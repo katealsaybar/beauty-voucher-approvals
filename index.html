@@ -17,6 +17,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="notes-widget.css">
+<link rel="stylesheet" href="ghl-view.css">
 <style>
   :root{
     --bg:#FAF8F4; --paper:#FFFFFF; --ink:#2D2E37; --muted:#6E6E77;
@@ -184,6 +185,7 @@
       <a href="#phorest"><span>Phorest Setup</span><span class="dot confirmed"></span></a>
       <a href="#copy"><span>Campaign Copy</span><span class="dot draft"></span></a>
       <a href="#mapping"><span>Confidence Mapping</span><span class="dot draft"></span></a>
+      <a href="#automations"><span>GHL Automations</span><span class="dot draft"></span></a>
       <a href="#terms"><span>Terms &amp; Conditions</span><span class="dot draft"></span></a>
       <a href="#cancellation"><span>Cancellation Policy</span><span class="dot draft"></span></a>
       <a href="#incentive"><span>Staff Incentive</span><span class="dot draft"></span></a>
@@ -214,6 +216,7 @@
         <a href="#phorest" class="s-green"><div class="b-title">Phorest Setup</div><div class="b-status"><span class="dot confirmed"></span>Gift card method</div></a>
         <a href="#copy" class="s-amber"><div class="b-title">Campaign Copy</div><div class="b-status"><span class="dot draft"></span>Approve wording</div></a>
         <a href="#mapping" class="s-amber"><div class="b-title">Confidence Mapping</div><div class="b-status"><span class="dot draft"></span>One approval</div></a>
+        <a href="#automations" class="s-amber"><div class="b-title">GHL Automations</div><div class="b-status"><span class="dot draft"></span>Approve messages</div></a>
         <a href="#terms" class="s-amber"><div class="b-title">Terms &amp; Conditions</div><div class="b-status"><span class="dot draft"></span>Approve wording</div></a>
         <a href="#cancellation" class="s-amber"><div class="b-title">Cancellation Policy</div><div class="b-status"><span class="dot draft"></span>Approve wording</div></a>
         <a href="#incentive" class="s-amber"><div class="b-title">Staff Incentive</div><div class="b-status"><span class="dot draft"></span>Approve model</div></a>
@@ -469,6 +472,25 @@
       </div>
     </section>
 
+    <section id="automations">
+      <div class="sec-head"><h2>GHL Automations</h2><span class="badge draft"><span class="b-dot"></span>Approve messages</span></div>
+      <div class="oneline"><div><b>In one line</b>Three workflows, every message she could receive. Tap a workflow to see its steps, then tap any step with a <strong>View</strong> button to read the actual email or WhatsApp draft.</div></div>
+
+      <div class="action">
+        <div class="a-label">What we need from Tara</div>
+        <ul>
+          <li>Read the messages behind the <strong>View</strong> buttons and approve the wording, or tell us what to change.</li>
+          <li>The four Confidence Mapping emails are built and shown exactly as she will receive them. The eight nurture and welcome emails are approved copy, not yet built.</li>
+        </ul>
+      </div>
+
+      <div id="ghlMount"></div>
+
+      <div class="note good"><strong>Nothing over-sends.</strong> Every workflow exits the moment <span style="font-family:monospace;font-size:13px;">voucher:paid</span> lands, and each message carries the client self-exit described in Campaign Copy. A woman who has already paid stops hearing from us straight away.</div>
+
+      <div class="note flag"><strong>Two dependencies worth knowing:</strong> the waits are fixed-date for this window and need rebuilding as relative delays after the campaign, and until the Phorest to GHL webhook exists, reception has to apply <span style="font-family:monospace;font-size:13px;">voucher:redeemed</span> at checkout by hand. The expiry touch at 30 days before a tier lapses must survive the campaign closing, because that is where unredeemed-credit complaints live.</div>
+    </section>
+
     <section id="terms">
       <div class="sec-head"><h2>Terms &amp; Conditions</h2><span class="badge draft"><span class="b-dot"></span>Dawn's revision · approve</span></div>
       <div class="oneline"><div><b>In one line</b>Updated to Dawn's recommended legal wording (7 Aug). Two things need a call before it ships, flagged directly below.</div></div>
@@ -608,5 +630,9 @@
      script (not a module) so the pack still works opened straight off disk as file://. -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="notes-widget.js"></script>
+
+<!-- GHL automations: data first, then the viewer that renders into #ghlMount. -->
+<script src="ghl-data.js"></script>
+<script src="ghl-view.js"></script>
 </body>
 </html>
