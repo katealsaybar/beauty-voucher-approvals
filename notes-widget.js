@@ -61,9 +61,19 @@
     { sel: '.decision', into: null, labelSel: '.q', float: true }
   ];
 
-  // Where the identity toggle gets injected. The pack has .topbar, the automations window
-  // has .top, the dashboard has .dash-top; body is the last resort so it always lands.
-  var ID_HOSTS = '.topbar, .top, .dash-top, main, body';
+  // Where the identity toggle gets injected, in priority order. Each of these is the
+  // page's own sticky header, so the toggle stays visible while you scroll.
+  // Tried one at a time on purpose: querySelector with a comma list returns the first
+  // match in DOCUMENT order, not the first selector that matches, so 'body' always won
+  // and the toggle landed at the very bottom of the page (found 2026-08-07).
+  var ID_HOSTS = ['.topbar', '.top', '.dash-top', 'main', 'body'];
+  function idHost() {
+    for (var i = 0; i < ID_HOSTS.length; i++) {
+      var el = document.querySelector(ID_HOSTS[i]);
+      if (el) return el;
+    }
+    return null;
+  }
 
   // ---------- helpers ----------
 
@@ -228,9 +238,9 @@
             return '<button type="button" data-name="' + esc(n) + '">' + esc(n) + '</button>';
           }).join('') +
         '</span>' +
-        '<span class="trs-idbar-hint" id="trsIdHint">Pick a name to leave notes</span>';
+        '<span class="trs-idbar-hint" id="trsIdHint">&#9664; Tap your name first, or you cannot leave notes</span>';
 
-      var host = document.querySelector(ID_HOSTS);
+      var host = idHost();
       if (!host) return null;
       host.appendChild(bar);
 
@@ -254,6 +264,7 @@
         Array.prototype.forEach.call(dom.idbar.querySelectorAll('button'), function (btn) {
           btn.classList.toggle('active', btn.dataset.name === name);
         });
+        dom.idbar.classList.toggle('trs-idbar-set', !!name);
         var hintEl = document.getElementById('trsIdHint');
         if (hintEl) hintEl.hidden = !!name;
       }
@@ -911,6 +922,28 @@
     }
 
     function renderCompose() {
+      // No name picked = nothing to post with. Show why instead of a form that will only
+      // reject them once they have typed the whole thing out.
+      if (!isReviewer()) {
+        composeEl.innerHTML =
+          '<div class="trs-locked-compose">' +
+            '<strong>Tap your name to start</strong>' +
+            '<p>Notes and suggestions are filed under whoever left them, so pick ' +
+            '<strong>Tara</strong>, <strong>Emma</strong>, <strong>Hanneh</strong> or ' +
+            '<strong>Kate</strong> in the header at the top of the page. It only has to be ' +
+            'done once on this device.</p>' +
+            '<button type="button" id="trsJumpToId">Take me to it</button>' +
+          '</div>';
+        document.getElementById('trsJumpToId').addEventListener('click', function () {
+          closePanel();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          if (dom.idbar) {
+            dom.idbar.classList.add('trs-idbar-nudge');
+            window.setTimeout(function () { dom.idbar.classList.remove('trs-idbar-nudge'); }, 2200);
+          }
+        });
+        return;
+      }
       if (activeTab === 'notes') {
         composeEl.innerHTML =
           (activeAnchor

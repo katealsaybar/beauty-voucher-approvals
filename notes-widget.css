@@ -204,7 +204,26 @@
 .trs-idbar-btns button.active {
   background: var(--n-dark); border-color: var(--n-dark); color: #fff;
 }
-.trs-idbar-hint { font-size: 12.5px; color: var(--n-amber); font-weight: 600; }
+/* loud on purpose: nobody can leave a note until a name is picked, so saying so quietly
+   just produces people typing into a form that then refuses them */
+.trs-idbar-hint {
+  font-size: 12.5px; font-weight: 700; color: var(--n-amber);
+  background: var(--amber-bg, #FBF3E2); border: 1px solid #EAD9B8;
+  border-radius: 100px; padding: 5px 13px;
+}
+/* until someone picks, the name buttons themselves ask to be pressed */
+.trs-idbar:not(.trs-idbar-set) .trs-idbar-btns button {
+  border-color: var(--n-amber); color: var(--n-ink);
+}
+
+/* composer, before a name is picked */
+.trs-locked-compose { text-align: center; padding: 4px 2px 2px; }
+.trs-locked-compose strong { display: block; font-size: 15px; margin-bottom: 6px; }
+.trs-locked-compose p { font-size: 13px; color: var(--n-muted); line-height: 1.6; margin: 0 0 12px; }
+.trs-locked-compose button {
+  background: var(--n-dark); color: #fff; border: none; border-radius: 100px;
+  cursor: pointer; font-family: inherit; font-size: 13.5px; font-weight: 700; padding: 10px 22px;
+}
 
 /* flashes when someone tries to post without picking a name */
 @keyframes trsIdNudge {
