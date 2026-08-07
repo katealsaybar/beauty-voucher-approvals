@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<script type="application/json" id="cowork-artifact-meta">
+{
+  "name": "Beauty Voucher Approval Pack",
+  "schemaVersion": 1,
+  "description": "Tara Rose Beauty Voucher approval pack for Kate to present to Tara. Sidebar nav with Overview, Offer & Tiers, Branch Availability, Terms & Conditions, Cancellation Policy, Staff Incentive, and Open Decisions. Colour-coded status: confirmed (live site), draft (needs approval), pending (info/decision).",
+  "mcpTools": [],
+  "mcpServerNames": []
+}
+</script>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Beauty Voucher — Approval Pack</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="notes-widget.css">
+<style>
+  :root{
+    --bg:#FAF8F4; --paper:#FFFFFF; --ink:#2D2E37; --muted:#6E6E77;
+    --line:#E7E2D8; --accent:#99F6E4; --sand:#F1ECE3; --dark:#2D2E37;
+    --amber:#B4823A; --amber-bg:#FBF3E2; --blue:#3B6E8F; --blue-bg:#E6F0F5;
+    --green:#3E7A5E; --green-bg:#E4F1EA; --red:#B24A4A;
+    --serif:'Playfair Display',Georgia,serif;
+    --sans:'Inter',system-ui,-apple-system,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;font-size:15.5px;}
+  a{color:inherit;}
+
+  /* layout */
+  .wrap{display:flex;min-height:100vh;}
+  .sidebar{
+    width:270px;flex-shrink:0;background:var(--dark);color:#EFECE5;
+    position:sticky;top:0;height:100vh;overflow-y:auto;padding:28px 20px;
+  }
+  /* the source logo is a wordmark, so let it run nearly the full sidebar width —
+     anything smaller and it reads as a tiny grey smudge against the dark panel */
+  .brandlogo{display:block;width:100%;max-width:216px;height:auto;}
+  /* mobile: the sidebar is hidden below 860px, so the topbar carries the logo instead */
+  .topbar .brandlogo{display:none;max-width:170px;margin-bottom:18px;}
+  .navlabel{font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:#8B8981;margin:28px 0 10px;}
+  nav a{
+    display:flex;align-items:center;justify-content:space-between;gap:8px;
+    padding:11px 12px;border-radius:10px;color:#D8D5CE;text-decoration:none;
+    font-size:14px;font-weight:500;margin-bottom:4px;transition:background .15s,color .15s;
+  }
+  nav a:hover{background:rgba(255,255,255,.06);color:#fff;}
+  nav a.active{background:var(--accent);color:var(--ink);font-weight:700;}
+  .dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;display:inline-block;}
+  .dot.draft{background:var(--amber);} .dot.pending{background:var(--blue);} .dot.confirmed{background:var(--green);}
+  nav a.active .dot{outline:2px solid rgba(45,46,55,.25);}
+  .legend-row{display:flex;align-items:center;gap:9px;font-size:12.5px;color:#C7C5BE;margin:7px 0;}
+
+  /* main */
+  main{flex:1;padding:0 0 90px;max-width:920px;}
+  .topbar{
+    padding:34px 52px 26px;border-bottom:1px solid var(--line);background:var(--paper);
+    position:sticky;top:0;z-index:5;
+  }
+  .kicker{font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--muted);}
+  h1{font-family:var(--serif);font-weight:600;font-size:31px;line-height:1.12;margin:10px 0 4px;}
+  .topmeta{font-size:13.5px;color:var(--muted);margin-top:8px;}
+  .topmeta strong{color:var(--ink);}
+
+  section{padding:46px 52px 10px;scroll-margin-top:20px;}
+  section + section{border-top:1px solid var(--line);}
+  h2{font-family:var(--serif);font-weight:600;font-size:25px;margin-bottom:4px;}
+  h3{font-size:15px;font-weight:800;margin:26px 0 8px;letter-spacing:.01em;text-transform:uppercase;color:#55565F;font-size:12.5px;letter-spacing:.12em;}
+  p{margin:11px 0;}
+  ul,ol{margin:11px 0 11px 22px;} li{margin:7px 0;}
+
+  /* one-line summary strip */
+  .oneline{
+    display:flex;gap:12px;align-items:flex-start;
+    background:var(--paper);border:1px solid var(--line);border-left:5px solid var(--accent);
+    border-radius:12px;padding:14px 18px;margin:14px 0 22px;font-size:15px;
+  }
+  .oneline b{display:block;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:2px;font-weight:700;}
+
+  /* status badges */
+  .badge{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:700;
+    letter-spacing:.05em;text-transform:uppercase;padding:5px 12px;border-radius:100px;vertical-align:middle;}
+  .badge.draft{background:var(--amber-bg);color:var(--amber);}
+  .badge.pending{background:var(--blue-bg);color:var(--blue);}
+  .badge.confirmed{background:var(--green-bg);color:var(--green);}
+  .badge .b-dot{width:7px;height:7px;border-radius:50%;background:currentColor;}
+  .sec-head{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:6px;}
+
+  /* status board */
+  .board{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin:18px 0 6px;}
+  .board a{
+    text-decoration:none;background:var(--paper);border:1px solid var(--line);border-radius:14px;
+    padding:16px 16px 15px;display:block;transition:transform .12s,box-shadow .12s;border-top:4px solid var(--line);
+  }
+  .board a:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(45,46,55,.08);}
+  .board a.s-green{border-top-color:var(--green);}
+  .board a.s-amber{border-top-color:var(--amber);}
+  .board a.s-blue{border-top-color:var(--blue);}
+  .board .b-title{font-weight:700;font-size:14.5px;margin-bottom:5px;}
+  .board .b-status{font-size:12.5px;color:var(--muted);display:flex;align-items:center;gap:7px;}
+
+  /* action box */
+  .action{background:#FFFDF8;border:1.5px solid var(--amber);border-radius:14px;padding:16px 20px;margin:18px 0;}
+  .action .a-label{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--amber);margin-bottom:8px;}
+  .action ul{margin:0 0 0 20px;} .action li{margin:6px 0;}
+
+  .card{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:20px 24px;margin:14px 0;}
+  .card p{margin:9px 0;}
+
+  .tier-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px;margin:16px 0;}
+  .tier{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:22px;}
+  .tier.vip{background:var(--dark);color:#F3F1EC;border-color:var(--dark);}
+  .tier.vip .t-sub,.tier.vip .t-incl{color:rgba(243,241,236,.75);}
+  .t-name{font-family:var(--serif);font-size:19px;font-weight:600;}
+  .t-price{font-size:23px;font-weight:800;margin:8px 0 3px;}
+  .t-sub{font-size:13px;color:var(--muted);}
+  .t-incl{font-size:12.5px;color:var(--muted);margin-top:13px;line-height:1.6;}
+  .chip{display:inline-block;background:var(--accent);color:var(--ink);font-size:11px;font-weight:700;padding:3px 11px;border-radius:100px;margin-top:12px;}
+  .paySpend{display:flex;align-items:flex-end;gap:14px;margin:12px 0 6px;}
+  .ps-col{display:flex;flex-direction:column;gap:2px;}
+  .ps-label{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700;}
+  .ps-pay{font-size:21px;font-weight:800;line-height:1;}
+  .ps-credit{font-size:21px;font-weight:800;line-height:1;color:var(--green);}
+  .ps-arrow{font-size:18px;color:var(--muted);font-weight:700;padding-bottom:2px;}
+  .tier.vip .ps-credit{color:var(--accent);} .tier.vip .ps-label{color:rgba(243,241,236,.7);}
+
+  table{width:100%;border-collapse:collapse;margin:16px 0 6px;font-size:14px;background:var(--paper);border-radius:12px;overflow:hidden;border:1px solid var(--line);}
+  th,td{text-align:left;padding:12px 15px;border-bottom:1px solid var(--line);}
+  th{background:var(--sand);font-size:11.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink);font-weight:700;}
+  tr:last-child td{border-bottom:none;}
+  td.num{font-variant-numeric:tabular-nums;white-space:nowrap;}
+  .avail-yes{color:var(--green);font-weight:700;} .avail-no{color:var(--red);font-weight:700;} .avail-tbc{color:var(--blue);font-weight:700;}
+
+  .note{background:var(--sand);border-radius:12px;padding:15px 18px;font-size:14px;margin:14px 0;}
+  .note.flag{background:var(--amber-bg);color:#6E5320;border:1px solid #EAD9B8;}
+  .note.good{background:var(--green-bg);color:#2C5A44;border:1px solid #C9E4D5;}
+
+  ol.terms{counter-reset:t;list-style:none;margin-left:0;}
+  ol.terms>li{counter-increment:t;position:relative;padding-left:44px;margin:18px 0;}
+  ol.terms>li::before{content:counter(t);position:absolute;left:0;top:-2px;width:30px;height:30px;border-radius:50%;
+    background:var(--dark);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+  ol.terms>li strong{display:block;margin-bottom:2px;}
+
+  .decision{display:flex;gap:12px;align-items:flex-start;background:var(--paper);border:1px solid var(--line);
+    border-left:4px solid var(--blue);border-radius:12px;padding:14px 18px;margin:12px 0;}
+  .decision.done{border-left-color:var(--green);background:var(--green-bg);}
+  .decision .q{font-weight:700;}
+  .decision .a{font-size:13.5px;color:var(--muted);margin-top:3px;}
+  .decision .tick{font-weight:800;color:var(--green);flex-shrink:0;}
+  .decision .num{flex-shrink:0;width:26px;height:26px;border-radius:50%;background:var(--blue);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+
+  .footer{padding:30px 52px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);}
+  .foot-legend{display:flex;gap:22px;flex-wrap:wrap;margin-top:12px;}
+  .foot-legend span{display:flex;align-items:center;gap:8px;}
+
+  @media(max-width:860px){
+    .sidebar{display:none;} main{max-width:100%;}
+    .topbar,section,.footer{padding-left:22px;padding-right:22px;}
+    /* sidebar is gone, so the topbar picks up the brandmark */
+    .topbar .brandlogo{display:block;}
+    /* the wider tables (Phorest mapping, confidence mapping, T&Cs, incentive) can't fit a
+       phone. Let them scroll inside their own box rather than stretch the whole page. */
+    table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  }
+</style>
+</head>
+<!-- data-note-pack: the pack_id every note/suggestion row is filed under. Change it and
+     you start a fresh, empty review thread. -->
+<body data-note-pack="beauty-voucher-2026-08">
+<div class="wrap">
+
+  <aside class="sidebar">
+    <img class="brandlogo" src="assets/tara-rose-logo-white.png" alt="Tara Rose Salon">
+    <div class="navlabel">Approval Pack</div>
+    <nav id="nav">
+      <a href="#overview"><span>Overview</span><span class="dot pending"></span></a>
+      <a href="#offer"><span>Offer &amp; Tiers</span><span class="dot confirmed"></span></a>
+      <a href="#branches"><span>Branch Availability</span><span class="dot confirmed"></span></a>
+      <a href="#payment"><span>Payment Links</span><span class="dot confirmed"></span></a>
+      <a href="#phorest"><span>Phorest Setup</span><span class="dot confirmed"></span></a>
+      <a href="#copy"><span>Campaign Copy</span><span class="dot draft"></span></a>
+      <a href="#mapping"><span>Confidence Mapping</span><span class="dot draft"></span></a>
+      <a href="#terms"><span>Terms &amp; Conditions</span><span class="dot draft"></span></a>
+      <a href="#cancellation"><span>Cancellation Policy</span><span class="dot draft"></span></a>
+      <a href="#incentive"><span>Staff Incentive</span><span class="dot draft"></span></a>
+      <a href="#decisions"><span>Open Decisions</span><span class="dot pending"></span></a>
+    </nav>
+    <div class="navlabel">Legend</div>
+    <div class="legend-row"><span class="dot confirmed"></span>Confirmed (live site)</div>
+    <div class="legend-row"><span class="dot draft"></span>Draft, needs approval</div>
+    <div class="legend-row"><span class="dot pending"></span>Pending info / decision</div>
+  </aside>
+
+  <main>
+    <div class="topbar">
+      <img class="brandlogo" src="assets/tara-rose-logo-black.png" alt="Tara Rose Salon">
+      <div class="kicker">Summer Beauty Ritual Voucher · UAE</div>
+      <h1>Beauty Voucher — Approval Pack</h1>
+      <div class="topmeta">Prepared by <strong>Kate</strong> for Tara's review · Campaign closes <strong>28 August 2026</strong> · Target launch <strong>Monday 10 August</strong></div>
+    </div>
+
+    <section id="overview">
+      <div class="sec-head"><h2>Overview</h2><span class="badge pending"><span class="b-dot"></span>Start here</span></div>
+      <div class="oneline"><div><b>In one line</b>Everything that needs your sign-off before Monday, colour-coded so you can see at a glance what is done and what is left.</div></div>
+
+      <div class="board">
+        <a href="#offer" class="s-green"><div class="b-title">Offer &amp; Tiers</div><div class="b-status"><span class="dot confirmed"></span>Confirmed</div></a>
+        <a href="#branches" class="s-green"><div class="b-title">Branch Availability</div><div class="b-status"><span class="dot confirmed"></span>Confirmed</div></a>
+        <a href="#payment" class="s-green"><div class="b-title">Payment Links</div><div class="b-status"><span class="dot confirmed"></span>Live Stripe</div></a>
+        <a href="#phorest" class="s-green"><div class="b-title">Phorest Setup</div><div class="b-status"><span class="dot confirmed"></span>Gift card method</div></a>
+        <a href="#copy" class="s-amber"><div class="b-title">Campaign Copy</div><div class="b-status"><span class="dot draft"></span>Approve wording</div></a>
+        <a href="#mapping" class="s-amber"><div class="b-title">Confidence Mapping</div><div class="b-status"><span class="dot draft"></span>One approval</div></a>
+        <a href="#terms" class="s-amber"><div class="b-title">Terms &amp; Conditions</div><div class="b-status"><span class="dot draft"></span>Approve wording</div></a>
+        <a href="#cancellation" class="s-amber"><div class="b-title">Cancellation Policy</div><div class="b-status"><span class="dot draft"></span>Approve wording</div></a>
+        <a href="#incentive" class="s-amber"><div class="b-title">Staff Incentive</div><div class="b-status"><span class="dot draft"></span>Approve model</div></a>
+        <a href="#decisions" class="s-blue"><div class="b-title">Open Decisions</div><div class="b-status"><span class="dot pending"></span>7 to decide</div></a>
+      </div>
+
+      <div class="action">
+        <div class="a-label">What we need from Tara</div>
+        <ul>
+          <li>Approve the <strong>Campaign Copy</strong>, <strong>Terms &amp; Conditions</strong>, and <strong>Cancellation Policy</strong> wording.</li>
+          <li>Approve the <strong>Staff Incentive</strong> model, amounts, and budget.</li>
+          <li>Make the <strong>Confidence Mapping</strong> copy call (a, b or c), and decide the open items at the bottom.</li>
+        </ul>
+      </div>
+
+      <div class="note good"><strong>Already settled:</strong> the two-voucher split (a Dubai voucher and an Abu Dhabi voucher) and exactly what each branch can deliver. No decision needed there.</div>
+    </section>
+
+    <section id="offer">
+      <div class="sec-head"><h2>Offer &amp; Tiers</h2><span class="badge confirmed"><span class="b-dot"></span>Per live site</span></div>
+      <div class="oneline"><div><b>In one line</b>Three tiers, prices locked to the live site. Nothing to decide here, just for reference.</div></div>
+      <div class="note"><strong>How to read each tier:</strong> the first number is what the client <strong>pays now</strong>. The second is the <strong>credit she gets to spend</strong> on services (her payment plus the bonus). The credit is a spending cap, so if her bill goes over her remaining credit, she pays the difference at the till.</div>
+      <div class="tier-grid">
+        <div class="tier">
+          <div class="t-name">Dip Your Toes</div>
+          <div class="paySpend">
+            <div class="ps-col"><span class="ps-label">She pays</span><span class="ps-pay">AED 1,000</span></div>
+            <div class="ps-arrow">→</div>
+            <div class="ps-col"><span class="ps-label">Credit to spend</span><span class="ps-credit">AED 1,150</span></div>
+          </div>
+          <div class="t-sub">Includes AED 150 bonus · valid 6 months · cash, card or Stripe (online) · no Tabby</div>
+          <div class="t-incl">Free Confidence Map · AED 100 gift voucher · birthday blowdry (AED 150) · Reset Kit · 3-month priority booking</div>
+        </div>
+        <div class="tier">
+          <div class="t-name">Season of You</div>
+          <div class="paySpend">
+            <div class="ps-col"><span class="ps-label">She pays</span><span class="ps-pay">AED 2,500</span></div>
+            <div class="ps-arrow">→</div>
+            <div class="ps-col"><span class="ps-label">Credit to spend</span><span class="ps-credit">AED 3,000</span></div>
+          </div>
+          <div class="t-sub">Includes AED 500 Self-Care Bonus · valid 9 months · Tabby 4 × AED 625</div>
+          <div class="t-incl">Free Confidence Map · 3 × AED 100 gift vouchers · birthday facial or scalp treatment with blowdry (AED 350) · home skin care kit · Reset Journal · 9-month priority booking</div>
+          <span class="chip">Most popular</span>
+        </div>
+        <div class="tier vip">
+          <div class="t-name">All-In VIP Year</div>
+          <div class="paySpend">
+            <div class="ps-col"><span class="ps-label">She pays</span><span class="ps-pay">AED 4,500</span></div>
+            <div class="ps-arrow">→</div>
+            <div class="ps-col"><span class="ps-label">Credit to spend</span><span class="ps-credit">AED 5,400</span></div>
+          </div>
+          <div class="t-sub">Includes AED 900 Self-Care Bonus · valid 12 months · Tabby 4 × AED 1,125</div>
+          <div class="t-incl">Free Confidence Map · 5 × AED 100 gift vouchers · birthday facial and scalp/hair treatment with blowdry (AED 750) · VIP Ritual Kit · home skin care kit · Reset Journal + 8 Pillars Journal · all-year priority booking</div>
+          <span class="chip">Best value</span>
+        </div>
+      </div>
+      <div class="note">Credit spends on any service, <strong>up to the credit value</strong>. Exclusions: home care products and new hair extensions. Self-Care Bonus (top two tiers) applies to beauty, treatments, keratin and blowdries only. Larger colour work is covered up to a set amount per visit.</div>
+    </section>
+
+    <section id="branches">
+      <div class="sec-head"><h2>Branch Availability</h2><span class="badge confirmed"><span class="b-dot"></span>Confirmed</span></div>
+      <div class="oneline"><div><b>In one line</b>Abu Dhabi does the full beauty menu. In Dubai, hair is at both branches, beauty is at Al Quoz only, and Motor City is hair-only.</div></div>
+
+      <table>
+        <thead><tr><th>Service group</th><th>Abu Dhabi<br>Saadiyat &amp; KCA</th><th>Dubai<br>Al Quoz</th><th>Dubai<br>Motor City</th></tr></thead>
+        <tbody>
+          <tr><td>Hair (colour, cuts, treatments)</td><td class="avail-yes">Yes</td><td class="avail-yes">Yes</td><td class="avail-yes">Yes</td></tr>
+          <tr><td>Facials — full menu (deep cleanse, hydration, LED)</td><td class="avail-yes">Yes</td><td class="avail-no">No</td><td class="avail-no">No</td></tr>
+          <tr><td>Facials — Relaxation Facial</td><td class="avail-yes">Yes</td><td class="avail-yes">Yes</td><td class="avail-no">No</td></tr>
+          <tr><td>Nails (mani/pedi, gel, enhancements)</td><td class="avail-yes">Yes</td><td class="avail-yes">Yes</td><td class="avail-no">No</td></tr>
+          <tr><td>Waxing / threading / brow</td><td class="avail-yes">Yes</td><td class="avail-yes">Yes</td><td class="avail-no">No</td></tr>
+          <tr><td>Lashes / LVL / brow lamination / tinting</td><td class="avail-yes">Yes</td><td class="avail-yes">Yes</td><td class="avail-no">No</td></tr>
+          <tr><td>Massage</td><td class="avail-yes">Yes</td><td class="avail-yes">Yes</td><td class="avail-no">No</td></tr>
+        </tbody>
+      </table>
+      <div class="note good"><strong>Confirmed (final):</strong> Motor City is hair only, no beauty at all. Al Quoz does the full beauty menu (nails, waxing, threading, lashes, LVL, brow lamination, tinting, massage) plus the Relaxation Facial. Al Quoz does not do deep cleanse, clinical facials or LED; those are Abu Dhabi only.</div>
+      <div class="note"><strong>Decision made:</strong> two separate vouchers, so each one only promises what its branches can actually deliver.</div>
+
+      <h3>Dubai voucher — what the credit can be spent on</h3>
+      <table>
+        <thead><tr><th>Service</th><th>Al Quoz</th><th>Motor City</th></tr></thead>
+        <tbody>
+          <tr><td>Hair (colour, cuts, highlights, keratin, treatments, blowdry)</td><td class="avail-yes">Yes</td><td class="avail-yes">Yes</td></tr>
+          <tr><td>Nails (mani/pedi, gel, enhancements)</td><td class="avail-yes">Yes</td><td class="avail-no">No</td></tr>
+          <tr><td>Waxing / threading / brow</td><td class="avail-yes">Yes</td><td class="avail-no">No</td></tr>
+          <tr><td>Lashes / LVL / brow lamination / tinting</td><td class="avail-yes">Yes</td><td class="avail-no">No</td></tr>
+          <tr><td>Massage</td><td class="avail-yes">Yes</td><td class="avail-no">No</td></tr>
+          <tr><td>Relaxation Facial (AED 350)</td><td class="avail-yes">Yes</td><td class="avail-no">No</td></tr>
+          <tr><td>Deep cleanse / clinical facials, LED</td><td class="avail-no">No</td><td class="avail-no">No</td></tr>
+        </tbody>
+      </table>
+      <div class="note">Same tiers and prices as Abu Dhabi. Beauty is done at Al Quoz; Motor City is for hair. The Dubai birthday facial is the Relaxation Facial (AED 350). Credit is flexible, so if a client wants something we do not offer in Dubai, she just spends her credit on what is available.</div>
+
+      <h3>Abu Dhabi voucher — what the credit can be spent on</h3>
+      <table>
+        <thead><tr><th>Service</th><th>Saadiyat</th><th>Khalifa City A</th></tr></thead>
+        <tbody>
+          <tr><td>Hair (colour, cuts, highlights, keratin, treatments, blowdry)</td><td class="avail-yes">Yes</td><td class="avail-yes">Yes</td></tr>
+          <tr><td>Nails (mani/pedi, gel, enhancements)</td><td class="avail-yes">Yes</td><td class="avail-yes">Yes</td></tr>
+          <tr><td>Waxing / threading / brow</td><td class="avail-yes">Yes</td><td class="avail-yes">Yes</td></tr>
+          <tr><td>Lashes / LVL / brow lamination / tinting</td><td class="avail-yes">Yes</td><td class="avail-yes">Yes</td></tr>
+          <tr><td>Massage</td><td class="avail-yes">Yes</td><td class="avail-yes">Yes</td></tr>
+          <tr><td>Relaxation Facial</td><td class="avail-yes">Yes</td><td class="avail-yes">Yes</td></tr>
+          <tr><td>Deep cleanse / clinical facials, LED</td><td class="avail-yes">Yes</td><td class="avail-yes">Yes</td></tr>
+        </tbody>
+      </table>
+      <div class="note">Full hair and beauty menu at both Abu Dhabi salons, including all facials. The birthday facial here can be a full facial.</div>
+    </section>
+
+    <section id="payment">
+      <div class="sec-head"><h2>Payment Links</h2><span class="badge confirmed"><span class="b-dot"></span>Live Stripe</span></div>
+      <div class="oneline"><div><b>In one line</b>Nine live Stripe links — one per tier, per paying branch. All three tiers, including Dip Your Toes, are payable online so we can capture revenue the moment a client says yes. Saadiyat has no working Stripe, so its clients pay through the Khalifa City link.</div></div>
+
+      <table>
+        <thead><tr><th>Branch</th><th>Tier</th><th>Stripe link</th></tr></thead>
+        <tbody>
+          <tr><td rowspan="3"><strong>Abu Dhabi</strong><br><span style="font-size:12px;color:var(--muted);">Khalifa City &amp; Saadiyat</span></td><td>Dip Your Toes</td><td><a href="https://buy.stripe.com/00wbJ0fJYdLo5D2g9e5wI01" target="_blank" rel="noopener" style="word-break:break-all;">buy.stripe.com/…5wI01</a></td></tr>
+          <tr><td>Season of You</td><td><a href="https://buy.stripe.com/cNicN4eFUdLoe9y4qw5wI02" target="_blank" rel="noopener" style="word-break:break-all;">buy.stripe.com/…5wI02</a></td></tr>
+          <tr><td>All-In VIP Year</td><td><a href="https://buy.stripe.com/5kQ14m7ds4aO7La0ag5wI03" target="_blank" rel="noopener" style="word-break:break-all;">buy.stripe.com/…5wI03</a></td></tr>
+
+          <tr><td rowspan="3"><strong>Dubai — Al Quoz</strong></td><td>Dip Your Toes</td><td><a href="https://buy.stripe.com/9B6eV7c6G1fJgpY9EGeEo13" target="_blank" rel="noopener" style="word-break:break-all;">buy.stripe.com/…eEo13</a></td></tr>
+          <tr><td>Season of You</td><td><a href="https://buy.stripe.com/cNiaER0nYbUn3Dc2ceeEo14" target="_blank" rel="noopener" style="word-break:break-all;">buy.stripe.com/…eEo14</a></td></tr>
+          <tr><td>All-In VIP Year</td><td><a href="https://buy.stripe.com/28E9AN2w68Ib0r0eZ0eEo15" target="_blank" rel="noopener" style="word-break:break-all;">buy.stripe.com/…eEo15</a></td></tr>
+
+          <tr><td rowspan="3"><strong>Dubai — Motor City</strong></td><td>Dip Your Toes</td><td><a href="https://buy.stripe.com/7sYeVd8OR4w9dTVguf0VO1G" target="_blank" rel="noopener" style="word-break:break-all;">buy.stripe.com/…0VO1G</a></td></tr>
+          <tr><td>Season of You</td><td><a href="https://buy.stripe.com/4gM9ATc13bYB9DFem70VO1F" target="_blank" rel="noopener" style="word-break:break-all;">buy.stripe.com/…0VO1F</a></td></tr>
+          <tr><td>All-In VIP Year</td><td><a href="https://buy.stripe.com/8x23cv1mp2o16rtem70VO1E" target="_blank" rel="noopener" style="word-break:break-all;">buy.stripe.com/…0VO1E</a></td></tr>
+        </tbody>
+      </table>
+
+      <div class="note flag"><strong>Watch on Saadiyat:</strong> Saadiyat has no working Stripe, so those clients pay through the Khalifa City (KCA) link. In the Stripe dashboard these payments will show under KCA — so tag the client as Saadiyat at checkout (customer name or note field) so credit and branch reporting map correctly. Worth flagging to Belle / finance.</div>
+    </section>
+
+    <section id="phorest">
+      <div class="sec-head"><h2>Phorest Setup</h2><span class="badge confirmed"><span class="b-dot"></span>Confirmed with Belle</span></div>
+      <div class="oneline"><div><b>In one line</b>Belle has mapped every part of every tier to something Phorest can actually hold. Three gift cards, two business adjustments, and one thing that needs no record at all. Nothing to decide, just so you know it is handled.</div></div>
+
+      <div class="card">
+        <p><strong>Check her out as a Gift Card,</strong> then note which tier she bought on that card. The gift card balance is her credit, so it draws down on its own every time she spends, and the till shows what is left.</p>
+        <p><strong>Not a membership.</strong> Our Phorest plan has no membership feature at all.</p>
+        <p><strong>Not a course or package.</strong> Both need a fixed list of services booked in advance, and the whole point of the voucher is that she spends it on whatever she likes.</p>
+      </div>
+
+      <h3>What goes where, tier by tier</h3>
+      <table>
+        <thead>
+          <tr><th>What she gets</th><th>Dip Your Toes</th><th>Season of You</th><th>All-In VIP Year</th><th>How Belle records it</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Beauty and hair services at full price</td><td class="num">AED 1,150</td><td class="num">AED 3,000</td><td class="num">AED 5,400</td><td>Gift card</td></tr>
+          <tr><td>Gift for a friend</td><td class="num">AED 100</td><td class="num">AED 300</td><td class="num">AED 500</td><td>A second gift card, with the GC number changed to the membership number</td></tr>
+          <tr><td>Birthday treat</td><td class="num">Blow-dry, AED 150</td><td class="num">AED 350</td><td class="num">AED 750</td><td>Gift card</td></tr>
+          <tr><td>Kit</td><td>Reset Kit</td><td>Skincare kit and Reset Journal</td><td>Ritual and skincare kit</td><td>Business (adjustment)</td></tr>
+          <tr><td>Refer a Friend (3)</td><td class="num">+ AED 100</td><td class="num">+ AED 150</td><td class="num">+ AED 200</td><td>Business (adjustment)</td></tr>
+          <tr><td>Priority access to last-minute beauty appointments</td><td class="avail-yes">Yes</td><td class="avail-yes">Yes</td><td class="avail-yes">Yes</td><td>Nothing to record</td></tr>
+          <tr><td><strong>Total value</strong></td><td class="num"><strong>AED 1,400</strong></td><td class="num"><strong>AED 3,650</strong></td><td class="num"><strong>AED 6,650</strong></td><td></td></tr>
+        </tbody>
+      </table>
+      <div class="note">The bottom row is total <em>value</em>, not price. She pays AED 1,000, AED 2,500 or AED 4,500 — see Offer &amp; Tiers.</div>
+
+      <h3>Two things Belle suggests</h3>
+      <div class="card">
+        <p><strong>Make the gift cards electronic.</strong> The client shows it on her phone at the visit, so there is nothing to print and no cost to carry.</p>
+        <p><strong>Customise the artwork</strong> for the three gift-card types: gift for a friend, birthday, and refer a friend. Same mechanism, three different looks, so it does not feel like the same card three times.</p>
+      </div>
+
+      <div class="note flag"><strong>One thing to confirm with Belle:</strong> the campaign copy sells the friend gift as three separate AED 100 vouchers on Season of You and five on All-In VIP, because the client is meant to hand them to different friends. The mapping above shows them as one lump (AED 300, AED 500). Worth checking whether that is one card or several before launch, since it changes what she is handed.</div>
+    </section>
+
+    <section id="copy">
+      <div class="sec-head"><h2>Campaign Copy</h2><span class="badge draft"><span class="b-dot"></span>Approve wording</span></div>
+      <div class="oneline"><div><b>In one line</b>Two copy sets, one per voucher. Prices and inclusions are identical; only the availability line changes.</div></div>
+
+      <h3>Abu Dhabi voucher</h3>
+      <div class="card">
+        <p><strong>Hero / landing.</strong> The Summer Beauty Ritual Voucher is open until 28 August. Place your credit as a plan for the year, with a Self-Care Bonus pointed at what you usually skip. Available at our Abu Dhabi salons, Mamsha al Saadiyat and Khalifa City A. Not money off. A plan.</p>
+        <p><strong>Coverage line.</strong> Your credit spends on any service, up to your credit value: hair, colour, beauty, treatments and facials, at either Abu Dhabi salon. It is a spending cap; anything above your credit is settled at the till.</p>
+        <p><strong>Birthday facial.</strong> A full facial of her choice (Deep Cleanse or Signature Relaxing).</p>
+        <p><strong>Availability line for every caption and email.</strong> Available at our Abu Dhabi salons, Saadiyat and Khalifa City A.</p>
+      </div>
+
+      <h3>Dubai voucher</h3>
+      <div class="card">
+        <p><strong>Hero / landing.</strong> The Summer Beauty Ritual Voucher is open until 28 August. Place your credit as a plan for the year, with a Self-Care Bonus pointed at what you usually skip. Available in Dubai at Al Quoz and Motor City. Not money off. A plan.</p>
+        <p><strong>Coverage line.</strong> Your credit spends on any service, up to your credit value. Hair at both Al Quoz and Motor City. Beauty services and the Relaxation Facial at Al Quoz. It is a spending cap; anything above your credit is settled at the till.</p>
+        <p><strong>Birthday facial.</strong> Signature Relaxing Facial with lifting massage (AED 350) at Al Quoz.</p>
+        <p><strong>Availability line for every caption and email.</strong> Available in Dubai. Beauty services at Al Quoz; hair at Al Quoz and Motor City. Deep cleanse and clinical facials are available at our Abu Dhabi salons.</p>
+      </div>
+
+      <div class="note flag"><strong>Fix before launch:</strong> the "three tiers plainly" email and the landing page currently say "spends on any service at any of our four salons." Swap in the per-voucher coverage line above, and keep "up to your credit value" so it never reads as unlimited free services.</div>
+
+      <h3>How the reminders work (client self-exit)</h3>
+      <div class="card">
+        <p>The nurture reminders are written as a kind reminder, never a "pay now" chase. Every email and WhatsApp message carries a client self-exit: an email button ("Already got yours? Tap here and we'll stop the reminders") and a WhatsApp quick-reply button or "DONE" keyword. When the client taps it, the sequence stops immediately and flags the contact centre to confirm the payment. This means we do not rely on the branch to report a sale before the reminders stop, and even if a message reaches someone who already paid at the branch, the soft tone keeps it from causing offence. This directly fixes the past complaints about payment-link emails over-sending.</p>
+      </div>
+    </section>
+
+    <section id="mapping">
+      <div class="sec-head"><h2>Confidence Mapping Page</h2><span class="badge draft"><span class="b-dot"></span>One approval</span></div>
+      <div class="oneline"><div><b>In one line</b>The Confidence Mapping page passed brand review at 78/100. Eleven build defects are already fixed and need nothing from you. Six copy lines predate the locked doctrine, so there is one call to make: do we bring them in line?</div></div>
+
+      <div class="note"><strong>Context.</strong> The Lexicon locked 30 June 2026 and the dash purge 4 July 2026. Six lines on <em>/en/ae/confidence-mapping/</em> predate both. Nothing here disagrees with the writing, it is a sync gap. Reviewed 7 Aug 2026, gate trs-brand-guardian v3.2.</div>
+
+      <h3>The one call for Tara</h3>
+      <div class="card">
+        <p><strong>This copy was written before the doctrine locked. Do we bring it in line?</strong></p>
+        <p><strong>a. Apply all six.</strong> <span class="chip">Recommended</span><br>Kate drafts the swaps below; Tara reads them before anything goes live. Fully reversible.</p>
+        <p><strong>b. Apply four, leave the hero line and the naming.</strong> Fixes the banned word and the dashes; leaves the diagnosis contradiction on the page.</p>
+        <p><strong>c. Leave all six as written.</strong> Kate logs a doctrine exception so future reviews stop flagging the page.</p>
+        <p style="color:var(--muted);font-size:13.5px;margin-bottom:0;"><strong>Recommendation:</strong> (a). Every swap is seen before it ships, so the cost of changing your mind is zero.</p>
+      </div>
+
+      <h3>The six lines</h3>
+      <table>
+        <thead><tr><th>#</th><th>Issue</th><th>On the page</th><th>Proposed</th></tr></thead>
+        <tbody>
+          <tr><td class="num">1</td><td>Banned word in a quiz option ("transformation" is prose-banned)</td><td>"A transformation, a real change"</td><td>"A big change, a real change"</td></tr>
+          <tr><td class="num">2</td><td>Page contradicts itself on whether this is a diagnosis</td><td>Hero: "A diagnosis, not a commitment"</td><td>"A direction, not a commitment"</td></tr>
+          <tr><td class="num">3</td><td>Two dashes used as punctuation (in scope since 4 July purge)</td><td>"…consultation – designed…" and "– the tara rose way"</td><td>"…consultation, designed…" and "the Tara Rose way"</td></tr>
+          <tr><td class="num">4</td><td>Two names for the same deliverable</td><td>"Confidence Map" and "Journal" used interchangeably</td><td>"Confidence Map", everywhere</td></tr>
+          <tr><td class="num">5</td><td>Locked footer signature missing</td><td>Ends at "…care, expertise and intention."</td><td>Add: "We see you."</td></tr>
+          <tr><td class="num">6</td><td>Awards strip, confirm rather than rewrite</td><td>"Director of the Year 3 yrs, Team of the Year ×4, …"</td><td>Yes/no from Tara: are all current and evidenced?</td></tr>
+        </tbody>
+      </table>
+      <div class="note">Rows 1 to 5 are copy swaps Kate applies on your yes. Row 6 is not a rewrite: doctrine says never publish an award we cannot evidence, so it needs a yes/no. If confirmed, it stays as written and Kate adds the awarding body and the missing full stop.</div>
+
+      <h3>Already handled, no decision needed</h3>
+      <div class="card">
+        <p style="color:var(--muted);margin-top:0;">Eleven build defects, not writing. Listed for visibility only.</p>
+        <ol style="margin:0 0 0 20px;font-size:14px;">
+          <li>Stray quote mark rendering after "Your map".</li>
+          <li>Pull-quote opens a quote mark and never closes it.</li>
+          <li>Phone shows +971 48 3 27061, should read +971 4 832 7061 (the dial link itself is already correct).</li>
+          <li>Two different Privacy Policy URLs, one on the form and one in the footer; one is likely dead.</li>
+          <li>"Khalifa City" in nav and footer should read "Khalifa City A".</li>
+          <li>Three H1 tags on one page; two demoted to H2, same words.</li>
+          <li>Duplicate empty heading between "The honest answers" and "Good to know".</li>
+          <li>Hidden form labels read aloud by screen readers as "Pain (comma list)", "History bad", "Route".</li>
+          <li>Missing full stop at the end of the awards strip.</li>
+          <li>"Not Sure What's Right for You?" set to sentence case to match the page.</li>
+          <li>Booking button points at an anchor that may not exist (Kate testing).</li>
+        </ol>
+      </div>
+
+      <div class="note flag"><strong>Moving today, no wait:</strong> the marketing-consent tickbox on the form is set to <strong>required</strong>, which makes opting in a condition of getting the map. That is not lawful consent under UAE PDPL, on a form that claims compliance in its own privacy notice. It is a form setting, not copy, so nothing written changes. Kate is fixing it rather than asking.</div>
+
+      <div class="action">
+        <div class="a-label">Needs from Tara</div>
+        <ul>
+          <li>One reply on the six lines: <strong>a</strong>, <strong>b</strong>, or <strong>c</strong>.</li>
+          <li>Row 6: confirm the awards are current and evidenced (yes / no).</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="terms">
+      <div class="sec-head"><h2>Terms &amp; Conditions</h2><span class="badge draft"><span class="b-dot"></span>Dawn's revision · approve</span></div>
+      <div class="oneline"><div><b>In one line</b>Updated to Dawn's recommended legal wording (7 Aug). Two things need a call before it ships, flagged directly below.</div></div>
+
+      <div class="note flag"><strong>Flag 1 — Motor City is missing.</strong> Dawn's participating-salons list names only Saadiyat, Khalifa City A and Al Quoz. Motor City is not listed, yet the rest of this pack treats Motor City as a hair-redemption branch for the Dubai voucher. As written, Dubai-voucher clients could only redeem at Al Quoz. Confirm: is Motor City in or out?</div>
+      <div class="note flag"><strong>Flag 2 — Cancellation wording.</strong> Dawn defers cancellations to "standard booking, cancellation and no-show policies" (term 9). The Cancellation Policy section below still spells out a 48-hour notice and no-show deposit. Decide which governs so the two do not contradict.</div>
+
+      <ol class="terms">
+        <li><strong>Campaign period.</strong> The Beauty Voucher Summer Window is available to purchase until 28 August 2026.</li>
+        <li><strong>Participating salons.</strong> Beauty Vouchers can be redeemed at participating Tara Rose salons: Saadiyat (Abu Dhabi), Khalifa City (Abu Dhabi), and Al Quoz (Dubai). <em>[Motor City not listed in Dawn's draft, see Flag 1.]</em></li>
+        <li><strong>Voucher options &amp; validity.</strong>
+          <table>
+            <thead><tr><th>Tier</th><th class="num">Prepaid</th><th class="num">Bonus</th><th class="num">Total credit</th><th>Valid</th><th>Tabby</th></tr></thead>
+            <tbody>
+              <tr><td>Dip Your Toes</td><td class="num">AED 1,000</td><td class="num">AED 150</td><td class="num" style="color:var(--green);font-weight:700;">AED 1,150</td><td>6 months</td><td>No</td></tr>
+              <tr><td>Season of You</td><td class="num">AED 2,500</td><td class="num">AED 500</td><td class="num" style="color:var(--green);font-weight:700;">AED 3,000</td><td>9 months</td><td>4 interest-free</td></tr>
+              <tr><td>All-In VIP Year</td><td class="num">AED 4,500</td><td class="num">AED 900</td><td class="num" style="color:var(--green);font-weight:700;">AED 5,400</td><td>12 months</td><td>4 interest-free</td></tr>
+            </tbody>
+          </table>
+          <span style="font-size:13px;color:var(--muted);">Validity runs from date of purchase. Dip Your Toes must be paid in full; Tabby is not available on this tier. Season of You and All-In VIP Year are eligible for 4 interest-free payments through Tabby, subject to Tabby approval and terms.</span>
+        </li>
+        <li><strong>Using your credit.</strong> The prepaid credit can be used towards salon services at participating Tara Rose locations, including hair, colour, beauty and treatments. Credit cannot be used towards home-care or retail products, the purchase of new hair extensions, or cash withdrawals or cash refunds. For Season of You and All-In VIP Year, the Self-Care Bonus can be redeemed against beauty services, treatments, keratin services and blowdries only. All services are charged at the Tara Rose menu price applicable at the time of the appointment.</li>
+        <li><strong>Included gifts &amp; benefits.</strong> Complimentary gifts and benefits are additional to the service credit and have no cash value. Where included with the selected voucher, these may include Confidence Mapping, birthday treatments, home-care or ritual kits, journals, priority access to selected last-minute beauty appointments, gift vouchers for friends, and referral rewards. Physical gifts are subject to availability; Tara Rose may substitute an unavailable complimentary item with an alternative of similar value.</li>
+        <li><strong>Gift vouchers.</strong> The AED 100 friend gift vouchers are designed to be gifted to another person. Each has a value of AED 100, can be redeemed against an eligible salon service, cannot be exchanged for cash, cannot be used to purchase retail products or another voucher, and is subject to availability and standard booking terms. The main Beauty Voucher / account credit cannot be transferred to another person unless otherwise agreed by Tara Rose.</li>
+        <li><strong>Referral rewards.</strong> Referral credit is awarded when the required number of new clients successfully visit Tara Rose and complete a qualifying paid appointment. Referral rewards cannot be exchanged for cash and must be used within the validity period of the original Beauty Voucher.</li>
+        <li><strong>Birthday benefits.</strong> Birthday services must be redeemed during the Beauty Voucher validity period and are subject to appointment availability. The values shown within the campaign represent the standard menu value of the relevant service and are included to illustrate the overall voucher value.</li>
+        <li><strong>Appointments, cancellations &amp; no-shows.</strong> All appointments remain subject to Tara Rose's standard booking, cancellation and no-show policies. Voucher ownership or priority access does not guarantee appointment availability with a particular stylist, therapist, date or time. <em>[See Flag 2.]</em></li>
+        <li><strong>Expiry.</strong> All credit, bonus credit and unused benefits must be redeemed within the stated validity period for the selected Beauty Voucher. Any unused balance or promotional benefits remaining after the expiry date will expire and cannot be exchanged for cash or extended unless Tara Rose agrees otherwise.</li>
+        <li><strong>Refunds &amp; exchanges.</strong> Beauty Vouchers are non-refundable once purchased, except where otherwise required by applicable law. Voucher credit and promotional bonuses cannot be exchanged for cash.</li>
+        <li><strong>Other offers.</strong> Beauty Voucher credit, bonuses and complimentary benefits cannot be combined with another promotion, discount or offer unless Tara Rose specifically confirms otherwise.</li>
+        <li><strong>Tabby payments.</strong> Where Tabby is offered, approval and payment arrangements are provided directly by Tabby and are subject to Tabby's eligibility requirements and terms. Using Tabby does not change the amount of Tara Rose service credit included within the selected Beauty Voucher.</li>
+        <li><strong>Pricing.</strong> All prices and values shown are in UAE Dirhams (AED) and include applicable VAT.</li>
+        <li><strong>General.</strong> Tara Rose reserves the right to reasonably amend or clarify these terms where required for the administration of the campaign, provided that this does not remove service credit already purchased by a client. Purchase of a Beauty Voucher confirms acceptance of these Terms &amp; Conditions.</li>
+      </ol>
+      <div class="note"><strong>What changed from the previous draft:</strong> Dawn's version adds explicit clauses for gift-voucher transfer, referral qualification, other-offer stacking, VAT-inclusive pricing, and Tara Rose's right to amend. It drops the marketing framing ("not money off, a plan") since this is the legal T&amp;C. It also removes the specific larger-colour-cap line, so that ruling now lives only in Open Decisions.</div>
+    </section>
+
+    <section id="cancellation">
+      <div class="sec-head"><h2>Cancellation &amp; Booking Policy</h2><span class="badge draft"><span class="b-dot"></span>Approve wording</span></div>
+      <div class="oneline"><div><b>In one line</b>48-hour notice to reschedule, and the credit is never lost. Please confirm against the live policy.</div></div>
+      <div class="note flag"><strong>Reconcile with Dawn's T&amp;C (Flag 2):</strong> Dawn's revised Terms defer cancellations to "standard booking, cancellation and no-show policies" without naming a notice period. This section still specifies 48 hours and a no-show deposit. Keep this detailed version, or replace it with Dawn's lighter clause, so the pack does not say both.</div>
+      <ol class="terms">
+        <li><strong>Your credit is safe.</strong> Cancelling or rescheduling never affects your voucher credit. It stays on your account for the full validity period of your tier.</li>
+        <li><strong>Rescheduling.</strong> Please give at least 48 hours' notice to move an appointment, so we can offer the slot to another client. Rescheduling within your validity period is free and unlimited.</li>
+        <li><strong>Late arrival.</strong> We will do our best to complete your service, but it may be shortened to protect the next client's booking. The full service is still drawn from your credit.</li>
+        <li><strong>No-show.</strong> Missing an appointment without notice does not lose your credit, but a repeated no-show may require a deposit to secure future bookings.</li>
+        <li><strong>Voucher refunds.</strong> The voucher is prepaid credit and is non-refundable for cash. Unused credit cannot be exchanged for money. In place of a refund, our Confidence Promise applies.</li>
+        <li><strong>Bundled inclusions.</strong> Birthday facial/blowdry, gift vouchers and kits hold no cash value and cannot be redeemed for credit or refunded.</li>
+        <li><strong>Offer window.</strong> The purchase window closes 28 August 2026. Appointments from your credit may be booked anytime within your tier's validity period, even after the window closes.</li>
+      </ol>
+      <div class="note flag"><strong>Confirm:</strong> the 48-hour notice period and the no-show deposit rule against the current live cancellation policy.</div>
+    </section>
+
+    <section id="incentive">
+      <div class="sec-head"><h2>Staff Incentive Proposal</h2><span class="badge draft"><span class="b-dot"></span>Approve model</span></div>
+      <div class="oneline"><div><b>In one line</b>A per-sale bonus so reception and stylists actually push the voucher. Approve the model and budget.</div></div>
+
+      <div class="card">
+        <p><strong>The problem.</strong> Floor staff are hesitant to push the voucher because the prepaid-credit structure feels like it cuts their immediate commission. Without an incentive, the people closest to the client have no reason to recommend it.</p>
+        <p><strong>Reassurance to give staff first.</strong> The voucher does not remove commission, it defers it. When a client later redeems her credit on a service, the stylist or beautician still earns their normal service commission at that visit. This incentive sits on top of that.</p>
+      </div>
+
+      <h3>Recommended model — per-sale bonus, tiered</h3>
+      <table>
+        <thead><tr><th>Tier</th><th class="num">Total bonus</th><th class="num">Introducer (stylist)</th><th class="num">Closer (reception)</th></tr></thead>
+        <tbody>
+          <tr><td>Dip Your Toes</td><td class="num">AED 50</td><td class="num">AED 20</td><td class="num">AED 30</td></tr>
+          <tr><td>Season of You</td><td class="num">AED 150</td><td class="num">AED 60</td><td class="num">AED 90</td></tr>
+          <tr><td>All-In VIP Year</td><td class="num">AED 300</td><td class="num">AED 120</td><td class="num">AED 180</td></tr>
+        </tbody>
+      </table>
+      <div class="note">If one person both introduces and closes the sale, they get the full amount. This rewards the in-chair mention and the warm handoff, not just the till.</div>
+      <div class="note"><strong>Alternative (last December's model):</strong> a flat 10% of voucher value to the attributed seller (AED 100 / 250 / 450). Pays more on high tiers but does not reward the stylist-to-reception handoff.</div>
+
+      <h3>Rules and safeguards</h3>
+      <ul>
+        <li>Attribution is the staff member recorded on the Phorest sale, or named in the payment-link note. Disputes go to Kate, final call.</li>
+        <li>Paid on payment received, not on redemption. Refunds claw the bonus back.</li>
+        <li>Three Exits always (buy, gift, or come back next season). A pressured sale voids the bonus.</li>
+        <li>Mis-quoting the offer voids the bonus for that sale.</li>
+        <li>Runs for the campaign window only, purchases up to 28 August.</li>
+      </ul>
+      <div class="action">
+        <div class="a-label">Needs from Tara</div>
+        <ul>
+          <li>Approve the model (recommended split vs flat 10%) and the amounts.</li>
+          <li>Set the total incentive budget for the window.</li>
+          <li>Confirm whether to add a per-branch team target.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="decisions">
+      <div class="sec-head"><h2>Open Decisions</h2><span class="badge pending"><span class="b-dot"></span>7 to decide</span></div>
+      <div class="oneline"><div><b>In one line</b>The short list still blocking a clean launch. Two are already resolved and shown for the record.</div></div>
+
+      <div class="decision"><span class="num">1</span><div><div class="q">Staff incentive model &amp; budget</div><div class="a">Approve amounts and set the window budget. Tara.</div></div></div>
+      <div class="decision"><span class="num">2</span><div><div class="q">Larger-colour cap</div><div class="a">Confirm the per-visit credit cap for colour and authorise sharing it with managers. Tara.</div></div></div>
+      <div class="decision"><span class="num">3</span><div><div class="q">Existing vs new client eligibility</div><div class="a">Is the voucher open to existing clients as well as new? No final policy yet.</div></div></div>
+      <div class="decision"><span class="num">4</span><div><div class="q">Cancellation policy specifics</div><div class="a">Confirm the 48-hour notice and no-show deposit against the live policy page.</div></div></div>
+      <div class="decision"><span class="num">5</span><div><div class="q">Home Ritual Kit sourcing</div><div class="a">Confirm supplier, cost and stock before launch materials are final.</div></div></div>
+      <div class="decision"><span class="num">6</span><div><div class="q">Confidence Mapping page copy sync</div><div class="a">One call, a / b / c on the six lines (see Confidence Mapping section). Recommended: a. Tara.</div></div></div>
+      <div class="decision"><span class="num">7</span><div><div class="q">Motor City in the T&amp;C</div><div class="a">Dawn's revised Terms omit Motor City from participating salons, which conflicts with the resolved two-voucher split (Dubai = Al Quoz + Motor City). Confirm Motor City is a redemption branch and add it, or confirm it is intentionally out. Tara / Dawn.</div></div></div>
+      <div class="decision done"><span class="tick">✓</span><div><div class="q">Dubai payment links — resolved</div><div class="a">Separate Stripe links for Al Quoz and Motor City (Belle's call), same setup as the other branches.</div></div></div>
+
+      <div class="decision done"><span class="tick">✓</span><div><div class="q">Voucher split — resolved</div><div class="a">Two vouchers: Dubai (Al Quoz + Motor City) and Abu Dhabi (Saadiyat + KCA).</div></div></div>
+      <div class="decision done"><span class="tick">✓</span><div><div class="q">Al Quoz beauty scope — resolved</div><div class="a">Full beauty plus Relaxation Facial. No deep cleanse or clinical facials (Abu Dhabi only). Motor City hair only.</div></div></div>
+    </section>
+
+    <div class="footer">
+      Tara Rose Salon Group · Summer Beauty Ritual Voucher · Draft approval pack, prepared by Kate.
+      <div class="foot-legend">
+        <span><span class="dot confirmed"></span>Confirmed on the live site</span>
+        <span><span class="dot draft"></span>Drafted, needs approval</span>
+        <span><span class="dot pending"></span>Pending information or a decision</span>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+  var links = Array.prototype.slice.call(document.querySelectorAll('#nav a'));
+  var map = {};
+  links.forEach(function(a){ map[a.getAttribute('href').slice(1)] = a; });
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){
+        links.forEach(function(l){ l.classList.remove('active'); });
+        if(map[e.target.id]) map[e.target.id].classList.add('active');
+      }
+    });
+  }, { rootMargin: '-45% 0px -50% 0px', threshold: 0 });
+  document.querySelectorAll('main section').forEach(function(s){ obs.observe(s); });
+</script>
+
+<!-- Notes & suggestions. Loads the Supabase UMD build first — notes-widget.js is a plain
+     script (not a module) so the pack still works opened straight off disk as file://. -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="notes-widget.js"></script>
+</body>
+</html>
