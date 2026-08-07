@@ -180,19 +180,38 @@
   text-align: center; color: var(--n-muted); font-size: 13.5px; padding: 34px 10px; line-height: 1.7;
 }
 
-/* ---------- sign-in ---------- */
-.trs-signin { padding: 22px 4px 10px; }
-.trs-signin h4 { font-family: var(--n-serif); font-size: 18px; font-weight: 600; margin: 0 0 8px; }
-.trs-signin p { font-size: 13.5px; color: var(--n-muted); margin: 0 0 12px; }
-.trs-signin p strong { color: var(--n-ink); }
-.trs-signin .trs-signin-small { font-size: 12px; margin: 12px 0 0; }
-.trs-signin form { margin-top: 4px; }
-.trs-signin input[type="email"] {
-  width: 100%; font-family: inherit; font-size: 13.5px; color: var(--n-ink);
-  border: 1px solid var(--n-line); border-radius: 10px; padding: 11px 12px; background: var(--n-paper);
+/* ---------- identity toggle (lives in the page's sticky header) ---------- */
+.trs-idbar {
+  --n-ink: var(--ink, #2D2E37); --n-muted: var(--muted, #6E6E77);
+  --n-paper: var(--paper, #FFFFFF); --n-line: var(--line, #E7E2D8);
+  --n-sand: var(--sand, #F1ECE3); --n-dark: var(--dark, #2D2E37);
+  --n-amber: var(--amber, #B4823A); --n-sans: var(--sans, 'Inter', system-ui, sans-serif);
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  margin-top: 18px; padding-top: 15px; border-top: 1px solid var(--n-line);
+  font-family: var(--n-sans);
 }
-.trs-signin input[type="email"]:focus { outline: none; border-color: var(--n-dark); }
-.trs-signin .trs-submit { margin-top: 9px; }
+.trs-idbar-label {
+  font-size: 10.5px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--n-muted);
+}
+.trs-idbar-btns { display: flex; gap: 6px; }
+.trs-idbar-btns button {
+  background: var(--n-paper); border: 1px solid var(--n-line); border-radius: 100px;
+  cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 700;
+  color: var(--n-muted); padding: 6px 16px; transition: background .15s, color .15s, border-color .15s;
+}
+.trs-idbar-btns button:hover { border-color: #CFC8BA; color: var(--n-ink); }
+.trs-idbar-btns button.active {
+  background: var(--n-dark); border-color: var(--n-dark); color: #fff;
+}
+.trs-idbar-hint { font-size: 12.5px; color: var(--n-amber); font-weight: 600; }
+
+/* flashes when someone tries to post without picking a name */
+@keyframes trsIdNudge {
+  0%, 100% { background: transparent; }
+  25%, 75% { background: var(--amber-bg, #FBF3E2); }
+}
+.trs-idbar-nudge { animation: trsIdNudge .6s ease 3; border-radius: 10px; }
 
 /* ---------- badges ---------- */
 .trs-badge {

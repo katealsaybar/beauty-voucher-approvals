@@ -16,14 +16,13 @@
 // Injects all its own DOM — the page needs nothing but the <link>/<script> includes and a
 // `data-note-pack` id on <body>.
 //
-// ACCESS: magic-link sign-in (Supabase Auth email OTP) restricted to the five reviewers
-// in REVIEWERS below. No passwords, no signup form — you type your email, click the link
-// we send, and you're in. Authorship comes from the JWT, so nobody can post as anyone
-// else. The allowlist here is only for friendly messaging; public.is_reviewer() in
-// notes_setup.sql is the actual gate.
+// ACCESS: none, deliberately (decided 2026-08-07). Magic-link sign-in was built and then
+// dropped — making Tara and Emma go to their inbox and back before they can type a
+// sentence meant they'd never leave a note at all. Instead they pick a name from the
+// toggle injected into the page's sticky header, and that IS the identity.
 //
-// The PACK ITSELF is not gated — anyone who can open the page can read it. Only the notes
-// data is protected. Gating the page client-side would be theatre on a public URL.
+// So: anyone with the URL can read and post, under any of the three names. The only
+// server-side guard is that author_name must be one of them. See notes_setup.sql.
 
 (function () {
   if (typeof supabase === 'undefined') return;
@@ -39,21 +38,15 @@
   var HINT_KEY = 'trs-approval-hint-dismissed';
   var POLL_MS = 20000; // only while the panel is open — several people reviewing together
 
-  // Keep in sync with public.is_reviewer() in notes_setup.sql. Tara has three addresses;
-  // they all resolve to the same display name so her notes read consistently whichever
-  // one she happens to sign in with.
-  var REVIEWERS = {
-    'kate@tararosesalon.com': 'Kate',
-    'tara@tararosesalon.com': 'Tara',
-    'tararosegray@gmail.com': 'Tara',
-    'tararosehairandbeauty@gmail.com': 'Tara',
-    'emma-louise@tararosesalon.com': 'Emma-Louise'
-  };
+  // Keep in sync with public.is_reviewer_name() in notes_setup.sql.
+  var REVIEWERS = ['Tara', 'Emma', 'Kate'];
+  var NAME_KEY = 'trs-approval-author';
+  var MINE_KEY = 'trs-approval-mine';
 
-  // detectSessionInUrl: the magic link lands back here with the tokens in the URL hash;
-  // GoTrue picks them up, stores the session, then strips the hash.
+  // No auth flow, so don't let GoTrue keep a session around or try to read tokens out of
+  // the URL — there are none to find.
   var db = supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
-    auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
+    auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false }
   });
 
   var PACK_ID = document.body.dataset.notePack;
@@ -99,18 +92,24 @@
     return clone.textContent.replace(/\s+/g, ' ').trim();
   }
 
-  // Session identity. All three are null until a magic link has been used.
-  var sessionEmail = null;
-  function authorEmail() { return sessionEmail; }
-  function authorName() { return sessionEmail ? (REVIEWERS[sessionEmail] || sessionEmail) : ''; }
-  function isReviewer() { return !!sessionEmail && Object.prototype.hasOwnProperty.call(REVIEWERS, sessionEmail); }
-
-  // "Can I edit this?" is now a real question with a real answer — the same check the
-  // database enforces in the update triggers.
-  function isMine(row) {
-    return !!sessionEmail &&
-      String(row.author_email || row.requester_email || '').toLowerCase() === sessionEmail;
+  // Identity is whichever name is selected in the header toggle, remembered per browser.
+  function authorName() {
+    var n = window.localStorage.getItem(NAME_KEY);
+    return n && REVIEWERS.indexOf(n) !== -1 ? n : '';
   }
+  function setAuthorName(n) { window.localStorage.setItem(NAME_KEY, n); }
+  function isReviewer() { return !!authorName(); }
+
+  // Rows posted from this browser, so Edit is only offered where it makes sense. A
+  // convenience, not a permission — with no login there's nothing to enforce server-side.
+  function mineIds() {
+    try { return JSON.parse(window.localStorage.getItem(MINE_KEY)) || []; } catch (e) { return []; }
+  }
+  function rememberMine(id) {
+    var ids = mineIds(); ids.push(id);
+    window.localStorage.setItem(MINE_KEY, JSON.stringify(ids.slice(-200)));
+  }
+  function isMine(row) { return mineIds().indexOf(row.id) !== -1; }
 
   // anchor_id is always "<sectionId>__<slug>" so a note can be counted against its
   // sidebar section without storing the section id in its own column.
@@ -211,105 +210,69 @@
 
     // ---------- who am I ----------
 
+    // The identity toggle lives in the page's own sticky header, not just in the panel, so
+    // whoever is reading can see and change who they're posting as at any point without
+    // opening anything. Injected into .topbar (already sticky); falls back to the top of
+    // <main> if this pack ever loses its topbar.
+    function buildIdentityBar() {
+      var bar = document.createElement('div');
+      bar.className = 'trs-idbar';
+      bar.innerHTML =
+        '<span class="trs-idbar-label">You are</span>' +
+        '<span class="trs-idbar-btns">' +
+          REVIEWERS.map(function (n) {
+            return '<button type="button" data-name="' + esc(n) + '">' + esc(n) + '</button>';
+          }).join('') +
+        '</span>' +
+        '<span class="trs-idbar-hint" id="trsIdHint">Pick a name to leave notes</span>';
+
+      var host = document.querySelector('.topbar') || document.querySelector('main');
+      if (!host) return null;
+      host.appendChild(bar);
+
+      Array.prototype.forEach.call(bar.querySelectorAll('button'), function (btn) {
+        btn.addEventListener('click', function () {
+          var already = authorName() === btn.dataset.name;
+          // clicking the selected name again clears it — a way back out if someone picks
+          // the wrong one on a shared machine
+          setAuthorName(already ? '' : btn.dataset.name);
+          syncIdentity();
+        });
+      });
+      return bar;
+    }
+
+    // Keeps the header toggle, the panel's "posting as" line and the composer in step
+    // whenever the selected name changes.
+    function syncIdentity() {
+      var name = authorName();
+      if (dom.idbar) {
+        Array.prototype.forEach.call(dom.idbar.querySelectorAll('button'), function (btn) {
+          btn.classList.toggle('active', btn.dataset.name === name);
+        });
+        var hintEl = document.getElementById('trsIdHint');
+        if (hintEl) hintEl.hidden = !!name;
+      }
+      renderWho();
+      renderCompose();
+      renderList();
+    }
+
     function renderWho() {
       var whoEl = document.getElementById('trsNotesWho');
-      if (!sessionEmail) {
-        whoEl.innerHTML = 'Not signed in';
-        return;
-      }
-      if (!isReviewer()) {
-        whoEl.innerHTML = 'Signed in as <strong>' + esc(sessionEmail) + '</strong> · ' +
-          '<button type="button" id="trsSignOut">sign out</button>';
-      } else {
-        whoEl.innerHTML = 'Signed in as <strong>' + esc(authorName()) + '</strong> · ' +
-          '<button type="button" id="trsSignOut">sign out</button>';
-      }
-      document.getElementById('trsSignOut').addEventListener('click', function () {
-        db.auth.signOut().then(function () {
-          sessionEmail = null;
-          notes = []; suggestions = []; suggNotes = [];
-          applyAuthState();
+      var name = authorName();
+      whoEl.innerHTML = name
+        ? 'Posting as <strong>' + esc(name) + '</strong> · <button type="button" ' +
+          'id="trsWhoChange">not you?</button>'
+        : '<strong>Pick your name</strong> in the header above before leaving a note.';
+      var change = document.getElementById('trsWhoChange');
+      if (change) {
+        change.addEventListener('click', function () {
+          setAuthorName('');
+          syncIdentity();
+          closePanel(); // the toggle is up in the header, so get out of its way
         });
-      });
-    }
-
-    // The sign-in form replaces the list and the composer until there's a session. The
-    // pack behind the panel stays readable throughout — only the notes are gated.
-    function renderSignedOut(sentTo) {
-      document.getElementById('trsNotesFilters').style.display = 'none';
-      listEl.innerHTML =
-        '<div class="trs-signin">' +
-          (sentTo
-            ? '<h4>Check your email</h4>' +
-              '<p>We sent a sign-in link to <strong>' + esc(sentTo) + '</strong>. Open it on ' +
-              'this device and you\'ll come straight back here.</p>' +
-              '<p class="trs-signin-small">No link after a minute or two? Check spam, then ' +
-              'try again below.</p>'
-            : '<h4>Sign in to leave notes</h4>' +
-              '<p>Type your email and we\'ll send you a sign-in link. No password to set up ' +
-              'or remember.</p>') +
-          '<form id="trsSignInForm">' +
-            '<input type="email" id="trsSignInEmail" placeholder="you@tararosesalon.com" ' +
-              'autocomplete="email" required>' +
-            '<button type="submit" class="trs-submit">Email me a sign-in link</button>' +
-          '</form>' +
-          '<p class="trs-signin-small">Limited to the review team. Reading the pack itself ' +
-          'needs no sign-in.</p>' +
-        '</div>';
-
-      document.getElementById('trsSignInForm').addEventListener('submit', function (e) {
-        e.preventDefault();
-        clearMessage();
-        var emailEl = document.getElementById('trsSignInEmail');
-        var email = emailEl.value.trim().toLowerCase();
-        if (!email) return;
-        // Client-side courtesy only — the database refuses non-reviewers regardless, but a
-        // clear message here beats sending someone a link that gets them nowhere.
-        if (!Object.prototype.hasOwnProperty.call(REVIEWERS, email)) {
-          showMessage('That address isn\'t on the review list for this pack.', 'error');
-          return;
-        }
-        var btn = listEl.querySelector('.trs-submit');
-        btn.disabled = true; btn.textContent = 'Sending…';
-        db.auth.signInWithOtp({
-          email: email,
-          // come back to this exact page, without any anchor hash confusing the return trip
-          options: { emailRedirectTo: window.location.origin + window.location.pathname }
-        }).then(function (res) {
-          if (res.error) {
-            btn.disabled = false; btn.textContent = 'Email me a sign-in link';
-            showMessage('Could not send that link: ' + res.error.message, 'error');
-            return;
-          }
-          renderSignedOut(email);
-        });
-      });
-    }
-
-    // Single place that decides what the panel shows for the current auth state.
-    function applyAuthState() {
-      renderWho();
-      if (!sessionEmail) {
-        composeEl.innerHTML = '';
-        renderSignedOut(null);
-        updateToggleCount();
-        updatePinCounts();
-        updateNavCounts();
-        return;
       }
-      if (!isReviewer()) {
-        document.getElementById('trsNotesFilters').style.display = 'none';
-        composeEl.innerHTML = '';
-        listEl.innerHTML =
-          '<div class="trs-signin"><h4>Not on the review list</h4>' +
-          '<p><strong>' + esc(sessionEmail) + '</strong> can\'t see the notes on this pack. ' +
-          'Sign out above and try the address Kate invited.</p></div>';
-        return;
-      }
-      document.getElementById('trsNotesFilters').style.display = '';
-      renderFilters();
-      renderCompose();
-      loadAll();
     }
 
     // ---------- panel open/close ----------
@@ -318,12 +281,6 @@
       if (tab) activeTab = tab;
       dom.panel.classList.add('open');
       dom.overlay.classList.add('open');
-      if (!isReviewer()) {
-        // signed out, or signed in as someone who isn't on the list — applyAuthState puts
-        // the right screen up and there is nothing to poll for
-        applyAuthState();
-        return;
-      }
       syncTabs();
       loadAll();
       if (!pollTimer) pollTimer = window.setInterval(loadAll, POLL_MS);
@@ -355,13 +312,6 @@
     Array.prototype.forEach.call(dom.panel.querySelectorAll('.trs-notes-tabs button'), function (btn) {
       btn.addEventListener('click', function () {
         activeTab = btn.dataset.tab;
-        // signed out, the tab strip is inert — rendering a list here would blow away the
-        // sign-in form sitting in the same container
-        if (!isReviewer()) {
-          syncTabsOnly();
-          applyAuthState();
-          return;
-        }
         syncTabs();
         renderList();
         renderCompose();
@@ -738,7 +688,6 @@
             anchor_label: parent ? parent.anchor_label : null,
             parent_id: form.dataset.parentId,
             author_name: authorName(),
-            author_email: authorEmail(),
             body: body
           }).select('id').then(function (res) {
             btn.disabled = false; btn.textContent = 'Post reply';
@@ -911,7 +860,6 @@
           db.from(T_SUGG_NOTES).insert({
             suggestion_id: form.dataset.suggId,
             author_name: authorName(),
-            author_email: authorEmail(),
             body: body
           }).then(function (res) {
             btn.disabled = false; btn.textContent = 'Post note';
@@ -946,10 +894,15 @@
 
     // ---------- compose ----------
 
+    // Posting needs a name; reading doesn't. Nudges the header toggle rather than
+    // blocking with a form, since the toggle is the only place to fix it.
     function requireAuth() {
       if (isReviewer()) return true;
-      showMessage('Sign in first so this is filed under your name.', 'error');
-      applyAuthState();
+      showMessage('Pick your name in the header first, so we know who this is from.', 'error');
+      if (dom.idbar) {
+        dom.idbar.classList.add('trs-idbar-nudge');
+        window.setTimeout(function () { dom.idbar.classList.remove('trs-idbar-nudge'); }, 1800);
+      }
       return false;
     }
 
@@ -989,7 +942,6 @@
             anchor_id: activeAnchor ? activeAnchor.id : null,
             anchor_label: activeAnchor ? activeAnchor.label : null,
             author_name: authorName(),
-            author_email: authorEmail(),
             body: body
           }).select('id').then(function (res) {
             btn.disabled = false; btn.textContent = 'Add note';
@@ -1023,7 +975,6 @@
             pack_id: PACK_ID,
             section_context: currentSectionTitle(),
             requester_name: authorName(),
-            requester_email: authorEmail(),
             title: title,
             description: descEl.value.trim() || null,
             status: 'pending'
@@ -1049,23 +1000,13 @@
 
     // ---------- go ----------
 
+    dom.idbar = buildIdentityBar();
     injectPins();
     scrollToAnchorFromHash();
     if (!window.localStorage.getItem(HINT_KEY)) dom.hint.classList.add('show');
 
-    function adoptSession(session) {
-      sessionEmail = session && session.user && session.user.email
-        ? session.user.email.toLowerCase()
-        : null;
-      applyAuthState();
-    }
-
-    // Fires on the initial session restore AND when the magic link lands back here, so
-    // returning from email swaps the sign-in screen for the real panel with no reload.
-    db.auth.onAuthStateChange(function (_event, session) { adoptSession(session); });
-    db.auth.getSession().then(function (res) {
-      adoptSession(res.data && res.data.session);
-    });
+    syncIdentity();
+    loadAll(); // once up front, so the counts are right before the panel is ever opened
   }
 
   if (document.readyState === 'loading') {
