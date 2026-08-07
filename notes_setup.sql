@@ -34,7 +34,7 @@ returns boolean
 language sql
 immutable
 as $$
-  select n in ('Tara', 'Emma', 'Kate');
+  select n in ('Tara', 'Emma', 'Hanneh', 'Kate');
 $$;
 
 -- ============================================================================

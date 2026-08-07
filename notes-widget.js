@@ -39,7 +39,7 @@
   var POLL_MS = 20000; // only while the panel is open — several people reviewing together
 
   // Keep in sync with public.is_reviewer_name() in notes_setup.sql.
-  var REVIEWERS = ['Tara', 'Emma', 'Kate'];
+  var REVIEWERS = ['Tara', 'Emma', 'Hanneh', 'Kate'];
   var NAME_KEY = 'trs-approval-author';
   var MINE_KEY = 'trs-approval-mine';
 
@@ -55,11 +55,15 @@
   // Which blocks can be pinned. Sections cover everything; the two granular ones are the
   // places Tara is most likely to want to point at a single line. `.tier` is deliberately
   // NOT pinnable — the pack says there's nothing to decide there.
-  var PIN_TARGETS = [
+  var PIN_TARGETS = window.TRS_PIN_TARGETS || [
     { sel: 'main section[id]', into: '.sec-head', labelSel: 'h2', float: false },
     { sel: 'ol.terms > li', into: null, labelSel: 'strong', float: true },
     { sel: '.decision', into: null, labelSel: '.q', float: true }
   ];
+
+  // Where the identity toggle gets injected. The pack has .topbar, the automations window
+  // has .top, the dashboard has .dash-top; body is the last resort so it always lands.
+  var ID_HOSTS = '.topbar, .top, .dash-top, main, body';
 
   // ---------- helpers ----------
 
@@ -226,7 +230,7 @@
         '</span>' +
         '<span class="trs-idbar-hint" id="trsIdHint">Pick a name to leave notes</span>';
 
-      var host = document.querySelector('.topbar') || document.querySelector('main');
+      var host = document.querySelector(ID_HOSTS);
       if (!host) return null;
       host.appendChild(bar);
 
@@ -352,7 +356,7 @@
 
     function computeAnchor(el, target, index) {
       var section = el.matches('section[id]') ? el : el.closest('section[id]');
-      var sectionId = section ? section.id : 'pack';
+      var sectionId = section ? section.id : (window.TRS_ANCHOR_PREFIX || 'pack');
       if (el.matches('section[id]')) {
         var h2 = el.querySelector(target.labelSel);
         // "__section" rather than a slug of the heading: a section anchor should survive a

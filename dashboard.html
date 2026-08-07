@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Beauty Voucher — Review Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FAF8F4; --paper:#FFFFFF; --ink:#2D2E37; --muted:#6E6E77;
+    --line:#E7E2D8; --accent:#99F6E4; --sand:#F1ECE3; --dark:#2D2E37;
+    --amber:#B4823A; --amber-bg:#FBF3E2; --blue:#3B6E8F; --blue-bg:#E6F0F5;
+    --green:#3E7A5E; --green-bg:#E4F1EA; --red:#B24A4A;
+    --serif:'Playfair Display',Georgia,serif;
+    --sans:'Inter',system-ui,-apple-system,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--sans);background:var(--bg);color:var(--ink);font-size:15px;line-height:1.6;}
+  a{color:inherit;}
+
+  .dash-top{
+    background:var(--paper);border-bottom:1px solid var(--line);padding:18px 26px;
+    display:flex;align-items:center;gap:16px;flex-wrap:wrap;position:sticky;top:0;z-index:20;
+  }
+  .dash-top .back{
+    text-decoration:none;font-size:12.5px;font-weight:700;color:var(--muted);
+    border:1px solid var(--line);border-radius:100px;padding:7px 14px;
+  }
+  .dash-top .back:hover{background:var(--sand);color:var(--ink);}
+  .dash-title{flex:1 1 auto;min-width:200px;}
+  .dash-title .k{font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);font-weight:700;}
+  .dash-title h1{font-family:var(--serif);font-size:22px;font-weight:600;margin-top:2px;}
+
+  /* counters */
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;padding:20px 26px 4px;}
+  .stat{background:var(--paper);border:1px solid var(--line);border-top:4px solid var(--line);border-radius:14px;padding:14px 16px;}
+  .stat.open{border-top-color:var(--amber);} .stat.done{border-top-color:var(--green);}
+  .stat.pending{border-top-color:var(--blue);} .stat.people{border-top-color:var(--dark);}
+  .stat b{display:block;font-size:26px;font-weight:800;line-height:1.1;}
+  .stat span{font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);}
+
+  .toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:18px 26px 10px;}
+  .toolbar input[type="search"]{
+    flex:1 1 220px;min-width:180px;font-family:inherit;font-size:14px;padding:9px 13px;
+    border:1px solid var(--line);border-radius:10px;background:var(--paper);color:var(--ink);
+  }
+  .toolbar input:focus{outline:none;border-color:var(--dark);}
+  .chips{display:flex;gap:6px;flex-wrap:wrap;}
+  .chip{
+    background:var(--paper);border:1px solid var(--line);border-radius:100px;cursor:pointer;
+    font-family:inherit;font-size:11.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
+    color:var(--muted);padding:6px 13px;
+  }
+  .chip.active{background:var(--dark);border-color:var(--dark);color:#fff;}
+
+  .wrap{padding:8px 26px 70px;max-width:1080px;}
+  .group-head{
+    font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);
+    margin:24px 0 10px;padding-bottom:7px;border-bottom:1px solid var(--line);
+  }
+  .row{
+    background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--line);
+    border-radius:14px;padding:14px 17px;margin-bottom:9px;
+  }
+  .row.s-open{border-left-color:var(--amber);}
+  .row.s-done{border-left-color:var(--green);}
+  .row.s-pending{border-left-color:var(--blue);}
+  .row.s-declined,.row.s-archived{border-left-color:var(--line);opacity:.72;}
+  .row-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+  .row-who{font-weight:800;font-size:13.5px;}
+  .row-meta{font-size:11.5px;color:var(--muted);}
+  .row-body{margin-top:7px;font-size:14.5px;white-space:pre-wrap;}
+  .row-anchor{
+    display:inline-block;background:var(--sand);border-radius:8px;padding:3px 10px;
+    font-size:11.5px;font-weight:700;margin-top:8px;
+  }
+  .row-title{font-weight:800;font-size:15px;}
+  .row-desc{margin-top:5px;font-size:14px;color:#4A4B54;white-space:pre-wrap;}
+  .replies{margin-top:11px;border-top:1px solid var(--line);padding-top:9px;}
+  .reply{border-left:2px solid var(--line);padding-left:12px;margin-top:9px;}
+  .reply .row-who{font-size:12.5px;}
+  .reply .row-body{font-size:13.5px;margin-top:3px;}
+
+  .badge{
+    display:inline-flex;align-items:center;gap:6px;flex-shrink:0;font-size:10px;font-weight:800;
+    letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border-radius:100px;
+  }
+  .b-open{background:var(--amber-bg);color:var(--amber);}
+  .b-done{background:var(--green-bg);color:var(--green);}
+  .b-pending{background:var(--blue-bg);color:var(--blue);}
+  .b-grey{background:#F4F1EE;color:var(--muted);}
+  .pagepill{
+    font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;
+    background:var(--sand);color:var(--muted);border-radius:100px;padding:4px 9px;
+  }
+
+  .empty{text-align:center;color:var(--muted);padding:50px 20px;font-size:14px;}
+  .err{background:#FCEDED;color:var(--red);border:1px solid #F0D5D5;border-radius:12px;padding:14px 17px;margin:14px 0;font-size:14px;}
+
+  @media(max-width:640px){
+    .dash-top,.stats,.toolbar,.wrap{padding-left:16px;padding-right:16px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="dash-top">
+  <a class="back" href="index.html">&larr; Approval pack</a>
+  <a class="back" href="automations.html">Automations</a>
+  <div class="dash-title">
+    <div class="k">Tara Rose &middot; Beauty Voucher</div>
+    <h1>Review Dashboard</h1>
+  </div>
+</div>
+
+<div class="stats" id="stats"></div>
+
+<div class="toolbar">
+  <input type="search" id="q" placeholder="Search notes, suggestions, names…">
+  <div class="chips" id="chips"></div>
+</div>
+
+<div class="wrap" id="out"><div class="empty">Loading…</div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="dashboard.js"></script>
+</body>
+</html>

@@ -17,7 +17,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="notes-widget.css">
-<link rel="stylesheet" href="ghl-view.css">
 <style>
   :root{
     --bg:#FAF8F4; --paper:#FFFFFF; --ink:#2D2E37; --muted:#6E6E77;
@@ -57,7 +56,9 @@
   .legend-row{display:flex;align-items:center;gap:9px;font-size:12.5px;color:#C7C5BE;margin:7px 0;}
 
   /* main */
-  main{flex:1;padding:0 0 90px;max-width:920px;}
+  /* max-width keeps a readable measure, margin auto stops all the slack piling up on one
+     side of the column on a wide screen. The sidebar stays flush left as a full-bleed rail. */
+  main{flex:1;padding:0 0 90px;max-width:920px;margin:0 auto;}
   .topbar{
     padding:34px 52px 26px;border-bottom:1px solid var(--line);background:var(--paper);
     position:sticky;top:0;z-index:5;
@@ -190,6 +191,11 @@
       <a href="#cancellation"><span>Cancellation Policy</span><span class="dot draft"></span></a>
       <a href="#incentive"><span>Staff Incentive</span><span class="dot draft"></span></a>
       <a href="#decisions"><span>Open Decisions</span><span class="dot pending"></span></a>
+    </nav>
+    <div class="navlabel">Tools</div>
+    <nav>
+      <a href="automations.html" target="_blank" rel="noopener"><span>Automations map</span><span>&nearr;</span></a>
+      <a href="dashboard.html" target="_blank" rel="noopener"><span>All notes &amp; suggestions</span><span>&nearr;</span></a>
     </nav>
     <div class="navlabel">Legend</div>
     <div class="legend-row"><span class="dot confirmed"></span>Confirmed (live site)</div>
@@ -474,19 +480,23 @@
 
     <section id="automations">
       <div class="sec-head"><h2>GHL Automations</h2><span class="badge draft"><span class="b-dot"></span>Approve messages</span></div>
-      <div class="oneline"><div><b>In one line</b>Three workflows, every message she could receive. Tap a workflow to see its steps, then tap any step with a <strong>View</strong> button to read the actual email or WhatsApp draft.</div></div>
+      <div class="oneline"><div><b>In one line</b>Three workflows and every message she could receive. It needs the full width of a screen to read properly, so it opens in its own window.</div></div>
 
       <div class="action">
-        <div class="a-label">What we need from Tara</div>
+        <div class="a-label">View in another window</div>
         <ul>
-          <li>Read the messages behind the <strong>View</strong> buttons and approve the wording, or tell us what to change.</li>
-          <li>The four Confidence Mapping emails are built and shown exactly as she will receive them. The eight nurture and welcome emails are approved copy, not yet built.</li>
+          <li>Tap the button below. The workflow map opens in a new tab, with all twelve emails and every WhatsApp template shown exactly as she will receive them.</li>
+          <li>You can leave notes there the same way as here, and they land in the same place.</li>
         </ul>
+        <p style="margin:14px 0 2px;">
+          <a href="automations.html" target="_blank" rel="noopener"
+             style="display:inline-block;background:var(--dark);color:#fff;text-decoration:none;border-radius:100px;padding:12px 24px;font-size:14.5px;font-weight:700;">
+            Open the automations map &nearr;
+          </a>
+        </p>
       </div>
 
-      <div id="ghlMount"></div>
-
-      <div class="note good"><strong>Nothing over-sends.</strong> Every workflow exits the moment <span style="font-family:monospace;font-size:13px;">voucher:paid</span> lands, and each message carries the client self-exit described in Campaign Copy. A woman who has already paid stops hearing from us straight away.</div>
+      <div class="note"><strong>What is in there:</strong> Lead Nurture (16 steps, pre-purchase, stops the moment she pays), Welcome Pack (11 steps, starts on payment) and Confidence Mapping (12 steps, the quiz funnel). Twelve built emails, six WhatsApp templates including the Abu Dhabi and Dubai variants.</div>
 
       <div class="note flag"><strong>Two dependencies worth knowing:</strong> the waits are fixed-date for this window and need rebuilding as relative delays after the campaign, and until the Phorest to GHL webhook exists, reception has to apply <span style="font-family:monospace;font-size:13px;">voucher:redeemed</span> at checkout by hand. The expiry touch at 30 days before a tier lapses must survive the campaign closing, because that is where unredeemed-credit complaints live.</div>
     </section>
@@ -631,8 +641,5 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="notes-widget.js"></script>
 
-<!-- GHL automations: data first, then the viewer that renders into #ghlMount. -->
-<script src="ghl-data.js"></script>
-<script src="ghl-view.js"></script>
 </body>
 </html>
