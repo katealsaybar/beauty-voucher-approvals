@@ -205,7 +205,18 @@
     '.site,.site > *:last-child{border-radius:0 !important;}';
 
   /* ===================== what a tap inside the phone does =====================
-     Two things get relayed out to this page.
+     Three things are handled in the frame.
+
+     A tap on an ANCHOR is scrolled here rather than followed. This one is not a
+     nicety, it is the fix for a real fault: the frame is written with srcdoc, so it
+     has no URL of its own and every href resolves against the PAGE BEHIND IT. That
+     makes href="#" and href="#salon-pick" navigate the frame out of srcdoc and onto
+     the real mockup, which then renders its own review header inside the handset,
+     and its own phone stage on top of that, because the mode is remembered. What you
+     get is the review chrome drawn inside the phone it belongs outside of.
+     pvRewrite could not catch these, because it skips anything starting with "#" on
+     the reasonable assumption that a hash link is same-page and safe. Inside srcdoc
+     it is not, so the anchor has to be intercepted at click time instead.
 
      A tap on a BUTTON is replayed on the real page so its handler runs (the emirate
      picker drawn inside the website mockup).
@@ -224,6 +235,15 @@
       'if(p){var q=p.querySelector(".pop");' +
         'if(q){try{parent.postMessage({trsPV:"pin",html:q.innerHTML},"*");}catch(err){}}' +
         'e.preventDefault();return;}' +
+      /* anchors: scroll, never navigate. href="#" alone is a placeholder CTA and
+         scrolls nowhere, which is correct: on the real site it will be a real link,
+         and in here it must simply not take the frame with it. */
+      'var a=t.closest&&t.closest(\'a[href^="#"]\');' +
+      'if(a){e.preventDefault();' +
+        'var id=(a.getAttribute("href")||"").slice(1);' +
+        'if(id){var el=document.getElementById(id)||document.querySelector(\'[name="\'+id+\'"]\');' +
+          'if(el&&el.scrollIntoView)el.scrollIntoView({behavior:"smooth",block:"start"});}' +
+        'return;}' +
       'var b=t.closest&&t.closest("button[id]");' +
       'if(b&&b.id){try{parent.postMessage({trsPV:"click",id:b.id},"*");}catch(err){}}' +
     '},true);';
