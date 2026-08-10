@@ -45,7 +45,7 @@
   var POLL_MS = 20000; // only while the panel is open, because several people reviewing together
 
   // Keep in sync with public.is_reviewer_name() in sql/notes_setup.sql.
-  var REVIEWERS = ['Tara', 'Emma', 'Hanneh', 'Kate'];
+  var REVIEWERS = ['Tara', 'Emma', 'Hanneh', 'Kate', 'LID'];
   var NAME_KEY = 'trs-approval-author';
   var MINE_KEY = 'trs-approval-mine';
 

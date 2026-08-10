@@ -207,6 +207,10 @@ h3 > .trs-pin-btn, h4 > .trs-pin-btn { margin-left: 10px; letter-spacing: .06em;
   --who-emma: #EEF3C7;
   --who-hanneh: #FF9B9B;
   --who-kate: #C4B5FD;
+  /* LID is the agency, not one of the four here, so it gets the palette's neutral
+     sand rather than a fifth accent. Reading a comment and seeing it is not one of
+     the four house colours is the point: it says outside party at a glance. */
+  --who-lid: #EAD9B8;
 }
 
 /* ---------- identity toggle (lives in the page's sticky header) ---------- */
@@ -242,6 +246,7 @@ h3 > .trs-pin-btn, h4 > .trs-pin-btn { margin-left: 10px; letter-spacing: .06em;
 .trs-idbar-btns button[data-name="Emma"]   { --who: var(--who-emma); }
 .trs-idbar-btns button[data-name="Hanneh"] { --who: var(--who-hanneh); }
 .trs-idbar-btns button[data-name="Kate"]   { --who: var(--who-kate); }
+.trs-idbar-btns button[data-name="LID"]    { --who: var(--who-lid); }
 .trs-idbar-btns button:hover { border-color: #CFC8BA; color: var(--n-ink); }
 /* after :hover on purpose, equal specificity, so the selected chip keeps its colour
    while the pointer is on it */

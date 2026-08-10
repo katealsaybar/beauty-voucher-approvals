@@ -39,6 +39,7 @@ body.dq-locked .trs-notes-hint{display:none !important;}
 .dq-fork[data-who="Emma"]  {--who-active:var(--who-emma);}
 .dq-fork[data-who="Hanneh"]{--who-active:var(--who-hanneh);}
 .dq-fork[data-who="Kate"]  {--who-active:var(--who-kate);}
+.dq-fork[data-who="LID"]   {--who-active:var(--who-lid);}
 
 /* THE RULE ABOVE THE WORDMARK.
    It is baked into the PNG at #99F6E4 and is the only coloured pixel in the file, so it
@@ -102,6 +103,7 @@ body.dq-locked .trs-notes-hint{display:none !important;}
 .dq-names button[data-n="Emma"],   .dq-owner[data-n="Emma"]  {--who:var(--who-emma);}
 .dq-names button[data-n="Hanneh"], .dq-owner[data-n="Hanneh"]{--who:var(--who-hanneh);}
 .dq-names button[data-n="Kate"],   .dq-owner[data-n="Kate"]  {--who:var(--who-kate);}
+.dq-names button[data-n="LID"],    .dq-owner[data-n="LID"]   {--who:var(--who-lid);}
 
 /* the two doors */
 .dq-doors{display:grid;gap:11px;}

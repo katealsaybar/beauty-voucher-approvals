@@ -34,7 +34,7 @@
   var T_NOTES = 'approval_notes';
 
   // Keep in sync with REVIEWERS in notes-widget.js and public.is_reviewer_name().
-  var REVIEWERS = ['Tara', 'Emma', 'Hanneh', 'Kate'];
+  var REVIEWERS = ['Tara', 'Emma', 'Hanneh', 'Kate', 'LID'];
   var NAME_KEY = 'trs-approval-author';   // shared with notes-widget.js on purpose
   var STATE_KEY = 'trs-decide-v1';
 

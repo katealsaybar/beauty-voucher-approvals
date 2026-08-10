@@ -368,8 +368,25 @@ Two places, both needed:
    email to one of the four reviewer names, so their actions are signed with a name rather
    than an email.
 
-The four names themselves live in two places that must match: `public.is_reviewer_name()`
-in `sql/notes_setup.sql` (the real check) and `REVIEWERS` in `shared/notes-widget.js`.
+The reviewer names live in **five** places and all five must match. This said two until
+10 Aug, which is how LID nearly shipped half-added:
+
+1. `public.is_reviewer_name()` in `sql/notes_setup.sql` — the real check, and the only one
+   that can actually reject a post. **Re-run the file after editing it.**
+2. `REVIEWERS` in `shared/notes-widget.js` — the name toggle on every page
+3. `REVIEWERS` in `pack/decide.js` — the front door's own list, which is separate
+4. `--who-[name]` and the `[data-name]` rule in `shared/notes-widget.css`
+5. the `[data-who]` and `[data-n]` rules in `pack/decide.css`
+
+Miss 1 and the name appears but every post is rejected. Miss 2 or 3 and the person is
+absent from one surface and present on the other. Miss 4 or 5 and they show with no colour,
+which reads as a bug rather than a person.
+
+**LID is on the list as of 10 Aug**, so the agency can leave notes and suggestions like
+anyone else. They carry the palette's neutral sand rather than a fifth accent, because they
+are the outside party and it should be visible at a glance whose comment is whose. No
+decision is owned by LID, so the front door tells them nothing is waiting on them and
+promotes the browse door, which is the right greeting for a reviewer who is here to read.
 
 ### What that protects, and what it does not
 
