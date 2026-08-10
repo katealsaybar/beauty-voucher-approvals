@@ -284,7 +284,7 @@ const CAL_POSTS = [
     hook: 'One card in your plan is not for you. It is for someone who would never book it for herself.',
     cta: 'AED 100, AED 300 or AED 500 to gift, depending on your tier.',
     branch: 'All four',
-    flag: 'Gifting the WHOLE voucher is not carried by the Terms: the main credit cannot be transferred to another person unless Tara agrees. The landing page FAQ currently promises it is "sent in her name", so the page and the Terms disagree. This row is written to the gift card only. If Tara amends the term, the stronger whole-voucher angle comes back.' },
+    flag: 'Gifting the WHOLE voucher is not carried by the Terms: the main credit cannot be transferred to another person unless Tara agrees. The landing page FAQ used to promise it is "sent in her name". That was rewritten on 10 Aug to lead with the gift card, which is the part that genuinely is hers to hand over, so the page and the Terms disagree. This row is written to the gift card only. If Tara amends the term, the stronger whole-voucher angle comes back.' },
 
   { d: '2026-08-15', t: '20:30', ch: 'tiktok', pillar: 'transformation', status: 'plan',
     title: 'The hour that is only yours',
