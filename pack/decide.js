@@ -364,8 +364,20 @@
           ? 'You have answered everything on your list. Have a look around if you want to.'
           : 'Nothing on this pack is assigned to you. You can still read it all and leave notes anywhere.';
       } else {
-        h.innerHTML = p + (p === 1 ? ' thing needs <em>you</em>.' : ' things need <em>you</em>.');
-        sub.textContent = 'About ' + Math.max(2, Math.round(p * 1.5)) + ' minutes, in rounds of five. ' +
+        /* Deferred cards have to be IN this number, even though they are not in `pending()`.
+           They are excluded from the queue on purpose, so that "later" does not loop the same
+           card straight back at you, and that part is right. Counting them out of the headline
+           as well was not: someone who put fifteen off and left one unopened was told
+           "1 thing needs you", which is the one direction this sentence must never be wrong in.
+           The queue still serves `p`. The headline states the honest total, and the line under
+           it splits the two so the number is never a surprise. */
+        var later = nm ? deferredThisPass().length : 0;
+        var owed = p + later;
+        h.innerHTML = owed + (owed === 1 ? ' thing needs <em>you</em>.' : ' things need <em>you</em>.');
+        sub.textContent = (later
+            ? p + ' to answer now, and ' + later + ' you put off earlier. '
+            : '') +
+          'About ' + Math.max(2, Math.round(p * 1.5)) + ' minutes, in rounds of five. ' +
           'You can stop at any point and it will remember where you were.';
       }
 
