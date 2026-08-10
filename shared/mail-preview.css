@@ -1,0 +1,221 @@
+/* ==========================================================================
+   Device frames and email-client chrome, shared.
+
+   Lifted out of automations.html on 8 Aug 2026 so the result mockup can show the
+   same email in the same frames rather than growing a second renderer that drifts.
+   Loaded by BOTH:
+     automations.html                       = Gmail + Outlook mobile, two columns
+     confidence-mapping-result-mockup.html  = four client combinations, one at a time
+
+   What is here: the handset shells, the status bar, the scroll area, the avatar, and
+   the chrome for Gmail, Outlook mobile, Apple Mail and Outlook Windows desktop.
+   What is NOT here: the WhatsApp chrome, which only the automations map needs. It
+   still styles off .phone.samsung / .phone.iphone from this file, which is fine,
+   CSS does not care which file a selector came from.
+
+   Depends on these variables being defined by the host page (both do):
+     --paper --line --sand --dark --muted --ink
+   ========================================================================== */
+
+/* the row the frames sit in. Each page may override the padding and background. */
+.mstage{display:flex;gap:18px;justify-content:center;padding:18px 16px 26px;background:var(--sand);overflow-x:auto;}
+.devcol{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:8px;}
+.devlbl{font-size:10.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);text-align:center;}
+.devspec{font-size:10px;font-weight:600;color:#9A968E;letter-spacing:.04em;}
+.devswitch{display:inline-flex;background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:2px;}
+.devswitch button{border:none;background:transparent;font:inherit;font-size:11px;font-weight:700;color:var(--muted);
+  padding:4px 13px;border-radius:999px;cursor:pointer;}
+.devswitch button.active{background:var(--dark);color:#fff;}
+
+/* ===== handsets, drawn in CSS =====
+   No image assets on purpose: nothing to download, nothing to host, nothing to go missing,
+   and it still reads as the handset. Samsung is the flat even rim with a centred punch-hole
+   camera; iPhone is the thicker brushed rim, bigger corner radius and the Dynamic Island.
+
+   Real geometry, from the manufacturers' published specs (GSMArena):
+     Galaxy S25     146.9 x 70.5 x 7.2mm   6.2in  1080x2340 @416ppi  ->  360 x 780 CSS px
+     iPhone 16 Pro  149.6 x 71.5 x 8.3mm   6.3in  1206x2622 @460ppi  ->  402 x 874 CSS px
+   SCREEN WIDTH is the number that matters and is therefore exact: it is the viewport the
+   email lays out against. The old 340px was narrower than any real handset, which made the
+   mobile layout look tighter than it will actually be.
+   Screen HEIGHT is 85% of the real thing so both handsets fit a laptop without scrolling
+   the whole modal; the email scrolls inside the screen the way it does on the phone.
+   Bezels are proportional to the real ones, which measure ~2.3mm and ~2.45mm - nearly
+   identical, so the two rims are nearly identical too. */
+.phone{position:relative;flex:0 0 auto;margin:4px 6px 0;}
+.phone.samsung{
+  width:376px;padding:8px;border-radius:36px;
+  background:linear-gradient(150deg,#565B63 0%,#181B1F 16%,#0B0C0E 50%,#181B1F 84%,#565B63 100%);
+  box-shadow:0 20px 44px rgba(30,24,18,.42);
+}
+.phone.samsung .screen{width:360px;height:663px;border-radius:29px;}
+/* punch-hole front camera, dead centre, sitting over the status bar like the real thing */
+.phone.samsung .cam{
+  position:absolute;top:19px;left:50%;transform:translateX(-50%);width:13px;height:13px;border-radius:50%;
+  background:#0A0F18;z-index:7;
+  box-shadow:0 0 0 1.5px rgba(255,255,255,.13), inset 0 0 0 2.5px #050810, inset 0 1px 2px rgba(90,130,190,.45);
+}
+.phone.iphone{
+  width:420px;padding:9px;border-radius:58px;
+  background:linear-gradient(155deg,#DBD7D1 0%,#918D88 11%,#5E5B57 36%,#3B3936 60%,#918D88 86%,#DBD7D1 100%);
+  box-shadow:0 20px 44px rgba(30,24,18,.42);
+}
+.phone.iphone .screen{width:402px;height:743px;border-radius:50px;}
+.phone.iphone .island{
+  position:absolute;top:20px;left:50%;transform:translateX(-50%);width:122px;height:34px;border-radius:19px;
+  background:#04050a;z-index:7;
+}
+/* the camera inside the island, offset right, as on the handset */
+.phone.iphone .island::after{
+  content:'';position:absolute;right:10px;top:50%;transform:translateY(-50%);
+  width:13px;height:13px;border-radius:50%;background:#0B111C;
+  box-shadow:inset 0 0 0 2px #05070c, inset 0 1px 2px rgba(90,130,190,.5);
+}
+
+/* ===== side keys =====
+   Just outside the shell, rounded on the outer edge only, so they read as hardware rather
+   than a stripe painted on the case. Positions follow the real handsets: the S25 has the
+   volume rocker above the power key on the right; the 16 Pro has the Action button and the
+   volume rocker on the left, the side button on the right. */
+.phone .key{position:absolute;z-index:6;}
+.phone.samsung .key{right:-4px;width:4px;background:linear-gradient(90deg,#4A5057,#1E2227);border-radius:0 3px 3px 0;
+  box-shadow:1px 0 2px rgba(0,0,0,.35);}
+.phone.samsung .key.vol{top:170px;height:92px;}
+.phone.samsung .key.pwr{top:280px;height:52px;}
+.phone.iphone .key{width:4px;box-shadow:0 0 2px rgba(0,0,0,.3);}
+.phone.iphone .key.act,.phone.iphone .key.volu,.phone.iphone .key.vold{
+  left:-4px;background:linear-gradient(270deg,#A8A29A,#6B6660);border-radius:3px 0 0 3px;}
+.phone.iphone .key.act{top:140px;height:38px;}
+.phone.iphone .key.volu{top:202px;height:56px;}
+.phone.iphone .key.vold{top:270px;height:56px;}
+.phone.iphone .key.side{right:-4px;top:222px;height:86px;
+  background:linear-gradient(90deg,#A8A29A,#6B6660);border-radius:0 3px 3px 0;}
+
+.screen{background:#fff;overflow:hidden;position:relative;display:flex;flex-direction:column;}
+/* the status bar has to clear the camera or the island, so its height differs by device */
+.statusbar{display:flex;align-items:center;justify-content:space-between;flex:0 0 auto;
+  font:700 12.5px/1 Roboto,'Segoe UI',Arial,sans-serif;}
+.statusbar.samsung{padding:11px 20px 8px;}
+.statusbar.iphone{padding:19px 30px 9px;font-family:-apple-system,'Segoe UI',Arial,sans-serif;}
+.statusbar .sbicons{display:inline-flex;align-items:center;gap:5px;}
+.statusbar svg{fill:currentColor;}
+/* The scrollbar has to be hidden, not just styled. A visible one is ~15px wide, and it
+   took that off the iframe: the email was laying out against 345px instead of the S25's
+   real 360px, which is exactly the error this whole simulation exists to avoid. A phone
+   has no persistent scrollbar either, so hiding it is the more faithful render. Scrolls
+   on wheel and touch as normal. */
+.scrollarea{flex:1 1 auto;overflow-y:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none;}
+.scrollarea::-webkit-scrollbar{width:0;height:0;display:none;}
+.scrollarea iframe{width:100%;border:0;display:block;background:#EFEBE3;}
+/* iPhone home indicator */
+.homebar{width:134px;height:5px;border-radius:3px;background:#111;opacity:.36;margin:7px auto 10px;flex:0 0 auto;}
+/* Samsung's three-button navigation bar, still the default many people keep */
+.navbar{display:flex;align-items:center;justify-content:center;gap:56px;padding:10px 0 12px;flex:0 0 auto;}
+.navbar i{display:block;opacity:.6;}
+.navbar i.recent{width:14px;height:14px;border:1.7px solid #3C3C43;border-radius:2.5px;}
+.navbar i.home{width:15px;height:15px;border:1.7px solid #3C3C43;border-radius:50%;}
+.navbar i.back{width:0;height:0;border:7px solid transparent;border-right-color:#3C3C43;}
+
+/* the brand avatar: the real wordmark on black, which is how the account shows up */
+.avatar{border-radius:50%;flex:0 0 auto;display:grid;place-items:center;overflow:hidden;
+  background:#0D0D0D;color:#fff;font:700 13px/1 Arial,sans-serif;}
+.avatar img{width:82%;height:auto;display:block;}
+
+/* Gmail chrome */
+.gm-bar{display:flex;align-items:center;gap:16px;padding:9px 13px;flex:0 0 auto;color:#5f6368;}
+.gm-bar svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;}
+.gm-subject{padding:2px 15px 8px;font:400 18px/1.3 Roboto,Arial,sans-serif;color:#202124;flex:0 0 auto;}
+.gm-sender{display:flex;align-items:center;gap:11px;padding:0 15px 11px;flex:0 0 auto;}
+.gm-from{flex:1 1 auto;min-width:0;font:400 13.5px/1.35 Roboto,Arial,sans-serif;color:#202124;}
+.gm-from small{display:block;color:#5f6368;font-size:12px;}
+
+/* Outlook mobile chrome */
+.ol-bar{display:flex;align-items:center;gap:16px;padding:10px 13px;background:#0F6CBD;color:#fff;flex:0 0 auto;}
+.ol-bar svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;}
+.ol-subject{padding:11px 15px 6px;font:600 17px/1.3 'Segoe UI',Arial,sans-serif;color:#242424;flex:0 0 auto;}
+.ol-sender{display:flex;align-items:center;gap:11px;padding:0 15px 11px;border-bottom:1px solid #EDEBE9;flex:0 0 auto;}
+.ol-from{flex:1 1 auto;min-width:0;font:400 13.5px/1.35 'Segoe UI',Arial,sans-serif;color:#242424;}
+.ol-from small{display:block;color:#616161;font-size:12px;}
+
+/* ===== Apple Mail on iOS =====
+   The one iOS client that is NOT a browser engine wrapped in Gmail's chrome: it is WebKit
+   with the widest CSS support of any mail client, which is why it is worth its own pane.
+   Layout follows the iOS Mail message view: nav bar with "Inbox" and the up/down chevrons,
+   then sender, then subject, then body, then the four-icon toolbar at the bottom. */
+.am-bar{display:flex;align-items:center;gap:8px;padding:8px 12px 9px;background:#F9F9F9;
+  border-bottom:1px solid #D8D8DC;flex:0 0 auto;
+  font:400 16px/1.2 -apple-system,'Segoe UI',Arial,sans-serif;color:#007AFF;}
+.am-bar .am-back{display:inline-flex;align-items:center;gap:3px;}
+.am-bar .am-chev{font-size:21px;line-height:1;font-weight:500;}
+.am-bar .am-updown{margin-left:auto;display:inline-flex;gap:16px;color:#007AFF;}
+.am-bar .am-updown i{font-style:normal;font-size:15px;}
+.am-bar .am-updown i.off{color:#C4C4C6;}
+.am-sender{display:flex;align-items:center;gap:10px;padding:12px 16px 4px;flex:0 0 auto;}
+.am-from{flex:1 1 auto;min-width:0;font:600 16px/1.3 -apple-system,'Segoe UI',Arial,sans-serif;color:#000;}
+.am-from small{display:block;font-weight:400;font-size:14px;color:#8A8A8E;}
+.am-when{font:400 14px/1.3 -apple-system,'Segoe UI',Arial,sans-serif;color:#8A8A8E;flex:0 0 auto;}
+.am-subject{padding:2px 16px 11px;font:600 16px/1.32 -apple-system,'Segoe UI',Arial,sans-serif;
+  color:#000;border-bottom:1px solid #E5E5EA;flex:0 0 auto;}
+.am-tools{display:flex;align-items:center;justify-content:space-around;padding:11px 18px 6px;
+  border-top:1px solid #D8D8DC;background:#F9F9F9;flex:0 0 auto;color:#007AFF;}
+.am-tools svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;}
+
+/* ===== Outlook on Windows, the desktop reading pane =====
+   Deliberately NOT a phone. This is the client that renders through Word rather than a
+   browser engine, and it is read on a laptop at reading-pane width, so drawing it as a
+   handset would test the wrong thing entirely.
+   The frame is honest about its own limits: see .wordwarn below. A browser CANNOT emulate
+   the Word engine, so this pane shows the right WIDTH and the right CHROME, and the list
+   beside it says what Word will actually change. */
+.desktop{position:relative;flex:0 0 auto;margin:4px 0 0;width:820px;max-width:100%;
+  border-radius:9px;overflow:hidden;background:#F3F2F1;
+  border:1px solid #C8C6C4;box-shadow:0 20px 44px rgba(30,24,18,.32);}
+.desktop .winbar{display:flex;align-items:center;gap:9px;padding:0 0 0 12px;background:#E9E8E7;
+  border-bottom:1px solid #D2D0CE;font:400 12px/1 'Segoe UI',Arial,sans-serif;color:#3B3A39;}
+.desktop .winbar .wtitle{padding:9px 0;flex:1 1 auto;}
+.desktop .winbar .wbtns{display:flex;flex:0 0 auto;}
+.desktop .winbar .wbtns i{font-style:normal;width:42px;padding:9px 0;text-align:center;font-size:11px;color:#3B3A39;}
+.desktop .winbar .wbtns i.x:hover{background:#C42B1C;color:#fff;}
+/* the command strip above the reading pane */
+.desktop .olribbon{display:flex;align-items:center;gap:18px;padding:8px 14px;background:#FAF9F8;
+  border-bottom:1px solid #EDEBE9;font:600 12px/1 'Segoe UI',Arial,sans-serif;color:#323130;}
+.desktop .olribbon span{display:inline-flex;align-items:center;gap:6px;color:#424141;}
+.desktop .olribbon svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+.desktop .olread{background:#fff;}
+.desktop .ol-desk-subject{padding:15px 22px 4px;font:400 21px/1.28 'Segoe UI',Arial,sans-serif;color:#242424;}
+.desktop .ol-desk-sender{display:flex;align-items:center;gap:12px;padding:8px 22px 14px;}
+.desktop .ol-desk-from{flex:1 1 auto;min-width:0;font:600 14px/1.35 'Segoe UI',Arial,sans-serif;color:#242424;}
+.desktop .ol-desk-from small{display:block;font-weight:400;color:#616161;font-size:12.5px;}
+.desktop .ol-desk-when{font:400 12.5px/1.35 'Segoe UI',Arial,sans-serif;color:#616161;flex:0 0 auto;text-align:right;}
+.desktop .ol-desk-actions{display:flex;gap:8px;padding:0 22px 14px;}
+.desktop .ol-desk-actions b{font:600 12.5px/1 'Segoe UI',Arial,sans-serif;color:#0F6CBD;
+  border:1px solid #C8C6C4;border-radius:4px;padding:7px 13px;background:#fff;}
+/* the reading pane itself: a real scroll area at a real desktop width */
+.desktop .deskscroll{height:520px;overflow-y:auto;border-top:1px solid #EDEBE9;background:#EFEBE3;}
+.desktop .deskscroll iframe{width:100%;border:0;display:block;background:#EFEBE3;}
+
+/* the honest caveat that rides with the desktop pane */
+.wordwarn{width:820px;max-width:100%;margin:12px 0 0;background:#FBEDED;border:1px solid #E8C4C4;
+  border-radius:11px;padding:13px 16px;font-size:12.5px;line-height:1.6;color:#7A3535;text-align:left;}
+.wordwarn strong{color:#5F2626;}
+.wordwarn ul{margin:9px 0 0 18px;padding:0;}
+.wordwarn li{margin:5px 0;}
+.wordwarn code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:11.5px;
+  background:rgba(255,255,255,.7);padding:1px 5px;border-radius:4px;}
+.wordwarn .wtag{display:inline-block;font-size:9.5px;font-weight:800;letter-spacing:.12em;
+  text-transform:uppercase;border-radius:100px;padding:2px 8px;margin-right:7px;vertical-align:1px;}
+.wordwarn .wtag.bad{background:#B24A4A;color:#fff;}
+.wordwarn .wtag.mid{background:#B4823A;color:#fff;}
+
+/* Deliberately NOT made fluid on a narrow window. 820px is the point of this pane: it is the
+   reading width the email actually gets on a laptop, and the label above it says so. Letting
+   it shrink to the reviewer's window would make that label a lie and would re-flow the email
+   at a width nobody reads it at: the same mistake as the old 340px "phone". So the width is
+   fixed and the STAGE scrolls sideways instead; the host page gives .mstage overflow-x:auto.
+
+   (Both children keeping a definite width also matters mechanically: with width:100% the
+   column has no definite size to resolve against and sizes to the warning text's max-content,
+   which blew the frame out to ~1700px. Found 8 Aug in an 800px-wide preview pane.) */
+@media(max-height:820px){
+  .desktop .deskscroll{height:420px;}
+}

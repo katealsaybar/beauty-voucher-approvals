@@ -1,0 +1,104 @@
+{
+  "_readme": [
+    "WhatsApp templates for the Beauty Voucher campaign. Every template here is submitted to",
+    "Meta for approval before it can send.",
+    "",
+    "  submit        the body that gets submitted. Hard cap 1024 characters. Required.",
+    "  longer_draft  optional fuller alternative, kept for reference only. Never submitted,",
+    "                so it is allowed to be over the cap.",
+    "  buttons       quick replies. Max 3, and each label max 25 characters.",
+    "",
+    "build-previews.py validates all of the above on every run and refuses to write the data",
+    "file if any of it breaks - so an unsubmittable template cannot reach the approval pack.",
+    "Both caps are enforced by Meta at SUBMISSION, not at send: an over-length template is",
+    "simply rejected and the workflow step silently has nothing to send.",
+    "",
+    "[Name] is the {{1}} variable and stays a placeholder: Meta counts the variable, not the",
+    "name. [voucher link] is NOT a placeholder any more. It is resolved from the links block",
+    "below before anything is counted, because Meta counts the literal characters of a static",
+    "URL in the body. Change the URL there once and every character count, every preview and",
+    "every copy-to-clipboard follows. build-previews.py fails the build on any [placeholder]",
+    "it cannot resolve."
+  ],
+  "links": {
+    "voucher link": "https://www.tararosesalon.com/en/ae/beauty-voucher/"
+  },
+  "templates": {
+    "broadcast_ad": {
+      "label": "Initial broadcast",
+      "region": "Abu Dhabi",
+      "submit": "Hi [Name], we wanted to reach out personally. We have made something for the women who look after everyone else first, and we thought of you.\n\nThe Beauty Voucher is open until 28 August. It is not money off. You place your credit on your plan, we add more on top, and a Self-Care Bonus is pointed at exactly the part you keep putting off. The facial. The treatment. The hour that is only yours.\n\nThree tiers, from AED 1,000, and the upper two split into four with Tabby at no extra cost. All three are here: [voucher link]\n\nAvailable at our Abu Dhabi salons, Saadiyat and Khalifa City A.\n\nReserve yours, gift it to someone who would never buy it for herself, or reply here and we will help you choose. No pressure at all.\n\nShukran.",
+      "longer_draft": "Hi [Name], we wanted to reach out personally. We have made something for the women who look after everyone else first, and we thought of you.\n\nThe Beauty Voucher is open until 28 August. It is not money off. You place your credit on your plan, we add more on top, and a Self-Care Bonus is pointed at exactly the part you keep putting off. The facial. The treatment. The hour that is only yours.\n\nYou can choose:\n1. Dip Your Toes. Place AED 1,000, spend AED 1,150. A light way back in. 6 months.\n2. Season of You. Place AED 2,500, spend AED 3,000, and AED 500 of that is your Self-Care Bonus for beauty, treatments, keratin and blow-dries. 9 months. Most chosen.\n3. All-In VIP Year. Place AED 4,500, spend AED 5,400, and AED 900 of that is your Self-Care Bonus. Your whole year, held on rhythm. 12 months.\n\nYour credit spends on any service, up to your credit value, at our Abu Dhabi salons. Season of You and VIP Year can be split into four with Tabby at no extra cost.\n\nThree ways in:\n1. Reserve yours: [voucher link]\n2. Gift it to someone who would never buy it for herself: [voucher link]\n3. Reply here and we will help you choose. No pressure at all.\n\nThe window closes 28 August. Shukran.",
+      "buttons": [
+        "Tell me more",
+        "I already have mine"
+      ]
+    },
+    "broadcast_dubai": {
+      "label": "Initial broadcast",
+      "region": "Dubai",
+      "submit": "Hi [Name], something we made for our regulars, and you came to mind.\n\nThe Beauty Voucher is open until 28 August. It is not money off. You place your credit, we add more on top, and it is mapped around you from day one.\n\nThree tiers, from AED 1,000, and the upper two split into four with Tabby at no extra cost. All three are here: [voucher link]\n\nAvailable in Dubai. Beauty at Al Quoz; hair at Al Quoz and Motor City.\n\nReserve yours, gift it in her name with a note from you, or reply here and I will help you choose.\n\nThe window closes 28 August.",
+      "longer_draft": "Hi [Name], something we made for our regulars, and you came to mind.\n\nThe Beauty Voucher is open until 28 August. It is not money off. You place your credit, we add more on top, and it is mapped around you from day one.\n\nThree tiers:\n1. Dip Your Toes. Place AED 1,000, spend AED 1,150. Any service. 6 months.\n2. Season of You. Place AED 2,500, spend AED 3,000, and AED 500 of that is your Self-Care Bonus for the beauty you keep putting off. 9 months.\n3. All-In VIP Year. Place AED 4,500, spend AED 5,400, and AED 900 of that is your Self-Care Bonus. 12 months.\n\nYour credit spends on any service, up to your credit value. Beauty at Al Quoz; hair at Al Quoz and Motor City. Season of You and VIP Year can be split into four with Tabby, same credit, no extra cost.\n\nThree ways in:\n1. Reserve yours: [voucher link]\n2. Gift it, sent in her name with a note from you: [voucher link]\n3. Not sure which is you? Reply here and I will help you choose.\n\nThe window closes 28 August.",
+      "buttons": [
+        "Tell me more",
+        "I already have mine"
+      ]
+    },
+    "reminder_ad": {
+      "label": "48-72h reminder",
+      "region": "Abu Dhabi",
+      "submit": "Hi [Name], a gentle reminder from us. The Beauty Voucher closes on 28 August, and we did not want you to miss it if you have been thinking it over.\n\nYou can reserve it for yourself, gift it to someone you love, or simply reply and we will help you decide. No pressure at all.\n\n[voucher link]\n\nShukran.",
+      "buttons": [
+        "Tell me more",
+        "I already have mine"
+      ]
+    },
+    "reminder_dubai": {
+      "label": "48-72h reminder",
+      "region": "Dubai",
+      "submit": "Hi [Name], a quick one. The Beauty Voucher window closes 28 August.\n\nIf it has been on your mind, the three tiers are here: [voucher link]\n\nStill three ways in. Reserve it for yourself, gift it in her name, or reply and I will help you choose. Whatever suits you.",
+      "buttons": [
+        "Tell me more",
+        "I already have mine"
+      ]
+    },
+    "bridge": {
+      "label": "Mapping-to-voucher bridge",
+      "region": "All branches",
+      "submit": "Hi [Name], your Confidence Map is with you now, and your plan is written. Most women back it with the Beauty Voucher: you place your credit, we add more on top, and the visits in your plan are already covered. It closes 28 August. Would you like me to hold a tier against your plan, or book your first visit first?",
+      "buttons": [
+        "Hold a tier for me",
+        "Book my first visit"
+      ]
+    },
+    "welcome_confirm_ad": {
+      "label": "Payment confirmation + branch choice",
+      "region": "Abu Dhabi",
+      "submit": "Lovely [Name], your credit is on your account and your plan for the year has started.\n\nOne thing to set now, so we can point your priority slots and your kit at the right place: which salon should we make your home?\n\nTap Mamsha al Saadiyat or Khalifa City A below. Not sure which suits you? Tap Help me choose and one of us will talk it through with you, no rush.\n\nAnd if you move between the two, that is fine, your credit travels with you.",
+      "buttons": [
+        "Mamsha al Saadiyat",
+        "Khalifa City A",
+        "Help me choose"
+      ]
+    },
+    "welcome_confirm_dubai": {
+      "label": "Payment confirmation + branch choice",
+      "region": "Dubai",
+      "submit": "Lovely [Name], your credit is on your account and your plan for the year has started.\n\nOne thing to set now, so we can point your priority slots and your kit at the right place: which salon should we make your home?\n\nAl Quoz does hair and the full beauty menu. Motor City is our hair salon. Tap whichever is easier for you below, or tap Help me choose and one of us will talk it through with you.\n\nAnd if you move between the two, that is fine, your credit travels with you.",
+      "buttons": [
+        "Al Quoz",
+        "Motor City",
+        "Help me choose"
+      ]
+    },
+    "expiry_touch": {
+      "label": "Expiry touch, 30 days left",
+      "region": "All branches",
+      "submit": "Hi [Name], this is the one message we would hate you to miss. You have 30 days left to spend the credit on your account, and we did not want the date to arrive without you hearing it from us first.\n\nIt spends on any service, up to your credit value, at the salons on your voucher. One appointment is enough to put it to use.\n\nIf the diary is tight or you are not sure what to book, reply here and we will find you something that fits, or hold a slot for you.",
+      "buttons": [
+        "Book me in",
+        "Already booked"
+      ]
+    }
+  }
+}

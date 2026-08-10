@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="x-apple-disable-message-reformatting">
 <title>Your voucher is confirmed, {{contact.first_name}}</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet">
 <style>
   body,table,td { margin:0; padding:0; }
   img { border:0; display:block; }
@@ -26,8 +27,10 @@
       <!-- header -->
       <tr><td align="center" style="background-color:#0D0D0D;padding:34px 40px 30px 40px;">
         <div style="width:52px;height:2px;background-color:#99F6E4;font-size:0;line-height:0;margin:0 auto 20px auto;">&nbsp;</div>
-        <img src="{{LOGO_URL}}" width="180" alt="Tara Rose Salon Group" style="display:block;margin:0 auto;width:180px;max-width:180px;">
-        <div style="font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:13.5px;color:#99F6E4;padding-top:14px;">Your plan for the year</div>
+        <!-- wordmark, typeset, no image, so it survives image blocking -->
+        <div style="font-family:'Inter',Arial,Helvetica,sans-serif;font-size:25px;font-weight:400;letter-spacing:.30em;text-indent:.30em;text-transform:uppercase;color:#FFFFFF;line-height:1.15;mso-line-height-rule:exactly;">Tara&nbsp;Rose</div>
+        <div style="font-family:'Inter',Arial,Helvetica,sans-serif;font-size:10px;font-weight:400;letter-spacing:.46em;text-indent:.46em;text-transform:uppercase;color:#99F6E4;line-height:1.2;padding-top:10px;">Salon</div>
+        <div style="font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:13.5px;color:#EEF3C7;padding-top:14px;">Your plan for the year</div>
       </td></tr>
 
       <!-- headline -->
@@ -36,13 +39,32 @@
       </td></tr>
 
       <!-- body -->
-      <tr><td class="pad" style="padding:0 40px;"><p style="font-family:'Inter',Arial,sans-serif;font-size:15.5px;line-height:1.62;color:#2D2E37;margin:0 0 18px 0;">Hi {{contact.first_name}},</p><p style="font-family:'Inter',Arial,sans-serif;font-size:15.5px;line-height:1.62;color:#2D2E37;margin:0 0 18px 0;">Your credit is on your account, and your plan for the year has begun. Thank you for placing it with us.</p><p style="font-family:'Inter',Arial,sans-serif;font-size:15.5px;line-height:1.62;color:#2D2E37;margin:0 0 18px 0;">And this holds throughout, our Confidence Promise. If something does not feel right within seven days of any colour or treatment service, we invite you back to refine it. No blame, just care.</p><p style="font-family:'Inter',Arial,sans-serif;font-size:15.5px;line-height:1.62;color:#2D2E37;margin:0 0 18px 0;">One thing to set now. Reply and tell us which salon feels like home, Mamsha al Saadiyat, Khalifa City A, Al Quoz or Motor City, so your kit and your priority slots are waiting there. And if you move around, that is fine too, your credit travels with you.</p><!-- GHL conditional: show only for Season of You and All-In VIP Year. Never Dip Your Toes. -->
+      <tr><td class="pad" style="padding:0 40px;"><p style="font-family:'Inter',Arial,sans-serif;font-size:15.5px;line-height:1.62;color:#2D2E37;margin:0 0 18px 0;">Hi {{contact.first_name}},</p><p style="font-family:'Inter',Arial,sans-serif;font-size:15.5px;line-height:1.62;color:#2D2E37;margin:0 0 18px 0;">Your credit is on your account, and your plan for the year has begun. Thank you for placing it with us.</p><p style="font-family:'Inter',Arial,sans-serif;font-size:15.5px;line-height:1.62;color:#2D2E37;margin:0 0 18px 0;">And this holds throughout, our Confidence Promise. If something does not feel right within seven days of any colour or treatment service, we invite you back to refine it. No blame, just care.</p><p style="font-family:'Inter',Arial,sans-serif;font-size:15.5px;line-height:1.62;color:#2D2E37;margin:0 0 14px 0;">One thing to set now, so your kit and your priority slots are waiting in the right place: which salon should we make your home?</p>
+<!-- BRANCH CHOICE. GHL conditional on the voucher region: show the Abu Dhabi pair to an
+     Abu Dhabi voucher and the Dubai pair to a Dubai voucher. Never show all four. Two of
+     them are not redeemable on her voucher. {{branch_a_url}} / {{branch_b_url}} tag the
+     contact with her choice; the third link raises a contact-centre task instead of leaving
+     her to work it out on her own. -->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#F1ECE3;border-radius:14px;margin:0 0 18px 0;"><tr><td style="padding:18px 20px;">
+  <div style="font-family:'Inter',Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#74747B;padding-bottom:12px;">Pick your home salon</div>
+  <table role="presentation" cellpadding="0" cellspacing="0"><tr>
+    <td align="center" style="background-color:#FFFFFF;border-radius:100px;">
+      <a href="{{branch_a_url}}" target="_blank" style="display:inline-block;padding:12px 22px;font-family:'Playfair Display',Georgia,'Times New Roman',serif;font-size:15.5px;font-weight:400;color:#2D2E37;text-decoration:none;">{{branch_a_name}}</a>
+    </td>
+    <td width="10" style="font-size:0;line-height:0;">&nbsp;</td>
+    <td align="center" style="background-color:#FFFFFF;border-radius:100px;">
+      <a href="{{branch_b_url}}" target="_blank" style="display:inline-block;padding:12px 22px;font-family:'Playfair Display',Georgia,'Times New Roman',serif;font-size:15.5px;font-weight:400;color:#2D2E37;text-decoration:none;">{{branch_b_name}}</a>
+    </td>
+  </tr></table>
+  <div style="font-family:'Inter',Arial,sans-serif;font-size:14px;line-height:1.6;color:#55565F;padding-top:13px;">Not sure which suits you? <a href="{{help_me_choose_url}}" target="_blank" style="color:#3aa892;font-weight:700;">Ask us to help you choose</a> and one of us will talk it through with you. No rush.</div>
+</td></tr></table>
+<p style="font-family:'Inter',Arial,sans-serif;font-size:15.5px;line-height:1.62;color:#2D2E37;margin:0 0 18px 0;">And if you move between them, that is fine, your credit travels with you.</p><!-- GHL conditional: show only for Season of You and All-In VIP Year. Never Dip Your Toes. -->
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#FAF8F4;border-radius:14px;margin:0 0 18px 0;"><tr><td style="padding:16px 18px;font-family:'Inter',Arial,sans-serif;font-size:14px;line-height:1.6;color:#74747B;">Your Self-Care Bonus of AED {{bonus_amount}} is ready too, pointed at the beauty, treatments, keratin and blow-dries you usually skip.</td></tr></table></td></tr>
 
       <!-- CTA -->
       <tr><td class="pad btn" align="center" style="padding:8px 40px 10px 40px;"><table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 auto;">
                 <tr><td align="center" style="background-color:#99F6E4;border-radius:100px;">
-                  <a href="{{booking_url}}" target="_blank" style="display:inline-block;padding:15px 32px;font-family:'Inter',Arial,sans-serif;font-size:15px;font-weight:700;color:#0D0D0D;text-decoration:none;">Book my first visit</a>
+                  <a href="{{booking_url}}" target="_blank" style="display:inline-block;padding:15px 32px;font-family:'Playfair Display',Georgia,'Times New Roman',serif;font-size:16px;font-weight:400;color:#0D0D0D;text-decoration:none;">Book my first visit</a>
                 </td></tr>
               </table></td></tr>
       <tr><td class="pad" align="center" style="padding:0 40px 30px 40px;">
@@ -51,18 +73,20 @@
 
       <!-- sign-off -->
       <tr><td class="pad" style="padding:0 40px 34px 40px;border-top:1px solid rgba(45,46,55,.12);">
-        <p style="font-family:'Inter',Arial,sans-serif;font-size:15px;line-height:1.62;color:#2D2E37;margin:0 0 0 0;">Warm regards,<br><strong>The Tara Rose team</strong></p>
+        <p style="font-family:'Inter',Arial,sans-serif;font-size:15px;line-height:1.62;color:#2D2E37;margin:0 0 12px 0;">Warm regards,<br><span style="font-family:Georgia,'Times New Roman',serif;font-style:italic;font-weight:normal;font-size:16px;">The Tara Rose team</span></p>
+        <p style="font-family:'Inter',Arial,sans-serif;font-size:13px;line-height:1.5;color:#74747B;margin:0;"><a href="https://www.tararosesalon.com/en/ae/" target="_blank" style="color:#3aa892;text-decoration:underline;">tararosesalon.com</a></p>
       </td></tr>
 
       <!-- footer -->
       <tr><td align="center" style="background-color:#0D0D0D;padding:28px 40px 30px 40px;">
         <div style="font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:15px;color:#99F6E4;padding-bottom:14px;">We see you.</div>
         <div style="font-family:'Inter',Arial,sans-serif;font-size:12.5px;line-height:1.7;color:rgba(255,255,255,.62);">
-          Tara Rose Salon Group. Mamsha al Saadiyat &middot; Khalifa City A &middot; Motor City &middot; Al Quoz<br>
-          WhatsApp <a href="https://wa.me/971581559679" style="color:rgba(255,255,255,.62);">+971 58 155 9679</a>
+          Tara Rose Salon Group<br>
+          <a href="https://wa.me/971501968720" target="_blank" style="color:rgba(255,255,255,.72);text-decoration:underline;">Mamsha al Saadiyat</a> &middot; <a href="https://wa.me/971502811494" target="_blank" style="color:rgba(255,255,255,.72);text-decoration:underline;">Khalifa City A</a> &middot; <a href="https://wa.me/971524960903" target="_blank" style="color:rgba(255,255,255,.72);text-decoration:underline;">Motor City</a> &middot; <a href="https://wa.me/971556245520" target="_blank" style="color:rgba(255,255,255,.72);text-decoration:underline;">Al Quoz</a><br>
+          <span style="color:rgba(255,255,255,.42);">Tap your salon to message us on WhatsApp</span>
         </div>
         <div style="font-family:'Inter',Arial,sans-serif;font-size:11.5px;line-height:1.6;color:rgba(255,255,255,.40);padding-top:12px;">
-          <a href="{{unsubscribe_link}}" style="color:rgba(255,255,255,.40);">Manage your preferences</a>
+          <a href="{{unsubscribe_link}}" target="_blank" style="color:rgba(255,255,255,.55);text-decoration:underline;">Unsubscribe or manage your preferences</a>
         </div>
       </td></tr>
 

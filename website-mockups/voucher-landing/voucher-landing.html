@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<script type="application/json" id="cowork-artifact-meta">
+{
+  "name": "Beauty Voucher: Website Mockup (two vouchers)",
+  "schemaVersion": 1,
+  "description": "Mockup of the two split Beauty Voucher landing pages, one for Abu Dhabi and one for Dubai, drawn in the live site's own design system. Toggle between them, with a diff mode that highlights every block whose wording changes.",
+  "mcpTools": [],
+  "mcpServerNames": []
+}
+</script>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Website Mockup: Beauty Voucher, two vouchers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../shared/notes-widget.css">
+<link rel="stylesheet" href="voucher-landing.css">
+<!-- Phone view. AFTER the page's own <style> so the handset rules and the View
+     switch win where they overlap. mail-preview.* draws the two handsets; the pack
+     uses the same Galaxy S25 / iPhone 16 Pro pair everywhere it shows a phone. -->
+<link rel="stylesheet" href="../../shared/mail-preview.css">
+<link rel="stylesheet" href="../../shared/phone-view.css">
+<!-- ?pv=1 means this page is being read inside the phone frame on another mockup, so
+     the review chrome comes off and only the mocked site is left. Set here, in the
+     head, so it is never painted and then taken away. -->
+<script>if(/[?&]pv=1(&|$)/.test(location.search)&&window.self!==window.top)document.documentElement.classList.add('pv-embed');</script>
+</head>
+<!-- same pack_id as the approval pack, so notes left here land in the same stream -->
+<body data-note-pack="beauty-voucher-2026-08" class="v-ad" data-auth-root="../../">
+
+  <div class="top">
+    <!-- class="topbar" is the hook the notes widget uses to inject the "You are" bar, so it
+         sits on this row and lands inside the padded container. -->
+    <div class="inner topbar">
+      <img class="brandlogo" src="../../assets/tara-rose-logo-black.png" alt="Tara Rose Salon">
+      <h1 class="pagetitle">Website Mockup: one page per emirate</h1>
+      <span class="swlabel">Viewing</span>
+      <div class="switch">
+        <button type="button" id="btn-ad" class="on">Abu Dhabi</button>
+        <button type="button" id="btn-dxb">Dubai</button>
+      </div>
+      <button type="button" class="diffbtn" id="btn-diff">Show what changes</button>
+      <a class="back" href="../../index.html">&larr; Approval pack</a>
+    </div>
+  </div>
+
+  <div class="band">
+    <details class="howto">
+      <summary>How to read this</summary>
+      <div class="hint">Drawn in the live site's own design system, read off <em>/en/ae/beauty-voucher/</em> so the type, spacing and colour match what a client actually sees. The live page sells one voucher across all four salons; this is the same page split in two, so each one only promises what its own salons can deliver. <b>Switch emirate</b> in the header. <b>Show what changes</b> outlines every block whose wording moves between the two. Not drawn here: the founder story, the press strip, the four shifts, the gallery, the reviews and the reserve form, unchanged from the live page, left out to keep this readable. The rest of this review is pinned: look for a 📌 next to the part of the page it's about, and hover it to read the note.</div>
+    </details>
+    <div class="note flag"><strong>Needs a decision.</strong> Whether existing clients can buy, and the exact per-visit colour cap: both appear on this page as wording, so worth settling before it goes live. Reply in <a href="../../index.html#decisions"><strong>Open Decisions</strong></a>.</div>
+  </div>
+
+  <div class="band">
+    <div class="note info"><strong>The salon addresses now open Google Maps.</strong> A link on the address rather than a mint pill. The mint pill on this page means &ldquo;this is the thing that takes your money&rdquo;, and four more of them for directions would compete with the one that does. They point at a Maps <em>search</em> for each salon, which works today and never expires. Send me the four <strong>Google Business Profile</strong> links and I will swap them in, so they land on our own listing with the reviews and photos.</div>
+  </div>
+
+  <div class="browser">
+    <div class="chrome">
+      <div class="lights"><i></i><i></i><i></i></div>
+      <div class="urlbar">
+        tararosesalon.com/en/ae/beauty-voucher/<b><span class="only-ad">abu-dhabi</span><span class="only-dxb">dubai</span>/</b>
+      </div>
+    </div>
+
+    <div class="site">
+
+      <!-- ============ SITE NAV ============ -->
+      <div class="sitenav">
+        <div class="wrap">
+          <div class="wordmark">TARA ROSE<small>UAE</small></div>
+          <span class="emlabel">Where you book</span>
+          <div class="empick">
+            <button type="button" id="em-ad" class="on">Abu Dhabi</button>
+            <button type="button" id="em-dxb">Dubai</button>
+          </div>
+          <span class="pin info"><span class="pinicon" tabindex="0">📌</span><div class="pop">Why this picker lives here, sticky in the site header, not at checkout: the whole page already changes with the emirate, so the control belongs with the brand, not buried at the end, and she can't reach a Claim button without scrolling past it, so nobody buys the wrong voucher by accident. <strong>Still to build:</strong> tapping it should write <code>emirate:abu-dhabi</code> or <code>emirate:dubai</code> onto the lead, and carry the same value as a hidden field on every form on the page. Today the workflows hold both regional message sets but nothing chooses between them before payment. See the flag in <a href="../../index.html#automations">GHL Automations</a>.</div></span>
+          <a class="pill" href="#tiers">Reserve your voucher</a>
+        </div>
+      </div>
+
+      <!-- ============ HERO ============ -->
+      <section id="m-hero" class="sect dark" data-mockblock data-diff>
+        <span data-mocklabel hidden>Hero</span>
+        <div class="wrap">
+          <span class="diffmark">Changes per emirate</span>
+          <div class="eyebrow">
+            The Beauty Voucher &middot;
+            <span class="only-ad">Abu Dhabi</span><span class="only-dxb">Dubai</span>
+            &middot; Summer window &middot; Open until 28 August
+          </div>
+          <h2 class="display">You look after everyone.<br><em>This is the year you come first.</em></h2>
+          <div class="prose">
+            <p class="lede only-ad">For eleven years we have looked after women across our two Abu Dhabi salons. You never miss your colour. What you skip is the facial, the treatment, the hour that is only yours. So we built three prepaid Beauty Ritual vouchers: you place credit on your plan, we add a Self-Care Bonus on top pointed at exactly the part you keep putting off. Not money off. A plan.</p>
+            <p class="lede only-dxb">For eleven years we have looked after women across our two Dubai salons. You never miss your colour. What you skip is the facial, the treatment, the hour that is only yours. So we built three prepaid Beauty Ritual vouchers: you place credit on your plan, we add a Self-Care Bonus on top pointed at exactly the part you keep putting off. Not money off. A plan.</p>
+          </div>
+          <div class="availband only-ad">Available at Mamsha al Saadiyat and Khalifa City A</div>
+          <div class="availband only-dxb">Available in Dubai at Al Quoz and Motor City</div>
+          <div class="ctarow">
+            <a class="pill" href="#tiers">Reserve your voucher &rarr;</a>
+            <a class="pill ghost" href="#tiers">Gift it instead &rarr;</a>
+          </div>
+          <div class="microline">Three tiers &middot; AED 1,000 to AED 4,500 &middot; Your credit spends on any service<span class="pin good"><span class="pinicon" tabindex="0">📌</span><div class="pop">Already settled: two vouchers, one per emirate, same tiers and same prices. Nothing here changes what she pays; what changes is what each page <em>promises</em> she can spend it on.</div></span></div>
+        </div>
+      </section>
+
+      <!-- ============ COVERAGE ============ -->
+      <section id="m-coverage" class="sect paper" data-mockblock data-diff>
+        <span data-mocklabel hidden>What the credit covers</span>
+        <div class="wrap">
+          <span class="diffmark">Changes per emirate</span>
+          <div class="eyebrow">Where your credit spends</div>
+          <h3 class="h2 only-ad">Two salons, <em>the full menu at both.</em></h3>
+          <h3 class="h2 only-dxb">Two salons. Hair at both, <em>beauty at Al Quoz.</em></h3>
+          <div class="prose">
+            <p class="lede only-ad">Your credit spends on any service, up to your credit value: hair, colour, beauty, treatments and facials, at either Abu Dhabi salon. It is a spending cap, so anything above your credit is settled at the till.</p>
+            <p class="lede only-dxb">Your credit spends on any service, up to your credit value. Hair at both Al Quoz and Motor City. Beauty services and the Relaxation Facial at Al Quoz. It is a spending cap, so anything above your credit is settled at the till.</p>
+          </div>
+
+          <div class="grid2 only-ad">
+            <div class="card">
+              <div class="cardtitle">Mamsha al Saadiyat</div>
+              <div class="cardkick">Abu Dhabi</div>
+              <div class="row"><span>Hair, colour, keratin and treatments</span><span class="yes">Yes</span></div>
+              <div class="row"><span>Nails, waxing, threading, lashes, brows</span><span class="yes">Yes</span></div>
+              <div class="row"><span>Massage</span><span class="yes">Yes</span></div>
+              <div class="row"><span>Facials, the full menu including deep cleanse and LED</span><span class="yes">Yes</span></div>
+            </div>
+            <div class="card">
+              <div class="cardtitle">Khalifa City A</div>
+              <div class="cardkick">Abu Dhabi</div>
+              <div class="row"><span>Hair, colour, keratin and treatments</span><span class="yes">Yes</span></div>
+              <div class="row"><span>Nails, waxing, threading, lashes, brows</span><span class="yes">Yes</span></div>
+              <div class="row"><span>Massage</span><span class="yes">Yes</span></div>
+              <div class="row"><span>Facials, the full menu including deep cleanse and LED</span><span class="yes">Yes</span></div>
+            </div>
+          </div>
+
+          <div class="grid2 only-dxb">
+            <div class="card">
+              <div class="cardtitle">Al Quoz</div>
+              <div class="cardkick">Dubai</div>
+              <div class="row"><span>Hair, colour, keratin and treatments</span><span class="yes">Yes</span></div>
+              <div class="row"><span>Nails, waxing, threading, lashes, brows</span><span class="yes">Yes</span></div>
+              <div class="row"><span>Massage</span><span class="yes">Yes</span></div>
+              <div class="row"><span>Signature Relaxing Facial</span><span class="yes">Yes</span></div>
+              <div class="row"><span>Deep cleanse and clinical facials, LED</span><span class="no">Abu Dhabi only</span></div>
+            </div>
+            <div class="card">
+              <div class="cardtitle">Motor City</div>
+              <div class="cardkick">Dubai &middot; a hair salon</div>
+              <div class="row"><span>Hair, colour, keratin and treatments</span><span class="yes">Yes</span></div>
+              <div class="row"><span>Nails, waxing, threading, lashes, brows</span><span class="no">No</span></div>
+              <div class="row"><span>Massage</span><span class="no">No</span></div>
+              <div class="row"><span>Facials</span><span class="no">No</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ TIERS ============ -->
+      <section class="sect centred" id="tiers" data-mockblock>
+        <span data-mocklabel hidden>Three tiers</span>
+        <div class="wrap">
+          <div class="eyebrow">The value, made visible</div>
+          <h3 class="display">Everything your voucher<br>puts <em>on the table.</em></h3>
+          <div class="prose">
+            <p class="lede">Nothing here is money off. You place credit on your plan, we add a Self-Care Bonus on top of it, and the rest is what an hour that belongs to you actually looks like when someone plans it properly.</p>
+          </div>
+
+          <div class="grid3" style="text-align:left;">
+
+            <div class="card">
+              <div class="cardtitle">Dip Your Toes</div>
+              <div class="cardkick">A light way back in</div>
+              <div class="cardlead">Spends on any service. Colour, cuts, beauty and treatments. Home care and new extensions are the two things it does not cover.</div>
+              <div class="row"><span>Credit to spend on any service</span><span>AED 1,000</span></div>
+              <div class="row plus"><span>Bonus credit, added on top</span><span>+ AED 150</span></div>
+              <div class="row emph"><span>Yours to spend, from day one</span><span>AED 1,150</span></div>
+              <div class="row"><span>Your Confidence Map, your plan before the chair</span><span>Free</span></div>
+              <div class="row"><span>A gift voucher, to give to a friend</span><span>AED 100</span></div>
+              <div class="row plus"><span>Recommend 3 new friends who visit</span><span>+ AED 100</span></div>
+              <div class="row"><span>A birthday blowdry, so you feel it on your day</span><span>AED 150</span></div>
+              <div class="row"><span>The Reset Kit, the home products that hold your result</span><span>Included</span></div>
+              <div class="row"><span>Priority access to last-minute beauty slots</span><span>3 months</span></div>
+              <div class="row"><span>Yours to use for</span><span>6 months</span></div>
+              <div class="ontable"><span class="l">On the table</span><span class="v">AED 1,400</span></div>
+              <a class="cardcta only-ad" href="#">Claim Dip Your Toes</a>
+              <a class="cardcta only-dxb" href="#salon-pick">Claim: choose your salon</a>
+            </div>
+
+            <div class="card flag-tier">
+              <span class="tierchip">Most chosen</span>
+              <div class="cardtitle">Season of You</div>
+              <div class="cardkick">The one most women pick</div>
+              <div class="cardlead">Your credit spends on any service. Beauty is a form of self-care, so your Self-Care Bonus is for exactly that: beauty, treatments, keratin and blowdries.</div>
+              <div class="row"><span>Credit to spend on any service</span><span>AED 2,500</span></div>
+              <div class="row plus"><span>Your Self-Care Bonus, added on top</span><span>+ AED 500</span></div>
+              <div class="row emph"><span>Yours to spend, from day one</span><span>AED 3,000</span></div>
+              <div class="row"><span>Your Confidence Map, your plan before the chair</span><span>Free</span></div>
+              <div class="row" data-diff><span><span class="diffmark">Wording</span>AED 300 to gift, on a card you hand to a friend<span class="pin flag"><span class="pinicon" tabindex="0">📌</span><div class="pop">Reads <strong>AED 300 to gift</strong> here and <strong>AED 500 to gift</strong> on the VIP tier, rather than "3 &times; AED 100", because Phorest issues one card, not three.</div></span></span><span>AED 300</span></div>
+              <div class="row plus"><span>Recommend 3 new friends who visit</span><span>+ AED 150</span></div>
+              <div class="row only-ad" data-diff><span><span class="diffmark">Per emirate</span>A birthday facial of your choice, or a scalp and hair treatment with a blowdry</span><span>AED 350</span></div>
+              <div class="row only-dxb" data-diff><span><span class="diffmark">Per emirate</span>A birthday Signature Relaxing Facial with lifting massage at Al Quoz, or a scalp and hair treatment with a blowdry</span><span>AED 350</span></div>
+              <div class="row"><span>A free home skin care kit, because it starts on the inside</span><span>Included</span></div>
+              <div class="row"><span>The Reset Journal, your plan and rhythm written down</span><span>Included</span></div>
+              <div class="row"><span>Priority access to last-minute beauty slots</span><span>9 months</span></div>
+              <div class="row"><span>Yours to use for</span><span>9 months</span></div>
+              <div class="row"><span>Or 4 interest-free payments with Tabby</span><span>4 &times; AED 625</span></div>
+              <div class="ontable"><span class="l">On the table</span><span class="v">AED 3,650</span></div>
+              <a class="cardcta only-ad" href="#">Claim Season of You</a>
+              <a class="cardcta only-dxb" href="#salon-pick">Claim: choose your salon</a>
+            </div>
+
+            <div class="card">
+              <span class="tierchip" style="background:var(--site-mint);color:var(--site-mint-ink);">Best value</span>
+              <div class="cardtitle">All-In VIP Year</div>
+              <div class="cardkick">The whole year, and it shows</div>
+              <div class="cardlead">Your credit spends on any service. Beauty is a form of self-care, so your Self-Care Bonus is for exactly that: beauty, treatments, keratin and blowdries.</div>
+              <div class="row"><span>Credit to spend on any service</span><span>AED 4,500</span></div>
+              <div class="row plus"><span>Your Self-Care Bonus, added on top</span><span>+ AED 900</span></div>
+              <div class="row emph"><span>Yours to spend, from day one</span><span>AED 5,400</span></div>
+              <div class="row"><span>Your Confidence Map, your plan before the chair</span><span>Free</span></div>
+              <div class="row" data-diff><span><span class="diffmark">Wording</span>AED 500 to gift, on a card you hand to a friend</span><span>AED 500</span></div>
+              <div class="row plus"><span>Recommend 3 new friends who visit</span><span>+ AED 200</span></div>
+              <div class="row only-ad" data-diff><span><span class="diffmark">Per emirate</span>A birthday facial of your choice and a scalp and hair treatment with a blowdry</span><span>AED 750</span></div>
+              <div class="row only-dxb" data-diff><span><span class="diffmark">Per emirate</span>A birthday Signature Relaxing Facial with lifting massage at Al Quoz and a scalp and hair treatment with a blowdry</span><span>AED 750</span></div>
+              <div class="row"><span>The VIP Ritual Kit, the fuller home set</span><span>Included</span></div>
+              <div class="row"><span>The fuller home skin care kit</span><span>Included</span></div>
+              <div class="row"><span>The Reset Journal and the 8 Pillars of Wellness Journal</span><span>Included</span></div>
+              <div class="row"><span>Priority access to last-minute beauty slots</span><span>All year</span></div>
+              <div class="row"><span>Yours to use for</span><span>12 months</span></div>
+              <div class="row"><span>Or 4 interest-free payments with Tabby</span><span>4 &times; AED 1,125</span></div>
+              <div class="ontable"><span class="l">On the table</span><span class="v">AED 6,650</span></div>
+              <a class="cardcta only-ad" href="#">Claim VIP Year</a>
+              <a class="cardcta only-dxb" href="#salon-pick">Claim: choose your salon</a>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ DUBAI SALON PICKER ============ -->
+      <section class="sect paper only-dxb" id="salon-pick" data-mockblock data-diff>
+        <span data-mocklabel hidden>Dubai salon picker</span>
+        <div class="wrap">
+          <span class="diffmark">Dubai page only</span>
+          <div class="eyebrow">One more thing before you pay</div>
+          <h3 class="h2">Which Dubai salon <em>is yours?</em><span class="pin flag"><span class="pinicon" tabindex="0">📌</span><div class="pop">On the Dubai page the reserve button has to ask which Dubai salon before it can send her to the right Stripe link. Al Quoz and Motor City have separate links.</div></span></h3>
+          <div class="prose"><p class="lede">Your credit sits with the salon you choose, so tell us where you will be spending it. You can still visit both for hair.</p></div>
+          <div class="grid2">
+            <div class="card salon">
+              <div class="city">Dubai</div>
+              <div class="nm">Al Quoz</div>
+              <div class="ad">
+                <a class="maplink" href="https://share.google/UlAbYHkizJrfSgQzi" target="_blank" rel="noopener">
+                  <svg viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="2.6"/></svg>
+                  Arenco Warehouse 10, Al Quoz 1<span class="go">Directions</span>
+                </a>
+                <br>9:00am&ndash;8:00pm daily &middot; +971 4 457 2309
+              </div>
+              <div class="does yes">Hair and the full beauty menu</div>
+              <a class="cardcta" href="#">Continue with Al Quoz</a>
+            </div>
+            <div class="card salon">
+              <div class="city">Dubai</div>
+              <div class="nm">Motor City</div>
+              <div class="ad">
+                <a class="maplink" href="https://share.google/pO7A6yCVSS8AeQLDw" target="_blank" rel="noopener">
+                  <svg viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="2.6"/></svg>
+                  Daytona House, Unit LB 03, Motor City<span class="go">Directions</span>
+                </a>
+                <br>9:00am&ndash;8:00pm daily &middot; +971 4 324 6613
+              </div>
+              <div class="does">Hair only</div>
+              <a class="cardcta" href="#">Continue with Motor City</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ SALONS ============ -->
+      <section id="m-salons" class="sect centred" data-mockblock data-diff>
+        <span data-mocklabel hidden>Salon list</span>
+        <div class="wrap">
+          <span class="diffmark">Changes per emirate</span>
+          <div class="eyebrow">Where your credit spends</div>
+          <h3 class="h2">Two salons, <em>one plan.</em></h3>
+
+          <div class="grid2 only-ad" style="text-align:left;">
+            <div class="card salon">
+              <div class="city">Abu Dhabi</div>
+              <div class="nm">Mamsha al Saadiyat</div>
+              <!-- The four Google Business Profile share links, supplied 10 Aug, replacing the
+                   maps/search/?api=1&query= placeholders. These land on the listing itself,
+                   with the reviews and the photos, rather than on a search for the name, and
+                   they open the Maps app on a phone. They are share links rather than place_id
+                   URLs, so if a listing is ever recreated the link has to be re-copied: check
+                   all four still resolve before this page goes live. -->
+              <div class="ad">
+                <a class="maplink" href="https://share.google/SWwyDMe2UJwXUIIrY" target="_blank" rel="noopener">
+                  <svg viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="2.6"/></svg>
+                  Mamsha al Saadiyat, Abu Dhabi<span class="go">Directions</span>
+                </a>
+                <br>9:00am&ndash;8:00pm daily
+              </div>
+              <div class="does yes">Hair and the full beauty menu, all facials</div>
+            </div>
+            <div class="card salon">
+              <div class="city">Abu Dhabi</div>
+              <div class="nm">Khalifa City A</div>
+              <div class="ad">
+                <a class="maplink" href="https://share.google/uvIEtqWPLmTIxFHIy" target="_blank" rel="noopener">
+                  <svg viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="2.6"/></svg>
+                  Khalifa City A, Abu Dhabi<span class="go">Directions</span>
+                </a>
+                <br>9:00am&ndash;8:00pm daily
+              </div>
+              <div class="does yes">Hair and the full beauty menu, all facials</div>
+            </div>
+          </div>
+
+          <div class="grid2 only-dxb" style="text-align:left;">
+            <div class="card salon">
+              <div class="city">Dubai</div>
+              <div class="nm">Al Quoz</div>
+              <div class="ad">
+                <a class="maplink" href="https://share.google/UlAbYHkizJrfSgQzi" target="_blank" rel="noopener">
+                  <svg viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="2.6"/></svg>
+                  Arenco Warehouse 10, Al Quoz 1, Dubai<span class="go">Directions</span>
+                </a>
+                <br>9:00am&ndash;8:00pm daily &middot; +971 4 457 2309
+              </div>
+              <div class="does yes">Hair, the full beauty menu and the Signature Relaxing Facial</div>
+            </div>
+            <div class="card salon">
+              <div class="city">Dubai</div>
+              <div class="nm">Motor City</div>
+              <div class="ad">
+                <a class="maplink" href="https://share.google/pO7A6yCVSS8AeQLDw" target="_blank" rel="noopener">
+                  <svg viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="2.6"/></svg>
+                  Daytona House, Unit LB 03, Motor City, Dubai<span class="go">Directions</span>
+                </a>
+                <br>9:00am&ndash;8:00pm daily &middot; +971 4 324 6613
+              </div>
+              <div class="does">Hair only</div>
+            </div>
+          </div>
+
+          <div class="prose only-dxb" style="margin:34px auto 0;">
+            <p class="lede">Deep cleanse and clinical facials and LED are at our Abu Dhabi salons. Your Dubai credit does not travel there, so we say it here rather than at the till.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ HONEST PART ============ -->
+      <section id="m-honest" class="sect paper" data-mockblock>
+        <span data-mocklabel hidden>The honest part</span>
+        <div class="wrap">
+          <div class="eyebrow">The honest part</div>
+          <h3 class="h2">Your credit is yours. <em>Here is exactly how it works.</em></h3>
+          <div class="steps">
+            <div>
+              <div class="stepnum">01</div>
+              <div class="stept">It spends on your plan</div>
+              <div class="stepb">On what your tier covers, listed on every card above. <span class="only-ad">At either Abu Dhabi salon, the plan is the same.</span><span class="only-dxb">Hair at both Dubai salons; beauty at Al Quoz.</span></div>
+            </div>
+            <div>
+              <div class="stepnum">02</div>
+              <div class="stept">It stays yours</div>
+              <div class="stepb">Not clawed back, not conditional. Once it is on your account it is yours until it is used or the validity date passes.</div>
+            </div>
+            <div>
+              <div class="stepnum">03</div>
+              <div class="stept">No surprises at the till<span class="pin flag"><span class="pinicon" tabindex="0">📌</span><div class="pop">The exact per-visit colour cap here is still an open decision. Reply in <a href="../../index.html#decisions">Open Decisions</a>.</div></span></div>
+              <div class="stepb">Larger colour work is covered up to a set amount per visit. Any remainder is settled in the usual way, and your stylist tells you before, never at the till.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ FAQ ============ -->
+      <section id="m-faq" class="sect" data-mockblock data-diff>
+        <span data-mocklabel hidden>FAQ</span>
+        <div class="wrap">
+          <span class="diffmark">One question is new</span>
+          <div class="eyebrow">Questions</div>
+          <h3 class="h2">The <em>honest</em> answers.</h3>
+          <div class="faq">
+            <div class="q"><div class="qt">Is this money off?</div><div class="qa">No. You place credit on your plan and we add a Self-Care Bonus on top. Nothing is discounted; there is simply more on your account than you paid in.</div></div>
+            <div class="q"><div class="qt">How does the credit work?</div><div class="qa">It sits on your account from day one and draws down as you spend. If a bill goes over what is left, you settle the difference at the till.</div></div>
+            <div class="q only-ad"><div class="qt">Can I use my Abu Dhabi credit in Dubai?</div><div class="qa">This voucher is for Mamsha al Saadiyat and Khalifa City A. Our Dubai salons run their own voucher, so if Dubai is where you visit, start there instead. Ask us and we will point you to the right one before you pay.</div></div>
+            <div class="q only-dxb"><div class="qt">What if I want a deep cleanse or clinical facial?</div><div class="qa">Those are done at our Abu Dhabi salons. In Dubai your credit covers hair at both salons, and the full beauty menu plus the Signature Relaxing Facial at Al Quoz. If a clinical facial is what you are after, our Abu Dhabi voucher is the one for you.</div></div>
+            <div class="q only-dxb"><div class="qt">Can I use it at both Dubai salons?</div><div class="qa">Yes for hair. Beauty is at Al Quoz, because Motor City is a hair salon.</div></div>
+            <div class="q"><div class="qt">Can I split the payment?</div><div class="qa">Season of You and All-In VIP Year split into four interest-free payments with Tabby. Dip Your Toes is paid in full.</div></div>
+            <div class="q"><div class="qt">Can I give it as a gift?</div><div class="qa">Yes. It is sent in her name, ready to book, with a note from you.</div></div>
+            <div class="q"><div class="qt">What if I miss this season's window?</div><div class="qa">The window reopens next quarter and the value comes back with it. You have not missed your only chance, just this season's.</div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ SMALL PRINT ============ -->
+      <section id="m-smallprint" class="smallprint" data-mockblock data-diff>
+        <span data-mocklabel hidden>Small print strip</span>
+        <div class="wrap">
+          <span class="diffmark">Changes per emirate</span>
+          <span class="only-ad">All figures are in UAE dirhams and include applicable value added tax. Your credit spends on any service at Mamsha al Saadiyat or Khalifa City A. It does not cover home care or the purchase of new hair extensions. On Season of You and All-In VIP Year, the Self-Care Bonus added on top is for beauty, treatments, keratin and blowdries. Dip Your Toes is paid in full. Season of You and All-In VIP Year can be split into four with Tabby, and the credit stays exactly the same. Vouchers are not refundable and not transferable, and run from the date of purchase. <a href="../terms/terms.html">Read the full terms and conditions.</a></span>
+          <span class="only-dxb">All figures are in UAE dirhams and include applicable value added tax. Your credit spends on any service at Al Quoz, and on hair at Motor City. Beauty services and the Signature Relaxing Facial are at Al Quoz. Deep cleanse and clinical facials and LED are at our Abu Dhabi salons. Your credit does not cover home care or the purchase of new hair extensions. On Season of You and All-In VIP Year, the Self-Care Bonus added on top is for beauty, treatments, keratin and blowdries. Dip Your Toes is paid in full. Season of You and All-In VIP Year can be split into four with Tabby, and the credit stays exactly the same. Vouchers are not refundable and not transferable, and run from the date of purchase. <a href="../terms/terms.html">Read the full terms and conditions.</a></span>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+
+<script src="voucher-landing.js"></script>
+<!-- phone-view.js reads DEVICES/phone()/statusBar() out of mail-preview.js, so that
+     one loads first. Both go after the page's own script: a tap on the emirate picker
+     inside the phone is replayed on the real page, so its handler has to exist by then. -->
+<script src="../../shared/mail-preview.js"></script>
+<script src="../../shared/phone-view.js"></script>
+<!-- Supabase UMD build first: notes-widget.js is a plain script and needs it on the page
+     before it runs, same as index.html and automations.html. -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../../auth/supabase-client.js"></script>
+<script src="../../shared/notes-widget.js"></script>
+</body>
+</html>

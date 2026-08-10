@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<script type="application/json" id="cowork-artifact-meta">
+{
+  "name": "Beauty Voucher: Terms & Conditions Mockup",
+  "schemaVersion": 1,
+  "description": "Mockup of the updated Beauty Voucher Terms & Conditions in the live site's design system, split into an Abu Dhabi voucher version and a Dubai voucher version. Shows what changed from Dawn's 7 August draft and what still needs a decision.",
+  "mcpTools": [],
+  "mcpServerNames": []
+}
+</script>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Terms &amp; Conditions Mockup: Beauty Voucher</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../shared/notes-widget.css">
+<link rel="stylesheet" href="terms.css">
+<!-- Phone view. AFTER the page's own <style> so the handset rules and the View
+     switch win where they overlap. mail-preview.* draws the two handsets; the pack
+     uses the same Galaxy S25 / iPhone 16 Pro pair everywhere it shows a phone. -->
+<link rel="stylesheet" href="../../shared/mail-preview.css">
+<link rel="stylesheet" href="../../shared/phone-view.css">
+<!-- ?pv=1 means this page is being read inside the phone frame on another mockup, so
+     the review chrome comes off and only the mocked site is left. Set here, in the
+     head, so it is never painted and then taken away. -->
+<script>if(/[?&]pv=1(&|$)/.test(location.search)&&window.self!==window.top)document.documentElement.classList.add('pv-embed');</script>
+</head>
+<body data-note-pack="beauty-voucher-2026-08" class="v-ad" data-auth-root="../../">
+
+  <div class="top">
+    <!-- class="topbar" is the hook the notes widget uses to inject the "You are" bar -->
+    <div class="inner topbar">
+      <img class="brandlogo" src="../../assets/tara-rose-logo-black.png" alt="Tara Rose Salon">
+      <h1 class="pagetitle">T&amp;C Mockup: split per voucher</h1>
+      <span class="swlabel">Reading</span>
+      <div class="switch">
+        <button type="button" id="btn-ad" class="on">Abu Dhabi</button>
+        <button type="button" id="btn-dxb">Dubai</button>
+      </div>
+      <button type="button" class="diffbtn" id="btn-diff">Show what changed</button>
+      <a class="back" href="../../index.html">&larr; Approval pack</a>
+    </div>
+  </div>
+
+  <div class="band">
+    <details class="howto">
+      <summary>How to read this</summary>
+      <div class="hint">Dawn's 7 August wording, rewritten so each emirate's voucher only promises what its own salons can deliver, and set in the live site's own design system. <b>Switch voucher</b> in the header to read the other version. <b>Show what changed</b> marks every clause that is new, reworded, or still waiting on a decision.</div>
+    </details>
+    <div class="note good"><strong>Flag 1 is now answered.</strong> Dawn's draft listed Saadiyat, Khalifa City and Al Quoz and left Motor City out, which would have stopped Dubai clients redeeming there. Splitting the terms fixes it: Motor City is named on the Dubai voucher, as a hair salon, in term 2.</div>
+    <div class="note flag"><strong>Flag 2 still needs your call.</strong> Term 10 is shown twice, as option A and option B. Option A keeps the 48-hour notice and the no-show deposit spelled out. Option B is Dawn's lighter version that points at the standard policy. Pick one so the terms and the cancellation policy do not say different things.</div>
+    <div class="note flag"><strong>One clause is genuinely new.</strong> Term 3 says the credit is held against the emirate you bought in and cannot be spent at the other emirate's salons. The split does not work without it, but it is new legal wording, so it should go past Dawn before it ships.</div>
+  </div>
+
+  <div class="browser">
+    <div class="chrome">
+      <div class="lights"><i></i><i></i><i></i></div>
+      <div class="urlbar">
+        tararosesalon.com/en/ae/beauty-voucher/<b><span class="only-ad">abu-dhabi</span><span class="only-dxb">dubai</span>/terms/</b>
+      </div>
+    </div>
+
+    <div class="site">
+
+      <div class="sitenav">
+        <div class="wrap">
+          <div class="wordmark">TARA ROSE<small>UAE</small></div>
+          <span class="navspacer"></span>
+          <a class="navlink" href="../voucher-landing/voucher-landing.html">Back to the voucher &rarr;</a>
+          <a class="pill" href="../voucher-landing/voucher-landing.html">Reserve your voucher</a>
+        </div>
+      </div>
+
+      <div class="sect dark">
+        <div class="wrap">
+          <div class="eyebrow">The Beauty Voucher &middot; <span class="only-ad">Abu Dhabi</span><span class="only-dxb">Dubai</span></div>
+          <h2 class="display">Terms &amp; <em>Conditions.</em></h2>
+          <div class="col">
+            <p class="lede only-ad">These terms apply to the Abu Dhabi Beauty Voucher, redeemable at Mamsha al Saadiyat and Khalifa City A. Our Dubai salons run a separate voucher with its own terms.</p>
+            <p class="lede only-dxb">These terms apply to the Dubai Beauty Voucher, redeemable at Al Quoz and Motor City. Our Abu Dhabi salons run a separate voucher with its own terms.</p>
+          </div>
+          <div class="microline">Summer window &middot; Purchase closes 28 August 2026</div>
+        </div>
+      </div>
+
+      <div class="sect">
+        <div class="wrap">
+          <main class="col">
+          <ol class="terms">
+
+            <li>
+              <strong class="th">Campaign period.</strong>
+              The Beauty Voucher Summer Window is available to purchase until 28 August 2026. Credit purchased within the window can be redeemed at any point inside the validity period of the voucher you bought, including after the window closes.
+            </li>
+
+            <li data-changed>
+              <span class="tag chg">Reworded &middot; fixes Flag 1</span>
+              <strong class="th">Participating salons.</strong>
+              <span class="only-ad">The Abu Dhabi Beauty Voucher can be redeemed at Tara Rose Mamsha al Saadiyat and Tara Rose Khalifa City A. Both salons offer the full hair and beauty menu, including all facials.</span>
+              <span class="only-dxb">The Dubai Beauty Voucher can be redeemed at Tara Rose Al Quoz and Tara Rose Motor City. Hair services are available at both salons. Beauty services, including nails, waxing, threading, lashes, brow treatments, massage and the Signature Relaxing Facial, are available at Al Quoz. Motor City is a hair salon and does not offer beauty services. Deep cleanse and clinical facials and LED treatments are not available in Dubai.</span>
+            </li>
+
+            <li data-changed>
+              <span class="tag new">New clause &middot; needs Dawn</span>
+              <strong class="th">Which voucher you hold.</strong>
+              <span class="only-ad">This voucher is held against our Abu Dhabi salons. Credit, bonus credit and the included benefits are redeemable at Mamsha al Saadiyat and Khalifa City A only, and cannot be redeemed at our Dubai salons or exchanged for the Dubai voucher. If you bought the wrong voucher, contact us before your first redemption and we will do our best to put it right.</span>
+              <span class="only-dxb">This voucher is held against our Dubai salons. Credit, bonus credit and the included benefits are redeemable at Al Quoz and Motor City only, and cannot be redeemed at our Abu Dhabi salons or exchanged for the Abu Dhabi voucher. If you bought the wrong voucher, contact us before your first redemption and we will do our best to put it right.</span>
+            </li>
+
+            <li>
+              <strong class="th">Voucher options &amp; validity.</strong>
+              <table>
+                <thead><tr><th>Tier</th><th class="num">Prepaid</th><th class="num">Bonus</th><th class="num">Total credit</th><th>Valid</th><th>Tabby</th></tr></thead>
+                <tbody>
+                  <tr><td>Dip Your Toes</td><td class="num">AED 1,000</td><td class="num">AED 150</td><td class="num tot">AED 1,150</td><td>6 months</td><td>No</td></tr>
+                  <tr><td>Season of You</td><td class="num">AED 2,500</td><td class="num">AED 500</td><td class="num tot">AED 3,000</td><td>9 months</td><td>4 interest-free</td></tr>
+                  <tr><td>All-In VIP Year</td><td class="num">AED 4,500</td><td class="num">AED 900</td><td class="num tot">AED 5,400</td><td>12 months</td><td>4 interest-free</td></tr>
+                </tbody>
+              </table>
+              Validity runs from the date of purchase. Dip Your Toes must be paid in full; Tabby is not available on that tier. Season of You and All-In VIP Year are eligible for four interest-free payments through Tabby, subject to Tabby approval and terms.
+            </li>
+
+            <li data-changed>
+              <span class="tag chg">Reworded per emirate</span>
+              <strong class="th">Using your credit.</strong>
+              The prepaid credit can be used towards salon services at the participating salons named in term 2, at the Tara Rose menu price applicable at the time of the appointment.
+              <span class="only-ad">In Abu Dhabi this covers hair, colour, beauty, treatments and facials at either salon.</span>
+              <span class="only-dxb">In Dubai this covers hair at both salons, and beauty services and the Signature Relaxing Facial at Al Quoz.</span>
+              Credit cannot be used towards home-care or retail products, the purchase of new hair extensions, or cash withdrawals or cash refunds. For Season of You and All-In VIP Year, the Self-Care Bonus can be redeemed against beauty services, treatments, keratin services and blowdries only.
+            </li>
+
+            <li>
+              <strong class="th">Included gifts &amp; benefits.</strong>
+              Complimentary gifts and benefits are additional to the service credit and have no cash value. Where included with the selected voucher, these may include Confidence Mapping, birthday treatments, home-care or ritual kits, journals, priority access to selected last-minute beauty appointments, gift vouchers for friends, and referral rewards. Physical gifts are subject to availability; Tara Rose may substitute an unavailable complimentary item with an alternative of similar value.
+            </li>
+
+            <li data-changed>
+              <span class="tag chg">Reworded &middot; matches Phorest</span>
+              <strong class="th">Gift vouchers.</strong>
+              The gift voucher included with your Beauty Voucher is issued as a single gift card, to be given to another person: AED 100 with Dip Your Toes, AED 300 with Season of You and AED 500 with All-In VIP Year. It can be redeemed against an eligible salon service at the same participating salons named in term 2, cannot be exchanged for cash, and cannot be used to purchase retail products or another voucher. The main Beauty Voucher credit cannot be transferred to another person unless otherwise agreed by Tara Rose.
+            </li>
+
+            <li>
+              <strong class="th">Referral rewards.</strong>
+              Referral credit is awarded when the required number of new clients successfully visit Tara Rose and complete a qualifying paid appointment. Referral rewards cannot be exchanged for cash and must be used within the validity period of the original Beauty Voucher.
+            </li>
+
+            <li data-changed>
+              <span class="tag chg">Reworded per emirate</span>
+              <strong class="th">Birthday benefits.</strong>
+              Birthday services must be redeemed during the validity period of your voucher and are subject to appointment availability.
+              <span class="only-ad">In Abu Dhabi the birthday facial is a full facial of your choice from our Abu Dhabi menu.</span>
+              <span class="only-dxb">In Dubai the birthday facial is the Signature Relaxing Facial with lifting massage at Al Quoz.</span>
+              The values shown within the campaign represent the standard menu value of the relevant service and are included to illustrate the overall voucher value.
+            </li>
+
+            <li data-changed>
+              <span class="tag dec">Decision needed &middot; Flag 2</span>
+              <strong class="th">Appointments, cancellations &amp; no-shows.</strong>
+              <div class="opt pick">
+                <div class="ol">Option A: keeps the detail (recommended)</div>
+                Please give at least 48 hours' notice to move an appointment. Rescheduling within your validity period is free and unlimited, and cancelling or rescheduling never affects your voucher credit, which stays on your account for the full validity period. If you arrive late we will do our best to complete your service, but it may be shortened to protect the next client's booking, and the full service is still drawn from your credit. Missing an appointment without notice does not lose your credit, but a repeated no-show may require a deposit to secure future bookings. Voucher ownership or priority access does not guarantee availability with a particular stylist, therapist, date or time.
+              </div>
+              <div class="opt">
+                <div class="ol">Option B: Dawn's lighter version</div>
+                All appointments remain subject to Tara Rose's standard booking, cancellation and no-show policies. Voucher ownership or priority access does not guarantee appointment availability with a particular stylist, therapist, date or time.
+              </div>
+              <em class="src">Pick one. Whichever is chosen, the Cancellation Policy section of the approval pack has to be set to match.</em>
+            </li>
+
+            <li>
+              <strong class="th">Expiry.</strong>
+              All credit, bonus credit and unused benefits must be redeemed within the stated validity period for the selected Beauty Voucher. Any unused balance or promotional benefits remaining after the expiry date will expire and cannot be exchanged for cash or extended unless Tara Rose agrees otherwise.
+            </li>
+
+            <li>
+              <strong class="th">Refunds &amp; exchanges.</strong>
+              Beauty Vouchers are non-refundable once purchased, except where otherwise required by applicable law. Voucher credit and promotional bonuses cannot be exchanged for cash.
+            </li>
+
+            <li>
+              <strong class="th">Other offers.</strong>
+              Beauty Voucher credit, bonuses and complimentary benefits cannot be combined with another promotion, discount or offer unless Tara Rose specifically confirms otherwise.
+            </li>
+
+            <li>
+              <strong class="th">Tabby payments.</strong>
+              Where Tabby is offered, approval and payment arrangements are provided directly by Tabby and are subject to Tabby's eligibility requirements and terms. Using Tabby does not change the amount of Tara Rose service credit included within the selected Beauty Voucher.
+            </li>
+
+            <li>
+              <strong class="th">Pricing.</strong>
+              All prices and values shown are in UAE Dirhams (AED) and include applicable VAT.
+            </li>
+
+            <li>
+              <strong class="th">General.</strong>
+              Tara Rose reserves the right to reasonably amend or clarify these terms where required for the administration of the campaign, provided that this does not remove service credit already purchased by a client. Purchase of a Beauty Voucher confirms acceptance of these Terms &amp; Conditions.
+            </li>
+
+          </ol>
+          </main>
+        </div>
+      </div>
+
+      <div class="foot">
+        <div class="wrap">
+          <span class="only-ad">Tara Rose &middot; Abu Dhabi Beauty Voucher &middot; Mamsha al Saadiyat and Khalifa City A &middot; <a href="../voucher-landing/voucher-landing.html">Back to the voucher</a></span>
+          <span class="only-dxb">Tara Rose &middot; Dubai Beauty Voucher &middot; Al Quoz and Motor City &middot; <a href="../voucher-landing/voucher-landing.html">Back to the voucher</a></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="band" style="padding-bottom:60px;">
+    <div class="note info"><strong>What changed from Dawn's 7 August draft.</strong> Term 2 is split per emirate and now names Motor City. Term 3 is new and holds the credit to the emirate it was bought in. Term 5 spells out coverage per emirate. Term 7 is rewritten to one gift card rather than several, to match what Phorest actually issues. Term 9 names the right birthday facial for each emirate. Term 10 is the open decision. Everything else is Dawn's wording, unchanged.</div>
+    <div class="note flag"><strong>Not covered here.</strong> The per-visit colour cap is not written into these terms, so it currently lives only in <a href="../../index.html#decisions"><strong>Open Decisions</strong></a>. If it is a rule clients are held to, it belongs in term 5. Same for whether existing clients can buy.</div>
+  </div>
+
+<script src="terms.js"></script>
+<!-- phone-view.js reads DEVICES/phone()/statusBar() out of mail-preview.js, so that
+     one loads first. Both go after the page's own script: the View switch replays a
+     tap inside the phone onto the real page, and the handlers have to exist by then. -->
+<script src="../../shared/mail-preview.js"></script>
+<script src="../../shared/phone-view.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../../auth/supabase-client.js"></script>
+<script src="../../shared/notes-widget.js"></script>
+</body>
+</html>

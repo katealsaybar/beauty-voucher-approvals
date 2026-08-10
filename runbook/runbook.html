@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Beauty Voucher: Runbook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/notes-widget.css">
+<link rel="stylesheet" href="runbook.css">
+</head>
+<!-- Same pack_id as everything else, so a note left here lands in the one stream. -->
+<body data-note-pack="beauty-voucher-2026-08" data-auth-root="../">
+
+  <div class="top">
+    <div class="toprow1">
+      <a class="back" href="../index.html">&larr; Approval pack</a>
+      <img class="brandlogo" src="../assets/tara-rose-logo-black.png" alt="Tara Rose Salon">
+      <div class="head">
+        <div class="k">Beauty Voucher &middot; operations</div>
+        <h1>Runbook: what to do when it goes wrong</h1>
+        <div class="hint">Not a review document. This is the page you open <b>while</b> something is
+          failing, so it is ordered by urgency rather than by workflow.</div>
+      </div>
+    </div>
+    <!-- the notes widget injects the "You are" toggle into .topbar -->
+    <div class="topbar toprow2">
+      <nav class="jump">
+        <a href="#kill">1 &middot; Kill switch</a>
+        <a href="#gates">2 &middot; Error gates</a>
+        <a href="#modes">3 &middot; Failure modes</a>
+        <a href="#owners">4 &middot; Who to wake</a>
+        <a href="#build">5 &middot; Still to build</a>
+      </nav>
+    </div>
+  </div>
+
+  <main class="wrap">
+
+    <!-- ====================== 1. KILL SWITCH ====================== -->
+    <section id="kill" class="sect">
+      <div class="sec-head">
+        <span class="sectnum">1</span>
+        <div>
+          <h2>The kill switch</h2>
+          <p class="lede">Four switches, in this order. The order is the whole point: stop the
+            messages before you stop anything else, because a message already sent cannot be
+            recalled and a payment already taken does not need to be.</p>
+        </div>
+      </div>
+
+      <div class="rule">
+        <b>The rule that decides everything below: kill the messaging, never the money.</b>
+        Stripe stays on. A client who pays during an incident is a client who gets tagged late,
+        which the &ldquo;already placed your credit&rdquo; note in the emails now covers. A client
+        who cannot pay is revenue you do not get back, plus a support conversation you created
+        yourself.
+      </div>
+
+      <ol class="kills">
+
+        <li class="kill">
+          <div class="killnum">1</div>
+          <div class="killbody">
+            <h3>Pause the GHL workflow that is misbehaving</h3>
+            <div class="where">GoHighLevel &rarr; Automation &rarr; Workflows &rarr; the workflow &rarr;
+              toggle <b>Published</b> off</div>
+            <div class="two">
+              <div class="does"><span>Stops</span> every step for every contact still in that
+                workflow, immediately, including waits that have not resolved.</div>
+              <div class="doesnt"><span>Does not stop</span> the other two workflows, anything
+                already handed to the email or WhatsApp provider in the last few minutes, or the
+                Make scenarios that feed it.</div>
+            </div>
+            <div class="note">Pause the one that is wrong. Pausing all three when only Lead Nurture
+              is misfiring stops confirmation emails to women who have just paid, which turns one
+              problem into two.</div>
+          </div>
+        </li>
+
+        <li class="kill">
+          <div class="killnum">2</div>
+          <div class="killbody">
+            <h3>Turn off the Make scenario that feeds it</h3>
+            <div class="where">Make &rarr; Scenarios &rarr; the scenario &rarr; the <b>ON/OFF</b>
+              toggle. Scenario 1 is the quiz bridge, scenario 2 is the Stripe bridge.</div>
+            <div class="two">
+              <div class="does"><span>Stops</span> new contacts being created, tagged and noted.
+                Incoming webhooks queue rather than vanish, so nothing is lost while it is off.</div>
+              <div class="doesnt"><span>Does not stop</span> Stripe taking payments, and does not
+                stop the GHL workflows running for contacts already in them.</div>
+            </div>
+            <div class="note warn"><b>Turning off scenario 2 has a cost you have to plan for.</b>
+              A woman who pays while it is off gets no <code>voucher:paid</code> tag, so she gets no
+              Welcome Pack and no confirmation. Write down the time you switched it off. Every
+              Stripe payment between then and switching it back on needs tagging by hand, in the
+              order in section 3.</div>
+          </div>
+        </li>
+
+        <li class="kill">
+          <div class="killnum">3</div>
+          <div class="killbody">
+            <h3>Turn off the Gravity Forms feed, only if the quiz is the source</h3>
+            <div class="where">WordPress &rarr; Forms &rarr; form 21 &rarr; Settings &rarr; Webhooks
+              &rarr; toggle the feed off</div>
+            <div class="two">
+              <div class="does"><span>Stops</span> quiz submissions reaching Make at all.</div>
+              <div class="doesnt"><span>Does not stop</span> the form working. She still submits,
+                the entry is still stored in WordPress, and it can be replayed later. Nothing she
+                typed is lost.</div>
+            </div>
+            <div class="note">Rarely the right switch. Turning off scenario 1 in Make achieves the
+              same thing and keeps the queue, so reach for this only if the feed itself is what is
+              broken, for example if it is firing twice per submission.</div>
+          </div>
+        </li>
+
+        <li class="kill">
+          <div class="killnum">4</div>
+          <div class="killbody">
+            <h3>Tell the desk before you tell anyone else</h3>
+            <div class="where">The branch WhatsApp groups, and Belle</div>
+            <div class="two">
+              <div class="does"><span>Stops</span> reception improvising. If clients are calling
+                about an email they should not have had, the desk needs one sentence to say, and it
+                should not be a sentence they invented under pressure.</div>
+              <div class="doesnt"><span>Does not stop</span> anything technical. This is the step
+                everyone skips and it is the one clients actually feel.</div>
+            </div>
+            <div class="note">The sentence: <em>&ldquo;That went out in error and we are fixing it
+              now. Your credit is safe on your account and nothing has changed.&rdquo;</em> Do not
+              promise a time unless you know one.</div>
+          </div>
+        </li>
+      </ol>
+
+      <div class="afterwards">
+        <h3>Before you switch anything back on</h3>
+        <ol>
+          <li><b>Do not amend a live workflow and republish it.</b> GHL does not retro-apply a new
+            node: everyone already past the insertion point never sees the fix, so Wednesday's
+            correction silently misses everyone who entered on Monday. Build the corrected version
+            as a separate <b>v2</b>, let v1 drain, then point the trigger at v2.</li>
+          <li><b>Count what was missed.</b> Stripe payments during a scenario-2 outage, and quiz
+            submissions during a scenario-1 outage. Both are countable, and both need a backfill
+            list before you turn anything on.</li>
+          <li><b>Backfill with a catch-up, never by re-running the arc.</b> Nobody receives Day 0
+            twice. A small workflow scoped to the affected tag only.</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ====================== 2. ERROR GATES ====================== -->
+    <section id="gates" class="sect">
+      <div class="sec-head">
+        <span class="sectnum">2</span>
+        <div>
+          <h2>Error gates in Make</h2>
+          <p class="lede">A Make module with no error handler stops the whole run at that module.
+            The question is never &ldquo;should this have a handler&rdquo;, it is <b>&ldquo;if this
+            module fails, is the run still worth finishing?&rdquo;</b></p>
+        </div>
+      </div>
+
+      <div class="rule">
+        <b>One principle decides every row below: break on identity and money, ignore on
+        convenience.</b> If the module carries who she is or what she paid, a failure has to stop
+        the run and be retried, because everything after it is wrong without it. If the module is a
+        nicety, a failure must not cost her the parts that matter.
+      </div>
+
+      <div class="setup">
+        <h3>Two settings to turn on before either scenario goes live</h3>
+        <div class="setupgrid">
+          <div>
+            <b>Allow storing of incomplete executions</b>
+            <span>Scenario settings. A failed run is parked with its data intact and can be resumed
+              once the cause is fixed, instead of being lost. Without it, &ldquo;break&rdquo; means
+              &ldquo;discard&rdquo;.</span>
+          </div>
+          <div>
+            <b>Sequential processing</b>
+            <span>Scenario settings. Runs execute one at a time in order. Two payments landing in
+              the same second cannot race each other into creating two contact records.</span>
+          </div>
+        </div>
+        <div class="note">Both are off by default. Turning them on afterwards does not recover
+          anything that already failed.</div>
+      </div>
+
+      <h3 class="tabh">Scenario 1 &middot; the quiz bridge</h3>
+      <table class="gates">
+        <thead><tr><th>Module</th><th>Gate</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td>1 · Custom webhook</td><td class="g none">none</td>
+            <td>A trigger cannot have a handler. Its protection is the 200 response in module 7.</td></tr>
+          <tr><td>2 · Set variables</td><td class="g none">none</td>
+            <td>Pure computation on data already in hand. If this fails the payload is malformed and
+              the run should stop loudly.</td></tr>
+          <tr class="hot"><td>3 · Create or update contact</td><td class="g brk">Break</td>
+            <td><b>Identity.</b> Everything below needs the contact ID. Break parks the run with her
+              answers intact so it can be resumed; ignore would silently drop a real lead who filled
+              in nineteen questions.</td></tr>
+          <tr class="hot"><td>4 · Add contact tags</td><td class="g brk">Break</td>
+            <td><b>Identity.</b> <code>route:</code> and <code>tier:</code> are what the contact
+              centre and the kit packers filter on. An untagged contact is invisible to both.</td></tr>
+          <tr><td>5 · Create a note</td><td class="g ign">Ignore</td>
+            <td><b>Convenience.</b> The note is a reading aid. Losing it must not cost her the task
+              in module 6, which is the thing with a two-hour clock on it.</td></tr>
+          <tr class="hot"><td>6 · Create a task</td><td class="g brk">Break</td>
+            <td>This is the two-hour first-contact promise. A dropped task is a woman who
+              completed a nineteen-question map and never heard from anyone.</td></tr>
+          <tr><td>7 · Webhook response</td><td class="g ign">Ignore</td>
+            <td><b>Convenience.</b> The 200 is courtesy to WordPress. The work is already done by
+              the time this runs, and Gravity Forms does not retry on a missing response.</td></tr>
+        </tbody>
+      </table>
+
+      <h3 class="tabh">Scenario 2 &middot; the Stripe bridge</h3>
+      <table class="gates">
+        <thead><tr><th>Module</th><th>Gate</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td>1 · Watch events</td><td class="g none">none</td>
+            <td>A trigger. Stripe retries a failed webhook delivery on its own schedule, which is
+              the safety net here.</td></tr>
+          <tr><td>2 · Set variables</td><td class="g none">none</td>
+            <td>Decodes the payment link into an emirate. A failure here means an unrecognised
+              link, which must stop the run rather than guess.</td></tr>
+          <tr class="hot"><td>3 · Create or update contact</td><td class="g brk">Break</td>
+            <td><b>Money and identity.</b> She has paid. Losing this run means a paying client with
+              no record of the purchase in GHL.</td></tr>
+          <tr class="hot"><td>4 · Add contact tags</td><td class="g brk">Break</td>
+            <td><b>Money.</b> Emirate and tier. The Welcome Pack's first step reads the emirate;
+              without it the confirmation renders with two blank buttons.</td></tr>
+          <tr><td>5 · Create a note</td><td class="g ign">Ignore</td>
+            <td><b>Convenience.</b> The receipt in till language. Useful, not load-bearing.</td></tr>
+          <tr class="hot"><td>6 · Add tag <code>voucher:paid</code></td><td class="g brk">Break</td>
+            <td><b>The starting gun.</b> This tag ends the nurture and starts the Welcome Pack. If
+              it fails after modules 3 and 4 succeeded, she is a paying client still being sold to.
+              Break, and put this one on a notification.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="note warn"><b>One Make setting to check that is not a gate.</b>
+        Extra credits auto-purchase is <b>off</b> on the Core plan. That is the right setting, since
+        it stops a runaway loop spending money without asking. It also means that if 10,000 credits
+        are ever exhausted the scenarios stop rather than overspend. At roughly 7 and 6 credits a
+        run that is about 1,400 quiz submissions or 1,600 payments in a cycle, which this window
+        will not reach. Worth knowing rather than worth changing.</div>
+    </section>
+
+    <!-- ====================== 3. FAILURE MODES ====================== -->
+    <section id="modes" class="sect">
+      <div class="sec-head">
+        <span class="sectnum">3</span>
+        <div>
+          <h2>Failure modes, and the contingency for each</h2>
+          <p class="lede">Ordered by how much it costs a client, not by how likely it is. Every one
+            of these is silent: none of them raises an error anywhere, which is why each row has a
+            <b>what you would see</b> rather than a log to check.</p>
+        </div>
+      </div>
+
+      <div class="modes">
+
+        <article class="mode sev1">
+          <div class="modehead"><span class="sev">Worst</span>
+            <h3>A woman who has paid keeps getting the sell emails</h3></div>
+          <dl>
+            <dt>What you would see</dt>
+            <dd>A complaint, or Belle noticing a client on the nurture list who is already on the
+              paid list. Nothing in any log.</dd>
+            <dt>What it means</dt>
+            <dd>Two contact records for one woman. Scenario 1 matches on phone, scenario 2 matches
+              on email, so a quiz done on one and a payment made on the other never join up. Her
+              <code>voucher:paid</code> tag landed on record B while the nurture runs on record A,
+              and the goal that ends the arc is on A.</dd>
+            <dt>Contingency now</dt>
+            <dd>The &ldquo;already placed your credit&rdquo; note is in all seven pre-purchase
+              emails, so she is told to ignore it rather than left to conclude we do not know she
+              paid. That is a cushion, not a fix.</dd>
+            <dt>The fix</dt>
+            <dd>Match on <b>email in both scenarios</b>, or add a search-by-email-then-phone step.
+              Merge the duplicate pair in GHL by hand and re-apply the tags to the survivor.</dd>
+            <dt>Who</dt>
+            <dd>Kate builds. Belle spots it first.</dd>
+          </dl>
+        </article>
+
+        <article class="mode sev1">
+          <div class="modehead"><span class="sev">Worst</span>
+            <h3>A confirmation email arrives with two blank buttons</h3></div>
+          <dl>
+            <dt>What you would see</dt>
+            <dd>Open the sent copy of Email 1. Where the two salon buttons should be, there is
+              nothing, or the words render as empty. No error, no bounce.</dd>
+            <dt>What it means</dt>
+            <dd>An unpopulated GHL merge field renders blank rather than failing. The emirate was
+              never written before the Welcome Pack read it, so
+              <code>{{branch_a_name}}</code> and <code>{{branch_b_name}}</code> came back empty.</dd>
+            <dt>Cause, almost always</dt>
+            <dd>A hand-applied <code>voucher:paid</code> that arrived before the emirate, tier and
+              receipt. See the manual sequence below.</dd>
+            <dt>Contingency</dt>
+            <dd>Pause the Welcome Pack. Set the fields on the affected contacts. Send Email 1 to
+              them as a one-off rather than re-running the workflow, which would send Email 2 and
+              3 again as well.</dd>
+            <dt>Who</dt>
+            <dd>Whoever applied the tag. Kate re-sends.</dd>
+          </dl>
+        </article>
+
+        <article class="mode sev2">
+          <div class="modehead"><span class="sev">Bad</span>
+            <h3>A manual tag applied out of order, or late</h3></div>
+          <dl>
+            <dt>What it is</dt>
+            <dd>Tabby is a unique payment link per client, verified and tagged by Belle. A till
+              payment is tagged by the branch, within the day. Both are hand-applied, and both
+              reach the Welcome Pack the moment <code>voucher:paid</code> lands.</dd>
+            <dt>The trap</dt>
+            <dd><code>voucher:paid</code> is not a label, it is a trigger. Applied first, it starts
+              the Welcome Pack before the fields the Welcome Pack reads have been written, and the
+              result is the blank-button failure above.</dd>
+            <dt>The sequence, and it is not optional</dt>
+            <dd class="seq">
+              <span>1 · <code>emirate</code> and <code>emirate_source</code></span>
+              <span>2 · <code>tier:[x]</code> and <code>branch:[x]</code></span>
+              <span>3 · the amount, as a note</span>
+              <span class="last">4 · <code>voucher:paid</code>, last and on its own</span>
+            </dd>
+            <dt>The real fix</dt>
+            <dd>Do not hand anyone a tag. A short GHL internal form with four questions applies all
+              four in the right order, and the ordering trap stops existing rather than being
+              documented. An hour of work, and nobody has to remember a sequence at a busy till.</dd>
+            <dt>The late-tag cost</dt>
+            <dd>&ldquo;Within the day&rdquo; means a woman who pays at 10am can get her confirmation
+              at 7pm. That is survivable and the emails now cover it, but the shorter that gap is
+              the less this page matters.</dd>
+            <dt>Who</dt>
+            <dd>Belle for Tabby. Branch reception for till. Kate builds the form.</dd>
+          </dl>
+        </article>
+
+        <article class="mode sev2">
+          <div class="modehead"><span class="sev">Bad</span>
+            <h3>A refunded voucher keeps receiving the Welcome Pack</h3></div>
+          <dl>
+            <dt>Will this even happen</dt>
+            <dd>Yes, and the T&amp;Cs are what create it. Term 3 holds the credit to the emirate it
+              was bought in and then says that if she has bought the wrong one we <em>&ldquo;will do
+              our best to put it right&rdquo;</em>. That sentence invites a refund conversation in
+              writing. Refunds are not an edge case we are importing, they are a path the document
+              already promises her.</dd>
+            <dt>What it means today</dt>
+            <dd>Nothing watches <code>charge.refunded</code>. The tag stays, so the arc continues and
+              she keeps being welcomed to a voucher she no longer holds.</dd>
+            <dt>The part that is not obvious</dt>
+            <dd>Removing <code>voucher:paid</code> afterwards does <b>not</b> pull her out. The goal
+              fired once and she is already inside the workflow. Untagging her changes nothing.</dd>
+            <dt>The build, three parts</dt>
+            <dd class="seq">
+              <span>1 · Stripe module watches <code>charge.refunded</code> too</span>
+              <span>2 · Router path: remove <code>voucher:paid</code>, add <code>voucher:refunded</code>, note the amount and date</span>
+              <span class="last">3 · Welcome Pack gets a hard exit on <code>voucher:refunded</code></span>
+            </dd>
+            <dd class="wide">Part 3 is the one that actually stops the messages, and it is the one
+              that gets forgotten because parts 1 and 2 feel like the work. Build it the same way
+              <code>voucher:redeemed</code> already works: a goal node with the exit behaviour, not
+              a filter.</dd>
+            <dt>Partial refunds</dt>
+            <dd>Stripe fires <code>charge.refunded</code> for a partial refund as well. If we ever
+              refund part of a tier, treat it as a full exit and have a human re-place the credit by
+              hand. Do not try to compute a remaining balance in a workflow.</dd>
+            <dt>Contingency until it is built</dt>
+            <dd>Belle tells Kate on the day of any refund, and the contact is removed from the
+              workflow by hand. That works precisely because the volume is low; it stops working the
+              moment it is not.</dd>
+            <dt>Who</dt>
+            <dd>Kate builds all three parts. Belle reports.</dd>
+          </dl>
+        </article>
+
+        <article class="mode sev2">
+          <div class="modehead"><span class="sev">Bad</span>
+            <h3>She was shown one emirate and paid through the other</h3></div>
+          <dl>
+            <dt>What it means</dt>
+            <dd>Her tag says one emirate, her Stripe link says another. Under term 3 the credit is
+              held to the emirate it was bought in, so the payment wins on the data. It is never a
+              silent re-tag: she was shown one voucher and holds another.</dd>
+            <dt>Contingency</dt>
+            <dd>Hold both regional sends. Raise the mismatch task. A human calls within two hours,
+              before her first redemption, which is the window term 3 invites her to use.</dd>
+            <dt>How hard the call is</dt>
+            <dd>Read <code>emirate_source</code>. <b>picker</b> means she chose it herself and was
+              sold against that choice, so escalate. <b>phorest</b> means we inferred it and were
+              wrong, so confirm and move on.</dd>
+            <dt>Not a conflict</dt>
+            <dd>A Saadiyat client paying through the Khalifa City link. Saadiyat has no working
+              Stripe, so that is expected. The emirate agrees, nothing holds.</dd>
+            <dt>Who</dt>
+            <dd>Contact centre calls. Kate sets the severity rule.</dd>
+          </dl>
+        </article>
+
+        <article class="mode sev3">
+          <div class="modehead"><span class="sev">Planned</span>
+            <h3>Meta has not approved the emirate-ask template</h3></div>
+          <dl>
+            <dt>What you would see</dt>
+            <dd>The step sits in the workflow with nothing to send. No warning, no bounce.</dd>
+            <dt>Contingency, already designed</dt>
+            <dd>Hold the unknown-emirate cohort out of the Day 0 WhatsApp entirely and send them the
+              neutral email only. Email needs no approval. The email's WhatsApp link opens a chat,
+              and once she writes to us first the 24-hour service window lets us reply with no
+              template at all.</dd>
+            <dt>The hole in that fallback</dt>
+            <dd>It only works if somebody answers. The window is 24 hours from <b>her</b> message,
+              not from ours, and the reply has to be human. Confirm who is on the inbox and at what
+              hours before relying on this.</dd>
+            <dt>Timing</dt>
+            <dd>Not the emergency it was written as. The arc starts 20 August, not 10 August, so
+              there is a week of runway. Submit early anyway: a rejection restarts the clock.</dd>
+            <dt>Who</dt>
+            <dd>Kate submits. Whoever holds the WhatsApp inbox answers.</dd>
+          </dl>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- ====================== 4. OWNERS ====================== -->
+    <section id="owners" class="sect">
+      <div class="sec-head">
+        <span class="sectnum">4</span>
+        <div>
+          <h2>Who to wake, and who holds what</h2>
+          <p class="lede">Half of an incident is knowing who can actually press the button. Any row
+            marked in amber is a gap, not a formatting placeholder: it means nobody has confirmed
+            who holds it, and that is a decision rather than a lookup.</p>
+        </div>
+      </div>
+
+      <table class="owners">
+        <thead><tr><th>System</th><th>Who can stop it</th><th>Out of hours</th></tr></thead>
+        <tbody>
+          <tr><td>GoHighLevel workflows</td><td class="gap">Needs a name</td><td class="gap">Needs a name</td></tr>
+          <tr><td>Make scenarios</td><td>Kate</td><td>Kate</td></tr>
+          <tr><td>Stripe <span class="small">(never switch off, see section 1)</span></td>
+            <td>Tara Rose Group, confirmed 10 Aug</td><td>Kate</td></tr>
+          <tr><td>WordPress / Gravity Forms</td><td class="gap">Needs a name</td><td class="gap">Needs a name</td></tr>
+          <tr><td>WhatsApp, leads line <span class="small">971 58 155 9679</span></td>
+            <td>Live, confirmed 10 Aug</td><td class="gap">Who answers, needs a name</td></tr>
+          <tr><td>Tabby verification and tagging</td><td>Belle</td><td>Belle</td></tr>
+          <tr><td>Till tagging, per branch</td><td>Branch reception</td><td>Same day, not out of hours</td></tr>
+          <tr><td>Telling the desk</td><td>Kate or Emma</td><td>Kate or Emma</td></tr>
+        </tbody>
+      </table>
+
+      <div class="note"><b>Two rows closed on 10 August.</b> Stripe is ours, so the nine payment
+        links can be checked whenever we want and the account owner is not a blocker. And
+        <code>971 58 155 9679</code>, the number in the footer of all thirteen emails, is live: it
+        is the line for prospects who have no contact with a salon yet, which is exactly the
+        audience the pre-purchase emails are written for. The Meta fallback in section 3 stands
+        up. <b>What is still open is who answers it, and at what hours</b>, because that fallback
+        only works if somebody replies inside her 24-hour window.</div>
+    </section>
+
+    <!-- ====================== 5. STILL TO BUILD ====================== -->
+    <section id="build" class="sect">
+      <div class="sec-head">
+        <span class="sectnum">5</span>
+        <div>
+          <h2>Still to build, with the how</h2>
+          <p class="lede">Three items that are cheap now and expensive later, because each one is
+            something you are told not to do once the window is open. They are here rather than in
+            the build specs because each exists to make an incident survivable.</p>
+        </div>
+      </div>
+
+      <article class="build done">
+        <h3><span class="donetag">Built 10 Aug</span> 1 &middot; The nine Stripe links, in a data
+          store rather than in a scenario</h3>
+        <p class="why"><b>Why it could not wait.</b> Section 1 says never amend a live scenario
+          mid-window. Had the nine payment link IDs stayed hardcoded in a <em>Set multiple
+          variables</em> module, correcting one mis-mapped link would have meant doing exactly the
+          thing that rule forbids. The two rules collided, and the collision only had a cheap answer
+          before the window opened.</p>
+        <div class="built">
+          <b>Live in Make now.</b> Team <em>My Team</em> &middot; data store
+          <code>voucher_payment_links</code> (id 160293) on data structure <em>Voucher payment
+          links</em> (id 524304). Five text fields: <code>link_id</code> as the key,
+          <code>emirate</code>, <code>branch</code>, <code>tier</code>, <code>note</code>. All nine
+          rows are in.
+        </div>
+        <p class="why"><b>It caught something on the way in.</b> Motor City's three links run
+          <code>…0VO1G</code>, <code>…0VO1F</code>, <code>…0VO1E</code> for Dip Your Toes, Season of
+          You and All-In VIP Year: <b>reversed</b> against the other two branches, which run 01, 02,
+          03 in tier order. A mapping written from the pattern rather than from the table would have
+          had all three Motor City tiers wrong, and the failure would have been silent, because a
+          wrong tier still routes to the right emirate. The reversal is written into the
+          <code>note</code> field on those rows so the next person does not re-derive it.</p>
+        <p class="why"><b><code>branch</code> is deliberately empty on the three Abu Dhabi rows.</b>
+          Saadiyat has no working Stripe, so its clients pay through the Khalifa City link. A payment
+          there means Abu Dhabi, not Khalifa City, and an empty field is the honest answer where a
+          guess would be a wrong one.</p>
+        <ol class="steps">
+          <li><b>Still to do, and it needs the scenario to exist first.</b> There is no Stripe bridge
+            scenario in this Make account yet: the two Beauty Voucher scenarios are still drawings in
+            <code>automations/automations.html</code>. Nothing here is wired to anything.</li>
+          <li><b>When you build scenario 2</b>, read the emirate with a <em>Data store &rarr; Search
+            records</em> module filtered on <code>link_id</code>, placed before the contact upsert.
+            Do not re-type the mapping into a variables module.</li>
+          <li><b>Handle the miss.</b> If the search returns nothing, the link is one nobody has
+            recorded. Set <code>emirate: unknown</code>, <code>emirate_source: payment</code> and
+            raise the mismatch task. Never guess an emirate from an unrecognised link.</li>
+        </ol>
+        <div class="payoff">Fixing a wrong link is now editing one row and takes about ten seconds.
+          Nobody opens the scenario, so the mid-window rule is never broken, and anyone can read the
+          routing table without knowing Make.</div>
+      </article>
+
+      <article class="build">
+        <h3>2 &middot; The refund exit, all three parts</h3>
+        <p class="why"><b>Why it cannot wait.</b> Term 3 promises her we will &ldquo;do our best to
+          put it right&rdquo; if she holds the wrong emirate's voucher. That is a refund path written
+          into the T&amp;Cs, so the first refund is a matter of when. Building the exit afterwards
+          does not help the woman it already happened to.</p>
+        <ol class="steps">
+          <li><b>Stripe module:</b> add <code>charge.refunded</code> to the watched events alongside
+            <code>checkout.session.completed</code>.</li>
+          <li><b>Router:</b> a second path for the refund event. On it, remove
+            <code>voucher:paid</code>, add <code>voucher:refunded</code>, and write a note with the
+            amount and the date.</li>
+          <li><b>GHL Welcome Pack:</b> a hard exit goal on <code>voucher:refunded</code>, built the
+            same way <code>voucher:redeemed</code> already is.</li>
+        </ol>
+        <div class="payoff warnpay"><b>Step 3 is the one that actually stops the messages</b>, and it
+          is the one that gets skipped because the first two feel like the work. Untagging her does
+          nothing on its own: the goal fired once and she is already inside the workflow.</div>
+      </article>
+
+      <article class="build">
+        <h3>3 &middot; <code>test:seed</code>, applied before the import and not after</h3>
+        <p class="why"><b>Why it cannot wait.</b> The eight test contacts exist to exercise every
+          branch, which means they look exactly like real leads to every filter in the system. Add
+          the exclusion after the import and they have already had the broadcast.</p>
+        <ol class="steps">
+          <li><b>Tag the eight seed contacts <code>test:seed</code></b> as the first thing you do to
+            them, before they are used for anything.</li>
+          <li><b>Exclude the tag in each workflow's entry filters</b>, not in a branch partway down.
+            One condition per workflow, at the top: <em>does not have tag <code>test:seed</code></em>.
+            An exclusion halfway down still lets a test contact trigger everything above it.</li>
+          <li><b>Exclude it in the broadcast segment as well</b>, so it holds even if a workflow
+            filter is ever edited out. Two independent guards, because this one fails silently and
+            publicly.</li>
+          <li><b>Never reuse a real client's number or email as a seed.</b> A <code>+test</code>
+            alias and a team number only. A seed that is also a client cannot be excluded without
+            excluding her.</li>
+        </ol>
+        <div class="payoff">Keep the eight after launch rather than deleting them. They are how you
+          test a fix against the live build without sending anything to a real client, which is the
+          thing section 1 tells you to do and which nothing else on this page makes possible.</div>
+      </article>
+
+      <article class="build">
+        <h3>4 &middot; Un-require the consent tickbox on form 21</h3>
+        <p class="why"><b>Why it cannot wait.</b> This one is not a campaign item and it is not
+          waiting on anything. The UAE Personal Data Protection Law wants consent that is
+          <em>freely given</em>. Field 5 on Gravity Forms 21 is still marked required, which means
+          she cannot get her Confidence Map without agreeing to marketing. Consent bundled into
+          getting the thing she came for is not freely given, and the page is live now.</p>
+        <ol class="steps">
+          <li><b>WordPress &rarr; Forms &rarr; form 21 &rarr; the consent field &rarr; General &rarr;
+            untick <em>Required</em>.</b> That is the whole change.</li>
+          <li><b>Do not remove the tickbox.</b> The consent itself is what lets us message her at
+            all. What comes off is the requirement, not the question.</li>
+          <li><b>Check the submit button still works unticked.</b> Submit the form twice, once with
+            the box ticked and once without, and confirm both entries land.</li>
+          <li><b>Expect fewer opt-ins,</b> and take it. What the required box collects is form
+            completion, not consent, so the number it was producing was never the number it looked
+            like.</li>
+        </ol>
+        <div class="payoff">Also worth doing in the same pass, from the field spec's appendix:
+          the consent label and the submit button both still say <em>Journal</em>, and the page
+          <code>&lt;title&gt;</code> still reads &ldquo;A diagnosis, not a commitment&rdquo; against
+          a hero that now says &ldquo;A direction&rdquo;. Three strings, one visit.</div>
+      </article>
+
+      <div class="note warn"><b>Two built templates are not in this pack.</b> The
+        <em>Beauty Voucher Reserved</em> and <em>Beauty Voucher &mdash; Payment Notification</em>
+        messages exist and were test-sent in July, and neither is in
+        <code>data/whatsapp-templates.json</code>, which carries eight. Two consequences.
+        <b>One:</b> the &ldquo;is Lead Nurture broadcast-fed or form-fed&rdquo; question that has
+        blocked the build since 7 August is answered by this. A reserve-and-pay path already exists
+        and already has its own two messages, so Lead Nurture can be broadcast-fed without
+        stranding the women who reserve. <b>Two:</b> the test send shows the tier rendering as a raw
+        field value, <code>vip</code> in lower case, where a client should read
+        <em>All-In VIP Year</em>. That is a test doing its job; it still has to be fixed before the
+        template goes near a client. Both templates need adding to the pack and reviewing like every
+        other asset.</div>
+    </section>
+
+    <p class="foot">Written 10 August 2026. This page is the contingency layer for the build
+      described in <b>docs/EMIRATE-ROUTING-BUILD-SPEC.md</b> and
+      <b>docs/CONFIDENCE-MAPPING-FIELD-SPEC.md</b>. Where those two say what to build, this one
+      says what to do when it does not work. If a failure happens that is not on this page, add it
+      here before you fix it, while you still remember what it looked like.</p>
+
+  </main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../auth/supabase-client.js"></script>
+<script src="../shared/notes-widget.js"></script>
+<script src="runbook.js"></script>
+</body>
+</html>

@@ -1,0 +1,194 @@
+/* ==========================================================================
+   Phone view for the mockup pages: the browser/phone switch, the mobile
+   browser chrome, and the stage the handset sits on.
+
+   Added 8 Aug 2026. Pairs with phone-view.js, and REQUIRES mail-preview.css,
+   which already draws the two handsets (.phone.samsung / .phone.iphone), the
+   status bar and the scroll area. Same two devices as the email previews on
+   purpose: Galaxy S25 at 360px and iPhone 16 Pro at 402px are the pack's
+   standard pair, so "phone" means the same thing everywhere in it.
+
+   Loaded by the three mockups:
+     website-mockup.html · terms-mockup.html · confidence-mapping-mockup.html
+
+   Depends on the host page defining --paper --line --sand --dark --muted --ink
+   and the .top/.inner sticky header, .browser > .chrome + .site structure.
+   ========================================================================== */
+
+/* ========================= embedded in a handset =========================
+   A mockup opened with ?pv=1 is being read INSIDE the phone frame on another
+   mockup, so everything that belongs to the reviewer comes off and only the
+   mocked page is left: no sticky review header, no "You are" bar, no notes
+   pins, no browser chrome, no page margins. Otherwise a tap on "Back to the
+   voucher" hands you the review furniture at 360px, which is nobody's view of
+   anything.
+
+   Set by a one-line script in each mockup's <head>, so the chrome is never
+   painted and then taken away. Everything here is !important on purpose: it is
+   undoing the host page's own layout and has to win without knowing it. */
+html.pv-embed .top,
+html.pv-embed .band,
+html.pv-embed .chrome,
+html.pv-embed .trs-notes-root,
+html.pv-embed .trs-idbar,
+html.pv-embed .trs-pin-btn,
+html.pv-embed .trs-nav-count{display:none !important;}
+html.pv-embed{--revh:0px !important;}
+/* A 15px scrollbar takes the layout width down to 387 and quietly makes the
+   simulation wrong: the srcdoc render hides it the same way, and a phone has no
+   persistent scrollbar either. */
+html.pv-embed{scrollbar-width:none;-ms-overflow-style:none;}
+html.pv-embed::-webkit-scrollbar{width:0;height:0;display:none;}
+html.pv-embed .browser{
+  margin:0 !important;max-width:none !important;border:0 !important;
+  border-radius:0 !important;box-shadow:none !important;
+}
+html.pv-embed .site,
+html.pv-embed .site > *:last-child{border-radius:0 !important;}
+/* the widget pads a pinned heading to clear its pin; with no pin, no padding */
+html.pv-embed .trs-pin-clear{padding-right:0 !important;}
+
+/* The mockups' own 📌 annotations keep their ICON in the frame, because it is what marks
+   which part of the page the note is about, but not their popover. A note is not
+   part of the site's interface, so it has no business inside the client's screen,
+   and nothing in an iframe can spill outside one anyway. The tap is posted out and
+   the note is drawn beside the handset instead: see .pv-note below. */
+html.pv-embed .pin .pop{display:none !important;}
+html.pv-embed .pin .pinicon{cursor:pointer;}
+
+/* ===================== the switch, in the sticky header =====================
+   The header arranges itself with `order`, not source order, so the new control
+   is placed by number rather than by where the script injects it. `.back` is
+   order 7 on all three pages; it moves to 9 so View can sit before it, which is
+   where the eye lands last: after the page's own switches, before you leave. */
+.top .inner > .back{order:9;}
+.pv-lbl{order:7;}
+.pvswitch{order:8;margin-left:-8px;}
+.pvswitch button{display:inline-flex;align-items:center;gap:7px;}
+.pvswitch svg{
+  width:15px;height:15px;fill:none;stroke:currentColor;
+  stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;
+}
+
+/* The nudge. A control nobody notices is a control that does not exist, so the
+   switch pulses until it has been used once, then never again (the script
+   remembers in localStorage). Three pulses, not a loop: it should catch the
+   eye, not nag. */
+.pv-nudge .pvswitch{animation:pvpulse 2.6s ease-out 3;border-radius:100px;}
+@keyframes pvpulse{
+  0%{box-shadow:0 0 0 0 rgba(28,117,99,.5);}
+  70%{box-shadow:0 0 0 11px rgba(28,117,99,0);}
+  100%{box-shadow:0 0 0 0 rgba(28,117,99,0);}
+}
+@media(prefers-reduced-motion:reduce){ .pv-nudge .pvswitch{animation:none;} }
+
+/* the one-line pointer under the header, shown until the phone view is opened */
+.pv-tip{
+  display:flex;align-items:flex-start;gap:9px;margin:14px 0 0;
+  background:#EAF7F3;border:1px solid #BFE4DA;border-left:3px solid #1C7563;
+  border-radius:0 10px 10px 0;padding:10px 15px;font-size:13.5px;line-height:1.6;color:#1E4A41;
+}
+.pv-tip svg{width:17px;height:17px;flex:0 0 auto;margin-top:2px;fill:none;stroke:#1C7563;
+  stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;}
+.pv-tip b{font-weight:700;}
+
+/* ============================== the stage ==============================
+   Only one of the two frames is in the document flow at a time. The desktop
+   frame is hidden rather than removed so the notes widget's pins, which are
+   injected into .site, keep their anchors and come back untouched. */
+.pv-stage{display:none;background:transparent;padding:24px 16px 46px;}
+body.pv-on .browser{display:none;}
+body.pv-on .pv-stage{display:flex;}
+
+.pv-col .devlbl{font-size:11px;}
+.pv-cap{
+  max-width:430px;text-align:center;font-size:12.5px;line-height:1.65;
+  color:var(--muted);margin-top:16px;
+}
+.pv-cap b{display:block;color:var(--ink);font-weight:600;word-break:break-all;margin-bottom:4px;}
+
+/* The iframe fills the screen and scrolls itself, rather than being sized to its
+   content with the .scrollarea scrolling around it the way the email previews do.
+   It has to be this way round: the mocked site has its own position:sticky header,
+   and sticky only works when the element's own document is the scroll container. */
+.pv-stage .scrollarea{overflow:hidden;}
+.pv-stage .scrollarea iframe{width:100%;height:100%;border:0;display:block;background:#F1ECE3;}
+
+/* ================= the pin note, beside the handset =================
+   Where a mockup's 📌 annotation opens in phone view. Deliberately outside the
+   phone and deliberately in the PACK's amber, not the site's palette: it is
+   review furniture, and it should never be mistaken for something the page does.
+
+   align-self:flex-start with a top offset lines it up with the top of the screen
+   rather than the top of the column, which carries the label, the spec and the
+   device switch above the handset. */
+.pv-note{
+  flex:0 1 320px;align-self:flex-start;margin-top:62px;
+  background:var(--amber-bg);border:1px solid #E4CC9A;
+  border-radius:4px 14px 14px 14px;padding:13px 16px 14px;
+  font-size:13px;line-height:1.65;color:var(--ink);
+  box-shadow:0 14px 32px rgba(28,26,22,.16);
+}
+.pv-note[hidden]{display:none;}
+.pv-note-h{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;
+  font-size:10.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--amber);
+}
+.pv-note-x{
+  border:0;background:transparent;color:var(--amber);cursor:pointer;
+  font:400 19px/1 inherit;padding:0 2px;
+}
+.pv-note-x:hover{color:var(--ink);}
+.pv-note-b strong{font-weight:700;}
+.pv-note-b code{
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:11.5px;
+  background:rgba(45,46,55,.08);padding:1px 5px;border-radius:4px;
+}
+.pv-note-f{
+  margin-top:10px;padding-top:9px;border-top:1px solid rgba(180,130,58,.28);
+  font-size:11.5px;color:#8A7448;
+}
+/* On a narrow window the note wraps under the phone instead of squeezing it. The
+   stage is a flex row that already scrolls sideways for the handsets; letting it
+   wrap keeps the note readable rather than 90px wide. */
+.pv-stage{flex-wrap:wrap;}
+
+/* ===================== Chrome on Android, the top bar ===================== */
+.pv-and{display:flex;align-items:center;gap:9px;padding:5px 10px 9px;background:#F1F3F4;flex:0 0 auto;}
+.pv-and .u{
+  flex:1 1 auto;min-width:0;display:flex;align-items:center;gap:7px;background:#fff;
+  border-radius:100px;padding:7px 13px;font:400 12.5px/1 Roboto,Arial,sans-serif;color:#3C4043;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.pv-and .u svg{width:11px;height:11px;flex:0 0 auto;fill:#5F6368;}
+.pv-and .t{
+  flex:0 0 auto;width:17px;height:17px;border:1.8px solid #5F6368;border-radius:4px;
+  font:700 10px/14px Roboto,Arial,sans-serif;text-align:center;color:#5F6368;
+}
+.pv-and .m{flex:0 0 auto;color:#5F6368;font:700 15px/1 Roboto,Arial,sans-serif;letter-spacing:1px;}
+
+/* ================== Safari on iOS, the bar at the bottom ==================
+   Bottom, not top: that has been the iOS Safari default since iOS 15, and it
+   is the reason a sticky footer CTA gets covered on an iPhone and not on an
+   Android. Drawing it in the wrong place would hide the one thing this frame
+   is useful for catching. */
+.pv-ios{flex:0 0 auto;background:#F7F7F7;border-top:1px solid #DEDEE1;padding:8px 12px 0;}
+.pv-ios .u{
+  display:flex;align-items:center;gap:8px;background:#EDEDEF;border-radius:12px;padding:8px 12px;
+  font:400 14px/1.1 -apple-system,'Segoe UI',Arial,sans-serif;color:#1C1C1E;
+}
+.pv-ios .u .aa{font-size:12px;color:#5B5B60;flex:0 0 auto;}
+.pv-ios .u .host{flex:1 1 auto;min-width:0;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.pv-ios .u svg{width:14px;height:14px;flex:0 0 auto;fill:none;stroke:#5B5B60;stroke-width:1.9;
+  stroke-linecap:round;stroke-linejoin:round;}
+.pv-ios .tools{display:flex;align-items:center;justify-content:space-between;padding:11px 8px 3px;color:#007AFF;}
+.pv-ios .tools svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.9;
+  stroke-linecap:round;stroke-linejoin:round;}
+.pv-ios .tools .off{color:#B9B9BE;}
+
+/* Narrow reviewer window: the handsets are a fixed 376/420px wide by design,
+   that is the whole point, so the stage scrolls sideways rather than squashing
+   them, exactly as .mstage does for the email frames. */
+@media(max-width:520px){
+  .pv-stage{justify-content:flex-start;padding-left:12px;padding-right:12px;}
+}

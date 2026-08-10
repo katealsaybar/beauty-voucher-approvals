@@ -1,0 +1,328 @@
+  /* Google Calendar's month grid, wearing the pack's palette. The layout is deliberately
+     familiar. Tara, Emma and Hanneh already know how to read a month view, so nothing
+     here needs explaining. What is ours is the type, the colour and the detail card. */
+  :root{
+    --bg:#F1ECE3; --canvas:#FAF8F4; --paper:#FFFFFF; --ink:#2D2E37; --muted:#6E6E77;
+    --line:#E7E2D8; --accent:#99F6E4; --accent-deep:#3AA892; --sand:#F1ECE3; --dark:#2D2E37;
+    --amber:#B4823A; --amber-bg:#FBF3E2; --amber-line:#EAD9B8; --amber-ink:#6E5320;
+    --green:#3E7A5E; --green-bg:#E4F1EA; --red:#B24A4A;
+    --serif:'Playfair Display',Georgia,serif;
+    --sans:'Inter',system-ui,-apple-system,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.6;}
+
+  /* ===== header ===== */
+  .top{background:var(--paper);border-bottom:1px solid var(--line);padding:12px 22px 11px;position:sticky;top:0;z-index:20;}
+  .toprow1{display:flex;align-items:center;gap:18px;flex-wrap:wrap;}
+  .toprow2{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:9px;}
+  .toprow3{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;
+    margin-top:9px;padding-top:9px;border-top:1px solid var(--line);}
+  .top .back{flex:0 0 auto;text-decoration:none;font-size:12.5px;font-weight:700;color:var(--muted);
+    border:1px solid var(--line);border-radius:100px;padding:7px 14px;background:var(--paper);}
+  .top .back:hover{border-color:var(--accent-deep);color:var(--ink);}
+  .brandlogo{display:block;width:112px;height:auto;flex:0 0 auto;}
+  .top .head{flex:1 1 auto;min-width:230px;}
+  .top .k{font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--muted);font-weight:700;}
+  .top h1{font-family:var(--serif);font-weight:600;font-size:21px;line-height:1.15;margin-top:3px;}
+  .top .hint{font-size:12.5px;color:var(--muted);margin-top:3px;}
+  .top .hint b{color:var(--ink);}
+  /* the notes widget injects its "You are" bar into .topbar; it was drawn for a stacked
+     header, so its own margin and divider are reset here (same fix as the automations map) */
+  .toprow2 .trs-idbar{margin:0;padding:0;border-top:none;flex:0 1 auto;order:1;}
+  .toprow2 .navwrap{order:2;}
+
+  /* month switch + view switch, lower right */
+  .navwrap{display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap;}
+  .navblock{display:flex;flex-direction:column;gap:5px;}
+  .navlbl{font-size:9.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);}
+  .navbtns{display:flex;gap:6px;align-items:center;}
+  .btn{background:var(--paper);border:1px solid var(--line);border-radius:11px;padding:6px 13px;
+    font:inherit;font-size:12.5px;font-weight:700;color:var(--muted);cursor:pointer;white-space:nowrap;}
+  .btn:hover{border-color:var(--accent-deep);color:var(--ink);}
+  .btn.active{background:var(--dark);border-color:var(--dark);color:#fff;}
+  .btn.arrow{padding:6px 11px;}
+  .monthlbl{font-family:var(--serif);font-size:17px;font-weight:600;min-width:158px;text-align:center;}
+
+  /* channel filters, Google Calendar's "my calendars" list laid out flat */
+  .cals{display:flex;gap:5px 12px;flex-wrap:wrap;align-items:center;}
+  .cal{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;color:var(--muted);
+    cursor:pointer;user-select:none;padding:3px 2px;}
+  .cal input{position:absolute;opacity:0;pointer-events:none;}
+  .cal .box{width:13px;height:13px;border-radius:3.5px;flex:0 0 auto;border:1.5px solid currentColor;
+    display:grid;place-items:center;}
+  .cal .box svg{width:9px;height:9px;stroke:#fff;fill:none;stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round;opacity:0;}
+  .cal.on{color:var(--ink);}
+  .cal.on .box svg{opacity:1;}
+  .cal.off .box{background:transparent !important;}
+  .calcount{font-size:10px;font-weight:700;color:var(--muted);opacity:.75;}
+  /* One switch for the lot. Reading a single platform means unticking five boxes, and
+     going back to everything means ticking them again, which is the sort of small friction
+     that stops someone using the filter at all. */
+  .calall{border:1px solid var(--line);background:var(--paper);border-radius:100px;padding:4px 11px;
+    font:inherit;font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--muted);cursor:pointer;white-space:nowrap;}
+  .calall:hover{border-color:var(--accent-deep);color:var(--ink);}
+  .rhythm{font-size:11px;color:var(--muted);white-space:nowrap;}
+  .rhythm b{color:var(--ink);}
+
+  /* ===== banners ===== */
+  .banner{margin:14px 22px 0;padding:12px 16px;background:var(--amber-bg);border:1px solid var(--amber-line);
+    border-radius:12px;font-size:13px;line-height:1.6;color:var(--amber-ink);}
+  .banner code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;
+    background:rgba(255,255,255,.6);padding:1px 5px;border-radius:4px;}
+
+  /* ===== the sign-off card =====
+     The calendar opens in its own tab, so until now the one place to say yes to it was back
+     in the pack, in a queue Tara has to go and find. The answer belongs where the thing
+     being answered is. Same anchor as Decision 16 in index.html, so an approval given here
+     and one given in the queue are the same answer, counted once. */
+  .signoff{margin:14px 22px 0;padding:14px 17px 15px;background:var(--paper);
+    border:1px solid var(--line);border-left:4px solid var(--accent-deep);border-radius:12px;
+    display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap;}
+  .so-main{flex:1 1 340px;min-width:0;}
+  .so-k{font-size:9.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+  .so-t{font-family:var(--serif);font-size:18px;font-weight:600;line-height:1.2;margin-top:3px;}
+  .so-p{font-size:12.5px;color:var(--muted);line-height:1.6;margin-top:5px;}
+  .so-acts{display:flex;gap:8px;align-items:center;flex-wrap:wrap;flex:0 0 auto;padding-top:2px;}
+  .so-btn{background:var(--paper);border:1px solid var(--line);border-radius:100px;padding:9px 18px;
+    font:inherit;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer;white-space:nowrap;}
+  .so-btn:hover{border-color:var(--accent-deep);color:var(--ink);}
+  .so-btn.ok{background:var(--dark);border-color:var(--dark);color:#fff;}
+  .so-btn.ok:hover{background:#1F2029;color:#fff;}
+  .so-btn:disabled{opacity:.5;cursor:default;}
+  /* the answer already on record, read back from the notes table so a second visit does not
+     look like an unanswered one */
+  .so-state{flex:1 1 100%;font-size:12.5px;line-height:1.6;border-top:1px solid var(--line);
+    margin-top:2px;padding-top:11px;color:var(--muted);}
+  .so-state b{color:var(--ink);}
+  .so-state.ok{color:var(--green);}
+  .so-state.change{color:var(--amber-ink);}
+  .so-state.err{color:var(--red);}
+  .so-say{flex:1 1 100%;display:none;}
+  .so-say.on{display:block;}
+  .so-say textarea{width:100%;min-height:84px;resize:vertical;font:inherit;font-size:13.5px;
+    line-height:1.55;padding:11px 13px;border:1px solid var(--line);border-radius:10px;
+    background:#FCFBF8;color:var(--ink);}
+  .so-say textarea:focus{outline:none;border-color:var(--accent-deep);}
+  .so-say .so-row{display:flex;gap:8px;margin-top:9px;}
+
+  /* ===== pillar mix strip ===== */
+  .mixbar{margin:12px 22px 0;padding:13px 17px 15px;background:var(--paper);border:1px solid var(--line);border-radius:12px;}
+  .mixhead{display:flex;align-items:baseline;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:10px;}
+  .mixttl{font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+  .mixttl span{font-weight:700;letter-spacing:.04em;text-transform:none;}
+  .mixnote{font-size:11.5px;color:var(--muted);}
+  .mixrows{display:grid;grid-template-columns:repeat(auto-fit,minmax(196px,1fr));gap:7px 20px;}
+  .mixrow{display:grid;grid-template-columns:108px 1fr 66px;gap:9px;align-items:center;font-size:12px;}
+  .mixname{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .mixtrack{height:8px;background:var(--sand);border-radius:100px;position:relative;overflow:hidden;}
+  .mixfill{position:absolute;inset:0 auto 0 0;border-radius:100px;background:var(--accent-deep);}
+  /* the target sits on the track as a hairline, so over and under read at a glance */
+  .mixtarget{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--dark);opacity:.55;}
+  .mixval{font-size:11.5px;font-weight:700;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;}
+  .mixval b{color:var(--ink);}
+  .mixval.over b{color:var(--amber);}
+  .mixval.under b{color:var(--red);}
+  .mixwhy{font-size:12.5px;line-height:1.6;color:var(--muted);margin-top:12px;padding-top:11px;border-top:1px solid var(--line);}
+  .mixwhy strong{color:var(--ink);}
+
+  /* ===== month grid ===== */
+  .sheet{padding:14px 22px 90px;}
+  /* No overflow:hidden here, deliberately: it would kill the sticky weekday row below.
+     The corners are rounded on the pieces instead. */
+  .grid{background:var(--paper);border:1px solid var(--line);border-radius:14px;
+    box-shadow:0 1px 3px rgba(45,46,55,.05);}
+  /* By the fifth week of the grid the column you are reading is off screen, so the weekday
+     labels stick directly under the page header. --toph is the measured header height, set
+     from JS, because the header wraps to a different height on a narrow window. */
+  .dow{display:grid;/* minmax(0,1fr), not 1fr: a chip title is nowrap, and a plain 1fr track cannot shrink
+     below its content, so the seven columns push the grid wider than the window */
+    grid-template-columns:repeat(7,minmax(0,1fr));background:#FCFBF8;border-bottom:1px solid var(--line);
+    border-radius:13px 13px 0 0;position:sticky;top:var(--toph,228px);z-index:15;}
+  .dow div{padding:9px 10px;font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--muted);text-align:left;}
+  .dow div.we{color:var(--amber);}
+  .weeks{display:grid;/* minmax(0,1fr), not 1fr: a chip title is nowrap, and a plain 1fr track cannot shrink
+     below its content, so the seven columns push the grid wider than the window */
+    grid-template-columns:repeat(7,minmax(0,1fr));}
+  .day{border-right:1px solid var(--line);border-bottom:1px solid var(--line);min-height:132px;min-width:0;
+    padding:7px 7px 9px;display:flex;flex-direction:column;gap:4px;background:var(--paper);}
+  .day:nth-child(7n){border-right:none;}
+  /* the last row carries the grid's own bottom edge and its rounded corners */
+  .weeks .day:nth-last-child(-n+7){border-bottom:none;}
+  .weeks .day:nth-last-child(7){border-bottom-left-radius:13px;}
+  .weeks .day:last-child{border-bottom-right-radius:13px;}
+  .day.out{background:#FBFAF7;}
+  .day.out .dnum{color:#C3BEB3;}
+  .day.we{background:#FDFCF9;}
+  .day.we.out{background:#FBFAF7;}
+  .dhead{display:flex;align-items:center;gap:6px;min-height:22px;}
+  /* The anchor label for the day's note button. Hidden, because the cell already says the
+     date; it exists so the note is filed against "Saturday 15 August 2026" rather than
+     against a slug of whatever posts happened to be in the cell that day. */
+  .dlbl{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);
+    clip-path:inset(50%);white-space:nowrap;}
+  .dnum{font-size:12.5px;font-weight:700;width:23px;height:23px;border-radius:50%;display:grid;place-items:center;flex:0 0 auto;}
+  .day.today .dnum{background:var(--dark);color:#fff;}
+  .dtag{font-size:9px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;border-radius:100px;
+    padding:2px 7px;white-space:nowrap;}
+  .dtag.launch{background:var(--green-bg);color:#2C5A44;border:1px solid #C9E4D5;}
+  .dtag.close{background:#FBEDED;color:#8E3A3A;border:1px solid #EBD2D2;}
+  .dtag.count{background:var(--amber-bg);color:var(--amber-ink);border:1px solid var(--amber-line);}
+
+  /* an event chip. Colour bar left, time then title, one line, the way Google does it. */
+  .ev{display:flex;align-items:center;gap:6px;width:100%;min-width:0;text-align:left;border:none;background:transparent;
+    font:inherit;cursor:pointer;padding:3px 5px 3px 4px;border-radius:6px;line-height:1.25;}
+  .ev:hover{background:var(--sand);}
+  .ev .bar{width:3px;align-self:stretch;min-height:14px;border-radius:2px;flex:0 0 auto;}
+  .ev .evt{font-size:10.5px;font-weight:700;color:var(--muted);flex:0 0 auto;font-variant-numeric:tabular-nums;}
+  .ev .evn{font-size:11.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;}
+  .ev.beat .evn,.ev.prep .evn{font-style:italic;}
+  .ev.hid{display:none;}
+  /* The day's note button. The widget's default pin is a 28px pill with the word "Note" on
+     it, which is most of a day cell, so in the grid it shrinks to the icon alone, tucked
+     into the top right of the header row and faint until the cell is hovered. It goes solid
+     and carries a count the moment there is a note on that date. */
+  .dhead.trs-pin-host{padding-right:22px;}
+  .day .trs-pin-btn{padding:0;width:20px;height:20px;border-radius:6px;background:transparent;
+    border-color:transparent;}
+  .day .trs-pin-btn svg{width:12.5px;height:12.5px;}
+  .day .trs-pin-float{top:0;right:0;opacity:.3;}
+  .day:hover .trs-pin-float{opacity:.85;}
+  .day .trs-pin-btn:hover{background:var(--accent);border-color:var(--accent);color:var(--ink);opacity:1;}
+  .day .trs-pin-count{position:absolute;top:-5px;right:-5px;min-width:14px;padding:0 3px;
+    font-size:9px;font-weight:800;line-height:14px;}
+
+  .more{border:none;background:transparent;font:inherit;font-size:10.5px;font-weight:800;color:var(--accent-deep);
+    cursor:pointer;text-align:left;padding:2px 5px;letter-spacing:.02em;}
+  .more:hover{text-decoration:underline;}
+  .empty{font-size:10.5px;color:#C3BEB3;padding:2px 5px;}
+
+  /* ===== agenda view ===== */
+  .agenda{display:none;background:var(--paper);border:1px solid var(--line);border-radius:14px;overflow:hidden;}
+  body.view-agenda .grid{display:none;}
+  body.view-agenda .agenda{display:block;}
+  .agday{display:grid;grid-template-columns:112px 1fr;border-bottom:1px solid var(--line);}
+  .agday:last-child{border-bottom:none;}
+  .agday.we .agd{background:#FDFCF9;}
+  .agd{padding:12px 14px;border-right:1px solid var(--line);background:var(--paper);}
+  .agd .adw{font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+  .agd .add{font-family:var(--serif);font-size:21px;font-weight:600;line-height:1.1;margin-top:2px;}
+  .agd .adm{font-size:11px;color:var(--muted);}
+  .agrows{padding:6px 0;}
+  .ag-row{display:grid;grid-template-columns:58px 1fr;gap:10px;padding:9px 16px 9px 14px;align-items:start;}
+  .ag-row + .ag-row{border-top:1px dashed var(--line);}
+  .ag-time{font-size:11.5px;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums;padding-top:1px;}
+  .ag-main{min-width:0;}
+  .ag-t{font-size:14px;font-weight:700;line-height:1.3;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .ag-t .swatch{width:9px;height:9px;border-radius:2.5px;flex:0 0 auto;}
+  .ag-meta{font-size:11.5px;color:var(--muted);margin-top:2px;}
+  .ag-angle{font-size:12.5px;color:#3C3D45;margin-top:5px;}
+  .ag-hook{font-size:12.5px;margin-top:5px;padding:7px 10px;background:var(--sand);border-radius:8px;
+    border-left:3px solid var(--accent-deep);}
+  .ag-hook i{font-style:normal;font-size:9.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--muted);display:block;margin-bottom:2px;}
+  .ag-flag{font-size:12px;margin-top:6px;padding:7px 10px;background:var(--amber-bg);border:1px solid var(--amber-line);
+    border-radius:8px;color:var(--amber-ink);}
+  .ag-row .trs-pin-btn{top:8px;right:12px;}
+
+  /* ===== chip · pill · badge ===== */
+  .pill{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:800;letter-spacing:.07em;
+    text-transform:uppercase;border-radius:100px;padding:3px 9px;color:#fff;}
+  .spill{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;
+    border-radius:100px;padding:3px 9px;border:1px solid var(--line);background:var(--sand);color:#55565F;}
+  .spill.now{background:var(--amber-bg);border-color:var(--amber-line);color:var(--amber-ink);}
+  .spill.fixed{background:var(--green-bg);border-color:#C9E4D5;color:#2C5A44;}
+
+  /* ===== modal ===== */
+  .mback{position:fixed;inset:0;background:rgba(30,26,22,.6);display:none;align-items:flex-start;
+    justify-content:center;z-index:100;padding:26px 14px;overflow:auto;}
+  .mback.open{display:flex;}
+  .modal{background:var(--paper);border-radius:18px;width:620px;max-width:97vw;
+    box-shadow:0 30px 80px rgba(0,0,0,.4);overflow:hidden;}
+  .mtopbar{height:5px;}
+  .mhead{display:flex;align-items:flex-start;gap:12px;padding:15px 18px 13px;border-bottom:1px solid var(--line);}
+  .mhw{flex:1 1 auto;min-width:0;}
+  .mkick{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:6px;}
+  .mtt{font-family:var(--serif);font-weight:600;font-size:20px;line-height:1.2;}
+  .mwhen{font-size:12.5px;color:var(--muted);margin-top:4px;}
+  .mx{flex:0 0 auto;border:none;background:var(--sand);width:32px;height:32px;border-radius:9px;cursor:pointer;
+    font-size:17px;line-height:1;color:var(--muted);}
+  .mx:hover{background:#E8E2D6;color:var(--ink);}
+  .mbody{padding:16px 18px 18px;}
+  .mgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:1px;background:var(--line);
+    border:1px solid var(--line);border-radius:11px;overflow:hidden;margin-bottom:14px;}
+  .mcell{background:var(--paper);padding:9px 11px;}
+  .mcell .cl{font-size:9.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);}
+  .mcell .cv{font-size:13px;font-weight:600;margin-top:2px;line-height:1.35;}
+  .mlbl{font-size:9.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:14px 0 5px;}
+  .mtext{font-size:14px;line-height:1.62;color:#3C3D45;}
+  .mhook{font-size:15px;line-height:1.55;background:var(--sand);border-left:4px solid var(--accent-deep);
+    border-radius:10px;padding:12px 14px;font-family:var(--serif);font-style:italic;}
+  .mcta{font-size:13.5px;background:#FCFBF8;border:1px solid var(--line);border-radius:10px;padding:10px 13px;}
+  .mflag{font-size:13px;background:var(--amber-bg);border:1px solid var(--amber-line);border-radius:10px;
+    padding:11px 13px;color:var(--amber-ink);line-height:1.55;}
+  .mrule{font-size:12.5px;color:var(--muted);line-height:1.6;border-top:1px solid var(--line);margin-top:16px;padding-top:12px;}
+  .mrule b{color:var(--ink);}
+
+  /* the day list, when a cell has more than fits */
+  .dmlist{padding:6px 0 10px;}
+  .dm-row{display:grid;grid-template-columns:56px 1fr auto;gap:10px;align-items:center;width:100%;
+    padding:10px 18px;border:none;background:transparent;font:inherit;text-align:left;cursor:pointer;}
+  .dm-row + .dm-row{border-top:1px dashed var(--line);}
+  .dm-row:hover{background:var(--sand);}
+  .dm-time{font-size:12px;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums;}
+  .dm-t{font-size:13.5px;font-weight:600;line-height:1.3;}
+  .dm-m{font-size:11px;color:var(--muted);margin-top:1px;}
+
+  /* Below this a cell is under about 210px, and a time plus a title means most titles are
+     truncated (50 of 79 at 1440). The time is the thing that can go: it is still in the
+     tooltip, the day list and the brief, whereas a title cut to three words tells you
+     nothing. Above it there is room for both. */
+  @media(max-width:1520px){
+    .ev .evt{display:none;}
+  }
+  @media(max-width:1080px){
+    .day{min-height:112px;}
+  }
+  @media(max-width:720px){
+    .sheet{padding:12px 10px 90px;}
+    .banner,.mixbar{margin-left:10px;margin-right:10px;}
+    .mixrow{grid-template-columns:98px 1fr 62px;}
+    .day{min-height:88px;padding:5px 4px 7px;}
+    .ev .evn{font-size:10.5px;}
+    .dow div{padding:7px 5px;font-size:9px;letter-spacing:.08em;}
+    .ag-row{grid-template-columns:1fr;}
+    .agday{grid-template-columns:82px 1fr;}
+  }
+
+  /* The header's height depends on how many times its three rows wrap, which depends on the
+     window. At 1280 it is a comfortable 228px, at 800 it is 465px and a sticky band that
+     deep eats the calendar. So the decision is made by measurement (see syncHeaderHeight)
+     rather than at a width that would be wrong for some of them: past a third of the
+     viewport the header stops being sticky and the weekday row takes the top instead. */
+  body.tall-header .top{position:static;}
+  body.tall-header .dow{top:0;}
+
+  /* Phone month view: a cell is around 50px, which is four characters of a title, worse
+     than nothing. So the posts become dots, the way every phone calendar does it, and a tap
+     anywhere in the day opens that day as a list. */
+  @media(max-width:620px){
+    .day{display:block;min-height:66px;cursor:pointer;}
+    .day.has:hover{background:var(--sand);}
+    .dhead{margin-bottom:2px;}
+    .dnum{width:20px;height:20px;font-size:11.5px;}
+    .dtag{display:none;}
+    .day.launch-d,.day.close-d{box-shadow:inset 0 -3px 0 var(--accent-deep);}
+    .ev,.ev.hid{display:inline-flex;width:auto;padding:2px;gap:0;vertical-align:top;}
+    .ev .bar{width:7px;height:7px;min-height:0;border-radius:50%;align-self:center;}
+    .ev .evn,.ev .evt,.more,.empty{display:none;}
+    /* there is no hover on a phone, so the day's note button has to be visible on its own */
+    .day .trs-pin-float{opacity:.55;}
+  }
+  @media(max-width:720px){
+    .signoff{margin-left:10px;margin-right:10px;}
+    .so-acts{flex:1 1 100%;}
+    .so-btn{flex:1 1 auto;text-align:center;}
+  }

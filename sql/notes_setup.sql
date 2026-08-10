@@ -1,32 +1,45 @@
--- Beauty Voucher Approval Pack — revision notes + suggestions
+-- Beauty Voucher Approval Pack: revision notes + suggestions
 -- Run in Supabase: Dashboard -> SQL Editor -> New Query -> paste -> Run.
 -- Project: vlqvefsaxztitcbhirxt
 --
--- THIS IS THE CANONICAL FILE. Idempotent — re-run it any time. It explicitly drops the
+-- THIS IS THE CANONICAL FILE. Idempotent, so re-run it any time. It explicitly drops the
 -- policies from BOTH earlier versions of this schema (the first anon one, and the
 -- magic-link one), so running it now is what puts the database in the right state.
 --
 -- Two channels, same as the CWD knowledgebase widgets this is copied from:
---   approval_notes       — a revision request pinned to a specific part of the pack (a
+--   approval_notes       is a revision request pinned to a specific part of the pack (a
 --                          section, a T&C clause, one open decision). Threaded replies.
 --                          Open -> Actioned.
---   approval_suggestions — a standalone idea not tied to one line. Title + description,
+--   approval_suggestions is a standalone idea not tied to one line. Title + description,
 --                          with its own flat discussion thread.
 --                          Pending -> Accepted / Declined / Archived.
 --
--- ACCESS: none. Deliberately (decided 2026-08-07). Sign-in was built and then dropped —
--- a magic link means Tara and Emma have to go to their inbox and back before they can
--- type a sentence, and they simply wouldn't. Instead the reader picks a name from a
--- toggle in the header, and that is the only identity there is.
+-- ACCESS (revised 2026-08-07, second pass). Two levels:
 --
--- What that means, stated plainly so nobody is surprised later:
---   * anyone who has the page URL can read and post, and can post under any of the three
---     names. There is no way around that without a login.
---   * the only server-side guard on identity is that author_name must be one of the three
---     names below — enough to keep junk out, not enough to prove who wrote something.
+--   ANONYMOUS (Tara, Emma, Hanneh, and anyone with the URL)
+--     read everything, post a note, reply, raise a suggestion. No sign-in, on purpose:
+--     a magic link meant going to the inbox and back before typing a sentence, and that
+--     meant nobody left a note at all. They pick a name from the header toggle, and that
+--     IS the identity.
+--
+--   EDITOR (kate@tararosesalon.com, signed in)
+--     everything above, PLUS the state changes: mark actioned, reopen, archive, and
+--     accept/decline a suggestion. Nobody else can move a row, so the reviewers watch
+--     Kate's progress through their own suggestions instead of moving it themselves.
+--
+-- Run sql/supabase_roles_setup.sql BEFORE this file, because it creates public.is_admin(), which
+-- every UPDATE policy below calls. Running this first means nobody can action anything,
+-- including Kate. Nothing is lost; run the roles file and it works.
+--
+-- What that still means, stated plainly so nobody is surprised later:
+--   * anyone who has the page URL can read and post, and can post under any of the four
+--     names. There is no way around that without a login on the whole pack.
+--   * the only server-side guard on WHO WROTE something is that author_name must be one of
+--     the four names below: enough to keep junk out, not enough to prove authorship.
+--   * what IS properly guarded is editing. That is a real check against a real session.
 --   * the pack is served from a public URL, so the notes are as private as that URL is.
--- Fine for three colleagues reviewing one document for three weeks. Not fine for
--- anything client-facing, confidential, or long-lived. Don't reuse these tables for that.
+-- Fine for four colleagues reviewing one document for three weeks. Not fine for anything
+-- client-facing, confidential, or long-lived. Don't reuse these tables for that.
 
 -- Who can be picked in the header toggle. Keep in sync with REVIEWERS in notes-widget.js.
 create or replace function public.is_reviewer_name(n text)
@@ -38,19 +51,19 @@ as $$
 $$;
 
 -- ============================================================================
--- 1. NOTES — pinned revision requests
+-- 1. NOTES: pinned revision requests
 -- ============================================================================
 
 create table if not exists public.approval_notes (
   id uuid primary key default gen_random_uuid(),
   -- pack_id: which document the note belongs to (body[data-note-pack]). One table can
-  -- serve several approval packs — filter by this.
+  -- serve several approval packs, so filter by this.
   pack_id text not null,
   pack_title text not null,
   -- anchor_id/anchor_label: set when a note is pinned to a specific block rather than the
   -- pack as a whole. Both null = a general, pack-level note. anchor_label is a
   -- denormalized snapshot of that block's wording at post time, so the note still reads
-  -- sensibly if the wording changes later. anchor_id is always "<sectionId>__<slug>" —
+  -- sensibly if the wording changes later. anchor_id is always "<sectionId>__<slug>",
   -- the widget splits on "__" to work out which sidebar section a note belongs to.
   anchor_id text,
   anchor_label text,
@@ -65,8 +78,10 @@ create table if not exists public.approval_notes (
   resolved_by_name text,
   resolved_at timestamptz,
   -- archived: a reversible "hide this" flag, deliberately NOT the same as resolved. For
-  -- test/dummy rows. There is no delete policy anywhere in this file, so this is the safe
-  -- way to get rid of noise. Archived rows are filtered out of the panel entirely.
+  -- test/dummy rows and duplicates. There is no delete policy anywhere in this file, so this
+  -- is the safe way to get rid of noise. Archived rows are hidden from everyone's normal
+  -- view; the editor can list them under the panel's Archived filter and restore one, so
+  -- archiving is reversible from the page rather than from here.
   archived boolean not null default false
 );
 
@@ -81,7 +96,11 @@ create index if not exists approval_notes_resolved_idx on public.approval_notes 
 create index if not exists approval_notes_archived_idx on public.approval_notes (archived);
 
 alter table public.approval_notes enable row level security;
-grant select, insert, update on public.approval_notes to anon, authenticated;
+grant select, insert on public.approval_notes to anon;
+grant select, insert, update on public.approval_notes to authenticated;
+-- revoked explicitly: an earlier version of this file granted UPDATE to anon, and a grant
+-- is not removed just because it stops being written
+revoke update on public.approval_notes from anon;
 
 drop policy if exists approval_notes_select on public.approval_notes;
 drop policy if exists approval_notes_insert on public.approval_notes;
@@ -120,14 +139,14 @@ create policy approval_notes_insert on public.approval_notes
     )
   );
 
--- Anyone can edit a body, resolve, or archive. Without a login there is nobody to check
--- against, so the trigger below protects what it still can: identity, targeting,
--- threading and timestamps are immutable once posted.
-create policy approval_notes_update on public.approval_notes
+-- Editing, resolving and archiving are the editor's, and only the editor's. The trigger
+-- below still protects the rest: identity, targeting, threading and timestamps are
+-- immutable once posted, even for an admin.
+create policy approval_notes_update_admin_only on public.approval_notes
   for update
-  to anon, authenticated
-  using (true)
-  with check (char_length(body) between 1 and 4000);
+  to authenticated
+  using (public.is_admin(auth.uid()))
+  with check (public.is_admin(auth.uid()) and char_length(body) between 1 and 4000);
 
 create or replace function public.approval_notes_guard_update()
 returns trigger
@@ -157,23 +176,23 @@ create trigger approval_notes_guard_update_trigger
   for each row
   execute function public.approval_notes_guard_update();
 
--- No delete policy on purpose — the notes are the audit trail of what Tara asked for and
+-- No delete policy on purpose: the notes are the audit trail of what Tara asked for and
 -- what got actioned. A client DELETE matches zero rows and changes nothing (verified).
 
 -- ============================================================================
--- 2. SUGGESTIONS — standalone ideas, not tied to one line
+-- 2. SUGGESTIONS: standalone ideas, not tied to one line
 -- ============================================================================
 
 create table if not exists public.approval_suggestions (
   id uuid primary key default gen_random_uuid(),
   pack_id text not null,
   -- section_context: which section they happened to be reading when it was raised. For
-  -- reference only — a suggestion is deliberately NOT pinned the way a note is.
+  -- reference only: a suggestion is deliberately NOT pinned the way a note is.
   section_context text,
   requester_name text not null,
   title text not null,
   description text,
-  -- 'archived' is for stale/duplicate ideas where no real call was made — distinct from
+  -- 'archived' is for stale/duplicate ideas where no real call was made, distinct from
   -- 'declined', which is an actual no. Archived suggestions are hidden from the panel.
   status text not null default 'pending' check (status in ('pending', 'accepted', 'declined', 'archived')),
   created_at timestamptz not null default now(),
@@ -187,11 +206,14 @@ create index if not exists approval_suggestions_pack_id_idx on public.approval_s
 create index if not exists approval_suggestions_status_idx on public.approval_suggestions (status);
 
 alter table public.approval_suggestions enable row level security;
-grant select, insert, update on public.approval_suggestions to anon, authenticated;
+grant select, insert on public.approval_suggestions to anon;
+grant select, insert, update on public.approval_suggestions to authenticated;
+revoke update on public.approval_suggestions from anon;
 
 drop policy if exists approval_suggestions_select on public.approval_suggestions;
 drop policy if exists approval_suggestions_insert on public.approval_suggestions;
 drop policy if exists approval_suggestions_update on public.approval_suggestions;
+drop policy if exists approval_suggestions_update_admin_only on public.approval_suggestions;
 
 create policy approval_suggestions_select on public.approval_suggestions
   for select
@@ -209,12 +231,16 @@ create policy approval_suggestions_insert on public.approval_suggestions
     and status = 'pending'  -- always starts pending; deciding is a separate update
   );
 
-create policy approval_suggestions_update on public.approval_suggestions
+-- Deciding a suggestion (accept / decline / archive / reset to pending) is the editor's
+-- call. Anyone can still raise one, and anyone can still discuss it.
+drop policy if exists approval_suggestions_update_admin_only on public.approval_suggestions;
+create policy approval_suggestions_update_admin_only on public.approval_suggestions
   for update
-  to anon, authenticated
-  using (true)
+  to authenticated
+  using (public.is_admin(auth.uid()))
   with check (
-    char_length(title) between 1 and 200
+    public.is_admin(auth.uid())
+    and char_length(title) between 1 and 200
     and char_length(coalesce(description, '')) <= 4000
   );
 
@@ -244,7 +270,7 @@ create trigger approval_suggestions_guard_update_trigger
   execute function public.approval_suggestions_guard_update();
 
 -- ============================================================================
--- 3. SUGGESTION DISCUSSION — flat notes under one suggestion
+-- 3. SUGGESTION DISCUSSION: flat notes under one suggestion
 -- ============================================================================
 
 create table if not exists public.approval_suggestion_notes (
@@ -261,18 +287,21 @@ create index if not exists approval_suggestion_notes_suggestion_id_idx
   on public.approval_suggestion_notes (suggestion_id);
 
 alter table public.approval_suggestion_notes enable row level security;
-grant select, insert, update on public.approval_suggestion_notes to anon, authenticated;
+grant select, insert on public.approval_suggestion_notes to anon;
+grant select, insert, update on public.approval_suggestion_notes to authenticated;
+revoke update on public.approval_suggestion_notes from anon;
 
 drop policy if exists approval_suggestion_notes_select on public.approval_suggestion_notes;
 drop policy if exists approval_suggestion_notes_insert on public.approval_suggestion_notes;
 drop policy if exists approval_suggestion_notes_update on public.approval_suggestion_notes;
+drop policy if exists approval_suggestion_notes_update_admin_only on public.approval_suggestion_notes;
 
 create policy approval_suggestion_notes_select on public.approval_suggestion_notes
   for select
   to anon, authenticated
   using (true);
 
--- Locks once the suggestion is decided (status != 'pending') — mirrors the UI, which hides
+-- Locks once the suggestion is decided (status != 'pending'), which mirrors the UI, which hides
 -- the note box and shows "Reset it to pending to add a note" instead. Resetting the status
 -- reopens the discussion, same as reopening a note thread.
 create policy approval_suggestion_notes_insert on public.approval_suggestion_notes
@@ -287,11 +316,12 @@ create policy approval_suggestion_notes_insert on public.approval_suggestion_not
     )
   );
 
-create policy approval_suggestion_notes_update on public.approval_suggestion_notes
+drop policy if exists approval_suggestion_notes_update_admin_only on public.approval_suggestion_notes;
+create policy approval_suggestion_notes_update_admin_only on public.approval_suggestion_notes
   for update
-  to anon, authenticated
-  using (true)
-  with check (char_length(body) between 1 and 4000);
+  to authenticated
+  using (public.is_admin(auth.uid()))
+  with check (public.is_admin(auth.uid()) and char_length(body) between 1 and 4000);
 
 create or replace function public.approval_suggestion_notes_guard_update()
 returns trigger
@@ -322,4 +352,4 @@ create trigger approval_suggestion_notes_guard_update_trigger
 drop function if exists public.is_reviewer();
 drop function if exists public.current_email();
 
--- No delete policy anywhere on purpose — same audit-trail reasoning throughout.
+-- No delete policy anywhere on purpose: same audit-trail reasoning throughout.

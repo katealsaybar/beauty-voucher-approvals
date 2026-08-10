@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Beauty Voucher: Review Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="dashboard.css">
+</head>
+<body data-auth-root="../">
+
+<div class="dash-top">
+  <a class="back" href="../index.html">&larr; Approval pack</a>
+  <a class="back" href="../automations/automations.html">Automations</a>
+  <div class="dash-title">
+    <div class="k">Tara Rose &middot; Beauty Voucher</div>
+    <h1>Review Dashboard</h1>
+  </div>
+  <!-- filled by dashboard-app.js: who you are, whether you can edit, and the way out -->
+  <div class="who" id="who"></div>
+</div>
+
+<div class="stats" id="stats"></div>
+
+<div class="toolbar">
+  <input type="search" id="q" placeholder="Search notes, suggestions, names…">
+  <div class="chips" id="chips"></div>
+</div>
+
+<div class="wrap" id="out"><div class="empty">Loading…</div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../auth/supabase-client.js"></script>
+<script src="dashboard-app.js"></script>
+</body>
+</html>

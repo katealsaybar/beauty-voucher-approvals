@@ -1,0 +1,190 @@
+  :root{
+    --bg:#FAF8F4; --paper:#FFFFFF; --ink:#2D2E37; --muted:#6E6E77;
+    --line:#E7E2D8; --accent:#99F6E4; --sand:#F1ECE3; --dark:#2D2E37;
+    --amber:#B4823A; --amber-bg:#FBF3E2; --blue:#3B6E8F; --blue-bg:#E6F0F5;
+    --green:#3E7A5E; --green-bg:#E4F1EA; --red:#B24A4A;
+    --serif:'Playfair Display',Georgia,serif;
+    --sans:'Inter',system-ui,-apple-system,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;font-size:15.5px;}
+  a{color:inherit;}
+
+  /* layout */
+  .wrap{display:flex;min-height:100vh;}
+  .sidebar{
+    width:270px;flex-shrink:0;background:var(--dark);color:#EFECE5;
+    position:sticky;top:0;height:100vh;overflow-y:auto;padding:0 20px 28px;
+  }
+  /* the nav is longer than the rail, so the rail scrolls, and the logo used to scroll
+     off with it. Sticky inside the rail keeps the brandmark on screen the whole way down.
+     The dark background is repeated here so nav links pass behind it, not through it. */
+  .sidebar .brandwrap{
+    position:sticky;top:0;z-index:2;background:var(--dark);
+    padding:24px 0 16px;margin-bottom:2px;
+  }
+  /* the source logo is a wordmark: small enough to sit quietly at the top of the rail,
+     centred rather than jammed against the left edge */
+  .brandlogo{display:block;width:118px;max-width:100%;height:auto;margin:0 auto;}
+  /* mobile: the sidebar is hidden below 860px, so the topbar carries the logo instead.
+     There it is left-aligned with the heading it sits above. */
+  .topbar .brandlogo{display:none;width:104px;margin:0 0 12px;}
+  .navlabel{font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:#8B8981;margin:28px 0 10px;}
+  nav a{
+    display:flex;align-items:center;justify-content:space-between;gap:8px;
+    padding:11px 12px;border-radius:10px;color:#D8D5CE;text-decoration:none;
+    font-size:14px;font-weight:500;margin-bottom:4px;transition:background .15s,color .15s;
+  }
+  nav a:hover{background:rgba(255,255,255,.06);color:#fff;}
+  nav a.active{background:var(--accent);color:var(--ink);font-weight:700;}
+  .dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;display:inline-block;}
+  .dot.draft{background:var(--amber);} .dot.pending{background:var(--blue);} .dot.confirmed{background:var(--green);}
+  nav a.active .dot{outline:2px solid rgba(45,46,55,.25);}
+  .legend-row{display:flex;align-items:center;gap:9px;font-size:12.5px;color:#C7C5BE;margin:7px 0;}
+
+  /* the mockups, set apart from the tools rather than listed among them */
+  .navgroup{
+    background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.1);
+    border-radius:14px;padding:4px 8px 10px;margin-top:22px;
+  }
+  .navgroup .navlabel{margin:14px 0 8px;padding-left:4px;}
+  .navlabel.mocklbl{display:flex;align-items:center;gap:8px;color:var(--accent);}
+  .navlabel.mocklbl svg{
+    width:17px;height:17px;flex-shrink:0;fill:none;stroke:currentColor;
+    stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;
+  }
+  .navgroup nav a{font-size:13.5px;padding:10px 10px;}
+  .gnote{font-size:11.5px;line-height:1.55;color:#9C9A93;padding:6px 10px 0;}
+  .gnote b{color:#D8D5CE;font-weight:600;}
+
+  /* main */
+  /* max-width keeps a readable measure, margin auto stops all the slack piling up on one
+     side of the column on a wide screen. The sidebar stays flush left as a full-bleed rail. */
+  main{flex:1;padding:0 0 90px;max-width:920px;margin:0 auto;}
+  /* this bar is sticky, so every pixel of it is a pixel of the pack nobody can read.
+     Kept deliberately shallow: the title, the dates, the name toggle, nothing else. */
+  .topbar{
+    padding:18px 52px 14px;border-bottom:1px solid var(--line);background:var(--paper);
+    position:sticky;top:0;z-index:5;
+  }
+  .kicker{font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);}
+  h1{font-family:var(--serif);font-weight:600;font-size:24px;line-height:1.14;margin:5px 0 0;}
+  .topmeta{font-size:12.5px;color:var(--muted);margin-top:4px;}
+  .topmeta strong{color:var(--ink);}
+  /* the injected name toggle sits inside the sticky bar, so it gets the same trim */
+  .topbar .trs-idbar{margin-top:11px;padding-top:10px;}
+  .topbar .trs-idbar-btns button{padding:5px 14px;font-size:12.5px;}
+  .topbar .trs-idbar-hint{font-size:12px;padding:4px 11px;}
+
+  section{padding:46px 52px 10px;scroll-margin-top:20px;}
+  section + section{border-top:1px solid var(--line);}
+  h2{font-family:var(--serif);font-weight:600;font-size:25px;margin-bottom:4px;}
+  h3{font-size:15px;font-weight:800;margin:26px 0 8px;letter-spacing:.01em;text-transform:uppercase;color:#55565F;font-size:12.5px;letter-spacing:.12em;}
+  p{margin:11px 0;}
+  ul,ol{margin:11px 0 11px 22px;} li{margin:7px 0;}
+
+  /* one-line summary strip */
+  .oneline{
+    display:flex;gap:12px;align-items:flex-start;
+    background:var(--paper);border:1px solid var(--line);border-left:5px solid var(--accent);
+    border-radius:12px;padding:14px 18px;margin:14px 0 22px;font-size:15px;
+  }
+  .oneline b{display:block;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:2px;font-weight:700;}
+
+  /* status badges */
+  .badge{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:700;
+    letter-spacing:.05em;text-transform:uppercase;padding:5px 12px;border-radius:100px;vertical-align:middle;}
+  .badge.draft{background:var(--amber-bg);color:var(--amber);}
+  .badge.pending{background:var(--blue-bg);color:var(--blue);}
+  .badge.confirmed{background:var(--green-bg);color:var(--green);}
+  .badge .b-dot{width:7px;height:7px;border-radius:50%;background:currentColor;}
+  .sec-head{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:6px;}
+
+  /* status board */
+  .board{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin:18px 0 6px;}
+  .board a{
+    text-decoration:none;background:var(--paper);border:1px solid var(--line);border-radius:14px;
+    padding:16px 16px 15px;display:block;transition:transform .12s,box-shadow .12s;border-top:4px solid var(--line);
+  }
+  .board a:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(45,46,55,.08);}
+  .board a.s-green{border-top-color:var(--green);}
+  .board a.s-amber{border-top-color:var(--amber);}
+  .board a.s-blue{border-top-color:var(--blue);}
+  .board .b-title{font-weight:700;font-size:14.5px;margin-bottom:5px;}
+  .board .b-status{font-size:12.5px;color:var(--muted);display:flex;align-items:center;gap:7px;}
+  /* The second board holds the review surfaces, which open in their own window rather than
+     scrolling this page. The arrow is set in the title row so it reads as part of the name,
+     and the dashed top border says "this is a thing to look at" rather than "this is a thing
+     to sign off": same blue as the reference status, no new colour. */
+  .board a.s-ext{border-top-style:dashed;border-top-color:var(--blue);}
+  .board .b-title .b-ext{float:right;color:var(--muted);font-weight:600;}
+  .boardlbl{font-size:12.5px;color:var(--muted);margin:22px 0 -4px;}
+
+  /* action box */
+  .action{background:#FFFDF8;border:1.5px solid var(--amber);border-radius:14px;padding:16px 20px;margin:18px 0;}
+  .action .a-label{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--amber);margin-bottom:8px;}
+  .action ul{margin:0 0 0 20px;} .action li{margin:6px 0;}
+
+  .card{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:20px 24px;margin:14px 0;}
+  .card p{margin:9px 0;}
+
+  .tier-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px;margin:16px 0;}
+  .tier{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:22px;}
+  .tier.vip{background:var(--dark);color:#F3F1EC;border-color:var(--dark);}
+  .tier.vip .t-sub,.tier.vip .t-incl{color:rgba(243,241,236,.75);}
+  .t-name{font-family:var(--serif);font-size:19px;font-weight:600;}
+  .t-price{font-size:23px;font-weight:800;margin:8px 0 3px;}
+  .t-sub{font-size:13px;color:var(--muted);}
+  .t-incl{font-size:12.5px;color:var(--muted);margin-top:13px;line-height:1.6;}
+  .chip{display:inline-block;background:var(--accent);color:var(--ink);font-size:11px;font-weight:700;padding:3px 11px;border-radius:100px;margin-top:12px;}
+  .paySpend{display:flex;align-items:flex-end;gap:14px;margin:12px 0 6px;}
+  .ps-col{display:flex;flex-direction:column;gap:2px;}
+  .ps-label{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700;}
+  .ps-pay{font-size:21px;font-weight:800;line-height:1;}
+  .ps-credit{font-size:21px;font-weight:800;line-height:1;color:var(--green);}
+  .ps-arrow{font-size:18px;color:var(--muted);font-weight:700;padding-bottom:2px;}
+  .tier.vip .ps-credit{color:var(--accent);} .tier.vip .ps-label{color:rgba(243,241,236,.7);}
+
+  table{width:100%;border-collapse:collapse;margin:16px 0 6px;font-size:14px;background:var(--paper);border-radius:12px;overflow:hidden;border:1px solid var(--line);}
+  th,td{text-align:left;padding:12px 15px;border-bottom:1px solid var(--line);}
+  th{background:var(--sand);font-size:11.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink);font-weight:700;}
+  tr:last-child td{border-bottom:none;}
+  td.num{font-variant-numeric:tabular-nums;white-space:nowrap;}
+  .avail-yes{color:var(--green);font-weight:700;} .avail-no{color:var(--red);font-weight:700;} .avail-tbc{color:var(--blue);font-weight:700;}
+
+  .note{background:var(--sand);border-radius:12px;padding:15px 18px;font-size:14px;margin:14px 0;}
+  .note.flag{background:var(--amber-bg);color:#6E5320;border:1px solid #EAD9B8;}
+  .note.good{background:var(--green-bg);color:#2C5A44;border:1px solid #C9E4D5;}
+
+  ol.terms{counter-reset:t;list-style:none;margin-left:0;}
+  ol.terms>li{counter-increment:t;position:relative;padding-left:44px;margin:18px 0;}
+  ol.terms>li::before{content:counter(t);position:absolute;left:0;top:-2px;width:30px;height:30px;border-radius:50%;
+    background:var(--dark);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+  ol.terms>li strong{display:block;margin-bottom:2px;}
+
+  .decision{display:flex;gap:12px;align-items:flex-start;background:var(--paper);border:1px solid var(--line);
+    border-left:4px solid var(--blue);border-radius:12px;padding:14px 18px;margin:12px 0;}
+  .decision.done{border-left-color:var(--green);background:var(--green-bg);}
+  .decision .q{font-weight:700;}
+  .decision .a{font-size:13.5px;color:var(--muted);margin-top:3px;}
+  .decision .tick{font-weight:800;color:var(--green);flex-shrink:0;}
+  .decision .num{flex-shrink:0;width:26px;height:26px;border-radius:50%;background:var(--blue);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+  /* Some decisions carry more than one ask. Those get a real list under the lead-in line
+     instead of an inline "1) 2) 3)" run, which was unreadable at this font size. */
+  .decision .a ul{margin:7px 0 0;padding-left:19px;} .decision .a li{margin:5px 0;}
+  .decision .a li strong{color:var(--ink);}
+
+  .footer{padding:30px 52px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);}
+  .foot-legend{display:flex;gap:22px;flex-wrap:wrap;margin-top:12px;}
+  .foot-legend span{display:flex;align-items:center;gap:8px;}
+
+  @media(max-width:860px){
+    .sidebar{display:none;} main{max-width:100%;}
+    .topbar,section,.footer{padding-left:22px;padding-right:22px;}
+    /* sidebar is gone, so the topbar picks up the brandmark */
+    .topbar .brandlogo{display:block;}
+    /* the wider tables (Phorest mapping, confidence mapping, T&Cs, incentive) can't fit a
+       phone. Let them scroll inside their own box rather than stretch the whole page. */
+    table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  }

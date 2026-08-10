@@ -1,4 +1,4 @@
-/* Beauty Voucher Approval Pack — notes + suggestions widget
+/* Beauty Voucher Approval Pack: notes + suggestions widget
    Copied in concept from the CWD knowledgebase Comments/Suggestions widgets, restyled to
    the pack's own palette. Falls back to its own colours if the host page doesn't define
    the --ink/--accent/etc. variables, so the widget stays portable. */
@@ -61,27 +61,32 @@
 .trs-hint-close:hover { color: #fff; }
 
 /* ---------- pin buttons on the page ---------- */
+/* sized up deliberately: this is the one control the whole review depends on, and at
+   10px nobody noticed it. Big enough to see and hit on a phone, still not a shout. */
 .trs-pin-btn {
-  display: inline-flex; align-items: center; gap: 5px;
+  display: inline-flex; align-items: center; gap: 6px;
   background: var(--n-sand); border: 1px solid var(--n-line); border-radius: 100px;
-  color: var(--n-muted); cursor: pointer; padding: 4px 9px;
-  font-family: var(--n-sans); font-size: 10.5px; font-weight: 700;
+  color: var(--n-muted); cursor: pointer; padding: 6px 13px;
+  font-family: var(--n-sans); font-size: 12px; font-weight: 700;
   letter-spacing: .06em; text-transform: uppercase;
   transition: background .15s, color .15s, border-color .15s;
   vertical-align: middle;
 }
 .trs-pin-btn:hover { background: var(--n-accent); color: var(--n-ink); border-color: var(--n-accent); }
-.trs-pin-btn svg { width: 11px; height: 11px; }
+.trs-pin-btn svg { width: 14px; height: 14px; }
 .trs-pin-count {
   background: var(--n-amber); color: #fff; border-radius: 100px;
-  min-width: 16px; padding: 0 4px; font-size: 10px; line-height: 16px; text-align: center;
+  min-width: 18px; padding: 0 5px; font-size: 11px; line-height: 18px; text-align: center;
 }
+/* a sub-heading pin sits inline after the heading text, so it must not inherit the
+   heading's own casing and tracking */
+h3 > .trs-pin-btn, h4 > .trs-pin-btn { margin-left: 10px; letter-spacing: .06em; }
 /* inline blocks (a T&C clause, one open decision) get the pin floated top-right */
-.trs-pin-float { position: absolute; top: 10px; right: 12px; opacity: .45; transition: opacity .15s; }
+.trs-pin-float { position: absolute; top: 10px; right: 12px; opacity: .6; transition: opacity .15s; }
 .trs-pin-host:hover .trs-pin-float, .trs-pin-float:focus-visible { opacity: 1; }
 .trs-pin-float.has-notes { opacity: 1; }
 /* the pinned block's heading, indented so a long one doesn't run under the floated pin */
-.trs-pin-clear { padding-right: 46px; }
+.trs-pin-clear { padding-right: 56px; }
 
 /* sidebar nav note counts */
 .trs-nav-count {
@@ -180,6 +185,30 @@
   text-align: center; color: var(--n-muted); font-size: 13.5px; padding: 34px 10px; line-height: 1.7;
 }
 
+/* ------------------------------------------------------------------
+   A COLOUR PER PERSON: the one source of truth for every name toggle
+   in the pack. This file is loaded on every page, and before pack/decide.css
+   on index.html, so the front door reads these too.
+
+   Kate asked for blue / yellow / pink / violet. Three of those four are
+   off-palette: trs-brand-guardian/references/palette.md rules out pink and
+   blue by name, and yellow is not in it either. These are the palette's own
+   four distinct accents in the same order, which land on the same intent:
+     Tara    turquoise  --accent      (stands in for blue)
+     Emma    lime       --accent-soft (stands in for yellow)
+     Hanneh  coral      --coral       (the nearest thing to pink that IS in the palette)
+     Kate    lavender   --lavender    (violet, exactly as asked)
+   All four are pale enough to take --ink text, so a selected chip stays
+   readable without a second text colour per person.
+   To use the literal four instead, change only these four values.
+   ------------------------------------------------------------------ */
+:root {
+  --who-tara: #99F6E4;
+  --who-emma: #EEF3C7;
+  --who-hanneh: #FF9B9B;
+  --who-kate: #C4B5FD;
+}
+
 /* ---------- identity toggle (lives in the page's sticky header) ---------- */
 .trs-idbar {
   --n-ink: var(--ink, #2D2E37); --n-muted: var(--muted, #6E6E77);
@@ -196,14 +225,30 @@
 }
 .trs-idbar-btns { display: flex; gap: 6px; }
 .trs-idbar-btns button {
+  display: inline-flex; align-items: center; gap: 7px;
   background: var(--n-paper); border: 1px solid var(--n-line); border-radius: 100px;
   cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 700;
-  color: var(--n-muted); padding: 6px 16px; transition: background .15s, color .15s, border-color .15s;
+  color: var(--n-muted); padding: 6px 15px; transition: background .15s, color .15s, border-color .15s;
 }
+/* Unselected still carries the person's colour as a dot, so the mapping is legible
+   BEFORE anyone clicks; otherwise you only learn whose colour is whose by selecting,
+   which is no use to the reader trying to spot their own name. Same behaviour as the
+   front door's .dq-names, because it is the same four people and the same four colours. */
+.trs-idbar-btns button::before {
+  content: ''; width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+  background: var(--who, var(--n-line)); box-shadow: 0 0 0 1px rgba(0, 0, 0, .12) inset;
+}
+.trs-idbar-btns button[data-name="Tara"]   { --who: var(--who-tara); }
+.trs-idbar-btns button[data-name="Emma"]   { --who: var(--who-emma); }
+.trs-idbar-btns button[data-name="Hanneh"] { --who: var(--who-hanneh); }
+.trs-idbar-btns button[data-name="Kate"]   { --who: var(--who-kate); }
 .trs-idbar-btns button:hover { border-color: #CFC8BA; color: var(--n-ink); }
+/* after :hover on purpose, equal specificity, so the selected chip keeps its colour
+   while the pointer is on it */
 .trs-idbar-btns button.active {
-  background: var(--n-dark); border-color: var(--n-dark); color: #fff;
+  background: var(--who); border-color: var(--who); color: var(--n-ink);
 }
+.trs-idbar-btns button.active::before { background: rgba(45, 46, 55, .34); box-shadow: none; }
 /* loud on purpose: nobody can leave a note until a name is picked, so saying so quietly
    just produces people typing into a form that then refuses them */
 .trs-idbar-hint {
@@ -224,6 +269,34 @@
   background: var(--n-dark); color: #fff; border: none; border-radius: 100px;
   cursor: pointer; font-family: inherit; font-size: 13.5px; font-weight: 700; padding: 10px 22px;
 }
+
+/* ---------- signed in (replaces the name toggle) ---------- */
+/* The account IS the identity while signed in, so there is nothing to pick. What matters
+   on screen is who you are, whether you can edit, and the way out: sign-out has to be
+   visible on every page, because the session now survives closing the tab. */
+.trs-idbar-you {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 13.5px; font-weight: 700; color: var(--n-ink);
+}
+.trs-idbar-you::before {
+  content: ''; width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+  background: var(--who-kate, #B4823A); box-shadow: 0 0 0 1px rgba(0, 0, 0, .12) inset;
+}
+.trs-idbar-role {
+  font-size: 10px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase;
+  padding: 3px 9px; border-radius: 100px;
+}
+.trs-role-editor { background: #E4F5EE; color: #1C6B4E; border: 1px solid #BEE5D7; }
+.trs-role-viewer { background: var(--n-sand); color: var(--n-muted); border: 1px solid var(--n-line); }
+
+/* quiet on purpose: the reviewers never need it, and the editor only needs it once */
+.trs-idbar-link {
+  background: none; border: none; padding: 0; cursor: pointer; font-family: inherit;
+  font-size: 12.5px; font-weight: 600; color: var(--n-muted);
+  text-decoration: underline; text-underline-offset: 3px;
+}
+.trs-idbar-link:hover { color: var(--n-ink); }
+.trs-who-role { color: #1C6B4E; font-weight: 700; }
 
 /* flashes when someone tries to post without picking a name */
 @keyframes trsIdNudge {

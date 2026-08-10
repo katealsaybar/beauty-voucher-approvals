@@ -1,11 +1,11 @@
-// Beauty Voucher Approval Pack — notes + suggestions widget.
+// Beauty Voucher Approval Pack: notes + suggestions widget.
 //
 // Concept copied from the CWD knowledgebase widgets (Comments Widget + Suggestions
 // Widget), merged into one slide-in panel with two tabs because this is one document
 // rather than a whole site:
-//   NOTES       — a revision request pinned to a specific part of the pack (a section, a
+//   NOTES       is a revision request pinned to a specific part of the pack (a section, a
 //                 T&C clause, one open decision), with threaded replies. Open -> Actioned.
-//   SUGGESTIONS — a standalone idea not tied to one line, with a title, a status
+//   SUGGESTIONS is a standalone idea not tied to one line, with a title, a status
 //                 (Pending -> Accepted/Declined/Archived) and its own discussion thread.
 //
 // Plain script (not type="module") on purpose: this pack is usually opened straight off
@@ -13,16 +13,22 @@
 // context. Loaded after the Supabase UMD script, which exposes a global
 // `supabase.createClient`.
 //
-// Injects all its own DOM — the page needs nothing but the <link>/<script> includes and a
+// Injects all its own DOM: the page needs nothing but the <link>/<script> includes and a
 // `data-note-pack` id on <body>.
 //
 // ACCESS: none, deliberately (decided 2026-08-07). Magic-link sign-in was built and then
-// dropped — making Tara and Emma go to their inbox and back before they can type a
+// dropped, because making Tara and Emma go to their inbox and back before they can type a
 // sentence meant they'd never leave a note at all. Instead they pick a name from the
 // toggle injected into the page's sticky header, and that IS the identity.
 //
-// So: anyone with the URL can read and post, under any of the three names. The only
-// server-side guard is that author_name must be one of them. See notes_setup.sql.
+// So: anyone with the URL can read and post, under any of the four names. The only
+// server-side guard on authorship is that author_name must be one of them.
+//
+// EDITING is a different matter, and is properly guarded (2026-08-07, second pass). Marking
+// a note actioned, archiving a row and deciding a suggestion need a signed-in editor account,
+// Kate's. The database enforces it (sql/notes_setup.sql + sql/supabase_roles_setup.sql); the
+// controls below are hidden to match, so nobody presses a button that would only fail.
+// See auth/supabase-client.js, which owns the client and the session.
 
 (function () {
   if (typeof supabase === 'undefined') return;
@@ -36,25 +42,41 @@
 
   var TZ = 'Asia/Dubai';
   var HINT_KEY = 'trs-approval-hint-dismissed';
-  var POLL_MS = 20000; // only while the panel is open — several people reviewing together
+  var POLL_MS = 20000; // only while the panel is open, because several people reviewing together
 
-  // Keep in sync with public.is_reviewer_name() in notes_setup.sql.
+  // Keep in sync with public.is_reviewer_name() in sql/notes_setup.sql.
   var REVIEWERS = ['Tara', 'Emma', 'Hanneh', 'Kate'];
   var NAME_KEY = 'trs-approval-author';
   var MINE_KEY = 'trs-approval-mine';
 
-  // No auth flow, so don't let GoTrue keep a session around or try to read tokens out of
-  // the URL — there are none to find.
-  var db = supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+  // Share the client with auth/supabase-client.js when the page loads it, so an editor
+  // session started on the sign-in page is the same session used for these writes. When it
+  // is absent, fall back to an anonymous client: read and post still work, editing does not.
+  var db = (window.TRS && window.TRS.db) || supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
     auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false }
   });
 
+  // Can the reader change the state of a row? Only a signed-in admin. Read live rather than
+  // cached, because the session arrives after the first render: supabase-client.js has to
+  // ask Supabase for the session and then read the profile before it knows. Everything that
+  // depends on this is re-rendered from onAuthChange at the bottom of init().
+  function canEdit() { return !!(window.TRS && window.TRS.isAdmin && window.TRS.isAdmin()); }
+
+  // The name attached to the signed-in account, '' when signed out. When it is set it wins
+  // over the four-name toggle, which is the point: whatever Kate writes or actions while
+  // signed in is filed as Kate, with nothing to remember to tap first.
+  function sessionName() {
+    var n = window.TRS && window.TRS.displayName ? window.TRS.displayName() : '';
+    return n && REVIEWERS.indexOf(n) !== -1 ? n : '';
+  }
+  function signedIn() { return !!(window.TRS && window.TRS.email && window.TRS.email()); }
+
   var PACK_ID = document.body.dataset.notePack;
-  var PACK_TITLE = document.title.split('—')[0].trim() || document.title;
+  var PACK_TITLE = document.title.split(':')[0].trim() || document.title;
 
   // Which blocks can be pinned. Sections cover everything; the two granular ones are the
   // places Tara is most likely to want to point at a single line. `.tier` is deliberately
-  // NOT pinnable — the pack says there's nothing to decide there.
+  // NOT pinnable: the pack says there's nothing to decide there.
   var PIN_TARGETS = window.TRS_PIN_TARGETS || [
     { sel: 'main section[id]', into: '.sec-head', labelSel: 'h2', float: false },
     { sel: 'ol.terms > li', into: null, labelSel: 'strong', float: true },
@@ -106,8 +128,11 @@
     return clone.textContent.replace(/\s+/g, ' ').trim();
   }
 
-  // Identity is whichever name is selected in the header toggle, remembered per browser.
+  // Identity is the signed-in account when there is one, and otherwise whichever name is
+  // selected in the header toggle, remembered per browser.
   function authorName() {
+    var s = sessionName();
+    if (s) return s;
     var n = window.localStorage.getItem(NAME_KEY);
     return n && REVIEWERS.indexOf(n) !== -1 ? n : '';
   }
@@ -115,7 +140,7 @@
   function isReviewer() { return !!authorName(); }
 
   // Rows posted from this browser, so Edit is only offered where it makes sense. A
-  // convenience, not a permission — with no login there's nothing to enforce server-side.
+  // convenience, not a permission: with no login there's nothing to enforce server-side.
   function mineIds() {
     try { return JSON.parse(window.localStorage.getItem(MINE_KEY)) || []; } catch (e) { return []; }
   }
@@ -197,6 +222,9 @@
     var notes = [];
     var suggestions = [];
     var suggNotes = [];
+    var allNotes = [];             // every row including archived; the two lists below are slices
+    var archivedNotes = [];        // editor-only, shown under the Archived filter
+    var archivedSuggestions = [];
     var activeTab = 'notes';
     var noteFilter = 'all';       // all | open | done
     var suggFilter = 'all';       // all | pending | decided
@@ -229,57 +257,99 @@
     // opening anything. Injected into .topbar (already sticky); falls back to the top of
     // <main> if this pack ever loses its topbar.
     function buildIdentityBar() {
-      var bar = document.createElement('div');
-      bar.className = 'trs-idbar';
-      bar.innerHTML =
-        '<span class="trs-idbar-label">You are</span>' +
-        '<span class="trs-idbar-btns">' +
-          REVIEWERS.map(function (n) {
-            return '<button type="button" data-name="' + esc(n) + '">' + esc(n) + '</button>';
-          }).join('') +
-        '</span>' +
-        '<span class="trs-idbar-hint" id="trsIdHint">&#9664; Tap your name first, or you cannot leave notes</span>';
-
       var host = idHost();
       if (!host) return null;
+      var bar = document.createElement('div');
+      bar.className = 'trs-idbar';
       host.appendChild(bar);
+      renderIdentityBar(bar);
+      return bar;
+    }
 
-      Array.prototype.forEach.call(bar.querySelectorAll('button'), function (btn) {
+    // Two states, redrawn whenever the session or the selected name changes.
+    //
+    //   signed out  the four-name toggle, plus a quiet "Sign in to edit" link. This is the
+    //               reviewers' state and the one Tara, Emma and Hanneh stay in.
+    //   signed in   no toggle at all. The account IS the identity, so offering to post as
+    //               someone else would only produce notes signed with the wrong name.
+    //               Sign out is always on screen, which is what makes it safe to keep the
+    //               session in localStorage on a shared machine.
+    function renderIdentityBar(bar) {
+      var name = authorName();
+
+      if (signedIn()) {
+        var role = canEdit() ? 'editor' : 'viewer';
+        var label = sessionName() || (window.TRS.email() || '');
+        bar.innerHTML =
+          '<span class="trs-idbar-label">Signed in as</span>' +
+          '<span class="trs-idbar-you">' + esc(label) +
+            '<span class="trs-idbar-role trs-role-' + role + '">' + role + '</span>' +
+          '</span>' +
+          (canEdit()
+            ? ''
+            : '<span class="trs-idbar-hint">This account cannot action notes. ' +
+              'Ask for editor access, or sign out to post as yourself.</span>') +
+          '<button type="button" class="trs-idbar-link" data-id-act="signout">Sign out</button>';
+      } else {
+        bar.innerHTML =
+          '<span class="trs-idbar-label">You are</span>' +
+          '<span class="trs-idbar-btns">' +
+            REVIEWERS.map(function (n) {
+              return '<button type="button" data-name="' + esc(n) + '"' +
+                (n === name ? ' class="active"' : '') + '>' + esc(n) + '</button>';
+            }).join('') +
+          '</span>' +
+          '<span class="trs-idbar-hint" id="trsIdHint"' + (name ? ' hidden' : '') + '>' +
+            '&#9664; Tap your name first, or you cannot leave notes</span>' +
+          (window.TRS && window.TRS.loginUrl
+            ? '<a class="trs-idbar-link" href="' + esc(window.TRS.loginUrl()) + '">Sign in to edit</a>'
+            : '');
+      }
+
+      bar.classList.toggle('trs-idbar-set', !!name);
+      bar.classList.toggle('trs-idbar-editor', canEdit());
+
+      Array.prototype.forEach.call(bar.querySelectorAll('button[data-name]'), function (btn) {
         btn.addEventListener('click', function () {
           var already = authorName() === btn.dataset.name;
-          // clicking the selected name again clears it — a way back out if someone picks
+          // clicking the selected name again clears it, a way back out if someone picks
           // the wrong one on a shared machine
           setAuthorName(already ? '' : btn.dataset.name);
           syncIdentity();
         });
       });
-      return bar;
+
+      var out = bar.querySelector('[data-id-act="signout"]');
+      if (out) {
+        out.addEventListener('click', function () {
+          out.disabled = true;
+          window.TRS.signOut().then(syncIdentity);
+        });
+      }
     }
 
-    // Keeps the header toggle, the panel's "posting as" line and the composer in step
-    // whenever the selected name changes.
+    // Keeps the header toggle, the panel's "posting as" line, the composer and every
+    // editor-only control in step whenever the name or the session changes.
     function syncIdentity() {
-      var name = authorName();
-      if (dom.idbar) {
-        Array.prototype.forEach.call(dom.idbar.querySelectorAll('button'), function (btn) {
-          btn.classList.toggle('active', btn.dataset.name === name);
-        });
-        dom.idbar.classList.toggle('trs-idbar-set', !!name);
-        var hintEl = document.getElementById('trsIdHint');
-        if (hintEl) hintEl.hidden = !!name;
-      }
+      if (dom.idbar) renderIdentityBar(dom.idbar);
       renderWho();
       renderCompose();
+      renderFilters();
       renderList();
     }
 
     function renderWho() {
       var whoEl = document.getElementById('trsNotesWho');
       var name = authorName();
-      whoEl.innerHTML = name
-        ? 'Posting as <strong>' + esc(name) + '</strong> · <button type="button" ' +
-          'id="trsWhoChange">not you?</button>'
-        : '<strong>Pick your name</strong> in the header above before leaving a note.';
+      // Signed in, the name is not a choice: it comes from the account, so "not you?" would
+      // only lead somewhere that does nothing. Sign out is in the header instead.
+      whoEl.innerHTML = signedIn()
+        ? 'Posting as <strong>' + esc(name || window.TRS.email()) + '</strong>' +
+          (canEdit() ? ' · <span class="trs-who-role">you can action and archive</span>' : '')
+        : name
+          ? 'Posting as <strong>' + esc(name) + '</strong> · <button type="button" ' +
+            'id="trsWhoChange">not you?</button>'
+          : '<strong>Pick your name</strong> in the header above before leaving a note.';
       var change = document.getElementById('trsWhoChange');
       if (change) {
         change.addEventListener('click', function () {
@@ -344,11 +414,22 @@
       renderFilters();
     }
 
+    // Archived is an editor-only filter. Everyone else never sees the archived rows, which
+    // is the whole point of archiving them; the editor needs the view because archiving has
+    // to be reversible without opening the SQL editor.
     function renderFilters() {
       var opts = activeTab === 'notes'
         ? [['all', 'All'], ['open', 'Open'], ['done', 'Actioned']]
         : [['all', 'All'], ['pending', 'Pending'], ['decided', 'Decided']];
+      if (canEdit()) opts.push(['archived', 'Archived']);
+
       var current = activeTab === 'notes' ? noteFilter : suggFilter;
+      // dropped back to All when the editor signs out mid-session, so nobody is left
+      // staring at an empty list on a filter that no longer has a button
+      if (current === 'archived' && !canEdit()) {
+        current = 'all';
+        if (activeTab === 'notes') noteFilter = 'all'; else suggFilter = 'all';
+      }
       filtersEl.innerHTML = opts.map(function (o) {
         return '<button type="button" data-val="' + o[0] + '"' +
           (o[0] === current ? ' class="active"' : '') + '>' + o[1] + '</button>';
@@ -385,6 +466,9 @@
       pin.type = 'button';
       pin.className = 'trs-pin-btn' + (floating ? ' trs-pin-float' : '');
       pin.title = 'Leave a note on this';
+      // The tooltip is fine when you can see what "this" is; a screen reader hears 31
+      // identical buttons in the calendar's month grid, so the name carries the anchor.
+      pin.setAttribute('aria-label', 'Leave a note on ' + anchor.label);
       pin.innerHTML =
         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>' +
         (floating ? '' : '<span>Note</span>') +
@@ -404,6 +488,11 @@
       var seen = {};
       PIN_TARGETS.forEach(function (target) {
         Array.prototype.forEach.call(document.querySelectorAll(target.sel), function (el, i) {
+          // Already carries its pin. Matters on a page that rebuilds part of itself (the
+          // calendar redraws both its views on a month change or a channel toggle and calls
+          // back in here); without this, the blocks that survived the redraw would collect a
+          // second pin every time.
+          if (el.dataset.noteAnchorId && el.querySelector('.trs-pin-btn')) return;
           var anchor = computeAnchor(el, target, i);
           if (!anchor || seen[anchor.id]) return;
           seen[anchor.id] = true;
@@ -497,7 +586,7 @@
     function scrollToAnchorFromHash() {
       var raw = window.location.hash ? window.location.hash.slice(1) : '';
       if (!raw) return;
-      // a magic-link return lands as #access_token=...&refresh_token=... — that's GoTrue's
+      // a magic-link return lands as #access_token=...&refresh_token=..., which is GoTrue's
       // to consume, not an anchor to scroll to
       if (raw.indexOf('access_token=') !== -1 || raw.indexOf('error_description=') !== -1) return;
       var hash;
@@ -512,15 +601,17 @@
 
     // ---------- load ----------
 
+    // Archived rows are fetched too, then split off below. They are hidden from everyone's
+    // normal view, but the editor can pull them back up under the Archived filter and
+    // restore one, so archiving stays reversible from the page. It used to be a SQL job.
     function loadAll() {
       var q1 = db.from(T_NOTES).select('*')
-        .eq('pack_id', PACK_ID).eq('archived', false)
+        .eq('pack_id', PACK_ID)
         .order('created_at', { ascending: false });
-      // 'archived' means "hide this" — same contract as a note's archived flag, so it's
-      // filtered out here rather than rendered as another status. Nothing is ever deleted;
-      // un-archiving is a SQL job (see README).
+      // 'archived' as a suggestion status means "hide this", the same contract as a note's
+      // archived flag. Nothing is ever deleted, here or anywhere in this pack.
       var q2 = db.from(T_SUGG).select('*')
-        .eq('pack_id', PACK_ID).neq('status', 'archived')
+        .eq('pack_id', PACK_ID)
         .order('created_at', { ascending: false });
       var q3 = db.from(T_SUGG_NOTES).select('*')
         .order('created_at', { ascending: true });
@@ -533,8 +624,15 @@
           return;
         }
         loadError = null;
-        notes = res[0].data || [];
-        suggestions = res[1].data || [];
+        // Split rather than filter in the query, so the counts on the pins, the nav and the
+        // toggle keep counting only live rows while the Archived view still has something
+        // to show.
+        allNotes = res[0].data || [];
+        var allSugg = res[1].data || [];
+        notes = allNotes.filter(function (n) { return !n.archived; });
+        archivedNotes = allNotes.filter(function (n) { return n.archived; });
+        suggestions = allSugg.filter(function (s) { return s.status !== 'archived'; });
+        archivedSuggestions = allSugg.filter(function (s) { return s.status === 'archived'; });
         suggNotes = res[2].data || [];
 
         if (pendingOpenAnchorId) {
@@ -566,18 +664,35 @@
       return roots;
     }
 
-    // skipHeader: true for a root note rendered inside its own <details> — the <summary>
+    // skipHeader: true for a root note rendered inside its own <details>: the <summary>
     // row already shows author/date/status, so repeating them doubles up the same info.
     function renderNoteCard(n, isReply, skipHeader) {
       var footer = [];
       if (!isReply) {
-        footer.push('<button type="button" class="trs-primary" data-act="resolve" data-id="' + n.id +
-          '" data-resolved="' + n.resolved + '">' + (n.resolved ? 'Reopen' : 'Mark actioned') + '</button>');
-        if (!n.resolved) {
+        // resolving and archiving are the editor's; everyone else sees the state, not the
+        // switch. Archive is the reversible "get this out of the way" for duplicates and
+        // test rows: hidden from the panel, still in the table, restorable from the
+        // Archived filter. Nothing in this pack deletes.
+        if (canEdit()) {
+          if (n.archived) {
+            footer.push('<button type="button" class="trs-primary" data-act="unarchive" data-id="' +
+              n.id + '">Restore</button>');
+          } else {
+            footer.push('<button type="button" class="trs-primary" data-act="resolve" data-id="' + n.id +
+              '" data-resolved="' + n.resolved + '">' + (n.resolved ? 'Reopen' : 'Mark actioned') + '</button>');
+            footer.push('<button type="button" data-act="archive" data-id="' + n.id +
+              '" title="Hides it from the panel. Nothing is deleted, and you can restore it ' +
+              'from the Archived filter.">Archive</button>');
+          }
+        }
+        if (!n.resolved && !n.archived) {
           footer.push('<button type="button" data-act="reply" data-id="' + n.id + '">Reply</button>');
         }
       }
-      if (isMine(n)) {
+      // Editing the text of a posted note is an UPDATE, and only the editor has one. It used
+      // to be offered to anyone on their own rows, which meant a reviewer could type a
+      // correction, press Save and get a permission error from the database.
+      if (isMine(n) && canEdit()) {
         footer.push('<button type="button" data-act="edit" data-id="' + n.id + '">Edit</button>');
       }
       var meta = skipHeader ? '' :
@@ -605,10 +720,14 @@
 
     function renderThread(root) {
       var replies = root.replies.length;
-      var badge = root.resolved
-        ? '<span class="trs-badge trs-badge-done">Actioned' +
-            (root.resolved_by_name ? ' · ' + esc(root.resolved_by_name) : '') + '</span>'
-        : '<span class="trs-badge trs-badge-open">Open</span>';
+      // Archived wins the badge: in the Archived view the open/actioned state is still true
+      // but it is not what the reader needs to know about the row.
+      var badge = root.archived
+        ? '<span class="trs-badge trs-badge-declined">Archived</span>'
+        : root.resolved
+          ? '<span class="trs-badge trs-badge-done">Actioned' +
+              (root.resolved_by_name ? ' · ' + esc(root.resolved_by_name) : '') + '</span>'
+          : '<span class="trs-badge trs-badge-open">Open</span>';
 
       return '<details class="trs-thread" data-thread-id="' + root.id + '"' +
           (openThreads[root.id] ? ' open' : '') + '>' +
@@ -638,16 +757,29 @@
     }
 
     function renderNotesList() {
-      var threads = buildThreads(notes).filter(function (t) {
-        if (noteFilter === 'open') return !t.resolved;
-        if (noteFilter === 'done') return t.resolved;
-        return true;
-      });
+      var threads;
+      if (noteFilter === 'archived') {
+        // An archived root keeps its replies, which are not archived themselves, so pull
+        // them back in explicitly or the thread reads as if nobody answered.
+        var archivedIds = {};
+        archivedNotes.forEach(function (n) { archivedIds[n.id] = true; });
+        threads = buildThreads(allNotes.filter(function (n) {
+          return n.archived || (n.parent_id && archivedIds[n.parent_id]);
+        }));
+      } else {
+        threads = buildThreads(notes).filter(function (t) {
+          if (noteFilter === 'open') return !t.resolved;
+          if (noteFilter === 'done') return t.resolved;
+          return true;
+        });
+      }
       if (!threads.length) {
         listEl.innerHTML = '<div class="trs-notes-empty">' +
           (noteFilter === 'all'
-            ? 'No notes yet.<br>Use the <strong>Note</strong> button next to any section, clause or decision to pin one — or write a general note below.'
-            : 'Nothing here with that filter.') +
+            ? 'No notes yet.<br>Use the <strong>Note</strong> button next to any section, clause or decision to pin one, or write a general note below.'
+            : noteFilter === 'archived'
+              ? 'Nothing archived. Archiving hides a note from everyone without deleting it, and you can restore it from here.'
+              : 'Nothing here with that filter.') +
           '</div>';
         return;
       }
@@ -665,6 +797,8 @@
           var act = btn.dataset.act;
           if (act === 'resolve') {
             setResolved(btn.dataset.id, btn.dataset.resolved !== 'true');
+          } else if (act === 'archive' || act === 'unarchive') {
+            setArchived(btn.dataset.id, act === 'archive');
           } else if (act === 'reply') {
             var form = btn.closest('.trs-thread').querySelector('.trs-reply-form');
             if (!form) return;
@@ -729,14 +863,36 @@
     }
 
     function setResolved(id, resolved) {
-      if (resolved && !requireAuth()) return;
+      if (!requireEditor()) return;
       var patch = resolved
         ? { resolved: true, resolved_by_name: authorName(), resolved_at: new Date().toISOString() }
         : { resolved: false, resolved_by_name: null, resolved_at: null };
       db.from(T_NOTES).update(patch).eq('id', id).then(function (res) {
         if (res.error) { showMessage('Could not update that note: ' + res.error.message, 'error'); return; }
+        showMessage(resolved ? 'Marked actioned.' : 'Reopened.', 'ok');
         loadAll();
       });
+    }
+
+    function setArchived(id, archived) {
+      if (!requireEditor()) return;
+      db.from(T_NOTES).update({ archived: archived }).eq('id', id).then(function (res) {
+        if (res.error) { showMessage('Could not archive that note: ' + res.error.message, 'error'); return; }
+        showMessage(archived
+          ? 'Archived. It is hidden, not deleted: the Archived filter brings it back.'
+          : 'Restored.', 'ok');
+        loadAll();
+      });
+    }
+
+    // The database is the guard; this only stops a stale button from producing a confusing
+    // permission error when the session expired since the panel was drawn.
+    function requireEditor() {
+      if (canEdit()) return true;
+      showMessage(signedIn()
+        ? 'This account is a viewer, so it cannot change the state of a row. Ask for editor access.'
+        : 'Sign in as the editor to action, decide or archive.', 'error');
+      return false;
     }
 
     // ---------- render: suggestions ----------
@@ -750,13 +906,22 @@
 
     function renderSuggestion(s) {
       var disc = suggNotes.filter(function (n) { return n.suggestion_id === s.id; });
-      var actions = s.status === 'pending'
-        ? '<button type="button" class="trs-accept" data-sact="accepted" data-id="' + s.id + '">Accept</button>' +
-          '<button type="button" class="trs-decline" data-sact="declined" data-id="' + s.id + '">Decline</button>' +
-          '<button type="button" data-sact="archived" data-id="' + s.id + '" ' +
-            'title="Hides it from this panel. Nothing is deleted.">Archive</button>'
-        : '<button type="button" data-sact="pending" data-id="' + s.id + '">Reset to pending</button>';
-      if (isMine(s)) {
+      // deciding is the editor's. A viewer still sees the status badge and the discussion,
+      // which is the whole point: they watch their suggestion move.
+      var actions = '';
+      if (canEdit()) {
+        actions = s.status === 'pending'
+          ? '<button type="button" class="trs-accept" data-sact="accepted" data-id="' + s.id + '">Accept</button>' +
+            '<button type="button" class="trs-decline" data-sact="declined" data-id="' + s.id + '">Decline</button>' +
+            '<button type="button" data-sact="archived" data-id="' + s.id + '" ' +
+              'title="Hides it from this panel. Nothing is deleted, and the Archived filter ' +
+              'brings it back.">Archive</button>'
+          : '<button type="button" class="' + (s.status === 'archived' ? 'trs-primary' : '') +
+            '" data-sact="pending" data-id="' + s.id + '">' +
+            (s.status === 'archived' ? 'Restore' : 'Reset to pending') + '</button>';
+      }
+      // same as a note: changing the text is an UPDATE, and only the editor has one
+      if (isMine(s) && canEdit()) {
         actions += '<button type="button" data-sact="edit" data-id="' + s.id + '">Edit</button>';
       }
 
@@ -802,16 +967,20 @@
     }
 
     function renderSuggestionsList() {
-      var list = suggestions.filter(function (s) {
-        if (suggFilter === 'pending') return s.status === 'pending';
-        if (suggFilter === 'decided') return s.status !== 'pending';
-        return true;
-      });
+      var list = suggFilter === 'archived'
+        ? archivedSuggestions
+        : suggestions.filter(function (s) {
+            if (suggFilter === 'pending') return s.status === 'pending';
+            if (suggFilter === 'decided') return s.status !== 'pending';
+            return true;
+          });
       if (!list.length) {
         listEl.innerHTML = '<div class="trs-notes-empty">' +
           (suggFilter === 'all'
-            ? 'No suggestions yet.<br>Use the box below for anything that isn\'t tied to one specific line — a different idea, an addition, a "what if we…".'
-            : 'Nothing here with that filter.') +
+            ? 'No suggestions yet.<br>Use the box below for anything that isn\'t tied to one specific line: a different idea, an addition, a "what if we…".'
+            : suggFilter === 'archived'
+              ? 'Nothing archived. Archiving hides a suggestion from everyone without deleting it, and you can restore it from here.'
+              : 'Nothing here with that filter.') +
           '</div>';
         return;
       }
@@ -886,13 +1055,21 @@
       });
     }
 
+    var STATUS_SAID = {
+      accepted: 'Accepted.',
+      declined: 'Declined.',
+      archived: 'Archived. It is hidden, not deleted: the Archived filter brings it back.',
+      pending: 'Back to pending. The discussion is open again.'
+    };
+
     function setStatus(id, status) {
-      if (status !== 'pending' && !requireAuth()) return;
+      if (!requireEditor()) return;
       var patch = status === 'pending'
         ? { status: 'pending', actioned_by_name: null, actioned_at: null }
         : { status: status, actioned_by_name: authorName(), actioned_at: new Date().toISOString() };
       db.from(T_SUGG).update(patch).eq('id', id).then(function (res) {
         if (res.error) { showMessage('Could not update that suggestion: ' + res.error.message, 'error'); return; }
+        showMessage(STATUS_SAID[status] || 'Updated.', 'ok');
         loadAll();
       });
     }
@@ -1026,7 +1203,7 @@
       }
     }
 
-    // Which section the reader is on — the pack's own scroll-spy marks it .active in the
+    // Which section the reader is on: the pack's own scroll-spy marks it .active in the
     // sidebar. Recorded on a suggestion as context only, never as a pin.
     function currentSectionTitle() {
       var active = document.querySelector('#nav a.active');
@@ -1039,11 +1216,30 @@
 
     dom.idbar = buildIdentityBar();
     injectPins();
+
+    // For a page that redraws its own content after load. Pins are injected by scanning the
+    // DOM once, so anything rebuilt afterwards comes back without them: the calendar's month
+    // grid and agenda are both thrown away and rewritten whenever the month changes or a
+    // channel is unticked. Re-scanning is cheap and skips whatever is already pinned.
+    window.TRS_NOTES = window.TRS_NOTES || {};
+    window.TRS_NOTES.refreshPins = function () { injectPins(); updatePinCounts(); };
+
     scrollToAnchorFromHash();
     if (!window.localStorage.getItem(HINT_KEY)) dom.hint.classList.add('show');
 
     syncIdentity();
     loadAll(); // once up front, so the counts are right before the panel is ever opened
+
+    // The session is not known yet at this point: supabase-client.js has to fetch it and
+    // then read the profile row before canEdit() can be true. Without this the whole page
+    // would render as a signed-out reviewer and stay that way until a manual reload, which
+    // is what "I signed in and the buttons still are not there" looked like.
+    if (window.TRS && window.TRS.onAuthChange) {
+      window.TRS.onAuthChange(function () {
+        syncIdentity();
+        loadAll(); // archived rows only come back for an editor, so refetch on both edges
+      });
+    }
   }
 
   if (document.readyState === 'loading') {

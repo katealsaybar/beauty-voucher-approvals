@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="x-apple-disable-message-reformatting">
 <title>You never skip your hair, {{contact.first_name}}</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet">
 <style>
   body,table,td { margin:0; padding:0; }
   img { border:0; display:block; }
@@ -26,8 +27,10 @@
       <!-- header -->
       <tr><td align="center" style="background-color:#0D0D0D;padding:34px 40px 30px 40px;">
         <div style="width:52px;height:2px;background-color:#99F6E4;font-size:0;line-height:0;margin:0 auto 20px auto;">&nbsp;</div>
-        <img src="{{LOGO_URL}}" width="180" alt="Tara Rose Salon Group" style="display:block;margin:0 auto;width:180px;max-width:180px;">
-        <div style="font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:13.5px;color:#99F6E4;padding-top:14px;">The Beauty Ritual Voucher</div>
+        <!-- wordmark, typeset, no image, so it survives image blocking -->
+        <div style="font-family:'Inter',Arial,Helvetica,sans-serif;font-size:25px;font-weight:400;letter-spacing:.30em;text-indent:.30em;text-transform:uppercase;color:#FFFFFF;line-height:1.15;mso-line-height-rule:exactly;">Tara&nbsp;Rose</div>
+        <div style="font-family:'Inter',Arial,Helvetica,sans-serif;font-size:10px;font-weight:400;letter-spacing:.46em;text-indent:.46em;text-transform:uppercase;color:#99F6E4;line-height:1.2;padding-top:10px;">Salon</div>
+        <div style="font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:13.5px;color:#EEF3C7;padding-top:14px;">The Beauty Ritual Voucher</div>
       </td></tr>
 
       <!-- headline -->
@@ -41,7 +44,7 @@
       <!-- CTA -->
       <tr><td class="pad btn" align="center" style="padding:8px 40px 10px 40px;"><table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 auto;">
                 <tr><td align="center" style="background-color:#99F6E4;border-radius:100px;">
-                  <a href="{{voucher_url}}" target="_blank" style="display:inline-block;padding:15px 32px;font-family:'Inter',Arial,sans-serif;font-size:15px;font-weight:700;color:#0D0D0D;text-decoration:none;">Reserve my tier</a>
+                  <a href="{{voucher_url}}" target="_blank" style="display:inline-block;padding:15px 32px;font-family:'Playfair Display',Georgia,'Times New Roman',serif;font-size:16px;font-weight:400;color:#0D0D0D;text-decoration:none;">Reserve my tier</a>
                 </td></tr>
               </table></td></tr>
       <tr><td class="pad" align="center" style="padding:0 40px 30px 40px;">
@@ -50,18 +53,33 @@
 
       <!-- sign-off -->
       <tr><td class="pad" style="padding:0 40px 34px 40px;border-top:1px solid rgba(45,46,55,.12);">
-        <p style="font-family:'Inter',Arial,sans-serif;font-size:15px;line-height:1.62;color:#2D2E37;margin:0 0 0 0;">Warm regards,<br><strong>The Tara Rose team</strong></p>
+        <p style="font-family:'Inter',Arial,sans-serif;font-size:15px;line-height:1.62;color:#2D2E37;margin:0 0 12px 0;">Warm regards,<br><span style="font-family:Georgia,'Times New Roman',serif;font-style:italic;font-weight:normal;font-size:16px;">The Tara Rose team</span></p>
+        <p style="font-family:'Inter',Arial,sans-serif;font-size:13px;line-height:1.5;color:#74747B;margin:0;"><a href="https://www.tararosesalon.com/en/ae/" target="_blank" style="color:#3aa892;text-decoration:underline;">tararosesalon.com</a></p>
+      </td></tr>
+
+      <!-- ALREADY PAID. Added 10 Aug 2026. Tabby is a unique link per client and a till
+           payment is a till payment: both are tagged by hand, and a branch tags within the
+           day. So a woman can be a paying client for several hours while this workflow still
+           has her down as a lead, and the sell email goes out on time regardless. The copy
+           carries what the tag cannot get to in time. Pre-purchase emails only. -->
+      <tr><td class="pad" style="padding:0 40px 30px 40px;">
+        <div style="background-color:#F1ECE3;border-radius:12px;padding:16px 18px;">
+          <p style="font-family:'Inter',Arial,sans-serif;font-size:13.5px;line-height:1.62;color:#55565F;margin:0;">
+            <strong style="color:#2D2E37;">Already placed your credit?</strong> Then this one is not for you, and thank you. If you paid at the salon or through Tabby, it can take us a few hours to catch up, and we would rather send one email too many than leave you wondering. Your credit is already safe on your account.
+          </p>
+        </div>
       </td></tr>
 
       <!-- footer -->
       <tr><td align="center" style="background-color:#0D0D0D;padding:28px 40px 30px 40px;">
         <div style="font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:15px;color:#99F6E4;padding-bottom:14px;">We see you.</div>
         <div style="font-family:'Inter',Arial,sans-serif;font-size:12.5px;line-height:1.7;color:rgba(255,255,255,.62);">
-          Tara Rose Salon Group. Mamsha al Saadiyat &middot; Khalifa City A &middot; Motor City &middot; Al Quoz<br>
-          WhatsApp <a href="https://wa.me/971581559679" style="color:rgba(255,255,255,.62);">+971 58 155 9679</a>
+          Tara Rose Salon Group<br>
+          <a href="https://wa.me/971501968720" target="_blank" style="color:rgba(255,255,255,.72);text-decoration:underline;">Mamsha al Saadiyat</a> &middot; <a href="https://wa.me/971502811494" target="_blank" style="color:rgba(255,255,255,.72);text-decoration:underline;">Khalifa City A</a> &middot; <a href="https://wa.me/971524960903" target="_blank" style="color:rgba(255,255,255,.72);text-decoration:underline;">Motor City</a> &middot; <a href="https://wa.me/971556245520" target="_blank" style="color:rgba(255,255,255,.72);text-decoration:underline;">Al Quoz</a><br>
+          <span style="color:rgba(255,255,255,.42);">Tap your salon to message us on WhatsApp</span>
         </div>
         <div style="font-family:'Inter',Arial,sans-serif;font-size:11.5px;line-height:1.6;color:rgba(255,255,255,.40);padding-top:12px;">
-          <a href="{{unsubscribe_link}}" style="color:rgba(255,255,255,.40);">Manage your preferences</a>
+          <a href="{{unsubscribe_link}}" target="_blank" style="color:rgba(255,255,255,.55);text-decoration:underline;">Unsubscribe or manage your preferences</a>
         </div>
       </td></tr>
 

@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="x-apple-disable-message-reformatting">
-<title>Final day, {{contact.first_name}}</title>
+<title>Your plan is written, {{contact.first_name}}</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet">
 <style>
   body,table,td { margin:0; padding:0; }
@@ -14,12 +14,13 @@
     .container { width:100% !important; }
     .pad { padding-left:22px !important; padding-right:22px !important; }
     .h1 { font-size:22px !important; }
-    .btn a { display:block !important; width:100% !important; box-sizing:border-box; }
+    .btn-stack { display:block !important; width:100% !important; padding:0 !important; margin:0 0 12px 0 !important; }
+    .btn-stack a { display:block !important; }
   }
 </style>
 </head>
 <body style="background-color:#EFEBE3;margin:0;padding:0;">
-<div style="display:none;max-height:0;overflow:hidden;opacity:0;mso-hide:all;">The Summer Beauty Ritual Voucher closes tonight, 28 August.</div>
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;mso-hide:all;">Most women back their plan with the Beauty Voucher. It closes 28 August.</div>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#EFEBE3;">
   <tr><td align="center" style="padding:32px 16px;">
     <table role="presentation" class="container" width="600" cellpadding="0" cellspacing="0" style="width:600px;max-width:600px;background-color:#FAF8F4;border-radius:20px;overflow:hidden;">
@@ -30,25 +31,29 @@
         <!-- wordmark, typeset, no image, so it survives image blocking -->
         <div style="font-family:'Inter',Arial,Helvetica,sans-serif;font-size:25px;font-weight:400;letter-spacing:.30em;text-indent:.30em;text-transform:uppercase;color:#FFFFFF;line-height:1.15;mso-line-height-rule:exactly;">Tara&nbsp;Rose</div>
         <div style="font-family:'Inter',Arial,Helvetica,sans-serif;font-size:10px;font-weight:400;letter-spacing:.46em;text-indent:.46em;text-transform:uppercase;color:#99F6E4;line-height:1.2;padding-top:10px;">Salon</div>
-        <div style="font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:13.5px;color:#EEF3C7;padding-top:14px;">The Beauty Ritual Voucher</div>
+        <div style="font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:13.5px;color:#EEF3C7;padding-top:14px;">Your Confidence Map</div>
       </td></tr>
 
-      <!-- headline -->
-      <tr><td class="pad" style="padding:34px 40px 0 40px;">
-        <h1 class="h1" style="font-family:Georgia,'Times New Roman',serif;font-weight:normal;font-size:25px;line-height:1.22;color:#2D2E37;margin:0 0 20px 0;">Final day. <i>It closes tonight.</i></h1>
+      <!-- LOCKED TEXT, verbatim, Handover Part 5.2. Do not rewrite -->
+      <tr><td class="pad" style="padding:34px 40px 4px 40px;">
+        <p style="font-family:'Inter',Arial,sans-serif;font-size:16.5px;line-height:1.66;color:#2D2E37;margin:0 0 28px 0;">Hi {{contact.first_name}}, your Confidence Map is with you now, and your plan is written. Most women back it with the Beauty Voucher: you place your credit, we add more on top, and the visits in your plan are already covered. It closes 28 August. Would you like me to hold a tier against your plan, or book your first visit first?</p>
       </td></tr>
+      <!-- END LOCKED TEXT -->
 
-      <!-- body -->
-      <tr><td class="pad" style="padding:0 40px;"><p style="font-family:'Inter',Arial,sans-serif;font-size:15.5px;line-height:1.62;color:#2D2E37;margin:0 0 18px 0;">Hi {{contact.first_name}},</p><p style="font-family:'Inter',Arial,sans-serif;font-size:15.5px;line-height:1.62;color:#2D2E37;margin:0 0 18px 0;">Final day. The Summer Beauty Ritual Voucher closes tonight, 28 August. It is not money off. It is your credit placed as a plan for the year ahead. After tonight, it does not reopen.</p><p style="font-family:'Inter',Arial,sans-serif;font-size:15.5px;line-height:1.62;color:#2D2E37;margin:0 0 18px 0;">Reserve your tier now, or reply and we will help you choose in the next few hours.</p></td></tr>
-
-      <!-- CTA -->
-      <tr><td class="pad btn" align="center" style="padding:8px 40px 10px 40px;"><table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 auto;">
-                <tr><td align="center" style="background-color:#99F6E4;border-radius:100px;">
-                  <a href="{{voucher_url}}" target="_blank" style="display:inline-block;padding:15px 32px;font-family:'Playfair Display',Georgia,'Times New Roman',serif;font-size:16px;font-weight:400;color:#0D0D0D;text-decoration:none;">Reserve my tier before it closes</a>
-                </td></tr>
-              </table></td></tr>
+      <!-- two-path CTA -->
+      <tr><td class="pad" align="center" style="padding:0 40px 10px 40px;"><table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 auto;">
+        <tr>
+          <td class="btn-stack" align="center" style="background-color:#99F6E4;border-radius:100px;">
+            <a href="{{voucher_hold_url}}" target="_blank" style="display:inline-block;padding:15px 26px;font-family:'Playfair Display',Georgia,'Times New Roman',serif;font-size:16px;font-weight:400;color:#0D0D0D;text-decoration:none;">Hold a tier for me</a>
+          </td>
+          <td class="btn-stack" width="12" style="font-size:0;line-height:0;">&nbsp;</td>
+          <td class="btn-stack" align="center" style="background-color:#0D0D0D;border-radius:100px;">
+            <a href="{{booking_url}}" target="_blank" style="display:inline-block;padding:15px 26px;font-family:'Playfair Display',Georgia,'Times New Roman',serif;font-size:16px;font-weight:400;color:#FAF8F4;text-decoration:none;">Book my first visit</a>
+          </td>
+        </tr>
+      </table></td></tr>
       <tr><td class="pad" align="center" style="padding:0 40px 30px 40px;">
-        <a href="https://wa.me/971581559679" target="_blank" style="font-family:'Inter',Arial,sans-serif;font-size:14px;color:#3aa892;text-decoration:underline;">Or message us on WhatsApp</a>
+        <a href="https://wa.me/971581559679" target="_blank" style="font-family:'Inter',Arial,sans-serif;font-size:14px;color:#3aa892;text-decoration:underline;">Or reply on WhatsApp and we will help you choose</a>
       </td></tr>
 
       <!-- sign-off -->
@@ -79,6 +84,7 @@
           <span style="color:rgba(255,255,255,.42);">Tap your salon to message us on WhatsApp</span>
         </div>
         <div style="font-family:'Inter',Arial,sans-serif;font-size:11.5px;line-height:1.6;color:rgba(255,255,255,.40);padding-top:12px;">
+          You are receiving this because you completed a Confidence Mapping with Tara Rose Salon Group.<br>
           <a href="{{unsubscribe_link}}" target="_blank" style="color:rgba(255,255,255,.55);text-decoration:underline;">Unsubscribe or manage your preferences</a>
         </div>
       </td></tr>

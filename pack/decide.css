@@ -1,0 +1,413 @@
+/* Beauty Voucher Approval Pack: the front door and the decision queue.
+   Everything here is prefixed dq- and scoped inside #trsDecide, so it cannot leak into
+   the pack underneath it. Colour variables are the pack's own (index.html :root); this
+   file adds none of its own so the two screens stay the same document. */
+
+/* Above the notes widget's floating toggle (z-index 900), below its slide-in panel (950)
+   which cannot be reached from here anyway, because the toggle is hidden while the
+   queue is up. That is deliberate rather than tidy: the card's own "Change this" writes
+   to the same place the notes panel does, and offering both at once would leave the
+   reviewer picking between two boxes that do the same thing. It also stops the floating
+   bubble sitting directly on top of the Approve button, which is where it landed. */
+/* A COLOUR PER PERSON: --who-tara / --who-emma / --who-hanneh / --who-kate are declared
+   once in shared/notes-widget.css (loaded first on index.html) so this front door and the
+   sticky-header "You are" toggle stay the same four colours. Change them there, not here. */
+#trsDecide{
+  position:fixed;inset:0;z-index:940;display:none;
+  font-family:var(--sans);color:var(--ink);
+}
+#trsDecide.on{display:block;}
+/* The pack keeps scrolling behind an overlay unless the body is pinned. */
+body.dq-locked{overflow:hidden;}
+body.dq-locked .trs-notes-toggle,
+body.dq-locked .trs-notes-hint{display:none !important;}
+
+/* ============================================================
+   THE FORK: one screen, one choice. Dark on purpose: this is a
+   front door, not another page of the pack.
+   ============================================================ */
+.dq-fork{
+  position:absolute;inset:0;background:var(--dark);color:#EFECE5;
+  overflow-y:auto;display:flex;align-items:center;justify-content:center;padding:34px 22px;
+}
+.dq-fork-in{width:100%;max-width:560px;}
+
+/* The whole front door takes the reader's colour, not just their name chip. --who-active
+   is set from data-who in paint(); everything below reads it and falls back to the house
+   turquoise before anyone has picked a name. */
+.dq-fork[data-who="Tara"]  {--who-active:var(--who-tara);}
+.dq-fork[data-who="Emma"]  {--who-active:var(--who-emma);}
+.dq-fork[data-who="Hanneh"]{--who-active:var(--who-hanneh);}
+.dq-fork[data-who="Kate"]  {--who-active:var(--who-kate);}
+
+/* THE RULE ABOVE THE WORDMARK.
+   It is baked into the PNG at #99F6E4 and is the only coloured pixel in the file, so it
+   cannot be restyled, but it CAN be replaced. Measured: the bar occupies y3–y9 of 211
+   and x295–x448 of 720, and the wordmark does not start until y47, leaving a 38px gap.
+   So the top 12% is clipped away (clear of both) and the bar is redrawn as a pseudo
+   element in the live colour. Exact palette values, rather than the approximation a
+   hue-rotate filter would give. If the logo asset is ever recut, re-measure before
+   trusting the 12%. */
+.dq-logowrap{position:relative;display:block;width:132px;max-width:100%;margin:0 auto 30px;}
+.dq-logowrap::before{
+  content:'';position:absolute;top:1px;left:41%;width:21.4%;height:2px;border-radius:2px;
+  background:var(--who-active,var(--accent));transition:background .2s;
+}
+.dq-fork img.dq-logo{display:block;width:100%;height:auto;clip-path:inset(12% 0 0 0);}
+.dq-kicker{
+  font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:#8B8981;
+  text-align:center;margin-bottom:10px;
+}
+.dq-fork h2{
+  font-family:var(--serif);font-weight:600;font-size:31px;line-height:1.16;
+  text-align:center;margin:0 0 12px;color:#fff;
+}
+.dq-fork h2 em{font-style:italic;color:var(--who-active,var(--accent));transition:color .2s;}
+.dq-fork-sub{
+  text-align:center;font-size:14.5px;line-height:1.65;color:#B8B6AE;
+  margin:0 auto 26px;max-width:420px;
+}
+
+/* who are you: the same identity the notes widget uses */
+.dq-who{
+  background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.11);
+  border-radius:16px;padding:16px 16px 17px;margin-bottom:18px;
+}
+.dq-who-lbl{
+  font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:#8B8981;
+  text-align:center;margin-bottom:11px;
+}
+.dq-names{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
+.dq-names button{
+  font:inherit;font-size:14px;font-weight:600;cursor:pointer;
+  display:inline-flex;align-items:center;gap:8px;
+  padding:9px 18px;border-radius:100px;border:1px solid rgba(255,255,255,.2);
+  background:transparent;color:#D8D5CE;transition:background .15s,color .15s,border-color .15s;
+}
+/* Unselected still carries the person's colour as a dot, so the mapping is legible
+   BEFORE anyone clicks; otherwise you only learn whose colour is whose by selecting,
+   which is no use to the reader trying to spot their own name. */
+.dq-names button::before{
+  content:'';width:9px;height:9px;border-radius:50%;flex-shrink:0;
+  background:var(--who);box-shadow:0 0 0 1px rgba(0,0,0,.12) inset;
+}
+.dq-names button:hover{background:rgba(255,255,255,.09);color:#fff;}
+.dq-names button.sel{
+  background:var(--who);border-color:var(--who);color:var(--ink);font-weight:700;
+}
+.dq-names button.sel::before{background:rgba(45,46,55,.34);box-shadow:none;}
+
+/* One variable, set per name, drives both the dot and the selected fill. */
+.dq-names button[data-n="Tara"],   .dq-owner[data-n="Tara"]  {--who:var(--who-tara);}
+.dq-names button[data-n="Emma"],   .dq-owner[data-n="Emma"]  {--who:var(--who-emma);}
+.dq-names button[data-n="Hanneh"], .dq-owner[data-n="Hanneh"]{--who:var(--who-hanneh);}
+.dq-names button[data-n="Kate"],   .dq-owner[data-n="Kate"]  {--who:var(--who-kate);}
+
+/* the two doors */
+.dq-doors{display:grid;gap:11px;}
+.dq-door{
+  display:block;width:100%;text-align:left;font:inherit;cursor:pointer;
+  background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.13);
+  border-radius:16px;padding:17px 19px;color:#EFECE5;
+  transition:background .15s,border-color .15s,transform .12s;
+}
+.dq-door:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.28);transform:translateY(-1px);}
+.dq-door.primary{
+  background:var(--who-active,var(--accent));border-color:var(--who-active,var(--accent));
+  color:var(--ink);transition:background .2s,border-color .2s,transform .12s;
+}
+/* brightness rather than a second hardcoded hex, so hover works for all four colours */
+.dq-door.primary:hover{filter:brightness(1.05);}
+.dq-door[disabled]{opacity:.45;cursor:default;transform:none;}
+.dq-door-t{display:flex;align-items:center;justify-content:space-between;gap:12px;font-weight:700;font-size:16.5px;}
+.dq-door-t .dq-arrow{font-size:19px;opacity:.6;}
+.dq-door-d{font-size:13.5px;line-height:1.6;color:#A9A7A0;margin-top:4px;}
+/* was a fixed dark teal, which only sat right on the turquoise; a tint of --ink reads
+   correctly on all four */
+.dq-door.primary .dq-door-d{color:rgba(45,46,55,.68);}
+.dq-fork-foot{
+  text-align:center;font-size:12.5px;color:#84837C;margin-top:20px;line-height:1.6;
+}
+.dq-fork-foot button{
+  font:inherit;font-size:12.5px;background:none;border:none;padding:0;cursor:pointer;
+  color:#B8B6AE;text-decoration:underline;text-underline-offset:3px;
+}
+.dq-fork-foot button:hover{color:#fff;}
+
+/* ============================================================
+   THE QUEUE: one card at a time on the pack's own cream.
+   ============================================================ */
+.dq-queue{position:absolute;inset:0;background:var(--bg);display:flex;flex-direction:column;}
+
+/* header: the finish line, always visible. This is the whole point. */
+.dq-head{
+  flex-shrink:0;background:var(--paper);border-bottom:1px solid var(--line);
+  padding:12px 20px 0;
+}
+.dq-head-row{
+  display:flex;align-items:center;justify-content:space-between;gap:14px;
+  max-width:660px;margin:0 auto;
+}
+.dq-count{font-size:13px;font-weight:700;letter-spacing:.01em;}
+.dq-count span{color:var(--muted);font-weight:500;}
+.dq-exit{
+  font:inherit;font-size:12.5px;font-weight:600;cursor:pointer;color:var(--muted);
+  background:none;border:1px solid var(--line);border-radius:100px;padding:5px 14px;
+  transition:background .15s,color .15s;
+}
+.dq-exit:hover{background:var(--sand);color:var(--ink);}
+.dq-bar{
+  max-width:660px;margin:9px auto 0;height:4px;border-radius:100px;background:var(--line);
+  overflow:hidden;
+}
+.dq-bar i{
+  display:block;height:100%;background:var(--green);border-radius:100px;
+  width:0;transition:width .32s cubic-bezier(.4,0,.2,1);
+}
+/* round pips: three small completions instead of one long slog */
+.dq-pips{
+  display:flex;gap:5px;justify-content:center;max-width:660px;margin:8px auto 0;
+  padding-bottom:10px;
+}
+.dq-pips i{
+  width:22px;height:3px;border-radius:100px;background:var(--line);
+  transition:background .25s;
+}
+.dq-pips i.done{background:var(--green);}
+.dq-pips i.now{background:var(--ink);}
+
+/* stage */
+.dq-stage{
+  flex:1;overflow-y:auto;display:flex;align-items:flex-start;justify-content:center;
+  padding:26px 20px 20px;
+}
+.dq-card{
+  width:100%;max-width:660px;background:var(--paper);
+  border:1px solid var(--line);border-radius:18px;padding:26px 28px 24px;
+  box-shadow:0 4px 20px rgba(45,46,55,.05);
+  touch-action:pan-y;
+}
+.dq-card.anim{animation:dqIn .26s cubic-bezier(.2,.7,.3,1);}
+@keyframes dqIn{from{opacity:0;transform:translateY(10px) scale(.99);}to{opacity:1;transform:none;}}
+
+.dq-tag{
+  display:flex;align-items:center;gap:9px;flex-wrap:wrap;
+  font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);
+  font-weight:700;margin-bottom:9px;
+}
+/* One chip per owner rather than "Tara & Emma" in a single pill: two owners is a
+   different fact from one, and two chips say it without a word of explanation. */
+.dq-tag .dq-owner{
+  background:var(--who,var(--blue-bg));color:var(--ink);border-radius:100px;
+  padding:3px 11px;letter-spacing:.08em;
+}
+.dq-q{
+  font-family:var(--serif);font-weight:600;font-size:26px;line-height:1.24;margin:0 0 14px;
+}
+
+/* two owners, two answers: said out loud so the second one to open it does not assume
+   the first already closed it */
+.dq-both{
+  background:var(--sand);border:1px solid var(--line);border-radius:11px;
+  padding:10px 14px;margin-bottom:13px;font-size:13px;line-height:1.55;color:var(--muted);
+}
+
+/* the recommendation, pre-selected. She confirms rather than composes. */
+.dq-rec{
+  background:var(--green-bg);border:1px solid #C6E0D2;border-left:5px solid var(--green);
+  border-radius:12px;padding:13px 16px;margin-bottom:14px;
+}
+.dq-rec b{
+  display:block;font-size:10px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--green);margin-bottom:3px;
+}
+.dq-rec p{margin:0;font-size:15px;line-height:1.6;font-weight:600;}
+.dq-rec.none{background:var(--blue-bg);border-color:#C3D9E4;border-left-color:var(--blue);}
+.dq-rec.none b{color:var(--blue);}
+.dq-rec.none p{font-weight:500;color:var(--muted);font-size:14px;}
+
+/* the why, and the full detail folded away until asked for */
+.dq-why{font-size:15px;line-height:1.7;color:var(--ink);}
+.dq-why p{margin:10px 0;}
+.dq-why ul{margin:10px 0 10px 20px;}
+.dq-why li{margin:6px 0;}
+.dq-why a{color:var(--blue);font-weight:600;}
+.dq-why strong{font-weight:700;}
+
+.dq-more{margin-top:15px;border-top:1px solid var(--line);padding-top:13px;}
+.dq-more summary{
+  cursor:pointer;list-style:none;font-size:12.5px;font-weight:700;color:var(--blue);
+  letter-spacing:.02em;display:flex;align-items:center;gap:7px;
+}
+.dq-more summary::-webkit-details-marker{display:none;}
+.dq-more summary::after{content:'▾';font-size:11px;transition:transform .18s;}
+.dq-more[open] summary::after{transform:rotate(180deg);}
+.dq-more-body{font-size:14px;line-height:1.7;color:var(--muted);padding-top:10px;}
+.dq-more-body a{color:var(--blue);font-weight:600;}
+
+/* the comment box: where "yes but change this" actually lands */
+.dq-say{margin-top:16px;display:none;}
+.dq-say.on{display:block;animation:dqIn .2s ease;}
+.dq-say label{
+  display:block;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;
+  font-weight:700;color:var(--amber);margin-bottom:7px;
+}
+.dq-say textarea{
+  width:100%;min-height:104px;resize:vertical;font:inherit;font-size:15px;line-height:1.6;
+  border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--bg);
+  color:var(--ink);
+}
+.dq-say textarea:focus{outline:none;border-color:var(--amber);background:var(--paper);}
+.dq-say-row{display:flex;gap:9px;margin-top:10px;flex-wrap:wrap;}
+.dq-say-row button{
+  font:inherit;font-size:14px;font-weight:700;cursor:pointer;border-radius:100px;
+  padding:9px 20px;border:1px solid var(--line);background:var(--paper);color:var(--muted);
+}
+.dq-say-row button.go{background:var(--amber);border-color:var(--amber);color:#fff;}
+.dq-say-row button.go:hover{background:#9E7133;}
+.dq-say-row button[disabled]{opacity:.5;cursor:default;}
+
+.dq-err{
+  margin-top:12px;background:#FBECEC;border:1px solid #E7C8C8;color:var(--red);
+  border-radius:11px;padding:10px 14px;font-size:13.5px;line-height:1.55;display:none;
+}
+.dq-err.on{display:block;}
+
+/* ============================================================
+   ACTIONS: three, not two. "Change this" is the third answer a
+   swipe cannot hold, and it is the one that creates the work.
+   ============================================================ */
+.dq-acts{
+  flex-shrink:0;background:var(--paper);border-top:1px solid var(--line);
+  padding:13px 20px calc(13px + env(safe-area-inset-bottom,0px));
+}
+.dq-acts-in{display:flex;gap:10px;max-width:660px;margin:0 auto;}
+.dq-acts button{
+  font:inherit;font-weight:700;cursor:pointer;border-radius:13px;padding:14px 10px;
+  border:1px solid var(--line);background:var(--paper);color:var(--ink);
+  font-size:15px;transition:transform .12s,background .15s,border-color .15s;
+  display:flex;flex-direction:column;align-items:center;gap:2px;line-height:1.2;
+}
+.dq-acts button:hover{transform:translateY(-1px);}
+.dq-acts button kbd{
+  font:inherit;font-size:10px;font-weight:600;opacity:.5;letter-spacing:.04em;
+}
+/* Qualified with .dq-acts on purpose. Unqualified (.dq-act-ok) these lose to the base
+   `.dq-acts button` rule above on specificity, and all three buttons render identical
+   white, which is exactly the flattening this screen exists to avoid. */
+.dq-acts .dq-act-later{flex:0 0 27%;color:var(--muted);}
+.dq-acts .dq-act-later:hover{background:var(--sand);}
+.dq-acts .dq-act-change{flex:1;background:var(--amber-bg);border-color:#E3CFA9;color:var(--amber);}
+.dq-acts .dq-act-change:hover{background:#F7E9CE;}
+.dq-acts .dq-act-ok{flex:1;background:var(--green);border-color:var(--green);color:#fff;}
+.dq-acts .dq-act-ok:hover{background:#356850;}
+.dq-acts button[disabled]{opacity:.55;cursor:default;transform:none;}
+
+/* swipe feedback: the gesture is a shortcut, the buttons are the truth */
+.dq-swipe{
+  position:absolute;top:50%;transform:translateY(-50%);z-index:2;pointer-events:none;
+  font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;
+  padding:9px 16px;border-radius:100px;opacity:0;transition:opacity .12s;
+}
+.dq-swipe.l{left:20px;background:var(--sand);color:var(--muted);}
+.dq-swipe.r{right:20px;background:var(--green);color:#fff;}
+.dq-swipe.on{opacity:1;}
+
+/* ============================================================
+   BREAK BEAT + END SCREEN
+   ============================================================ */
+.dq-rest{
+  position:absolute;inset:0;background:var(--bg);overflow-y:auto;
+  display:flex;align-items:center;justify-content:center;padding:34px 22px;
+}
+.dq-rest-in{width:100%;max-width:520px;text-align:center;}
+.dq-tick{
+  width:62px;height:62px;border-radius:50%;background:var(--green-bg);color:var(--green);
+  display:flex;align-items:center;justify-content:center;margin:0 auto 18px;
+  font-size:29px;font-weight:800;
+}
+.dq-rest h2{font-family:var(--serif);font-weight:600;font-size:29px;line-height:1.2;margin:0 0 10px;}
+.dq-rest p{font-size:15px;line-height:1.7;color:var(--muted);margin:0 auto 22px;max-width:400px;}
+.dq-tally{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:0 0 22px;text-align:left;
+}
+.dq-tally div{
+  background:var(--paper);border:1px solid var(--line);border-radius:13px;padding:13px 14px;
+  border-top:4px solid var(--line);
+}
+.dq-tally .n{font-size:24px;font-weight:800;line-height:1.1;}
+.dq-tally .l{font-size:11.5px;color:var(--muted);margin-top:2px;line-height:1.35;}
+.dq-tally .t-ok{border-top-color:var(--green);} .dq-tally .t-ok .n{color:var(--green);}
+.dq-tally .t-ch{border-top-color:var(--amber);} .dq-tally .t-ch .n{color:var(--amber);}
+.dq-tally .t-lt{border-top-color:var(--blue);} .dq-tally .t-lt .n{color:var(--blue);}
+.dq-open{
+  background:var(--paper);border:1px solid var(--line);border-radius:14px;
+  padding:15px 18px;margin-bottom:20px;text-align:left;
+}
+.dq-open b{
+  display:block;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:8px;
+}
+.dq-open ol{margin:0 0 0 19px;font-size:14px;line-height:1.6;}
+.dq-open li{margin:5px 0;}
+.dq-rest-btns{display:grid;gap:10px;}
+.dq-rest-btns button{
+  font:inherit;font-size:15px;font-weight:700;cursor:pointer;border-radius:13px;
+  padding:14px 18px;border:1px solid var(--line);background:var(--paper);color:var(--ink);
+  transition:transform .12s,background .15s;
+}
+.dq-rest-btns button:hover{transform:translateY(-1px);background:var(--sand);}
+.dq-rest-btns button.go{background:var(--green);border-color:var(--green);color:#fff;}
+.dq-rest-btns button.go:hover{background:#356850;}
+
+/* the topbar re-entry button, injected into the pack itself */
+.dq-open-btn{
+  font:inherit;font-size:12.5px;font-weight:700;cursor:pointer;
+  background:var(--green);color:#fff;border:none;border-radius:100px;
+  padding:7px 16px;margin-top:11px;display:inline-flex;align-items:center;gap:8px;
+  transition:background .15s;
+}
+.dq-open-btn:hover{background:#356850;}
+.dq-open-btn .dq-n{
+  background:rgba(255,255,255,.24);border-radius:100px;padding:1px 8px;font-size:11.5px;
+  font-variant-numeric:tabular-nums;
+}
+
+/* The score breakdown, under the button. Rendered only once the server has answered,
+   because a row of zeroes while the fetch is in flight reads as "you have done nothing". */
+.dq-stats{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+.dq-stat{
+  font-size:11.5px;line-height:1;color:var(--muted);background:var(--paper);
+  border:1px solid var(--line);border-radius:100px;padding:5px 11px;
+  display:inline-flex;align-items:center;gap:5px;
+}
+.dq-stat b{font-weight:800;color:var(--ink);font-variant-numeric:tabular-nums;}
+.dq-stat.s-ok{background:var(--green-bg);border-color:#C6E0D2;} .dq-stat.s-ok b{color:var(--green);}
+.dq-stat.s-ch{background:var(--amber-bg);border-color:#E3CFA9;} .dq-stat.s-ch b{color:var(--amber);}
+.dq-stat.s-co{background:var(--blue-bg);border-color:#C3D9E4;} .dq-stat.s-co b{color:var(--blue);}
+.dq-stat.s-sg{background:var(--sand);}
+.dq-stat.s-none{font-style:italic;}
+
+/* ============================================================
+   SMALL SCREENS: this gets read on a phone more than anywhere
+   ============================================================ */
+@media (max-width:640px){
+  .dq-fork{padding:26px 18px;align-items:flex-start;}
+  .dq-fork h2{font-size:26px;}
+  .dq-stage{padding:16px 14px 14px;}
+  .dq-card{padding:20px 19px 19px;border-radius:16px;}
+  .dq-q{font-size:22px;}
+  .dq-acts{padding:11px 14px calc(11px + env(safe-area-inset-bottom,0px));}
+  .dq-acts button{font-size:14px;padding:13px 6px;}
+  .dq-acts button kbd{display:none;}
+  .dq-act-later{flex:0 0 24%;}
+  .dq-tally{grid-template-columns:1fr;}
+  .dq-tally div{display:flex;align-items:baseline;gap:10px;}
+  .dq-tally .l{margin-top:0;}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .dq-card.anim{animation:none;}
+  .dq-bar i{transition:none;}
+  #trsDecide *{transition-duration:.01ms !important;}
+}

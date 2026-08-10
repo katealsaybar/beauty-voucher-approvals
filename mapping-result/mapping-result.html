@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<script type="application/json" id="cowork-artifact-meta">
+{
+  "name": "Confidence Mapping: What she gets, what we see",
+  "schemaVersion": 1,
+  "description": "Two halves of the Confidence Mapping result: the email as it lands in the lead's inbox, and the answers as they should arrive on our side in GHL. Flags the gap between what the page promises and what is actually delivered.",
+  "mcpTools": [],
+  "mcpServerNames": []
+}
+</script>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Confidence Mapping: what she gets, what we see</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/notes-widget.css">
+<!-- The handsets, the desktop frame and the client chrome. Shared with automations.html:
+     one renderer, so this page cannot drift from what the workflow map shows. -->
+<link rel="stylesheet" href="../shared/mail-preview.css">
+<link rel="stylesheet" href="mapping-result.css">
+</head>
+<body data-note-pack="beauty-voucher-2026-08" class="v-her" data-auth-root="../">
+
+  <div class="top">
+    <div class="inner topbar">
+      <img class="brandlogo" src="../assets/tara-rose-logo-black.png" alt="Tara Rose Salon">
+      <h1 class="pagetitle">Confidence Mapping: the result, both ends</h1>
+      <span class="swlabel">Viewing</span>
+      <div class="switch">
+        <button type="button" id="btn-her" class="on">What she gets</button>
+        <button type="button" id="btn-us">What we see</button>
+      </div>
+      <a class="back" href="../index.html">&larr; Approval pack</a>
+    </div>
+  </div>
+
+  <div class="band">
+    <details class="howto">
+      <summary>How to read this</summary>
+      <div class="hint">Two ends of the same submission. <b>What she gets</b> is the real email from the build, rendered as it lands on a phone, next to what the page promised her. <b>What we see</b> is what the quiz actually sends us, and what reception would have in front of them when they ring her within two hours.</div>
+    </details>
+    <div class="note stop"><strong>The gap, in one line.</strong> The page promises &ldquo;a full plan written for you: the exact treatments, your home care, and your rhythm, visit by visit.&rdquo; The email delivers one line of what-we-heard and a promise that somebody will call. <strong>The plan is a phone call, not a written plan.</strong> Either the page stops promising it in writing, or the email has to carry it.</div>
+  </div>
+
+  <!-- ========================= WHAT SHE GETS ========================= -->
+  <div class="panel panel-her">
+
+    <!-- Four combinations, built from MAIL_CLIENTS. Rendered by the SAME code the automations
+         map uses (mail-preview.js), so what she sees here and what a workflow step shows can
+         never disagree. -->
+    <div class="clientbar">
+      <span class="cblbl">Open it in</span>
+      <div class="clientsw" id="clientsw"></div>
+    </div>
+    <div class="clientwhy" id="clientwhy"></div>
+
+    <div class="note flag"><strong>Why these four, and why Outlook on Windows is one of them.</strong> Client and device are two different questions (Gmail runs on both handsets), so these are four combinations people actually read email in, rather than a row that mixes the two. <strong>Outlook on Windows renders through Word, not a browser engine</strong>, which is why it is the one that genuinely breaks emails and why it cannot be left out. &ldquo;It looked fine in Gmail&rdquo; is how a broken email ships.</div>
+
+    <div class="split" id="hersplit">
+
+      <div>
+        <div class="framewrap">
+          <!-- The real asset, not a redraw. EMAILS.journal is the same object the automations
+               map renders from, so this can never drift out of sync with what is built. -->
+          <div class="mstage" id="mailstage"></div>
+        </div>
+      </div>
+
+      <div class="ann" data-mockblock>
+        <span data-mocklabel hidden>What she gets</span>
+        <h2>The email that lands, minute zero.</h2>
+        <p class="lede">This is the built asset, pulled straight from the workflow file, not a redraw. Scroll it inside the frame, and switch client above to see it the way she will actually open it.</p>
+
+        <div class="note good"><strong>What is right about it.</strong> It already calls the deliverable <strong>&ldquo;your Confidence Map&rdquo;</strong>, not &ldquo;Journal&rdquo;, so the naming fix is already correct <em>in the email</em>. It carries &ldquo;We see you.&rdquo; It sets the two-hour expectation. The tone is right.</div>
+
+        <div class="claimrow">
+          <div class="claim promise">
+            <div class="cl">The page promises</div>
+            &ldquo;At the end a full plan written for you: <strong>the exact treatments, your home care, and your rhythm, visit by visit</strong>.&rdquo;
+          </div>
+          <div class="claim deliver">
+            <div class="cl">The email delivers</div>
+            <strong>What we heard</strong><br>Colour correction &middot; Brassy tones, and it never lasts<br><br>&hellip;then &ldquo;one of our team will be in touch within the next two hours&rdquo;.
+          </div>
+        </div>
+
+        <div class="note flag"><strong>So one of two things has to change.</strong> Either the email grows a real plan block (recommended treatments, home care, and the visit rhythm, merged from the answers she already gave), or the page stops saying the plan comes in writing and promises the call instead. <strong>The first is truer to the doctrine</strong> (we diagnose first, and the plan is the product) but it is the bigger build. The second ships this week. Tara's call.</div>
+
+        <div class="note flag"><strong>Two smaller things in this email.</strong> The footer lists <strong>all four salons</strong>, which is right for mapping but will read oddly to someone who arrived from a single-emirate voucher page. And the workflow node that sends it is still titled <strong>&ldquo;The Journal&rdquo;</strong> even though the email says Confidence Map. The map and the asset disagree.</div>
+
+        <div class="note stop"><strong>Found by building the Outlook pane, and it is not just this email.</strong> Every footer sets its text with <span style="font-family:ui-monospace,monospace;font-size:12.5px;">color:rgba(255,255,255,&hellip;)</span> on a near-black background. <strong>Outlook on Windows has never supported rgba colour</strong>, so it drops the rule and the text falls back to near-black: black on black. The footer, and <strong>the unsubscribe link inside it</strong>, become unreadable for every client on Outlook desktop. That is not only a look problem: an unsubscribe nobody can find is what gets a sender marked as spam.
+          <br><br><strong>All thirteen emails do it</strong>, four or five times each. The fix is a solid hex instead of rgba: the same grey, one line per file, no visible change in any other client. Kate can make it in an hour, but it changes thirteen client-facing assets, so it is flagged here rather than done quietly. Switch to <strong>Outlook &middot; Windows</strong> above to see the full list for this email.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================= WHAT WE SEE ========================= -->
+  <div class="panel panel-us">
+    <div data-mockblock>
+      <span data-mocklabel hidden>What we see</span>
+
+      <div class="note stop"><strong>Verified 8 August, not assumed: today, none of her 19 answers reach GHL at all.</strong> We checked every place a bridge could live: Gravity Forms' own Webhooks add-on (no feed configured on this form), the Zapier add-on (no zap configured either), and a plugin built for exactly this job, <code>GravityGHL Sync</code>, which exists on the site but is switched off, and even switched on fires on <em>every</em> form site-wide with no way to scope it to just this one. So this card is not what she gets today. It is <strong>the target, once the build below lands</strong>.</div>
+
+      <div class="rec" style="margin-top:18px;">
+        <div class="rhead">
+          <span class="who">Layla A.</span>
+          <span>+971 5&bull; &bull;&bull;&bull; &bull;&bull;&bull;&bull;</span>
+          <span class="sub">GHL contact &middot; the target, once the Make.com build lands</span>
+        </div>
+
+        <div class="tagrow">
+          <span class="tg">map:completed</span>
+          <span class="tg">route:colour-correction</span>
+          <span class="tg">pain:brassy</span>
+          <span class="tg">pain:fade-fast</span>
+          <span class="tg">tier:protect</span>
+          <span class="tg">source:confidence-mapping</span>
+          <span class="tg fallback">emirate:unknown &middot; Monday fallback</span>
+        </div>
+
+        <table>
+          <thead><tr><th style="width:210px;">Field</th><th>Her answer</th><th style="width:150px;">Where it goes today</th></tr></thead>
+          <tbody>
+            <tr><td class="f">route</td><td class="v">Colour correction</td><td><span class="st tag">Tag</span></td></tr>
+            <tr><td class="f">pain</td><td class="v">Brassy tones; colour fades too fast <span style="font-weight:400;color:var(--muted);">&rarr; splits into 2 tags</span></td><td><span class="st tag">Tag &times;2</span></td></tr>
+            <tr><td class="f">homecare_tier</td><td class="v">protect</td><td><span class="st tag">Tag</span></td></tr>
+            <tr><td class="f">confidence</td><td class="v">Longer than I can remember</td><td><span class="st field">Field</span></td></tr>
+            <tr><td class="f">history_bad</td><td class="v">Yes, in the past</td><td><span class="st field">Field</span></td></tr>
+            <tr><td class="f">goal</td><td class="v">A big change, a real change</td><td><span class="st field">Field</span></td></tr>
+            <tr><td class="f">change</td><td class="v">More shedding or thinning</td><td><span class="st field">Field</span></td></tr>
+            <tr><td class="f">base</td><td class="v">Blonde or light</td><td><span class="st field">Field</span></td></tr>
+            <tr><td class="f">status</td><td class="v">Highlights or balayage</td><td><span class="st field">Field</span></td></tr>
+            <tr><td class="f">hennakeratin</td><td class="v">Yes, keratin or a smoothing treatment</td><td><span class="st field">Field</span></td></tr>
+            <tr><td class="f">condition</td><td class="v">2 of 5 <span style="font-weight:400;color:var(--muted);">&middot; stored as Text, not Number</span></td><td><span class="st field">Field</span></td></tr>
+            <tr><td class="f">routine</td><td class="v">Heat styling most days</td><td><span class="st field">Field</span></td></tr>
+            <tr><td class="f">homecare</td><td class="v">Whatever is on the supermarket shelf</td><td><span class="st field">Field</span></td></tr>
+            <tr><td class="f">detox</td><td class="v">Never, I did not know I should</td><td><span class="st field">Field</span></td></tr>
+            <tr><td class="f">occasion</td><td class="v">A wedding or a big event</td><td><span class="st field">Field</span></td></tr>
+            <tr><td class="f">wellbeing</td><td class="v">Stressed, and not sleeping enough</td><td><span class="st field">Field</span></td></tr>
+            <tr><td class="f">supplements</td><td class="v">No, nothing</td><td><span class="st field">Field</span></td></tr>
+            <tr><td class="f">locale</td><td class="v">en-us <span style="font-weight:400;color:var(--red);">(a language code, not an emirate)</span></td><td><span class="st field">Field</span></td></tr>
+            <tr><td class="f">source_page</td><td class="v">en/ae/confidence-mapping</td><td><span class="st field">Field</span></td></tr>
+          </tbody>
+        </table>
+
+        <div style="padding:16px 18px;border-top:1px solid var(--line);font-size:13.5px;">
+          <strong>Contact-centre task:</strong> &ldquo;First human contact within 2 hours&rdquo;: created, but with no view of the answers attached to it.
+        </div>
+      </div>
+
+      <div class="legend">
+        <span><span class="st tag">Tag</span> becomes a GHL tag, only where something branches or segments on it</span>
+        <span><span class="st field">Field</span> a GHL custom field, read on the call, merged into email, not filtered on</span>
+        <span><span class="tg fallback" style="padding:3px 9px;font-size:10px;">amber</span> a deliberate stand-in value, not an error</span>
+      </div>
+
+      <div class="note stop" style="margin-top:22px;"><strong>Corrected 8 August, after reading the live form.</strong>
+        <br><br>One: <span style="font-family:ui-monospace,monospace;font-size:12.5px;">locale</span> is <strong>not</strong> the emirate. The live script sets it from the page's language attribute, so it holds <span style="font-family:ui-monospace,monospace;font-size:12.5px;">en-us</span> for every lead and always will. There is nothing being &ldquo;thrown away&rdquo; and nothing to recover. Mapping leads simply have no emirate until she is asked directly, hence the <span class="tg fallback" style="padding:2px 8px;font-size:10.5px;">emirate:unknown</span> fallback above.
+        <br><br>Two: the quiz is <strong>Gravity Forms on WordPress</strong>, not a GHL form, and Gravity Forms does not talk to GHL on its own. <strong>That hop is no longer a mystery.</strong> We checked wp-admin directly: no Webhooks feed, no Zapier feed, and the one plugin built for this job is switched off and, worse, fires on every form on the site with no way to scope it to just this one. So the decision is to build a clean bridge rather than revive that plugin.</div>
+
+      <div class="note flag"><strong>The build, in order.</strong> One, create all nineteen custom fields in GHL <em>before</em> anything else, because a field that does not exist when the form posts drops its value with no error anywhere: <code>pain</code> as Single Line Text, <code>condition</code> as Text, not Number. Two, a Make.com scenario: a Custom Webhook trigger fed by Gravity Forms' own Webhooks add-on (already installed, free), a step that splits <code>pain</code> into its own tags and folds in <code>route</code> / <code>tier</code> / <code>emirate:unknown</code>, then GHL's &ldquo;Update or Create Contact&rdquo;, matched on phone number, so a returning client is updated rather than duplicated. Three, submit one test entry and read it at <strong>both</strong> ends: the Gravity Forms entry list and the resulting GHL contact. Four, the contact note in reading order, written at the same moment as the fields, before the contact-centre task. Keys, types and the note layout are in <strong>docs/CONFIDENCE-MAPPING-FIELD-SPEC.md</strong>; the Make scenario is drawn module by module in the workflow map: open <a href="../automations/automations.html" target="_blank" rel="noopener">automations.html</a> and pick the <strong>Make.com bridge</strong> lane, where every module carries the settings to build it from.</div>
+
+      <div class="note info"><strong>Why this matters more than it looks.</strong> The page's whole promise is &ldquo;we diagnose first and recommend second, so nothing in your plan is guessed.&rdquo; If reception rings her without her answers in front of them, the first human contact guesses. That is the one thing the page says we do not do.</div>
+    </div>
+  </div>
+
+<script src="../data/automations-data.js"></script>
+<!-- The frames and the client chrome, shared with automations.html. Must load before the
+     inline script below, which calls into it. -->
+<script src="../shared/mail-preview.js"></script>
+<script src="mapping-result.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../auth/supabase-client.js"></script>
+<script src="../shared/notes-widget.js"></script>
+</body>
+</html>

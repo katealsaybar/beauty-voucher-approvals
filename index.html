@@ -12,172 +12,22 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Beauty Voucher — Approval Pack</title>
+<title>Beauty Voucher: Approval Pack</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="notes-widget.css">
-<style>
-  :root{
-    --bg:#FAF8F4; --paper:#FFFFFF; --ink:#2D2E37; --muted:#6E6E77;
-    --line:#E7E2D8; --accent:#99F6E4; --sand:#F1ECE3; --dark:#2D2E37;
-    --amber:#B4823A; --amber-bg:#FBF3E2; --blue:#3B6E8F; --blue-bg:#E6F0F5;
-    --green:#3E7A5E; --green-bg:#E4F1EA; --red:#B24A4A;
-    --serif:'Playfair Display',Georgia,serif;
-    --sans:'Inter',system-ui,-apple-system,sans-serif;
-  }
-  *{box-sizing:border-box;margin:0;padding:0;}
-  html{scroll-behavior:smooth;}
-  body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;font-size:15.5px;}
-  a{color:inherit;}
-
-  /* layout */
-  .wrap{display:flex;min-height:100vh;}
-  .sidebar{
-    width:270px;flex-shrink:0;background:var(--dark);color:#EFECE5;
-    position:sticky;top:0;height:100vh;overflow-y:auto;padding:28px 20px;
-  }
-  /* the source logo is a wordmark, so let it run nearly the full sidebar width —
-     anything smaller and it reads as a tiny grey smudge against the dark panel */
-  .brandlogo{display:block;width:100%;max-width:216px;height:auto;}
-  /* mobile: the sidebar is hidden below 860px, so the topbar carries the logo instead */
-  .topbar .brandlogo{display:none;max-width:170px;margin-bottom:18px;}
-  .navlabel{font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:#8B8981;margin:28px 0 10px;}
-  nav a{
-    display:flex;align-items:center;justify-content:space-between;gap:8px;
-    padding:11px 12px;border-radius:10px;color:#D8D5CE;text-decoration:none;
-    font-size:14px;font-weight:500;margin-bottom:4px;transition:background .15s,color .15s;
-  }
-  nav a:hover{background:rgba(255,255,255,.06);color:#fff;}
-  nav a.active{background:var(--accent);color:var(--ink);font-weight:700;}
-  .dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;display:inline-block;}
-  .dot.draft{background:var(--amber);} .dot.pending{background:var(--blue);} .dot.confirmed{background:var(--green);}
-  nav a.active .dot{outline:2px solid rgba(45,46,55,.25);}
-  .legend-row{display:flex;align-items:center;gap:9px;font-size:12.5px;color:#C7C5BE;margin:7px 0;}
-
-  /* main */
-  /* max-width keeps a readable measure, margin auto stops all the slack piling up on one
-     side of the column on a wide screen. The sidebar stays flush left as a full-bleed rail. */
-  main{flex:1;padding:0 0 90px;max-width:920px;margin:0 auto;}
-  .topbar{
-    padding:34px 52px 26px;border-bottom:1px solid var(--line);background:var(--paper);
-    position:sticky;top:0;z-index:5;
-  }
-  .kicker{font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--muted);}
-  h1{font-family:var(--serif);font-weight:600;font-size:31px;line-height:1.12;margin:10px 0 4px;}
-  .topmeta{font-size:13.5px;color:var(--muted);margin-top:8px;}
-  .topmeta strong{color:var(--ink);}
-
-  section{padding:46px 52px 10px;scroll-margin-top:20px;}
-  section + section{border-top:1px solid var(--line);}
-  h2{font-family:var(--serif);font-weight:600;font-size:25px;margin-bottom:4px;}
-  h3{font-size:15px;font-weight:800;margin:26px 0 8px;letter-spacing:.01em;text-transform:uppercase;color:#55565F;font-size:12.5px;letter-spacing:.12em;}
-  p{margin:11px 0;}
-  ul,ol{margin:11px 0 11px 22px;} li{margin:7px 0;}
-
-  /* one-line summary strip */
-  .oneline{
-    display:flex;gap:12px;align-items:flex-start;
-    background:var(--paper);border:1px solid var(--line);border-left:5px solid var(--accent);
-    border-radius:12px;padding:14px 18px;margin:14px 0 22px;font-size:15px;
-  }
-  .oneline b{display:block;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:2px;font-weight:700;}
-
-  /* status badges */
-  .badge{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:700;
-    letter-spacing:.05em;text-transform:uppercase;padding:5px 12px;border-radius:100px;vertical-align:middle;}
-  .badge.draft{background:var(--amber-bg);color:var(--amber);}
-  .badge.pending{background:var(--blue-bg);color:var(--blue);}
-  .badge.confirmed{background:var(--green-bg);color:var(--green);}
-  .badge .b-dot{width:7px;height:7px;border-radius:50%;background:currentColor;}
-  .sec-head{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:6px;}
-
-  /* status board */
-  .board{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin:18px 0 6px;}
-  .board a{
-    text-decoration:none;background:var(--paper);border:1px solid var(--line);border-radius:14px;
-    padding:16px 16px 15px;display:block;transition:transform .12s,box-shadow .12s;border-top:4px solid var(--line);
-  }
-  .board a:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(45,46,55,.08);}
-  .board a.s-green{border-top-color:var(--green);}
-  .board a.s-amber{border-top-color:var(--amber);}
-  .board a.s-blue{border-top-color:var(--blue);}
-  .board .b-title{font-weight:700;font-size:14.5px;margin-bottom:5px;}
-  .board .b-status{font-size:12.5px;color:var(--muted);display:flex;align-items:center;gap:7px;}
-
-  /* action box */
-  .action{background:#FFFDF8;border:1.5px solid var(--amber);border-radius:14px;padding:16px 20px;margin:18px 0;}
-  .action .a-label{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--amber);margin-bottom:8px;}
-  .action ul{margin:0 0 0 20px;} .action li{margin:6px 0;}
-
-  .card{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:20px 24px;margin:14px 0;}
-  .card p{margin:9px 0;}
-
-  .tier-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px;margin:16px 0;}
-  .tier{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:22px;}
-  .tier.vip{background:var(--dark);color:#F3F1EC;border-color:var(--dark);}
-  .tier.vip .t-sub,.tier.vip .t-incl{color:rgba(243,241,236,.75);}
-  .t-name{font-family:var(--serif);font-size:19px;font-weight:600;}
-  .t-price{font-size:23px;font-weight:800;margin:8px 0 3px;}
-  .t-sub{font-size:13px;color:var(--muted);}
-  .t-incl{font-size:12.5px;color:var(--muted);margin-top:13px;line-height:1.6;}
-  .chip{display:inline-block;background:var(--accent);color:var(--ink);font-size:11px;font-weight:700;padding:3px 11px;border-radius:100px;margin-top:12px;}
-  .paySpend{display:flex;align-items:flex-end;gap:14px;margin:12px 0 6px;}
-  .ps-col{display:flex;flex-direction:column;gap:2px;}
-  .ps-label{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700;}
-  .ps-pay{font-size:21px;font-weight:800;line-height:1;}
-  .ps-credit{font-size:21px;font-weight:800;line-height:1;color:var(--green);}
-  .ps-arrow{font-size:18px;color:var(--muted);font-weight:700;padding-bottom:2px;}
-  .tier.vip .ps-credit{color:var(--accent);} .tier.vip .ps-label{color:rgba(243,241,236,.7);}
-
-  table{width:100%;border-collapse:collapse;margin:16px 0 6px;font-size:14px;background:var(--paper);border-radius:12px;overflow:hidden;border:1px solid var(--line);}
-  th,td{text-align:left;padding:12px 15px;border-bottom:1px solid var(--line);}
-  th{background:var(--sand);font-size:11.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink);font-weight:700;}
-  tr:last-child td{border-bottom:none;}
-  td.num{font-variant-numeric:tabular-nums;white-space:nowrap;}
-  .avail-yes{color:var(--green);font-weight:700;} .avail-no{color:var(--red);font-weight:700;} .avail-tbc{color:var(--blue);font-weight:700;}
-
-  .note{background:var(--sand);border-radius:12px;padding:15px 18px;font-size:14px;margin:14px 0;}
-  .note.flag{background:var(--amber-bg);color:#6E5320;border:1px solid #EAD9B8;}
-  .note.good{background:var(--green-bg);color:#2C5A44;border:1px solid #C9E4D5;}
-
-  ol.terms{counter-reset:t;list-style:none;margin-left:0;}
-  ol.terms>li{counter-increment:t;position:relative;padding-left:44px;margin:18px 0;}
-  ol.terms>li::before{content:counter(t);position:absolute;left:0;top:-2px;width:30px;height:30px;border-radius:50%;
-    background:var(--dark);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;}
-  ol.terms>li strong{display:block;margin-bottom:2px;}
-
-  .decision{display:flex;gap:12px;align-items:flex-start;background:var(--paper);border:1px solid var(--line);
-    border-left:4px solid var(--blue);border-radius:12px;padding:14px 18px;margin:12px 0;}
-  .decision.done{border-left-color:var(--green);background:var(--green-bg);}
-  .decision .q{font-weight:700;}
-  .decision .a{font-size:13.5px;color:var(--muted);margin-top:3px;}
-  .decision .tick{font-weight:800;color:var(--green);flex-shrink:0;}
-  .decision .num{flex-shrink:0;width:26px;height:26px;border-radius:50%;background:var(--blue);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;}
-
-  .footer{padding:30px 52px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);}
-  .foot-legend{display:flex;gap:22px;flex-wrap:wrap;margin-top:12px;}
-  .foot-legend span{display:flex;align-items:center;gap:8px;}
-
-  @media(max-width:860px){
-    .sidebar{display:none;} main{max-width:100%;}
-    .topbar,section,.footer{padding-left:22px;padding-right:22px;}
-    /* sidebar is gone, so the topbar picks up the brandmark */
-    .topbar .brandlogo{display:block;}
-    /* the wider tables (Phorest mapping, confidence mapping, T&Cs, incentive) can't fit a
-       phone. Let them scroll inside their own box rather than stretch the whole page. */
-    table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;}
-  }
-</style>
+<link rel="stylesheet" href="shared/notes-widget.css">
+<link rel="stylesheet" href="pack/decide.css">
+<link rel="stylesheet" href="pack/pack.css">
 </head>
 <!-- data-note-pack: the pack_id every note/suggestion row is filed under. Change it and
      you start a fresh, empty review thread. -->
-<body data-note-pack="beauty-voucher-2026-08">
+<body data-note-pack="beauty-voucher-2026-08" data-auth-root="">
 <div class="wrap">
 
   <aside class="sidebar">
-    <img class="brandlogo" src="assets/tara-rose-logo-white.png" alt="Tara Rose Salon">
-    <div class="navlabel">Approval Pack</div>
+    <div class="brandwrap"><img class="brandlogo" src="assets/tara-rose-logo-white.png" alt="Tara Rose Salon"></div>
+    <div class="navlabel" style="margin-top:14px;">Approval Pack</div>
     <nav id="nav">
       <a href="#overview"><span>Overview</span><span class="dot pending"></span></a>
       <a href="#offer"><span>Offer &amp; Tiers</span><span class="dot confirmed"></span></a>
@@ -186,28 +36,68 @@
       <a href="#phorest"><span>Phorest Setup</span><span class="dot confirmed"></span></a>
       <a href="#copy"><span>Campaign Copy</span><span class="dot draft"></span></a>
       <a href="#mapping"><span>Confidence Mapping</span><span class="dot draft"></span></a>
+      <a href="#ritualkit"><span>Home Ritual Kit</span><span class="dot draft"></span></a>
       <a href="#automations"><span>GHL Automations</span><span class="dot draft"></span></a>
+      <a href="#social"><span>Social Media Calendar</span><span class="dot pending"></span></a>
+      <a href="#calendar"><span>Posting Calendar</span><span class="dot pending"></span></a>
       <a href="#terms"><span>Terms &amp; Conditions</span><span class="dot draft"></span></a>
       <a href="#cancellation"><span>Cancellation Policy</span><span class="dot draft"></span></a>
       <a href="#incentive"><span>Staff Incentive</span><span class="dot draft"></span></a>
       <a href="#decisions"><span>Open Decisions</span><span class="dot pending"></span></a>
+      <a href="#briefing"><span>Floor Briefing</span><span class="dot draft"></span></a>
     </nav>
+    <!-- Two different kinds of thing, so two different lists. Tools are working
+         instruments: a map, a calendar, a decision tree, the notes dashboard. Mockups are
+         the campaign DRAWN: the pages a client will actually meet. Mixing them in one
+         list made the mockups read as more admin, which is the opposite of what they are,
+         so they get their own boxed group below with the device switch called out. -->
     <div class="navlabel">Tools</div>
     <nav>
-      <a href="automations.html" target="_blank" rel="noopener"><span>Automations map</span><span>&nearr;</span></a>
-      <a href="dashboard.html" target="_blank" rel="noopener"><span>All notes &amp; suggestions</span><span>&nearr;</span></a>
+      <a href="automations/automations.html" target="_blank" rel="noopener"><span>Automations map</span><span>&nearr;</span></a>
+      <a href="calendar/calendar.html" target="_blank" rel="noopener"><span>Posting calendar</span><span>&nearr;</span></a>
+      <a href="ritual-kit/ritual-kit.html" target="_blank" rel="noopener"><span>Ritual Kit decision tree</span><span>&nearr;</span></a>
+      <!-- Last in the list on purpose. It is the only page here nobody should need to open
+           during a review: it is for the day something breaks, not for signing anything off. -->
+      <a href="runbook/runbook.html" target="_blank" rel="noopener"><span>Runbook: kill switch &amp; contingencies</span><span>&nearr;</span></a>
+      <a href="dashboard/dashboard.html" target="_blank" rel="noopener"><span>All notes &amp; suggestions</span><span>&nearr;</span></a>
+    </nav>
+
+    <div class="navgroup">
+      <div class="navlabel mocklbl">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="13" height="10" rx="2"/><path d="M6 19h5M8.5 14v5"/><rect x="16" y="9" width="7" height="12" rx="2"/></svg>
+        Mockups
+      </div>
+      <nav>
+        <a href="website-mockups/voucher-landing/voucher-landing.html" target="_blank" rel="noopener"><span>Website mockup</span><span>&nearr;</span></a>
+        <a href="website-mockups/terms/terms.html" target="_blank" rel="noopener"><span>T&amp;C mockup</span><span>&nearr;</span></a>
+        <a href="website-mockups/confidence-mapping/confidence-mapping.html" target="_blank" rel="noopener"><span>Confidence Mapping mockup</span><span>&nearr;</span></a>
+        <a href="mapping-result/mapping-result.html" target="_blank" rel="noopener"><span>Mapping result &middot; both ends</span><span>&nearr;</span></a>
+      </nav>
+      <div class="gnote">The campaign as a client meets it. The first three open with a
+        <b>Desktop / Phone</b> switch in their header. The fourth is already a phone.</div>
+    </div>
+
+    <div class="navlabel">Source data</div>
+    <nav>
+      <a href="https://docs.google.com/spreadsheets/d/1QDDiBYoQhccEHKB7VGJ9wgLoXFKQxJIz7f8C2Zj0oUU/edit?gid=1050960254" target="_blank" rel="noopener"><span>TRS Beauty Stock sheet</span><span>&nearr;</span></a>
     </nav>
     <div class="navlabel">Legend</div>
     <div class="legend-row"><span class="dot confirmed"></span>Confirmed (live site)</div>
     <div class="legend-row"><span class="dot draft"></span>Draft, needs approval</div>
-    <div class="legend-row"><span class="dot pending"></span>Pending info / decision</div>
+    <div class="legend-row"><span class="dot pending"></span>Pending info, decision or reference</div>
+    <!-- Deliberately no dot on the Tools or Mockups lists. A dot is the state of a DECISION, and a mockup
+         has no state of its own; it inherits whatever the section it illustrates is waiting on,
+         so a dot there would either duplicate that section's dot or imply the drawing itself
+         needs signing off. The arrow says the only thing that is true of all of them: it opens
+         in its own window. -->
+    <div class="legend-row"><span style="width:9px;flex-shrink:0;text-align:center;">&nearr;</span>Opens in its own window</div>
   </aside>
 
   <main>
     <div class="topbar">
       <img class="brandlogo" src="assets/tara-rose-logo-black.png" alt="Tara Rose Salon">
       <div class="kicker">Summer Beauty Ritual Voucher · UAE</div>
-      <h1>Beauty Voucher — Approval Pack</h1>
+      <h1>Beauty Voucher: Approval Pack</h1>
       <div class="topmeta">Prepared by <strong>Kate</strong> for Tara's review · Campaign closes <strong>28 August 2026</strong> · Target launch <strong>Monday 10 August</strong></div>
     </div>
 
@@ -222,11 +112,25 @@
         <a href="#phorest" class="s-green"><div class="b-title">Phorest Setup</div><div class="b-status"><span class="dot confirmed"></span>Gift card method</div></a>
         <a href="#copy" class="s-amber"><div class="b-title">Campaign Copy</div><div class="b-status"><span class="dot draft"></span>Approve wording</div></a>
         <a href="#mapping" class="s-amber"><div class="b-title">Confidence Mapping</div><div class="b-status"><span class="dot draft"></span>One approval</div></a>
+        <a href="#ritualkit" class="s-amber"><div class="b-title">Home Ritual Kit</div><div class="b-status"><span class="dot draft"></span>Approve the caps</div></a>
         <a href="#automations" class="s-amber"><div class="b-title">GHL Automations</div><div class="b-status"><span class="dot draft"></span>Approve messages</div></a>
+        <a href="#social" class="s-blue"><div class="b-title">Social Media Calendar</div><div class="b-status"><span class="dot pending"></span>Guide, no approval</div></a>
         <a href="#terms" class="s-amber"><div class="b-title">Terms &amp; Conditions</div><div class="b-status"><span class="dot draft"></span>Approve wording</div></a>
         <a href="#cancellation" class="s-amber"><div class="b-title">Cancellation Policy</div><div class="b-status"><span class="dot draft"></span>Approve wording</div></a>
         <a href="#incentive" class="s-amber"><div class="b-title">Staff Incentive</div><div class="b-status"><span class="dot draft"></span>Approve model</div></a>
-        <a href="#decisions" class="s-blue"><div class="b-title">Open Decisions</div><div class="b-status"><span class="dot pending"></span>13 to decide</div></a>
+        <a href="#decisions" class="s-blue"><div class="b-title">Open Decisions</div><div class="b-status"><span class="dot pending"></span>17 to decide</div></a>
+      </div>
+
+      <!-- The review surfaces, on the board rather than only in the sidebar. They are not
+           decisions, so they carry the reference colour, and the dashed top edge plus the arrow
+           says they open in their own window. Each one is also linked from the section it
+           belongs to; this board is so nobody has to find it there first. -->
+      <div class="boardlbl">And four <strong>mockups</strong> that draw the wording out, rather than list it. Each opens in its own window, and you can leave notes on them the same way as here. The first three have a <strong>Desktop / Phone</strong> switch in their header, so you can read them the way most clients will: on a phone.</div>
+      <div class="board">
+        <a href="website-mockups/voucher-landing/voucher-landing.html" target="_blank" rel="noopener" class="s-ext"><div class="b-title">Website mockup<span class="b-ext">&nearr;</span></div><div class="b-status"><span class="dot pending"></span>One page per emirate</div></a>
+        <a href="website-mockups/terms/terms.html" target="_blank" rel="noopener" class="s-ext"><div class="b-title">T&amp;C mockup<span class="b-ext">&nearr;</span></div><div class="b-status"><span class="dot pending"></span>Split per voucher</div></a>
+        <a href="website-mockups/confidence-mapping/confidence-mapping.html" target="_blank" rel="noopener" class="s-ext"><div class="b-title">Confidence Mapping mockup<span class="b-ext">&nearr;</span></div><div class="b-status"><span class="dot pending"></span>The six lines, in place</div></a>
+        <a href="mapping-result/mapping-result.html" target="_blank" rel="noopener" class="s-ext"><div class="b-title">Mapping result<span class="b-ext">&nearr;</span></div><div class="b-status"><span class="dot pending"></span>What she gets, what we see</div></a>
       </div>
 
       <div class="action">
@@ -280,6 +184,20 @@
         </div>
       </div>
       <div class="note">Credit spends on any service, <strong>up to the credit value</strong>. Exclusions: home care products and new hair extensions. Self-Care Bonus (top two tiers) applies to beauty, treatments, keratin and blowdries only. Larger colour work is covered up to a set amount per visit.</div>
+
+      <div class="action">
+        <div class="a-label">The same three tiers, as she reads them</div>
+        <ul>
+          <li>The cards above are the numbers. The mockup draws the three tiers as the <strong>client sees them</strong>: every line she is promised, in order, with the &ldquo;on the table&rdquo; total under it.</li>
+          <li>Worth reading because two lines only exist there. The gift now reads <strong>AED 300 to gift</strong> rather than &ldquo;3 &times; AED 100&rdquo;, and the birthday line changes wording per emirate.</li>
+        </ul>
+        <p style="margin:14px 0 2px;">
+          <a href="website-mockups/voucher-landing/voucher-landing.html#tiers" target="_blank" rel="noopener"
+             style="display:inline-block;background:var(--dark);color:#fff;text-decoration:none;border-radius:100px;padding:12px 24px;font-size:14.5px;font-weight:700;">
+            Open the three tiers on the page &nearr;
+          </a>
+        </p>
+      </div>
     </section>
 
     <section id="branches">
@@ -290,8 +208,8 @@
         <thead><tr><th>Service group</th><th>Abu Dhabi<br>Saadiyat &amp; KCA</th><th>Dubai<br>Al Quoz</th><th>Dubai<br>Motor City</th></tr></thead>
         <tbody>
           <tr><td>Hair (colour, cuts, treatments)</td><td class="avail-yes">Yes</td><td class="avail-yes">Yes</td><td class="avail-yes">Yes</td></tr>
-          <tr><td>Facials — full menu (deep cleanse, hydration, LED)</td><td class="avail-yes">Yes</td><td class="avail-no">No</td><td class="avail-no">No</td></tr>
-          <tr><td>Facials — Relaxation Facial</td><td class="avail-yes">Yes</td><td class="avail-yes">Yes</td><td class="avail-no">No</td></tr>
+          <tr><td>Facials: full menu (deep cleanse, hydration, LED)</td><td class="avail-yes">Yes</td><td class="avail-no">No</td><td class="avail-no">No</td></tr>
+          <tr><td>Facials: Relaxation Facial</td><td class="avail-yes">Yes</td><td class="avail-yes">Yes</td><td class="avail-no">No</td></tr>
           <tr><td>Nails (mani/pedi, gel, enhancements)</td><td class="avail-yes">Yes</td><td class="avail-yes">Yes</td><td class="avail-no">No</td></tr>
           <tr><td>Waxing / threading / brow</td><td class="avail-yes">Yes</td><td class="avail-yes">Yes</td><td class="avail-no">No</td></tr>
           <tr><td>Lashes / LVL / brow lamination / tinting</td><td class="avail-yes">Yes</td><td class="avail-yes">Yes</td><td class="avail-no">No</td></tr>
@@ -301,7 +219,7 @@
       <div class="note good"><strong>Confirmed (final):</strong> Motor City is hair only, no beauty at all. Al Quoz does the full beauty menu (nails, waxing, threading, lashes, LVL, brow lamination, tinting, massage) plus the Relaxation Facial. Al Quoz does not do deep cleanse, clinical facials or LED; those are Abu Dhabi only.</div>
       <div class="note"><strong>Decision made:</strong> two separate vouchers, so each one only promises what its branches can actually deliver.</div>
 
-      <h3>Dubai voucher — what the credit can be spent on</h3>
+      <h3>Dubai voucher: what the credit can be spent on</h3>
       <table>
         <thead><tr><th>Service</th><th>Al Quoz</th><th>Motor City</th></tr></thead>
         <tbody>
@@ -316,7 +234,7 @@
       </table>
       <div class="note">Same tiers and prices as Abu Dhabi. Beauty is done at Al Quoz; Motor City is for hair. The Dubai birthday facial is the Relaxation Facial (AED 350). Credit is flexible, so if a client wants something we do not offer in Dubai, she just spends her credit on what is available.</div>
 
-      <h3>Abu Dhabi voucher — what the credit can be spent on</h3>
+      <h3>Abu Dhabi voucher: what the credit can be spent on</h3>
       <table>
         <thead><tr><th>Service</th><th>Saadiyat</th><th>Khalifa City A</th></tr></thead>
         <tbody>
@@ -330,11 +248,25 @@
         </tbody>
       </table>
       <div class="note">Full hair and beauty menu at both Abu Dhabi salons, including all facials. The birthday facial here can be a full facial.</div>
+
+      <div class="action">
+        <div class="a-label">See it as a page</div>
+        <ul>
+          <li>The two tables above are the split as a rule. The mockup is the same split as a <strong>website</strong>, one page per emirate, so you can read what each one actually promises a client.</li>
+          <li>Switch emirate at the top of it, and turn on <strong>Show what changes</strong> to outline every block whose wording moves between the two.</li>
+        </ul>
+        <p style="margin:14px 0 2px;">
+          <a href="website-mockups/voucher-landing/voucher-landing.html" target="_blank" rel="noopener"
+             style="display:inline-block;background:var(--dark);color:#fff;text-decoration:none;border-radius:100px;padding:12px 24px;font-size:14.5px;font-weight:700;">
+            Open the website mockup &nearr;
+          </a>
+        </p>
+      </div>
     </section>
 
     <section id="payment">
       <div class="sec-head"><h2>Payment Links</h2><span class="badge confirmed"><span class="b-dot"></span>Live Stripe</span></div>
-      <div class="oneline"><div><b>In one line</b>Nine live Stripe links — one per tier, per paying branch. All three tiers, including Dip Your Toes, are payable online so we can capture revenue the moment a client says yes. Saadiyat has no working Stripe, so its clients pay through the Khalifa City link.</div></div>
+      <div class="oneline"><div><b>In one line</b>Nine live Stripe links, one per tier, per paying branch. All three tiers, including Dip Your Toes, are payable online so we can capture revenue the moment a client says yes. Saadiyat has no working Stripe, so its clients pay through the Khalifa City link.</div></div>
 
       <table>
         <thead><tr><th>Branch</th><th>Tier</th><th>Stripe link</th></tr></thead>
@@ -343,17 +275,32 @@
           <tr><td>Season of You</td><td><a href="https://buy.stripe.com/cNicN4eFUdLoe9y4qw5wI02" target="_blank" rel="noopener" style="word-break:break-all;">buy.stripe.com/…5wI02</a></td></tr>
           <tr><td>All-In VIP Year</td><td><a href="https://buy.stripe.com/5kQ14m7ds4aO7La0ag5wI03" target="_blank" rel="noopener" style="word-break:break-all;">buy.stripe.com/…5wI03</a></td></tr>
 
-          <tr><td rowspan="3"><strong>Dubai — Al Quoz</strong></td><td>Dip Your Toes</td><td><a href="https://buy.stripe.com/9B6eV7c6G1fJgpY9EGeEo13" target="_blank" rel="noopener" style="word-break:break-all;">buy.stripe.com/…eEo13</a></td></tr>
+          <tr><td rowspan="3"><strong>Dubai: Al Quoz</strong></td><td>Dip Your Toes</td><td><a href="https://buy.stripe.com/9B6eV7c6G1fJgpY9EGeEo13" target="_blank" rel="noopener" style="word-break:break-all;">buy.stripe.com/…eEo13</a></td></tr>
           <tr><td>Season of You</td><td><a href="https://buy.stripe.com/cNiaER0nYbUn3Dc2ceeEo14" target="_blank" rel="noopener" style="word-break:break-all;">buy.stripe.com/…eEo14</a></td></tr>
           <tr><td>All-In VIP Year</td><td><a href="https://buy.stripe.com/28E9AN2w68Ib0r0eZ0eEo15" target="_blank" rel="noopener" style="word-break:break-all;">buy.stripe.com/…eEo15</a></td></tr>
 
-          <tr><td rowspan="3"><strong>Dubai — Motor City</strong></td><td>Dip Your Toes</td><td><a href="https://buy.stripe.com/7sYeVd8OR4w9dTVguf0VO1G" target="_blank" rel="noopener" style="word-break:break-all;">buy.stripe.com/…0VO1G</a></td></tr>
+          <tr><td rowspan="3"><strong>Dubai: Motor City</strong></td><td>Dip Your Toes</td><td><a href="https://buy.stripe.com/7sYeVd8OR4w9dTVguf0VO1G" target="_blank" rel="noopener" style="word-break:break-all;">buy.stripe.com/…0VO1G</a></td></tr>
           <tr><td>Season of You</td><td><a href="https://buy.stripe.com/4gM9ATc13bYB9DFem70VO1F" target="_blank" rel="noopener" style="word-break:break-all;">buy.stripe.com/…0VO1F</a></td></tr>
           <tr><td>All-In VIP Year</td><td><a href="https://buy.stripe.com/8x23cv1mp2o16rtem70VO1E" target="_blank" rel="noopener" style="word-break:break-all;">buy.stripe.com/…0VO1E</a></td></tr>
         </tbody>
       </table>
 
-      <div class="note flag"><strong>Watch on Saadiyat:</strong> Saadiyat has no working Stripe, so those clients pay through the Khalifa City (KCA) link. In the Stripe dashboard these payments will show under KCA — so tag the client as Saadiyat at checkout (customer name or note field) so credit and branch reporting map correctly. Worth flagging to Belle / finance.</div>
+      <div class="note flag"><strong>Watch on Saadiyat:</strong> Saadiyat has no working Stripe, so those clients pay through the Khalifa City (KCA) link. In the Stripe dashboard these payments will show under KCA, so tag the client as Saadiyat at checkout (customer name or note field) so credit and branch reporting map correctly. Worth flagging to Belle / finance.</div>
+
+      <div class="action">
+        <div class="a-label">What has to happen on the page before a link is any use</div>
+        <ul>
+          <li>Six of these nine links are Dubai, and Al Quoz and Motor City have separate ones. So the page has to <strong>ask which Dubai salon</strong> before it can send her anywhere. That ask is drawn in the mockup as its own block.</li>
+          <li>Abu Dhabi needs no such ask, because both salons pay through the same three links.</li>
+        </ul>
+        <p style="margin:14px 0 2px;">
+          <a href="website-mockups/voucher-landing/voucher-landing.html#salon-pick" target="_blank" rel="noopener"
+             style="display:inline-block;background:var(--dark);color:#fff;text-decoration:none;border-radius:100px;padding:12px 24px;font-size:14.5px;font-weight:700;">
+            Open the Dubai salon picker &nearr;
+          </a>
+          <span style="display:block;font-size:13px;color:var(--muted);margin-top:8px;">Switch the mockup to <strong>Dubai</strong> in its header to see it. The block does not exist on the Abu Dhabi page.</span>
+        </p>
+      </div>
     </section>
 
     <section id="phorest">
@@ -375,13 +322,16 @@
           <tr><td>Beauty and hair services at full price</td><td class="num">AED 1,150</td><td class="num">AED 3,000</td><td class="num">AED 5,400</td><td>Gift card</td></tr>
           <tr><td>Gift for a friend</td><td class="num">AED 100</td><td class="num">AED 300</td><td class="num">AED 500</td><td>A second gift card, with the GC number changed to the membership number</td></tr>
           <tr><td>Birthday treat</td><td class="num">Blow-dry, AED 150</td><td class="num">AED 350</td><td class="num">AED 750</td><td>Gift card</td></tr>
-          <tr><td>Kit</td><td>Reset Kit</td><td>Skincare kit and Reset Journal</td><td>Ritual and skincare kit</td><td>Business (adjustment)</td></tr>
+          <tr><td>Home Ritual Kit<br><span style="font-size:12px;color:var(--muted);">2 / 4 / 6 items, capped at shelf value</span></td><td class="num">AED 350<br><span style="font-size:12px;color:var(--muted);font-weight:400;">Reset Kit</span></td><td class="num">AED 650<br><span style="font-size:12px;color:var(--muted);font-weight:400;">Skincare kit + Reset Journal</span></td><td class="num">AED 1,050<br><span style="font-size:12px;color:var(--muted);font-weight:400;">Ritual + skincare kit</span></td><td>Business (adjustment)</td></tr>
           <tr><td>Refer a Friend (3)</td><td class="num">+ AED 100</td><td class="num">+ AED 150</td><td class="num">+ AED 200</td><td>Business (adjustment)</td></tr>
           <tr><td>Priority access to last-minute beauty appointments</td><td class="avail-yes">Yes</td><td class="avail-yes">Yes</td><td class="avail-yes">Yes</td><td>Nothing to record</td></tr>
-          <tr><td><strong>Total value</strong></td><td class="num"><strong>AED 1,400</strong></td><td class="num"><strong>AED 3,650</strong></td><td class="num"><strong>AED 6,650</strong></td><td></td></tr>
+          <tr><td><strong>Total value shown to the client today</strong><br><span style="font-size:12px;color:var(--muted);">excludes the kit</span></td><td class="num"><strong>AED 1,400</strong></td><td class="num"><strong>AED 3,650</strong></td><td class="num"><strong>AED 6,650</strong></td><td>What the website says</td></tr>
+          <tr><td><strong>Total value including the kit</strong></td><td class="num"><strong>AED 1,750</strong></td><td class="num"><strong>AED 4,300</strong></td><td class="num"><strong>AED 7,700</strong></td><td></td></tr>
+          <tr><td>Kit cap as a share of the cash she pays</td><td class="num">35%</td><td class="num">26%</td><td class="num">23%</td><td>At shelf value, not cost</td></tr>
         </tbody>
       </table>
-      <div class="note">The bottom row is total <em>value</em>, not price. She pays AED 1,000, AED 2,500 or AED 4,500 — see Offer &amp; Tiers.</div>
+      <div class="note">Total <em>value</em>, not price. She pays AED 1,000, AED 2,500 or AED 4,500. See Offer &amp; Tiers. The caps are the same in both emirates; what changes between Abu Dhabi and Dubai is only which product fills each slot, because the four branches do not share the same shelf. Detail in the <a href="ritual-kit/ritual-kit.html" target="_blank" rel="noopener">Ritual Kit decision tree</a>.</div>
+      <div class="note flag"><strong>Two things this column exposes.</strong> One: the kit was the only row here with no number, and the total quoted to the client on the <a href="website-mockups/voucher-landing/voucher-landing.html" target="_blank" rel="noopener">website</a> as &ldquo;On the table&rdquo; leaves it out, so we are <strong>under-stating the voucher by AED 350, 650 and 1,050</strong> across the three tiers. Putting it in front of a client is a value claim, so that part is Tara's call rather than a copy edit. Two: <strong>these are retail shelf values, not what the kit costs us.</strong> The margin question cannot be answered until Emma confirms the trade cost multiplier, which is already point 2 of <a href="#decisions">Open Decision 5</a>, so do not read 35% / 26% / 23% as cost of sale.</div>
 
       <h3>Two things Belle suggests</h3>
       <div class="card">
@@ -415,6 +365,20 @@
       </div>
 
       <div class="note flag"><strong>Fix before launch:</strong> the "three tiers plainly" email and the landing page currently say "spends on any service at any of our four salons." Swap in the per-voucher coverage line above, and keep "up to your credit value" so it never reads as unlimited free services.</div>
+
+      <div class="action">
+        <div class="a-label">This copy, in place on the page</div>
+        <ul>
+          <li>Every line above is a caption or an email line on its own. The mockup shows them <strong>set into the landing page</strong>, so you can judge the wording where a client actually meets it.</li>
+          <li>Two changes to look for: the gift vouchers now read <strong>AED 300 to gift</strong> rather than "3 &times; AED 100", and the Dubai page has to ask which salon before it can send her to the right Stripe link.</li>
+        </ul>
+        <p style="margin:14px 0 2px;">
+          <a href="website-mockups/voucher-landing/voucher-landing.html" target="_blank" rel="noopener"
+             style="display:inline-block;background:var(--dark);color:#fff;text-decoration:none;border-radius:100px;padding:12px 24px;font-size:14.5px;font-weight:700;">
+            Open the website mockup &nearr;
+          </a>
+        </p>
+      </div>
 
       <h3>How the reminders work (client self-exit)</h3>
       <div class="card">
@@ -471,11 +435,107 @@
 
       <div class="note flag"><strong>Moving today, no wait:</strong> the marketing-consent tickbox on the form is set to <strong>required</strong>, which makes opting in a condition of getting the map. That is not lawful consent under UAE PDPL, on a form that claims compliance in its own privacy notice. It is a form setting, not copy, so nothing written changes. Kate is fixing it rather than asking.</div>
 
+      <div class="note flag"><strong>Found 7 Aug: the page promises a written plan the email does not send.</strong> The page says the quiz ends with &ldquo;a full plan written for you: the exact treatments, your home care, and your rhythm, visit by visit.&rdquo; The built email sends one line (&ldquo;What we heard: Colour correction &middot; Brassy tones&rdquo;) and a promise that someone will ring within two hours. <strong>The plan is a phone call, not a written plan.</strong> Separately, the quiz collects <strong>19 answers</strong> and only two become tags; the other seventeen are not stored or shown anywhere the workflow draws. <em>Corrected 8 Aug after reading the live form:</em> <span style="font-family:monospace;font-size:13px;">locale</span> is <strong>not</strong> the emirate. It is the page's language code and reads <span style="font-family:monospace;font-size:13px;">en-us</span> for everyone, so there is nothing to recover there. See the fuller note in <a href="#automations"><strong>GHL Automations</strong></a>. Both gaps are laid out side by side in the result mockup below.</div>
+
+      <div class="action">
+        <div class="a-label">What she gets, and what we see</div>
+        <ul>
+          <li>The real email as it lands on her phone, next to what the page promised her.</li>
+          <li>The quiz answers as they should arrive on our side, and which ones are currently going nowhere.</li>
+        </ul>
+        <p style="margin:14px 0 2px;">
+          <a href="mapping-result/mapping-result.html" target="_blank" rel="noopener"
+             style="display:inline-block;background:var(--dark);color:#fff;text-decoration:none;border-radius:100px;padding:12px 24px;font-size:14.5px;font-weight:700;">
+            Open the mapping result &nearr;
+          </a>
+        </p>
+      </div>
+
+      <div class="action">
+        <div class="a-label">See the six lines on the page</div>
+        <ul>
+          <li>The table above is the swaps as a list. The mockup is option <strong>(a)</strong> drawn out, so you can read the page as it would be if you say yes.</li>
+          <li>Switch to <strong>Live page today</strong> to see the wording that is on the site now, and turn on <strong>Show what changed</strong> to see where each of the six lands, alongside the eleven build fixes.</li>
+        </ul>
+        <p style="margin:14px 0 2px;">
+          <a href="website-mockups/confidence-mapping/confidence-mapping.html" target="_blank" rel="noopener"
+             style="display:inline-block;background:var(--dark);color:#fff;text-decoration:none;border-radius:100px;padding:12px 24px;font-size:14.5px;font-weight:700;">
+            Open the Confidence Mapping mockup &nearr;
+          </a>
+        </p>
+      </div>
+
       <div class="action">
         <div class="a-label">Needs from Tara</div>
         <ul>
           <li>One reply on the six lines: <strong>a</strong>, <strong>b</strong>, or <strong>c</strong>.</li>
           <li>Row 6: confirm the awards are current and evidenced (yes / no).</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="ritualkit">
+      <div class="sec-head"><h2>Home Ritual Kit</h2><span class="badge draft"><span class="b-dot"></span>Approve the caps</span></div>
+      <div class="oneline"><div><b>In one line</b>What she actually gets in the bag, standardised at two, four or six items by voucher, priced off the live stock sheet, with a spending cap per tier so no branch can over-give.</div></div>
+
+      <p>The kit was the last thing in the campaign with a name but no contents. It has contents now. Eleven bundles, one for each answer she can tick at Stage 2 of her Confidence Mapping, each built from six fixed slots and filled in the same order every time.</p>
+
+      <h3>The six slots, filled in order</h3>
+      <div class="card">
+        <p style="margin-top:0;"><strong>1</strong> Hero treatment &middot; <strong>2</strong> Heat shield &middot; <strong>3</strong> Shampoo, matched &middot; <strong>4</strong> Conditioner, matched &middot; <strong>5</strong> Weekly mask &middot; <strong>6</strong> Scalp or water defence</p>
+        <p style="margin-bottom:0;">Dip Your Toes fills slots 1 to 2. Season of You fills 1 to 4. All-In VIP Year fills all six. It is cumulative, so each voucher is visibly more than the one below it, and nobody has to build a kit from scratch.</p>
+      </div>
+
+      <h3>The cap, per voucher</h3>
+      <p>Retail shelf value of the whole bag. Every one of the sixty-six possible builds, eleven bundles across three tiers and both emirates, was totalled against the stock sheet and comes in under.</p>
+      <ul>
+        <li><strong>Dip Your Toes: AED 350.</strong> She paid 1,000. This is the tier where the kit is the biggest single thing we give away, so it is the one to hold the line on.</li>
+        <li><strong>Season of You: AED 650.</strong> She paid 2,500. Adds the matched shampoo and conditioner, the pair that actually changes the result.</li>
+        <li><strong>All-In VIP Year: AED 1,050.</strong> She paid 4,500, and already has the birthday services, the gift vouchers and the journals on top.</li>
+      </ul>
+      <div class="note flag"><strong>These numbers are staff information and never reach a client.</strong> She is being given a kit matched to her hair, not a budget. The value of the bag is never said out loud, in either direction.</div>
+
+      <h3>What the emirate changes</h3>
+      <p>The cap is the same on both sides and so are the six slots. What differs is which product fills each slot, because the four branches do not stock the same shelf. Khalifa City carries neither Fibre Clinix nor Olaplex, and Al Quoz carries lines the other three do not, some of them expensive enough to blow a tier on their own. So there are two product lists behind one cap.</p>
+
+      <div class="action">
+        <div class="a-label">View in another window</div>
+        <ul>
+          <li>The decision tree walks reception through it one question at a time and ends on a card they can read while she is standing there, with the running total already checked against the cap.</li>
+          <li>There is a printable matrix underneath for the desk drawer, and it follows the Abu Dhabi and Dubai switch in the header.</li>
+        </ul>
+        <p style="margin:14px 0 2px;">
+          <a href="ritual-kit/ritual-kit.html" target="_blank" rel="noopener"
+             style="display:inline-block;background:var(--dark);color:#fff;text-decoration:none;border-radius:100px;padding:12px 24px;font-size:14.5px;font-weight:700;">
+            Open the Ritual Kit decision tree &nearr;
+          </a>
+        </p>
+      </div>
+
+      <div class="note good"><strong>Sourcing is no longer a blocker.</strong> Every product in every bundle is already on the shelf and already priced, read from the <a href="https://docs.google.com/spreadsheets/d/1QDDiBYoQhccEHKB7VGJ9wgLoXFKQxJIz7f8C2Zj0oUU/edit?gid=1050960254" target="_blank" rel="noopener">TRS Beauty Stock sheet</a>. Nothing needs to be ordered in for the campaign to launch.</div>
+
+      <h3>Four things the sheet turned up</h3>
+      <div class="card">
+        <p style="margin-top:0;"><strong>Three doctrine lines are not stocked anywhere.</strong> Scalp Clinix, K18 and Fibreplex appear in no branch. The bundles route around them, but the home care doctrine still names all three, so one of the two documents is out of date.</p>
+        <p><strong>There is no water filter.</strong> Doctrine says the top tier is not complete without one, and there is not a single filter in the sheet. The recommendation is to stop describing a filter rather than source one, because the sixth slot already covers that job.</p>
+        <p><strong>The same product is named and priced differently between branches.</strong> Scalp Rituals Hemp is AED 170 at Al Quoz and 137 at Motor City, a quarter apart inside one emirate. A client who visits both will notice.</p>
+        <p style="margin-bottom:0;"><strong>The prices here are retail, not cost.</strong> What the kit costs the business is not on the sheet, so the margin question cannot be answered from it. Emma needs to supply the trade multiplier before the caps are final.</p>
+      </div>
+
+      <div class="action">
+        <div class="a-label">Needs from Tara</div>
+        <ul>
+          <li>Sign off the three caps: <strong>AED 350 / 650 / 1,050</strong>.</li>
+          <li>Confirm the three map answers that still have no hero line: <em>my brunette looks flat or dull</em>, <em>my colour fades too fast</em>, <em>more shedding or thinning</em>.</li>
+          <li>Yes or no on dropping the water filter from the copy.</li>
+        </ul>
+      </div>
+
+      <div class="action">
+        <div class="a-label">Needs from Emma</div>
+        <ul>
+          <li>The trade cost multiplier, so the caps can be read as margin rather than shelf value.</li>
+          <li>Own the naming and price drift in the stock sheet between the four branches.</li>
         </ul>
       </div>
     </section>
@@ -491,24 +551,147 @@
           <li>You can leave notes there the same way as here, and they land in the same place.</li>
         </ul>
         <p style="margin:14px 0 2px;">
-          <a href="automations.html" target="_blank" rel="noopener"
+          <a href="automations/automations.html" target="_blank" rel="noopener"
              style="display:inline-block;background:var(--dark);color:#fff;text-decoration:none;border-radius:100px;padding:12px 24px;font-size:14.5px;font-weight:700;">
             Open the automations map &nearr;
           </a>
         </p>
       </div>
 
-      <div class="note"><strong>What is in there:</strong> Lead Nurture (16 steps, pre-purchase, stops the moment she pays), Welcome Pack (11 steps, starts on payment) and Confidence Mapping (12 steps, the quiz funnel). Twelve built emails, six WhatsApp templates including the Abu Dhabi and Dubai variants.</div>
+      <div class="note"><strong>What is in there:</strong> Lead Nurture (18 steps, pre-purchase, stops the moment she pays), Welcome Pack (13 steps, starts on payment) and Confidence Mapping (13 steps, the quiz funnel). Thirteen built emails and eight WhatsApp templates, including the Abu Dhabi and Dubai variants. Every one opens on a phone screen, shown as she receives it.</div>
 
-      <div class="note flag"><strong>Two dependencies worth knowing:</strong> the waits are fixed-date for this window and need rebuilding as relative delays after the campaign, and until the Phorest to GHL webhook exists, reception has to apply <span style="font-family:monospace;font-size:13px;">voucher:redeemed</span> at checkout by hand. The expiry touch at 30 days before a tier lapses must survive the campaign closing, because that is where unredeemed-credit complaints live.</div>
+      <h3>Why the WhatsApp messages are shorter than the emails</h3>
+      <div class="card">
+        <p style="margin-top:0;">This one is worth knowing before you read them, because it looks like we cut the copy back for no reason.</p>
+        <p><strong>WhatsApp is not email.</strong> Any message we send to a client who has not written to us first has to be submitted to Meta and approved before it can go out at all. Meta caps that message at <strong>1,024 characters</strong>, and caps each tappable button label at <strong>25</strong>.</p>
+        <p><strong>Going over does not get trimmed, it gets refused.</strong> Meta rejects the message at the approval stage, which means the step still sits in the workflow but has nothing to send, and the client hears nothing at all. There is no warning at the time it would have gone out. Our Abu Dhabi broadcast came to 1,193 characters, and two button labels came to 26.</p>
+        <p><strong>So the shorter version is not a preference, it is the only version that can exist.</strong> Instead of listing the three tiers in the message, it points at the voucher link, which carries them. That also reads better on a phone than a wall of text.</p>
+        <p style="margin-bottom:0;">The longer drafts are not lost. Open any WhatsApp step in the automations map and switch to <em>Longer draft</em> to read one; it will tell you plainly that it cannot be submitted.</p>
+      </div>
+
+      <h3>Every WhatsApp message has buttons she can tap</h3>
+      <div class="card">
+        <p style="margin-top:0;">No message asks her to compose a reply. Each one carries tappable buttons, which is also how the workflow knows what to do next.</p>
+        <ul style="margin-bottom:0;">
+          <li><strong>Broadcast and reminder</strong>: &ldquo;Tell me more&rdquo; or &ldquo;I already have mine&rdquo;. The second one stops the reminders straight away and flags the contact centre to check the payment, so nobody who has already bought keeps getting chased.</li>
+          <li><strong>Payment confirmation</strong>: her own two salons, plus <strong>&ldquo;Help me choose&rdquo;</strong>. The earlier version listed all four salons and asked an open question, which left a Dubai client looking at two salons she cannot use and no way to say she was unsure.</li>
+          <li><strong>Mapping bridge</strong>: &ldquo;Hold a tier for me&rdquo; or &ldquo;Book my first visit&rdquo;.</li>
+          <li><strong>Expiry touch</strong>: &ldquo;Book me in&rdquo; or &ldquo;Already booked&rdquo;.</li>
+        </ul>
+      </div>
+
+      <div class="note flag"><strong>Gap found 7 Aug: the emirate is never detected before payment.</strong> The workflows carry <em>both</em> regional message sets (<span style="font-family:monospace;font-size:13px;">broadcast_ad</span> / <span style="font-family:monospace;font-size:13px;">broadcast_dubai</span>, the same for the Day 2 reminder and the welcome confirmation) but there is <strong>no If/Else that chooses between them</strong>. Lead Nurture branches on consent, on the client button and on booked, never on emirate. The only place branch is captured is the Welcome Pack WhatsApp, <em>after</em> she has paid, via the buttons that tag <span style="font-family:monospace;font-size:13px;">branch:[x]</span>. So the Day 0 broadcast cannot know whether to promise her a deep-cleanse facial.</div>
+
+      <div class="note flag"><strong>Now drawn versus still to build by hand.</strong> The routing has been specified and the map updated. Nobody has touched the live GHL account, so every new node is a drawing.
+        <br><br><strong>Drawn in the <a href="automations/automations.html" target="_blank" rel="noopener">automations map</a> (five new nodes):</strong> <span style="font-family:monospace;font-size:13px;">If/Else · Emirate known?</span> and <span style="font-family:monospace;font-size:13px;">WhatsApp · Which emirate?</span> in Lead Nurture; <span style="font-family:monospace;font-size:13px;">If/Else · Emirate from payment</span> and <span style="font-family:monospace;font-size:13px;">Task · Emirate mismatch</span> in the Welcome Pack; <span style="font-family:monospace;font-size:13px;">If/Else · Locale → emirate</span> in Confidence Mapping.
+        <br><br><strong>Still to build by hand in GHL:</strong> an <span style="font-family:monospace;font-size:13px;">emirate</span> custom <em>field</em> (not only a tag, because merge fields cannot read tags, and the emails have to read the same value); an <span style="font-family:monospace;font-size:13px;">emirate_source</span> field so a wrong guess and a wrong choice can be told apart; the five nodes themselves; and the custom values behind <span style="font-family:monospace;font-size:13px;">{{voucher_availability_line}}</span>, <span style="font-family:monospace;font-size:13px;">{{branch_a_name}}</span> and <span style="font-family:monospace;font-size:13px;">{{branch_b_name}}</span>, which are already written into the emails and today render <strong>blank</strong>.
+        <br><br><strong>No emails need splitting.</strong> Three strings need changing: the body of the Day 4 nurture email, and the body <em>and the hidden preheader</em> of Welcome Email 2. Everything else is already emirate-neutral or already parametrised. WhatsApp stays split, because Meta fixes button labels at template level and they cannot take a merge field.
+        <br><br><strong>Two corrections to earlier notes.</strong> Guessing the emirate from the phone number is not available: <span style="font-family:monospace;font-size:13px;">+971</span> covers the whole country. And the payment is a reliable <em>emirate</em> signal but an unreliable <em>branch</em> one, because Saadiyat has no working Stripe and its clients pay through the Khalifa City link.
+        <br><br><strong>One answer needed before anything is built:</strong> is Lead Nurture fed by the website reserve form or by a broadcast to a segmented existing list? The trigger says one and all five emails are written for the other. A form can carry a hidden emirate field; a broadcast cannot, and has to take its emirate from Phorest instead. Full reasoning, the field design, the conflict rule and what can and cannot land by Monday are in <strong>docs/EMIRATE-ROUTING-BUILD-SPEC.md</strong>.</div>
+
+      <div class="note flag"><strong>Confidence Mapping, 8 August: the form was read, and one thing this pack has been saying is wrong.</strong>
+        <br><br><strong>What it actually is.</strong> The quiz is <strong>Gravity Forms 21 on WordPress</strong>, not a GHL-native form and not a direct post to GHL either. That matters because a native form maps its fields more or less for free, and this one maps nothing: all nineteen answers need an explicit destination, one at a time.
+        <br><br><strong>The correction.</strong> This pack said <span style="font-family:monospace;font-size:13px;">locale</span> was &ldquo;the emirate we have been looking for, already collected and thrown away&rdquo;. <strong>It is not.</strong> The live script sets it from the page's language attribute, so it reads <span style="font-family:monospace;font-size:13px;">en-us</span> for every lead and always will. There is nothing to recover. Mapping leads have no emirate at all, so for this window they stay <span style="font-family:monospace;font-size:13px;">emirate:unknown</span> and take it from the WhatsApp ask in Lead Nurture. The real fix is one more question on the quiz, which is a website change and should ship with the emirate landing-page split rather than on its own.
+        <br><br><strong>The thing that is bigger than both.</strong> Gravity Forms does not talk to GHL by itself. Something server-side has to carry the entry across, and <strong>nobody has yet identified what</strong>. That missing hop, not the field mapping, is the real reason nobody can say whether the seventeen answers are stored today. It is also the one item that could turn out to be much worse than expected: if there is no bridge at all, then no Confidence Mapping answer has ever reached GHL.
+        <br><br><strong>Now drawn in the <a href="automations/automations.html" target="_blank" rel="noopener">automations map</a> (all of it a drawing, nothing built):</strong> <span style="font-family:monospace;font-size:13px;">Update Contact Fields &middot; 19 answers</span>, <span style="font-family:monospace;font-size:13px;">Add tags &middot; route + pain + tier</span>, <span style="font-family:monospace;font-size:13px;">Note to contact</span>, the redrawn <span style="font-family:monospace;font-size:13px;">If/Else &middot; Emirate</span>, and the contact-centre task with her answers attached to it. The node that sends the first email is retitled from &ldquo;The Journal&rdquo; to match the asset, which says Confidence Map.
+        <br><br><strong>Still to build by hand in GHL, in order:</strong> find the Gravity Forms&nbsp;&rarr;&nbsp;GHL bridge or establish there is not one; create the nineteen custom fields; map all nineteen in the bridge; verify with a single test submission read at <em>both</em> ends. Only the fields, the tags and the note are plausible by Monday, and only if the first item comes back quickly. Keys, types and the test are in <strong>docs/CONFIDENCE-MAPPING-FIELD-SPEC.md</strong>.
+        <br><br><strong>Three things found on the form that are not in the audit.</strong> The consent tickbox is <strong>still set to required</strong>, so the PDPL problem is live today. &ldquo;Journal&rdquo; appears in two more client-facing places nobody has listed: the consent label and the submit button, which reads <em>&ldquo;Send my Journal&rdquo;</em>. And the page title still says <em>&ldquo;A diagnosis, not a commitment&rdquo;</em>, which is the Copy 2 line and is what shows in a Google result.</div>
+
+      <div class="note flag"><strong>Two dependencies worth knowing:</strong> the waits are fixed-date for this window and need rebuilding as relative delays after the campaign, and until the Phorest to GHL webhook exists, reception has to apply <span style="font-family:monospace;font-size:13px;">voucher:redeemed</span> at checkout by hand. The expiry touch at 30 days before a tier lapses now goes out on <strong>both</strong> email and WhatsApp, and must survive the campaign closing, because that is where unredeemed-credit complaints live.</div>
+    </section>
+
+    <section id="social">
+      <div class="sec-head"><h2>Social Media Calendar</h2><span class="badge pending"><span class="b-dot"></span>Guide · no approval needed</span></div>
+      <div class="oneline"><div><b>In one line</b>What happens to a post every day, from the moment it is drafted to the moment it goes live on Instagram. Nothing here needs a decision; it is here so everyone follows the same order.</div></div>
+
+      <h3>The daily loop, in order</h3>
+      <table>
+        <thead><tr><th>Step</th><th>Who</th><th>When</th><th>What happens</th></tr></thead>
+        <tbody>
+          <tr><td class="num"><strong>1. Draft</strong></td><td>Hanneh</td><td>Any time</td><td>The post is written into the Notion Content DB against one pillar, one avatar, one platform, one format. Caption, branch, channel and <strong>Publish On</strong> date are all filled in. Status is set to <em>Scripted - Needs Review</em> or <em>Designed - Needs Review</em>.</td></tr>
+          <tr><td class="num"><strong>2. Care standard</strong></td><td>Automatic</td><td>Hourly</td><td>The quality gate reads the caption against TRS voice and marks it PASS or FAIL in Notion, with the reasons written into the page. A FAIL goes nowhere until it is rewritten. An empty caption is an automatic FAIL.</td></tr>
+          <tr><td class="num"><strong>3. Ask</strong></td><td>Automatic</td><td>Minutes after a PASS</td><td>Tara and the team get the approval request: a branded email and a WhatsApp with the post title, branch, publish date, channel and caption, plus a <em>Review in Notion</em> button.</td></tr>
+          <tr><td class="num"><strong>4. Answer</strong></td><td>Tara or Emma</td><td>Same day</td><td>Reply on WhatsApp, voice note or text, whichever is quicker. A voice note is transcribed automatically. Say yes, or say what needs changing.</td></tr>
+          <tr><td class="num"><strong>5. Route</strong></td><td>Automatic</td><td>Immediately</td><td>The reply is read for approval or revision wording and Notion is updated: <em>Approved</em>, or <em>Revision</em> with the feedback attached. Whoever needs to know is notified. A revision goes back to Hanneh at step 1.</td></tr>
+          <tr><td class="num"><strong>6. Publish</strong></td><td>Automatic</td><td>On the Publish On date</td><td>Once Tara's approval is ticked and the status is <em>Approved</em>, the post is handed to Buffer, which posts it to Instagram at the scheduled time.</td></tr>
+          <tr><td class="num"><strong>7. Answer people</strong></td><td>Whoever is on socials</td><td>First 60 minutes, then twice more</td><td>Comments and DMs answered inside the first hour, because that hour decides how far the post travels. Two more sweeps later in the day.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="note good"><strong>The safety net:</strong> if nobody replies, a post that passed the care standard is auto-approved at midnight before its publish date (with a minimum two-hour buffer for same-day posts). Silence publishes it. So a post you do <em>not</em> want going out has to get an actual "no", not just be ignored.</div>
+
+      <h3>What to check every morning</h3>
+      <ol>
+        <li><strong>Anything sitting on FAIL.</strong> Those are stuck and will never publish. Fix the caption or pull the post.</li>
+        <li><strong>Anything still on Needs Review with a publish date inside 48 hours.</strong> That is the queue about to auto-approve itself.</li>
+        <li><strong>Anything on Revision from yesterday.</strong> A revision with no new draft is a gap in the calendar.</li>
+        <li><strong>Yesterday's live posts.</strong> Unanswered comments and DMs, and whether anything needs a reply from Tara rather than the team.</li>
+      </ol>
+
+      <h3>The posting rhythm</h3>
+      <table>
+        <thead><tr><th>Platform</th><th>Format</th><th>How often</th><th>Leading pillars</th></tr></thead>
+        <tbody>
+          <tr><td>Instagram Reels</td><td>Short video, 15&ndash;30 sec</td><td>4&ndash;5 a week</td><td>Education, Transformation</td></tr>
+          <tr><td>Instagram static</td><td>Image + caption</td><td>3&ndash;4 a week</td><td>Identity, Behind the Scenes</td></tr>
+          <tr><td>Instagram Stories</td><td>Polls, Q&amp;A, in-salon</td><td>Daily</td><td>Behind the Scenes, Community</td></tr>
+          <tr><td>TikTok</td><td>Short video, raw</td><td>3&ndash;5 a week</td><td>Education, contrarian hooks</td></tr>
+          <tr><td>Facebook</td><td>Longer copy, carousel, testimonial</td><td>3 a week</td><td>Transformation, Community</td></tr>
+        </tbody>
+      </table>
+      <div class="note"><strong>The pillar mix across a month:</strong> Education 30%, Transformation 25%, Behind the Scenes 20%, Identity 15%, Community and Conversion 10%. One pillar per post, never blended. If a week is all Transformation, the month is out of balance and it shows.</div>
+
+      <h3>Two rules that are not negotiable</h3>
+      <div class="card">
+        <p><strong>The brief is locked before anything is written.</strong> Pillar, avatar, platform, format, specialist. If the avatar is not clear, ask, because the avatar changes every other choice. Guessing it is how a post ends up sounding like nobody.</p>
+        <p><strong>Nothing client-facing skips the care standard.</strong> Not a caption, not a Story, not a reply. Every specialist writes brand-blind by design, so the gate is what makes the output ours.</p>
+      </div>
+
+      <div class="note flag"><strong>Known gaps, for visibility only:</strong> the approval flow is still running against the test Notion database rather than the live one, and WhatsApp delivery needs every recipient to join the sandbox before they receive anything. Kate is working through both. Neither changes the order of the steps above.</div>
+    </section>
+
+    <section id="calendar">
+      <div class="sec-head"><h2>Posting Calendar</h2><span class="badge pending"><span class="b-dot"></span>Sign-off &middot; 3 decisions &middot; 2 rows held</span></div>
+      <div class="oneline"><div><b>In one line</b>The section above is the <em>order</em> a post travels in. This is the <em>plan</em>: all 79 posts from today to 31 August, laid out as a month. It needs the full width of a screen, so it opens in its own window.</div></div>
+
+      <div class="action">
+        <div class="a-label">View in another window</div>
+        <ul>
+          <li>Tap the button below. The calendar opens in a new tab, one colour per platform, with the launch date, the closing date and a live countdown across the last five days.</li>
+          <li><strong>Click any post</strong> for its brief: pillar, format, the angle, a hook to start from, what it asks for, and who owns it. Untick a platform to read one channel on its own, <strong>Untick all</strong> to clear the lot and build the view back up one channel at a time, or switch to <strong>Agenda</strong> for the whole plan as a working list.</li>
+          <li>You can leave notes there the same way as here: on <strong>any single date</strong> from the speech-bubble button in the corner of the day, or on any single post in Agenda. Both land in the same place as everything else in this pack.</li>
+          <li><strong>The sign-off is on the calendar page too</strong>, at the top. Approve it there or answer Decision 16 here; it is the same answer either way.</li>
+        </ul>
+        <p style="margin:14px 0 2px;">
+          <a href="calendar/calendar.html" target="_blank" rel="noopener"
+             style="display:inline-block;background:var(--dark);color:#fff;text-decoration:none;border-radius:100px;padding:12px 24px;font-size:14.5px;font-weight:700;">
+            Open the posting calendar &nearr;
+          </a>
+        </p>
+      </div>
+
+      <div class="note"><strong>Nothing in there is finished copy.</strong> Every row is a brief for Hanneh to draft against, and every caption still passes the care standard and an approval before it publishes. Volumes sit inside the rhythm above: 4 to 5 Reels, 3 to 4 static, Stories daily, 3 TikTok and 3 Facebook, every week. Every hook has been through a brand review and the fixes are already in.</div>
+
+      <div class="note flag"><strong>The pillar mix does not match the monthly target, and that is deliberate.</strong> Measured across the window: Education 30% (on target), Conversion 23% against 10%, Transformation 11% against 25%, Behind the Scenes 14% against 20%. A three-week closing window cannot carry an ordinary month's mix, because the last five days are structurally a countdown and there are barely two weeks of finished work to show inside the window itself. The calendar shows this measured, not claimed, at the top of the page.</div>
+
+      <div class="note flag"><strong>Two rows are held, both waiting on decisions already open elsewhere in this pack.</strong> The gifting posts on 15 and 22 August are written to the gift card only, because the Terms do not allow the main credit to be transferred while the landing page FAQ says it is "sent in her name". The "your credit is safe" post on 18 August cannot name a notice period until the cancellation wording is settled (Flag 2 in Terms &amp; Conditions). Both rows carry the hold on the row itself, so neither can be drafted by accident.</div>
+
+      <div class="action">
+        <div class="a-label">Needs from Tara</div>
+        <ul>
+          <li><strong>Sign the plan off</strong> (Decision 16), so Hanneh can draft against it. That is the dates, the platforms and the mix, not the captions: every post is still approved on its own before it publishes.</li>
+          <li><strong>One reply on the pillar mix:</strong> <strong>(a)</strong> leave the closing week as it is and run September heavy on Transformation and Behind the Scenes, or <strong>(b)</strong> pull some countdown posts out of the last five days now to bring the mix closer to target.</li>
+          <li>Gifting: does the main credit become transferable, or does the landing page FAQ lose the "sent in her name" promise? Three posts and a button on the live page depend on it.</li>
+        </ul>
+      </div>
     </section>
 
     <section id="terms">
       <div class="sec-head"><h2>Terms &amp; Conditions</h2><span class="badge draft"><span class="b-dot"></span>Dawn's revision · approve</span></div>
       <div class="oneline"><div><b>In one line</b>Updated to Dawn's recommended legal wording (7 Aug). Two things need a call before it ships, flagged directly below.</div></div>
 
-      <div class="note flag"><strong>Flag 1 — Motor City is missing.</strong> Dawn's participating-salons list names only Saadiyat, Khalifa City A and Al Quoz. Motor City is not listed, yet the rest of this pack treats Motor City as a hair-redemption branch for the Dubai voucher. As written, Dubai-voucher clients could only redeem at Al Quoz. Confirm: is Motor City in or out?</div>
-      <div class="note flag"><strong>Flag 2 — Cancellation wording.</strong> Dawn defers cancellations to "standard booking, cancellation and no-show policies" (term 9). The Cancellation Policy section below still spells out a 48-hour notice and no-show deposit. Decide which governs so the two do not contradict.</div>
+      <div class="note flag"><strong>Flag 1: Motor City is missing.</strong> Dawn's participating-salons list names only Saadiyat, Khalifa City A and Al Quoz. Motor City is not listed, yet the rest of this pack treats Motor City as a hair-redemption branch for the Dubai voucher. As written, Dubai-voucher clients could only redeem at Al Quoz. Confirm: is Motor City in or out?</div>
+      <div class="note flag"><strong>Flag 2: Cancellation wording.</strong> Dawn defers cancellations to "standard booking, cancellation and no-show policies" (term 9). The Cancellation Policy section below still spells out a 48-hour notice and no-show deposit. Decide which governs so the two do not contradict.</div>
 
       <ol class="terms">
         <li><strong>Campaign period.</strong> The Beauty Voucher Summer Window is available to purchase until 28 August 2026.</li>
@@ -537,6 +720,20 @@
         <li><strong>Pricing.</strong> All prices and values shown are in UAE Dirhams (AED) and include applicable VAT.</li>
         <li><strong>General.</strong> Tara Rose reserves the right to reasonably amend or clarify these terms where required for the administration of the campaign, provided that this does not remove service credit already purchased by a client. Purchase of a Beauty Voucher confirms acceptance of these Terms &amp; Conditions.</li>
       </ol>
+      <div class="action">
+        <div class="a-label">Read it as the client would</div>
+        <ul>
+          <li>The mockup is the same terms <strong>split in two</strong>, one per voucher, laid out as the page a client lands on from the small print.</li>
+          <li>It answers <strong>Flag 1</strong>: Motor City is named on the Dubai voucher. It puts <strong>Flag 2</strong> in front of you as option A or option B, side by side, so you can pick one. And it adds one new clause holding the credit to the emirate it was bought in, which the split does not work without.</li>
+        </ul>
+        <p style="margin:14px 0 2px;">
+          <a href="website-mockups/terms/terms.html" target="_blank" rel="noopener"
+             style="display:inline-block;background:var(--dark);color:#fff;text-decoration:none;border-radius:100px;padding:12px 24px;font-size:14.5px;font-weight:700;">
+            Open the T&amp;C mockup &nearr;
+          </a>
+        </p>
+      </div>
+
       <div class="note"><strong>What changed from the previous draft:</strong> Dawn's version adds explicit clauses for gift-voucher transfer, referral qualification, other-offer stacking, VAT-inclusive pricing, and Tara Rose's right to amend. It drops the marketing framing ("not money off, a plan") since this is the legal T&amp;C. It also removes the specific larger-colour-cap line, so that ruling now lives only in Open Decisions.</div>
     </section>
 
@@ -554,6 +751,20 @@
         <li><strong>Offer window.</strong> The purchase window closes 28 August 2026. Appointments from your credit may be booked anytime within your tier's validity period, even after the window closes.</li>
       </ol>
       <div class="note flag"><strong>Confirm:</strong> the 48-hour notice period and the no-show deposit rule against the current live cancellation policy.</div>
+
+      <div class="action">
+        <div class="a-label">This is one decision, not two</div>
+        <ul>
+          <li>The seven clauses above and <strong>term 10 of the Terms</strong> are the same rule written twice. The T&amp;C mockup puts both versions <strong>side by side in one place</strong>, as option A (this detailed wording) and option B (Dawn's lighter clause).</li>
+          <li>Pick one there and both this section and the Terms follow it. Leaving it open is what makes the pack contradict itself.</li>
+        </ul>
+        <p style="margin:14px 0 2px;">
+          <a href="website-mockups/terms/terms.html" target="_blank" rel="noopener"
+             style="display:inline-block;background:var(--dark);color:#fff;text-decoration:none;border-radius:100px;padding:12px 24px;font-size:14.5px;font-weight:700;">
+            Read A and B side by side &nearr;
+          </a>
+        </p>
+      </div>
     </section>
 
     <section id="incentive">
@@ -565,7 +776,7 @@
         <p><strong>Reassurance to give staff first.</strong> The voucher does not remove commission, it defers it. When a client later redeems her credit on a service, the stylist or beautician still earns their normal service commission at that visit. This incentive sits on top of that.</p>
       </div>
 
-      <h3>Recommended model — per-sale bonus, tiered</h3>
+      <h3>Recommended model: per-sale bonus, tiered</h3>
       <table>
         <thead><tr><th>Tier</th><th class="num">Total bonus</th><th class="num">Introducer (stylist)</th><th class="num">Closer (reception)</th></tr></thead>
         <tbody>
@@ -596,29 +807,172 @@
     </section>
 
     <section id="decisions">
-      <div class="sec-head"><h2>Open Decisions</h2><span class="badge pending"><span class="b-dot"></span>13 to decide</span></div>
-      <div class="oneline"><div><b>In one line</b>The short list still blocking a clean launch. Thirteen to settle, three already resolved and shown for the record, and the last six come out of the brand review of the emails.</div></div>
+      <div class="sec-head"><h2>Open Decisions</h2><span class="badge pending"><span class="b-dot"></span>17 to decide</span></div>
+      <div class="oneline"><div><b>In one line</b>The short list still blocking a clean launch. Seventeen to settle, three already resolved and shown for the record, and the last six come out of the brand review of the emails.</div></div>
 
-      <div class="decision"><span class="num">1</span><div><div class="q">Staff incentive model &amp; budget</div><div class="a">Approve amounts and set the window budget. Tara.</div></div></div>
-      <div class="decision"><span class="num">2</span><div><div class="q">Larger-colour cap</div><div class="a">Confirm the per-visit credit cap for colour and authorise sharing it with managers. Tara.</div></div></div>
-      <div class="decision"><span class="num">3</span><div><div class="q">Existing vs new client eligibility</div><div class="a">Is the voucher open to existing clients as well as new? No final policy yet.</div></div></div>
-      <div class="decision"><span class="num">4</span><div><div class="q">Cancellation policy specifics</div><div class="a">Confirm the 48-hour notice and no-show deposit against the live policy page.</div></div></div>
-      <div class="decision"><span class="num">5</span><div><div class="q">Home Ritual Kit sourcing</div><div class="a">Confirm supplier, cost and stock before launch materials are final.</div></div></div>
-      <div class="decision"><span class="num">6</span><div><div class="q">Confidence Mapping page copy sync</div><div class="a">One call, a / b / c on the six lines (see Confidence Mapping section). Recommended: a. Tara.</div></div></div>
-      <div class="decision"><span class="num">7</span><div><div class="q">Motor City in the T&amp;C</div><div class="a">Dawn's revised Terms omit Motor City from participating salons, which conflicts with the resolved two-voucher split (Dubai = Al Quoz + Motor City). Confirm Motor City is a redemption branch and add it, or confirm it is intentionally out. Tara / Dawn.</div></div></div>
-      <div class="decision done"><span class="tick">✓</span><div><div class="q">Dubai payment links — resolved</div><div class="a">Separate Stripe links for Al Quoz and Motor City (Belle's call), same setup as the other branches.</div></div></div>
+      <div class="decision" data-owner="Tara,Emma"><span class="num">1</span><div><div class="q">Staff incentive model &amp; budget</div><div class="a">Approve amounts and set the window budget. Tara.</div></div></div>
+      <div class="decision" data-owner="Tara,Emma"><span class="num">2</span><div><div class="q">Larger-colour cap</div><div class="a">Confirm the per-visit credit cap for colour and authorise sharing it with managers. Tara.</div></div></div>
+      <div class="decision" data-owner="Tara"><span class="num">3</span><div><div class="q">Existing vs new client eligibility</div><div class="a">Is the voucher open to existing clients as well as new? No final policy yet.</div></div></div>
+      <div class="decision" data-owner="Tara"><span class="num">4</span><div><div class="q">Cancellation policy specifics</div><div class="a">Confirm the 48-hour notice and no-show deposit against the live policy page.</div></div></div>
+      <div class="decision" data-owner="Tara,Emma"><span class="num">5</span><div><div class="q">Home Ritual Kit: bundles priced, caps need signing off</div><div class="a"><strong>What goes in the kit is settled.</strong> Eleven bundles, standardised at 2 / 4 / 6 items, are priced per emirate off the <a href="https://docs.google.com/spreadsheets/d/1QDDiBYoQhccEHKB7VGJ9wgLoXFKQxJIz7f8C2Zj0oUU/edit?gid=1050960254" target="_blank" rel="noopener" style="color:var(--blue);font-weight:600;">TRS Beauty Stock sheet</a> and built into the <a href="ritual-kit/ritual-kit.html" target="_blank" rel="noopener" style="color:var(--blue);font-weight:600;">Ritual Kit decision tree</a>. Nothing needs sourcing to launch. It is all on the shelf already.<br><br><strong>Four things need you, Tara and Emma.</strong>
+        <ul>
+          <li><strong>Sign off the spending caps.</strong> AED 350 / 650 / 1,050 of shelf value by tier.</li>
+          <li><strong>Emma confirms the trade cost multiplier.</strong> The caps are retail, so without that number the margin question cannot be answered.</li>
+          <li><strong>Three map answers still have no hero line.</strong> They are <em>my brunette looks flat or dull</em>, <em>my colour fades too fast</em> and <em>more shedding or thinning</em>.</li>
+          <li><strong>The water filter.</strong> Doctrine calls for one in the top tier, but no branch has a filter in stock. Either we source one or we stop describing it.</li>
+        </ul></div></div></div>
+      <div class="decision" data-owner="Tara" data-rec="Option a: bring the page into line with the six locked lines."><span class="num">6</span><div><div class="q">Confidence Mapping page copy sync</div><div class="a">One call, a / b / c on the six lines (see Confidence Mapping section). Recommended: a. Tara.</div></div></div>
+      <div class="decision" data-owner="Tara"><span class="num">7</span><div><div class="q">Motor City in the T&amp;C</div><div class="a">Dawn's revised Terms omit Motor City from participating salons, which conflicts with the resolved two-voucher split (Dubai = Al Quoz + Motor City). Confirm Motor City is a redemption branch and add it, or confirm it is intentionally out. Tara / Dawn.</div></div></div>
+      <div class="decision done"><span class="tick">✓</span><div><div class="q">Dubai payment links: resolved</div><div class="a">Separate Stripe links for Al Quoz and Motor City (Belle's call), same setup as the other branches.</div></div></div>
 
-      <div class="decision done"><span class="tick">✓</span><div><div class="q">Voucher split — resolved</div><div class="a">Two vouchers: Dubai (Al Quoz + Motor City) and Abu Dhabi (Saadiyat + KCA).</div></div></div>
-      <div class="decision done"><span class="tick">✓</span><div><div class="q">Al Quoz beauty scope — resolved</div><div class="a">Full beauty plus Relaxation Facial. No deep cleanse or clinical facials (Abu Dhabi only). Motor City hair only.</div></div></div>
+      <div class="decision done"><span class="tick">✓</span><div><div class="q">Voucher split: resolved</div><div class="a">Two vouchers: Dubai (Al Quoz + Motor City) and Abu Dhabi (Saadiyat + KCA).</div></div></div>
+      <div class="decision done"><span class="tick">✓</span><div><div class="q">Al Quoz beauty scope: resolved</div><div class="a">Full beauty plus Relaxation Facial. No deep cleanse or clinical facials (Abu Dhabi only). Motor City hair only.</div></div></div>
 
       <h3>From the brand review, 7 August</h3>
       <div class="note">Every one of the twelve emails was gated against current doctrine before it went into this pack. Five blocking problems were found and fixed already, including one that mattered: the Self-Care Bonus was written as if it sat on top of the credit, which promised AED 3,500 on Season of You against AED 3,000 of actual credit. The bonus is the uplift, not an extra. The six below are the ones nobody but you can settle.</div>
-      <div class="decision"><span class="num">8</span><div><div class="q">Brand review: the mapping bridge copy</div><div class="a">The +24h bridge message says &quot;Most women back it with the Beauty Voucher.&quot; The campaign has not run, so there is no evidence for that, and the line also says &quot;would you like <em>me</em> to hold a tier&quot; in a singular voice when UAE is plural we. It is fenced as locked copy, so it cannot be changed without your say-so. <strong>Unlock it, or leave it as is?</strong> Tara.</div></div></div>
-      <div class="decision"><span class="num">9</span><div><div class="q">Brand review: is the kit really withheld until the mapping?</div><div class="a">The welcome email says &quot;We cannot release it until we have mapped you.&quot; That is a condition on something she has already paid for, and it appears nowhere else in this pack. If it is real policy it needs wording she agreed to at purchase. If it is not, the line comes out. Separate question from the sourcing decision above. Tara.</div></div></div>
-      <div class="decision"><span class="num">10</span><div><div class="q">Brand review: &quot;Most chosen&quot; on Season of You</div><div class="a">Used as the tier tagline in the copy and the tier email. Nothing has been sold yet, so there is no basis for it. Keep it, or swap to something like &quot;Our recommended starting point&quot;? Tara.</div></div></div>
-      <div class="decision"><span class="num">11</span><div><div class="q">Brand review: &quot;Five questions&quot; in the Confidence Mapping push</div><div class="a">Confidence Mapping is three stages, and the email itself describes three things heard back. A count of five both contradicts that and echoes the retired 5-Step consultation. Confirm the real number, or use &quot;a few short questions&quot;. Kate can action once confirmed.</div></div></div>
-      <div class="decision"><span class="num">12</span><div><div class="q">Brand review: how we sign off in the emails</div><div class="a">Every email footer reads &quot;Tara Rose Salon Group&quot;, which is what the build spec asks for. Current brand doctrine says client-facing should be &quot;Tara Rose&quot; or &quot;Tara Rose Group&quot;. Spec and doctrine disagree, so this is your call. Tara.</div></div></div>
-      <div class="decision"><span class="num">13</span><div><div class="q">Friend gift: the copy says three vouchers, Phorest issues one</div><div class="a">Campaign copy sells Season of You as 3 &times; AED 100 and All-In VIP as 5 &times; AED 100, because she is meant to hand them to different friends. Belle issues a single card of AED 300 or AED 500. Same money, different thing in her hand. Which is it? Tara with Belle.</div></div></div>
+      <div class="decision" data-owner="Tara"><span class="num">8</span><div><div class="q">Brand review: the mapping bridge copy</div><div class="a">The +24h bridge message says &quot;Most women back it with the Beauty Voucher.&quot; The campaign has not run, so there is no evidence for that, and the line also says &quot;would you like <em>me</em> to hold a tier&quot; in a singular voice when UAE is plural we. It is fenced as locked copy, so it cannot be changed without your say-so. <strong>Unlock it, or leave it as is?</strong> Tara.</div></div></div>
+      <div class="decision" data-owner="Tara"><span class="num">9</span><div><div class="q">Brand review: is the kit really withheld until the mapping?</div><div class="a">The welcome email says &quot;We cannot release it until we have mapped you.&quot; That is a condition on something she has already paid for, and it appears nowhere else in this pack. If it is real policy it needs wording she agreed to at purchase. If it is not, the line comes out. Separate question from the sourcing decision above. Tara.</div></div></div>
+      <div class="decision" data-owner="Tara"><span class="num">10</span><div><div class="q">Brand review: &quot;Most chosen&quot; on Season of You</div><div class="a">Used as the tier tagline in the copy and the tier email. Nothing has been sold yet, so there is no basis for it. Keep it, or swap to something like &quot;Our recommended starting point&quot;? Tara.</div></div></div>
+      <div class="decision" data-owner="Kate"><span class="num">11</span><div><div class="q">Brand review: &quot;Five questions&quot; in the Confidence Mapping push</div><div class="a">Confidence Mapping is three stages, and the email itself describes three things heard back. A count of five both contradicts that and echoes the retired 5-Step consultation. Confirm the real number, or use &quot;a few short questions&quot;. Kate can action once confirmed.</div></div></div>
+      <div class="decision" data-owner="Tara"><span class="num">12</span><div><div class="q">Brand review: how we sign off in the emails</div><div class="a">Every email footer reads &quot;Tara Rose Salon Group&quot;, which is what the build spec asks for. Current brand doctrine says client-facing should be &quot;Tara Rose&quot; or &quot;Tara Rose Group&quot;. Spec and doctrine disagree, so this is your call. Tara.</div></div></div>
+      <div class="decision" data-owner="Tara"><span class="num">13</span><div><div class="q">Friend gift: the copy says three vouchers, Phorest issues one</div><div class="a">Campaign copy sells Season of You as 3 &times; AED 100 and All-In VIP as 5 &times; AED 100, because she is meant to hand them to different friends. Belle issues a single card of AED 300 or AED 500. Same money, different thing in her hand. Which is it? Tara with Belle.</div></div></div>
+
+      <!-- Both of these were already written up in the Posting Calendar section as "Needs
+           from Tara", but they were never numbered, so they never reached this list and
+           never reached anyone's queue. Promoted here (8 Aug) rather than restated: the
+           calendar section is still where the working detail lives. Co-owned with Hanneh
+           because both of them change what she can draft. -->
+      <h3>From the posting calendar</h3>
+      <div class="decision" data-owner="Tara,Hanneh" data-rec="Option a: leave the closing week as it is, and run September heavy on Transformation and Behind the Scenes."><span class="num">14</span><div><div class="q">Posting calendar: the pillar mix in the closing window</div><div class="a">Measured across the window, Conversion runs at 23% against a 10% target and Transformation at 11% against 25%. The <a href="#calendar">Posting Calendar</a> argues this is structural rather than sloppy: a three-week closing window is mostly countdown, and there is barely a fortnight of finished work to show inside it. <strong>(a)</strong> Leave the closing week as it is and rebalance in September, or <strong>(b)</strong> pull countdown posts out of the last five days now to bring the mix closer to target. Tara, with Hanneh to redraft.</div></div></div>
+      <div class="decision" data-owner="Tara,Hanneh"><span class="num">15</span><div><div class="q">Gifting: is the main credit transferable, or does the FAQ lose &ldquo;sent in her name&rdquo;?</div><div class="a">The Terms do not allow the main credit to be transferred, while the live landing page FAQ says it is &ldquo;sent in her name&rdquo;. Those cannot both be true. <strong>Three posts and a button on the live page depend on the answer</strong>, and the gifting posts on 15 and 22 August are held until it lands. Separate from Decision 13, which is about how many cards Phorest issues, not who may use them. Tara, with Hanneh holding the rows.</div></div></div>
+      <!-- The plan itself was never on anyone's list (Kate, 8 Aug). Fourteen and fifteen are
+           arguments inside the calendar; this is the calendar. Three weeks of drafting run
+           off it, so it needs an actual yes, and the calendar page carries the same two
+           buttons against this same decision, because that is where she will be reading it.
+           The anchor decide.js builds from this heading is hardcoded in calendar/calendar.html:
+           reword the question and that has to be reworded with it. -->
+      <div class="decision" data-owner="Tara" data-rec="Approve the plan, and answer 14 and 15 separately. Nothing publishes off this without its own approval anyway."><span class="num">16</span><div><div class="q">Posting calendar: approve the plan as it stands</div><div class="a">Seventy-nine posts from now to 31 August, laid out as a month in the <a href="calendar/calendar.html" target="_blank" rel="noopener">posting calendar</a>: the dates, the platforms, the pillar behind each one and the hook it starts from. Hanneh drafts three weeks against it, so it needs a yes before she does. <strong>Approving the plan is not approving the captions</strong>, each one is written, gated against the care standard and approved on its own before it publishes. You can answer it here or on the calendar page itself; it is the same answer and it only counts once. The two arguments inside the plan, the pillar mix and the gifting hold, are Decisions 14 and 15 and stay separate.</div></div></div>
+      <div class="decision" data-owner="Tara,Emma"><span class="num">17</span><div><div class="q">Floor Briefing: sign it off before it reaches the team</div><div class="a">The <a href="#briefing">Floor Briefing</a> is the one page reception, stylists and beauticians work from, and it is written but unapproved. <strong>It cannot go out until Decision 1 lands</strong>, because the incentive table in it is a proposal, not a number, and the page says so. Until then the floor briefs the reassurance only (the voucher defers commission, it does not remove it). Tara approves the wording; Emma takes it to the floor. <strong>One thing to check while approving:</strong> the tier script has staff say &ldquo;Most women choose this one&rdquo; out loud, which is the same unevidenced claim as <a href="#decisions">Decision 10</a>. If that one changes, this script has to change with it.</div></div></div>
+    </section>
+
+    <section id="briefing">
+      <div class="sec-head"><h2>Floor Briefing</h2><span class="badge draft"><span class="b-dot"></span>Approve before it goes to the team</span></div>
+      <div class="oneline"><div><b>In one line</b>The one page reception, stylists and beauticians work from. Everything they need to say, and the things they must not. One thing is still blank in it: the incentive, which is waiting on you.</div></div>
+
+      <div class="action">
+        <div class="a-label">Blank until Tara confirms</div>
+        <ul>
+          <li>The <strong>incentive amounts</strong> in the table below are the proposal from Staff Incentive, not a decision. <strong>Do not brief the team on numbers until Tara has confirmed them.</strong></li>
+          <li>Until then, brief the reassurance only: the voucher <em>defers</em> commission, it does not remove it. That part is true regardless of what the incentive turns out to be.</li>
+        </ul>
+      </div>
+
+      <h3>The one line everyone says the same way</h3>
+      <div class="card">
+        <p style="font-size:17px;margin-top:0;">&ldquo;It is not money off. You place your credit, we add more on top, and it becomes your plan for the year.&rdquo;</p>
+        <p style="color:var(--muted);margin-bottom:0;">If someone only remembers one sentence, it is that one. Everything else on this page supports it.</p>
+      </div>
+
+      <h3>The three tiers, said out loud</h3>
+      <table>
+        <thead><tr><th>Tier</th><th class="num">She places</th><th class="num">She spends</th><th>Valid</th><th>Tabby</th><th>How to say it</th></tr></thead>
+        <tbody>
+          <tr><td>Dip Your Toes</td><td class="num">AED 1,000</td><td class="num">AED 1,150</td><td>6 months</td><td>No</td><td>&ldquo;A light way back in.&rdquo;</td></tr>
+          <tr><td>Season of You</td><td class="num">AED 2,500</td><td class="num">AED 3,000</td><td>9 months</td><td>4 payments</td><td>&ldquo;AED 500 of it is your Self-Care Bonus. Most women choose this one.&rdquo;</td></tr>
+          <tr><td>All-In VIP Year</td><td class="num">AED 4,500</td><td class="num">AED 5,400</td><td>12 months</td><td>4 payments</td><td>&ldquo;Your whole year, held on rhythm. AED 900 of it is your bonus.&rdquo;</td></tr>
+        </tbody>
+      </table>
+      <div class="note"><strong>Never say &ldquo;free&rdquo; and never say &ldquo;unlimited.&rdquo;</strong> The credit is a spending cap. If her bill goes over what is left, she settles the difference at the till, and she hears that from us <em>before</em> the service, never at the till.</div>
+
+      <h3>What the credit spends on, and what it never does</h3>
+      <div class="card">
+        <p><strong>It spends on</strong> any service up to her credit value: hair, colour, cuts, treatments, keratin, blowdries, and the beauty her branch offers.</p>
+        <p><strong>It never covers</strong> home-care or retail products, or the purchase of new hair extensions. Two exclusions, that is all. Say both, every time.</p>
+        <p><strong>The Self-Care Bonus</strong> (Season of You and All-In VIP only) is for beauty, treatments, keratin and blowdries. It is the part pointed at what she usually skips.</p>
+        <p><strong>Larger colour work</strong> is covered up to a set amount per visit. Tell her the number before she sits down. <em>Cap still to be confirmed. See Open Decisions.</em></p>
+      </div>
+
+      <h3>Branch availability: the mistake to avoid</h3>
+      <table>
+        <thead><tr><th>If she is at&hellip;</th><th>Hair</th><th>Beauty, nails, waxing, lashes, massage</th><th>Facials</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Saadiyat</strong> or <strong>Khalifa City A</strong></td><td class="avail-yes">Yes</td><td class="avail-yes">Yes</td><td class="avail-yes">All facials, including deep cleanse and LED</td></tr>
+          <tr><td><strong>Al Quoz</strong></td><td class="avail-yes">Yes</td><td class="avail-yes">Yes</td><td class="avail-tbc">Relaxation Facial only</td></tr>
+          <tr><td><strong>Motor City</strong></td><td class="avail-yes">Yes</td><td class="avail-no">No, send her to Al Quoz</td><td class="avail-no">No</td></tr>
+        </tbody>
+      </table>
+      <div class="note flag"><strong>The one thing that will cause a complaint:</strong> promising a deep cleanse or clinical facial in Dubai. Those are Abu Dhabi only. In Dubai the birthday facial is the Signature Relaxing Facial at Al Quoz. If she asks for something Dubai does not do, her credit is flexible: point her at what is there, do not invent an exception.</div>
+
+      <h3>Three Exits, every conversation</h3>
+      <div class="card">
+        <p>Nobody is ever cornered. Every conversation ends with three ways out, and all three are a good outcome:</p>
+        <ol>
+          <li><strong>Take it for herself.</strong></li>
+          <li><strong>Gift it</strong> to someone who would never buy it for herself.</li>
+          <li><strong>Come back next season.</strong> No pressure, no follow-up guilt.</li>
+        </ol>
+        <p style="margin-bottom:0;">A pressured sale is not a sale we want, and under the proposed incentive it would void the bonus for that sale.</p>
+      </div>
+
+      <h3>Your part, by role</h3>
+      <div class="card">
+        <p><strong>Stylists and beauticians: the in-chair mention.</strong> One sentence, once, while you are already talking about her hair or her skin. &ldquo;You come in for this anyway. There is a way to make the year work harder for you. Ask at the desk on your way out.&rdquo; Then let it go. You do not take the payment and you do not quote the tiers; you hand her over warm.</p>
+        <p><strong>Reception: the handover and the detail.</strong> You are the one who explains the tiers, the validity, what the credit covers, and the two exclusions. You take the payment or send the branch link. You give her the Three Exits before she decides.</p>
+        <p><strong>Everyone: the Confidence Promise, word for word:</strong> &ldquo;If something does not feel right within seven days of any colour or treatment service, we invite you back to refine it. No blame, just care.&rdquo; Say it as written, once. Do not paraphrase it and do not stretch it to cover things it does not cover.</p>
+      </div>
+
+      <h3>When she hesitates</h3>
+      <table>
+        <thead><tr><th>She says</th><th>You say</th></tr></thead>
+        <tbody>
+          <tr><td>&ldquo;It's a lot up front.&rdquo;</td><td>&ldquo;Season of You and the VIP Year split into four with Tabby, and the credit stays exactly the same. Or Dip Your Toes at AED 1,000 is the lighter way in.&rdquo;</td></tr>
+          <tr><td>&ldquo;What if I don't use it?&rdquo;</td><td>&ldquo;It runs for six, nine or twelve months depending on the tier, and we message you while there is still a month left. It spends on anything on the menu, so it is hard not to use.&rdquo;</td></tr>
+          <tr><td>&ldquo;Can I get my money back?&rdquo;</td><td>&ldquo;It is prepaid credit, so it is not refundable for cash. What does hold throughout is the Confidence Promise.&rdquo; Then say the Promise.</td></tr>
+          <tr><td>&ldquo;Can I share it with my sister?&rdquo;</td><td>&ldquo;The credit stays with you, but there is a gift voucher included that is made to be handed on.&rdquo;</td></tr>
+          <tr><td>&ldquo;Let me think about it.&rdquo;</td><td>&ldquo;Of course. It is open until 28 August. Would you like me to send you the link, or shall we leave it there for now?&rdquo; Then stop.</td></tr>
+        </tbody>
+      </table>
+
+      <h3>At the till</h3>
+      <div class="card">
+        <p><strong>Check her out as a gift card</strong> and note the tier on it. The gift card balance <em>is</em> her credit, so it draws down on its own and the till always shows what is left. It is not a membership and not a package.</p>
+        <p><strong>Saadiyat has no working Stripe.</strong> Saadiyat clients pay through the Khalifa City link, so tag the client as Saadiyat at checkout in the customer name or note field, or the branch reporting goes to the wrong salon.</p>
+        <p><strong>Record who sold it.</strong> The staff member on the Phorest sale, or named in the payment-link note, is who the incentive is attributed to. If it is not recorded, it did not happen.</p>
+      </div>
+
+      <h3>Incentive: proposal only, not yet approved</h3>
+      <table>
+        <thead><tr><th>Tier</th><th class="num">Total bonus</th><th class="num">Introducer (stylist)</th><th class="num">Closer (reception)</th></tr></thead>
+        <tbody>
+          <tr><td>Dip Your Toes</td><td class="num">AED 50</td><td class="num">AED 20</td><td class="num">AED 30</td></tr>
+          <tr><td>Season of You</td><td class="num">AED 150</td><td class="num">AED 60</td><td class="num">AED 90</td></tr>
+          <tr><td>All-In VIP Year</td><td class="num">AED 300</td><td class="num">AED 120</td><td class="num">AED 180</td></tr>
+        </tbody>
+      </table>
+      <div class="note flag"><strong>Hold this back.</strong> These numbers are Kate's proposal in the Staff Incentive section and have <strong>not</strong> been approved. Do not read them out, print them, or put them in a group until Tara confirms the model and the budget. If one person both introduces and closes, the proposal gives them the full amount; refunds claw the bonus back; a pressured sale or a mis-quoted offer voids it.</div>
+      <div class="note good"><strong>What you can say now:</strong> &ldquo;The voucher does not take your commission away, it moves it. When she comes back and spends her credit on a service, you earn your normal service commission on that visit, same as always.&rdquo; That is true whatever the incentive turns out to be, so it is safe to brief today.</div>
+
+      <h3>Words we use, and words we do not</h3>
+      <table>
+        <thead><tr><th>Never</th><th>Always</th></tr></thead>
+        <tbody>
+          <tr><td>Close, convert, sell her</td><td>Help her decide</td></tr>
+          <tr><td>Lead, target, funnel</td><td>Enquiry, serve, journey</td></tr>
+          <tr><td>Objection</td><td>Hesitation</td></tr>
+          <tr><td>Lapsed, reactivation</td><td>Quiet, reconnection</td></tr>
+          <tr><td>Retention</td><td>Continued care</td></tr>
+          <tr><td>Free, unlimited, discount, money off</td><td>Credit, your plan, Self-Care Bonus</td></tr>
+        </tbody>
+      </table>
+
+      <div class="action">
+        <div class="a-label">Needs from Tara before this is briefed</div>
+        <ul>
+          <li>Approve the wording on this page, particularly the Confidence Promise and the hesitation answers.</li>
+          <li>Confirm the incentive model and amounts, or say to leave the table out of the team version entirely.</li>
+          <li>Confirm the larger-colour cap, so it can be written in rather than left as a blank.</li>
+        </ul>
+      </div>
     </section>
 
     <div class="footer">
@@ -626,31 +980,24 @@
       <div class="foot-legend">
         <span><span class="dot confirmed"></span>Confirmed on the live site</span>
         <span><span class="dot draft"></span>Drafted, needs approval</span>
-        <span><span class="dot pending"></span>Pending information or a decision</span>
+        <span><span class="dot pending"></span>Pending information, a decision, or reference</span>
       </div>
     </div>
   </main>
 </div>
 
-<script>
-  var links = Array.prototype.slice.call(document.querySelectorAll('#nav a'));
-  var map = {};
-  links.forEach(function(a){ map[a.getAttribute('href').slice(1)] = a; });
-  var obs = new IntersectionObserver(function(entries){
-    entries.forEach(function(e){
-      if(e.isIntersecting){
-        links.forEach(function(l){ l.classList.remove('active'); });
-        if(map[e.target.id]) map[e.target.id].classList.add('active');
-      }
-    });
-  }, { rootMargin: '-45% 0px -50% 0px', threshold: 0 });
-  document.querySelectorAll('main section').forEach(function(s){ obs.observe(s); });
-</script>
+<script src="pack/pack.js"></script>
 
-<!-- Notes & suggestions. Loads the Supabase UMD build first — notes-widget.js is a plain
+<!-- Notes & suggestions. Loads the Supabase UMD build first, because notes-widget.js is a plain
      script (not a module) so the pack still works opened straight off disk as file://. -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="notes-widget.js"></script>
+<script src="auth/supabase-client.js"></script>
+<script src="shared/notes-widget.js"></script>
+<!-- The front door and the decision queue. Loaded AFTER notes-widget.js so the pins are
+     already in the page when decide.js clones a decision's copy into a card and strips
+     them back out. Shares the identity key and writes into the same approval_notes table,
+     so an answer given on a card and a note left by hand land on the same anchor. -->
+<script src="pack/decide.js"></script>
 
 </body>
 </html>

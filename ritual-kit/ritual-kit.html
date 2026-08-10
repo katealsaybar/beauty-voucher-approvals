@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<script type="application/json" id="cowork-artifact-meta">
+{
+  "name": "Home Ritual Kit Decision Tree",
+  "schemaVersion": 1,
+  "description": "Staff-facing decision tree and spending cap for the Beauty Voucher Home Ritual Kit. Standardised 2/4/6-item bundles per voucher tier, priced per emirate off the TRS Beauty Stock sheet, with a hard cap per tier, an exclusion list, the Because scripts, and the escalation list.",
+  "mcpTools": [],
+  "mcpServerNames": []
+}
+</script>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Home Ritual Kit, the decision tree</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/notes-widget.css">
+<link rel="stylesheet" href="ritual-kit.css">
+</head>
+
+<body data-note-pack="beauty-voucher-2026-08" class="v-ad" data-auth-root="../">
+
+  <div class="top">
+    <div class="inner topbar">
+      <img class="brandlogo" src="../assets/tara-rose-logo-black.png" alt="Tara Rose Salon">
+      <h1 class="pagetitle">Home Ritual Kit, the decision tree</h1>
+      <span class="swlabel">Working in</span>
+      <div class="switch">
+        <button type="button" id="btn-ad" class="on">Abu Dhabi</button>
+        <button type="button" id="btn-dxb">Dubai</button>
+      </div>
+      <button type="button" class="printbtn" onclick="window.print()">Print</button>
+      <a class="back" href="../index.html">&larr; Approval pack</a>
+    </div>
+  </div>
+
+  <div class="band">
+    <details class="howto">
+      <summary>How to read this</summary>
+      <div class="hint">
+        For reception and the front desk. Work top to bottom: <b>has she done her mapping</b>, then <b>which voucher she bought</b> (that sets how many items and the cap), then <b>what she ticked on her map</b> (that sets which line). Every kit below is priced off the live stock sheet, and every total is checked against the cap for you. The matrix is the same thing on one printable page for the desk drawer.
+        <br><br>
+        <b>Which parts of her map you actually read.</b> Confidence Mapping is not two stages, it runs <b>Listen &middot; Look &middot; Colour &middot; Live &middot; You</b>, then her map. The kit is built from three of them and you can ignore the rest: <b>Stage 2, Look</b> gives the concern that picks the bundle, <b>Stage 3, Colour</b> gives the henna and keratin flags, <b>Stage 4, Live</b> gives the detox override and the home-care opening. One answer sits outside that: <b>&ldquo;more shedding or thinning&rdquo;</b> is not one of the condition ticks, it is an option on the <em>&ldquo;have you noticed your hair changing recently?&rdquo;</em> question, and it raises a flag rather than picking a bundle.
+        <br><br>
+        <b>Updated 8 Aug.</b> The tree below now asks all three stages itself, in order, and puts every flag and override on the answer card automatically: henna and keratin sign-off, the shedding flag, and the Stage 4 detox override. <a href="#stopcheck">Stop and check</a> stays further down as the printable backup, for anyone reading the matrix off paper rather than clicking through the tree.
+      </div>
+    </details>
+
+    <div class="note bad">
+      <strong>The cap is staff information. It never goes to a client, and it never appears on a card in the bag.</strong> She is being given a kit matched to her hair. She is not being given a budget. Anything in a red-outlined box on this page stays behind the desk.
+    </div>
+
+    <div class="note good">
+      <strong>Standardised at 2 / 4 / 6 items.</strong> Six slots, filled in the same order every time, cumulative by tier. Same slots in both emirates, same cap in both emirates. What changes between Abu Dhabi and Dubai is only which product fills the slot, because the two emirates do not stock the same shelf.
+    </div>
+
+    <div class="note flag">
+      <strong>Correction to what the pack said before.</strong> The earlier version of this page said the emirate does not change the kit. On doctrine that is still true, the prescription follows her hair. On <em>stock</em> it is wrong: the four branches share far less shelf than expected, so a single UAE-wide product list is not deliverable. Hence two lists below, one cap.
+    </div>
+  </div>
+
+<main>
+
+  <!-- ===================== THE CAP ===================== -->
+  <section class="staffonly">
+    <div class="eyebrow" style="margin-top:6px;">The overspend guard</div>
+    <h2>The cap, per voucher</h2>
+    <p class="lede">Retail shelf value of everything in the bag, before the kit leaves the salon. If the build comes in over, you change an item, you do not wave it through.</p>
+
+    <div class="capcards">
+      <div class="capcard">
+        <div class="t">Dip Your Toes</div>
+        <div class="c">350</div>
+        <div class="u">AED retail &middot; 2 items</div>
+        <div class="m">She paid AED 1,000. This is the tier where the kit is the single biggest thing we give away, so it is the one to hold the line on.</div>
+      </div>
+      <div class="capcard">
+        <div class="t">Season of You</div>
+        <div class="c">650</div>
+        <div class="u">AED retail &middot; 4 items</div>
+        <div class="m">She paid AED 2,500. Adds the matched shampoo and conditioner, which is the pair that actually changes the result.</div>
+      </div>
+      <div class="capcard">
+        <div class="t">All-In VIP Year</div>
+        <div class="c">1,050</div>
+        <div class="u">AED retail &middot; 6 items</div>
+        <div class="m">She paid AED 4,500, and already has the birthday services, the gift vouchers and the journals on top. Do not stack more.</div>
+      </div>
+    </div>
+
+    <h3>How these were set</h3>
+    <p>Every build in the matrix below was totalled against the live stock sheet and the caps set just above the most expensive honest build, so no concern is forced into a worse product to fit. Roughly, that lands at 35 / 26 / 23 per cent of the cash she paid, at shelf value.</p>
+    <div class="note flag" style="margin-top:12px;">
+      <strong>One number is missing and it is yours, not mine.</strong> These are <em>retail</em> values, taken from the sheet. What the kit actually costs the business is the trade cost, which is not on the sheet. Emma needs to confirm the cost multiplier before Tara signs the caps off, because the real question is what percentage of the voucher margin we are handing back, and that cannot be answered from retail prices alone.
+    </div>
+
+    <div class="srcline">
+      Priced from <a href="https://docs.google.com/spreadsheets/d/1QDDiBYoQhccEHKB7VGJ9wgLoXFKQxJIz7f8C2Zj0oUU/edit?gid=1050960254" target="_blank" rel="noopener">TRS Beauty Stock, SAA / AA / KCA / MC (revised 22.07.26)</a>, read 7 August 2026. 3,955 rows, 3,022 of them hair. Prices move, so re-check the sheet before any reprint.
+    </div>
+  </section>
+
+  <!-- ===================== THE TREE ===================== -->
+  <section>
+    <div class="eyebrow">Ask three questions</div>
+    <h2>The tree</h2>
+    <p class="lede">One question at a time. It ends on a card you can read straight off the screen while she is standing there, with the total already checked against the cap.</p>
+
+    <div class="tree">
+      <div class="step" id="s0">
+        <div class="stepq">Has she done her Confidence Mapping?</div>
+        <div class="stephint">Check her record before anything else. This is the gate, not a formality.</div>
+        <div class="opts">
+          <button class="opt wide" data-k="gate" data-v="yes">Yes, her map is done<small>Open it and read Stage 2</small></button>
+          <button class="opt wide" data-k="gate" data-v="no">Not yet<small>Or you cannot find it</small></button>
+        </div>
+      </div>
+
+      <div class="step" id="s1" hidden>
+        <div class="stepq">Which voucher did she buy?</div>
+        <div class="stephint">This sets how many items she gets, and the cap.</div>
+        <div class="opts">
+          <button class="opt wide" data-k="tier" data-v="t1">Dip Your Toes<small>AED 1,000 &rarr; 1,150 &middot; 6 months</small></button>
+          <button class="opt wide" data-k="tier" data-v="t2">Season of You<small>AED 2,500 &rarr; 3,000 &middot; 9 months</small></button>
+          <button class="opt wide" data-k="tier" data-v="t3">All-In VIP Year<small>AED 4,500 &rarr; 5,400 &middot; 12 months</small></button>
+        </div>
+      </div>
+
+      <div class="step" id="s2" hidden>
+        <div class="stepq">On her map, Stage 2, what did she tick?</div>
+        <div class="stephint">If she ticked more than one, take the highest on this list. That is the detox-first order, and it is deliberate.</div>
+        <div class="opts" id="concernopts"></div>
+      </div>
+
+      <div class="step" id="s3" hidden>
+        <div class="stepq">On her map, Stage 2 &middot; &ldquo;have you noticed your hair changing recently?&rdquo;</div>
+        <div class="stephint">Only one answer here matters, and it never picks a bundle, it only raises a flag.</div>
+        <div class="opts">
+          <button class="opt wide" data-k="shed" data-v="yes">She ticked &ldquo;More shedding or thinning&rdquo;<small>Flag it, do not build from it</small></button>
+          <button class="opt wide" data-k="shed" data-v="no">Any other answer<small>Drier, greying, texture changed, or no real change</small></button>
+        </div>
+      </div>
+
+      <div class="step" id="s4" hidden>
+        <div class="stepq">On her map, Stage 3 &middot; has her hair ever had henna or a keratin treatment?</div>
+        <div class="stephint">This is a safety flag, not a product choice.</div>
+        <div class="opts">
+          <button class="opt wide" data-k="henna" data-v="henna">Yes, henna</button>
+          <button class="opt wide" data-k="henna" data-v="keratin">Yes, keratin or a smoothing treatment</button>
+          <button class="opt wide" data-k="henna" data-v="both">Both</button>
+          <button class="opt wide" data-k="henna" data-v="neither">Neither</button>
+          <button class="opt wide" data-k="henna" data-v="notsure">Not sure</button>
+        </div>
+      </div>
+
+      <div class="step" id="s5" hidden>
+        <div class="stepq">On her map, Stage 4 &middot; what does she use at home?</div>
+        <div class="stephint">The supermarket answer is the opening for the wash-pair conversation.</div>
+        <div class="opts">
+          <button class="opt wide" data-k="homecare" data-v="salon">Salon products, matched to my hair</button>
+          <button class="opt wide" data-k="homecare" data-v="supermarket">Whatever is on the supermarket shelf</button>
+          <button class="opt wide" data-k="homecare" data-v="mix">A mix of things</button>
+          <button class="opt wide" data-k="homecare" data-v="unsure">Honestly, I am not sure</button>
+          <button class="opt wide" data-k="homecare" data-v="minimal">Not much at all</button>
+        </div>
+      </div>
+
+      <div class="step" id="s6" hidden>
+        <div class="stepq">On her map, Stage 4 &middot; how often does she reset or detox her scalp?</div>
+        <div class="stephint">&ldquo;Never&rdquo; overrides her Stage 2 tick. Whatever she ticked there, build detox instead.</div>
+        <div class="opts">
+          <button class="opt wide" data-k="detox" data-v="regular">Regularly</button>
+          <button class="opt wide" data-k="detox" data-v="sometimes">Now and then</button>
+          <button class="opt wide" data-k="detox" data-v="rarely">Rarely</button>
+          <button class="opt wide" data-k="detox" data-v="never">Never, I did not know I should</button>
+        </div>
+      </div>
+
+      <button class="restart" id="restart" hidden>Start again</button>
+      <div class="out" id="out" hidden></div>
+    </div>
+  </section>
+
+  <!-- ===================== THE MATRIX ===================== -->
+  <section class="staffonly">
+    <div class="eyebrow" style="margin-top:6px;">The whole thing on one page</div>
+    <h2>The bundle matrix</h2>
+    <p class="lede">Print this. It follows the emirate switch in the header, so print it twice, once per side. Prices are shelf value in AED, worst case across the two branches in that emirate.</p>
+
+    <div class="scroller">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th style="min-width:170px;">What she ticked</th>
+            <th style="min-width:300px;">The six slots, in order</th>
+            <th class="num" style="min-width:92px;">Dip Your Toes<br><span class="capnote">2 items<br>cap AED 350</span></th>
+            <th class="num" style="min-width:92px;">Season of You<br><span class="capnote">4 items<br>cap AED 650</span></th>
+            <th class="num" style="min-width:92px;">All-In VIP Year<br><span class="capnote">6 items<br>cap AED 1,050</span></th>
+          </tr>
+        </thead>
+        <tbody id="matrixbody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===================== NEVER IN A KIT ===================== -->
+  <section class="staffonly">
+    <div class="eyebrow" style="margin-top:6px;">The actual overspend risk</div>
+    <h2>Never in a kit</h2>
+    <p class="lede">These are on the shelf and they are the ones that quietly blow the cap. None of them belongs in a Home Ritual Kit, whatever the tier.</p>
+    <table class="tbl">
+      <thead><tr><th style="width:46%;">What</th><th class="num" style="width:14%;">AED</th><th>Why not</th></tr></thead>
+      <tbody>
+        <tr><td>Philip B, whole line <span class="chip emirate">Al Quoz only</span></td><td class="num">to 893</td><td>One item is nearly three Dip Your Toes kits. Never.</td></tr>
+        <tr><td>Philip Martin's <span class="chip emirate">Al Quoz only</span></td><td class="num">to 520</td><td>Same reason. Al Quoz is the branch with the most expensive shelf, so it is the branch that needs this list most.</td></tr>
+        <tr><td>Any 500ml or litre mask, ABC Glow / Hydrate / Replenish</td><td class="num">440</td><td>Professional size. The 200ml retail version is the kit item, at 219 to 225.</td></tr>
+        <tr><td>Olaplex No.1 and No.2, 525ml</td><td class="num">369</td><td>Back bar, not home care. No.3 at 144 is the retail one.</td></tr>
+        <tr><td>Vivandi VIART serum and mask</td><td class="num">365 to 368</td><td>Out of proportion to every tier.</td></tr>
+        <tr><td>Alterna Caviar Ceramide Shots, Moisture Pack</td><td class="num">315 to 325</td><td>Would eat a whole Dip Your Toes kit in one item.</td></tr>
+        <tr><td>Anything priced 0 on the sheet</td><td class="num">0</td><td>A zero is back bar or an unpriced line, not a free gift. If it has no price it does not go in a bag.</td></tr>
+        <tr><td>Extensions, tools, GHD, Parlux, colour, developer, lightener</td><td class="num">&ndash;</td><td>Not home care. Different conversation entirely.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ===================== HARD RULES ===================== -->
+  <section>
+    <div class="eyebrow">Do not bend these</div>
+    <h2>The six hard rules</h2>
+    <ol class="rules">
+      <li><strong>No map, no kit.</strong> Her welcome email already told her the kit is personalised and released after her mapping. If we hand it over early we have made the mapping optional, and she will not book it.</li>
+      <li><strong>Fill the slots in order.</strong> Hero, then heat shield, then the wash pair, then the mask, then scalp or water defence. Never skip a slot to fit a nicer item into a later one.</li>
+      <li><strong>Every kit carries the heat shield.</strong> ABC Primer, AED 133, and it is on the shelf in all four branches. At Khalifa City it is ticketed as Flawless Primer. Same product, same price, different label.</li>
+      <li><strong>Every item carries a Because.</strong> Name the reason from her map and the consequence, then stop talking. Seven seconds. The silence is where she takes it in.</li>
+      <li><strong>It is home care, the insurance on her hair.</strong> Never &ldquo;retail&rdquo;, never &ldquo;products&rdquo;, never &ldquo;an extra&rdquo;. We prescribe, we do not sell up.</li>
+      <li><strong>Over the cap is not a judgement call.</strong> Swap an item down, or ask your manager. Do not hand over an over-cap bag and log it afterwards.</li>
+    </ol>
+  </section>
+
+  <!-- ===================== WHAT THE SHEET SHOWED ===================== -->
+  <section class="staffonly">
+    <div class="eyebrow" style="margin-top:6px;">Found while pricing this</div>
+    <h2>Six things in the stock sheet that need fixing</h2>
+    <p class="lede">None of these blocks the kit. All of them will cause an argument later if nobody owns them. Emma.</p>
+    <table class="tbl">
+      <thead><tr><th style="width:34%;">What</th><th>Detail</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>Three doctrine lines are not stocked at all</strong></td>
+          <td>Scalp Clinix, K18 and Fibreplex appear nowhere in the sheet, in any branch. The home care doctrine names all three as hero lines. Either the doctrine table is out of date or the sheet is. The bundles below route around them.</td>
+        </tr>
+        <tr>
+          <td><strong>The water filter does not exist</strong></td>
+          <td>Doctrine says Full Insurance is not Full Insurance without a water filter. There is no filter in the sheet at any branch. Until one is sourced, the VIP kit uses a sixth item on scalp or detox instead, and we should stop describing a filter anywhere.</td>
+        </tr>
+        <tr>
+          <td><strong>Khalifa City carries neither Fibre Clinix nor Olaplex</strong></td>
+          <td>Both are at the other three. Any kit built on those two lines is undeliverable at KCA, which is why the bond bundle is built on BlondMe Bond Repair instead, the one bond line priced in all four.</td>
+        </tr>
+        <tr>
+          <td><strong>The same product is named differently per branch</strong></td>
+          <td>Primer spray 250ml against Flawless Primer 250ml, both 133. Detox Scalp Mud against Detoxifying Scalp Mud. Bond Repair Shampoo against Bond Rep Shampoo against Caviar Bond Rep Shampoo, all 210. On a straight name match only 19 items look common to all four branches. The real overlap is far higher, the names just drifted.</td>
+        </tr>
+        <tr>
+          <td><strong>The same product is priced differently per branch</strong></td>
+          <td>Scalp Rituals Hemp 74ml is 170 at Al Quoz and 137 at Motor City, a 24 per cent gap inside one emirate. Dry Cleaning Spray Shampoo is 193 and 155. Detox Scalp Mud is 302 and 289. A client who visits both branches will notice.</td>
+        </tr>
+        <tr>
+          <td><strong>The Category column is auto-filled and wrong in places</strong></td>
+          <td>Nail products sit under Hair Mask/Treatment, cuticle oil under Hair oil. Fine for stock, useless for filtering, so every pick here was checked by product name rather than trusting the column.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ===================== SAFETY ===================== -->
+  <section id="stopcheck">
+    <div class="eyebrow">Read before you hand anything over</div>
+    <h2>Stop and check</h2>
+    <p class="lede">The tree above now asks every one of these directly and puts the flag on the card itself. This table is the printable backup, for the matrix page or anyone working off paper.</p>
+    <table class="tbl">
+      <thead><tr><th style="width:38%;">On her map</th><th>What you do</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Keratin or a smoothing treatment</strong><br><span style="color:var(--muted);font-size:13px;">Stage 3</span></td>
+            <td>Do not put a detox or clarifying cleanser in her kit without the stylist signing it off. <span class="chip stop">Stylist signs off</span></td></tr>
+        <tr><td><strong>Henna</strong><br><span style="color:var(--muted);font-size:13px;">Stage 3</span></td>
+            <td>Kit is unaffected, but the note travels with her, in front of the colourist before any colour is planned. <span class="chip stop">Flag on the card</span></td></tr>
+        <tr><td><strong>Both, or Not sure</strong><br><span style="color:var(--muted);font-size:13px;">Stage 3</span></td>
+            <td>Stylist signs the kit off before it leaves the salon. <span class="chip stop">Stylist signs off</span></td></tr>
+        <tr><td><strong>&ldquo;Never, I did not know I should&rdquo;</strong><br><span style="color:var(--muted);font-size:13px;">Stage 4, scalp reset</span></td>
+            <td>Overrides her Stage 2 tick and makes her a detox first. Build the detox bundle.</td></tr>
+        <tr><td><strong>&ldquo;Whatever is on the supermarket shelf&rdquo;</strong><br><span style="color:var(--muted);font-size:13px;">Stage 4, home care</span></td>
+            <td>An opening, not a flag. On Dip Your Toes she has no wash pair in her kit, so this is where you explain what her wash is doing and what Season of You covers.</td></tr>
+        <tr><td><strong>&ldquo;More shedding or thinning&rdquo;</strong><br><span style="color:var(--muted);font-size:13px;">Stage 2, &ldquo;have you noticed your hair changing recently?&rdquo;, not the condition ticks</span></td>
+            <td>Shedding does not pick a bundle. Build from her condition and colour ticks as normal; if she has ticked none, build the scalp bundle. Then <strong>make no claim about regrowth</strong> and route her to her stylist, because this is the one answer that can be medical. <span class="chip stop">Flag on the card</span></td></tr>
+        <tr><td><strong>Only shape or length ticked</strong><br><span style="color:var(--muted);font-size:13px;">Stage 2</span></td>
+            <td>Service concerns, not home care ones. Fall through to any condition or colour box. If there is none, build the hydration bundle.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ===================== EMIRATE ===================== -->
+  <section>
+    <div class="eyebrow">What the emirate changes</div>
+    <h2>Same cap, different shelf</h2>
+    <div class="grid2">
+      <div class="cell">
+        <h4>Identical in both emirates</h4>
+        <ul class="plain">
+          <li>The six slots and the order they are filled</li>
+          <li>2 / 4 / 6 items by tier</li>
+          <li>The cap: 350 / 650 / 1,050</li>
+          <li>The heat shield, ABC Primer at 133</li>
+          <li>Malibu Blondes 5g at 132, the one detox item priced in all four</li>
+          <li>The BlondMe Bond Repair line, the only bond line priced in all four</li>
+        </ul>
+      </div>
+      <div class="cell">
+        <h4>Set by the emirate</h4>
+        <ul class="plain">
+          <li class="only-ad"><strong>Abu Dhabi.</strong> Saadiyat and Khalifa City. <span class="chip emirate">You are here</span></li>
+          <li class="only-dxb"><strong>Dubai.</strong> Al Quoz and Motor City. <span class="chip emirate">You are here</span></li>
+          <li class="only-ad"><strong>The wash pair on hydration and curls</strong> comes from Kevin Murphy here. Dubai uses the ABC Hydrate line instead.</li>
+          <li class="only-dxb"><strong>Smoothing</strong> uses the Brazilian Blowout anti-frizz pair at 151 each, which Abu Dhabi does not carry. Abu Dhabi substitutes ABC.</li>
+          <li class="only-dxb"><strong>Al Quoz carries the most expensive shelf in the group.</strong> Philip B and Philip Martin's are there and nowhere else. Read the never-in-a-kit list before you build at Al Quoz.</li>
+          <li><strong>Collection.</strong> She collects at the branch she bought from. Her credit is held against the emirate she bought in and cannot cross, so the kit does not travel either.</li>
+          <li class="only-ad"><strong>The VIP skin set</strong> is handed over at her own branch, alongside her birthday facial of choice.</li>
+          <li class="only-dxb"><strong>The VIP skin set</strong> sits with Al Quoz, where the Dubai birthday facial is set. Hand it over at that visit.</li>
+          <li class="only-dxb"><strong>Motor City</strong> is still an open decision in the Dubai terms. Do not promise a Motor City collection in writing yet.</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>If an item is out of stock</h3>
+    <ol class="rules">
+      <li>Substitute within the same slot and the same purpose, and re-check the total against the cap.</li>
+      <li><strong>Tell her before she opens it</strong>, and tell her why. A swap she finds herself reads as a downgrade. A swap she is told about reads as care.</li>
+      <li>Log it, so her next kit does not repeat it and the stock gap is visible.</li>
+    </ol>
+  </section>
+
+  <!-- ===================== SCRIPTS ===================== -->
+  <section>
+    <div class="eyebrow">What you actually say</div>
+    <h2>The Because, by tier</h2>
+    <p class="lede">Fill the bracket from her map. Then stop talking. The pause is doing the work, not the sentence.</p>
+
+    <div class="script"><b>Dip Your Toes &middot; handing over Protect</b>
+      &ldquo;These two are your shields. I am giving you these because your hair is [her reason], and without them what we do today starts coming undone in two to three weeks. Your shampoo and conditioner at home are still doing their own thing, so this is the floor, not the finish.&rdquo;</div>
+
+    <div class="script"><b>Season of You &middot; handing over Protect and Maintain</b>
+      &ldquo;This is your full routine, matched to your hair, working every time you wash. The shampoo and conditioner you have at home are almost certainly undoing what we do in the chair. Swap those two and the result holds between visits instead of fading. This is where most women start.&rdquo;</div>
+
+    <div class="script"><b>All-In VIP Year &middot; handing over Full Insurance</b>
+      &ldquo;This is the complete insurance. On top of your routine, the weekly mask rebuilds the hair, and the sixth is for your scalp, because everything else works better when the scalp is settled. So every visit builds on the last, rather than starting again.&rdquo;</div>
+
+    <h3>Never say</h3>
+    <p class="lede">Retail. Products. An extra. Premium. Upsell. Guarantee. And never the value of the bag, in either direction. If she asks what it is worth, the answer is what it is <em>for</em>.</p>
+  </section>
+
+  <!-- ===================== ESCALATION ===================== -->
+  <section>
+    <div class="eyebrow">Not your call</div>
+    <h2>When to stop and pass it up</h2>
+    <table class="tbl">
+      <thead><tr><th style="width:44%;">What happened</th><th>Who owns it</th></tr></thead>
+      <tbody>
+        <tr><td>The build comes in over the cap</td><td>Swap down first. If it still will not fit, manager. Never hand it over and log it after.</td></tr>
+        <tr><td>Her answer has no locked hero line, so brunette dull or colour fading fast</td><td>Build the interim shown in the tree, log it, tell your manager. Tara confirms the permanent line.</td></tr>
+        <tr><td>She says her hair is shedding or thinning</td><td>Build from her other ticks, or the scalp bundle if she has none. No claim about regrowth, and her stylist sees her. See <a href="#stopcheck">Stop and check</a>.</td></tr>
+        <tr><td>An item in her bundle is out of stock</td><td>Substitution rule above. Manager logs the stock gap the same day.</td></tr>
+        <tr><td>Henna, keratin, or she is not sure</td><td>Her stylist, before the kit leaves.</td></tr>
+        <tr><td>She wants to swap an item for something else</td><td>Manager. The kit is a prescription, not a pick and mix.</td></tr>
+        <tr><td>She asks for the kit without doing the mapping</td><td>Hold the line, book the mapping. If she pushes, manager.</td></tr>
+        <tr><td>She bought in one emirate and wants to collect in the other</td><td>Manager. Terms question, not a stock one.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="note flag" style="margin-top:18px;">
+      <strong>Where this came from.</strong> The slot architecture and the Because rule are lifted from the locked home care doctrine. Every question in the tree above, Stage 2 through Stage 4, is taken word for word from the live Confidence Mapping form, so what she ticked and what you read match exactly. Every product and every price is read off the stock sheet linked at the top. The routing between the three is the only invented layer, and the gaps are marked rather than filled.
+    </div>
+  </section>
+
+</main>
+
+<script src="ritual-kit.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../auth/supabase-client.js"></script>
+<script src="../shared/notes-widget.js"></script>
+</body>
+</html>

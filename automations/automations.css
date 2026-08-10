@@ -1,0 +1,683 @@
+  /* Same palette and type as the approval pack: this window is part of the pack, not a
+     separate tool, so it carries the brand rather than a generic flow-chart look. */
+  :root{
+    --bg:#F1ECE3; --canvas:#FAF8F4; --paper:#FFFFFF; --ink:#2D2E37; --muted:#6E6E77;
+    --line:#E7E2D8; --accent:#99F6E4; --accent-deep:#3AA892; --sand:#F1ECE3; --dark:#2D2E37;
+    --amber:#B4823A; --amber-bg:#FBF3E2; --amber-line:#EAD9B8; --amber-ink:#6E5320;
+    --rail:#D8D2C6;
+    --serif:'Playfair Display',Georgia,serif;
+    --sans:'Inter',system-ui,-apple-system,sans-serif;
+    /* legend colours: the salon palette where it can be, channel identity where it must be
+       (WhatsApp green is how the channel is recognised) */
+    --trigger:#3E7A5E; --email:#3B6E8F; --wa:#25A55F; --wait:#B4823A;
+    --iff:#8A6D3B; --tag:#A05C6E; --task:#46707C; --goal:#6E5BA0;
+    /* the Make.com lane: one colour per app, the way Make itself colours a module */
+    --mk-hook:#6E5BA0; --mk-tools:#B4823A; --mk-ghl:#2F6F8F; --mk-err:#A33C3C;
+    --mk-stripe:#5B57C4;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.6;}
+
+  /* ===== top bar =====
+     Two rows. Row 1 is identity: back, logo, title. Row 2 is controls: who you are on the
+     left, which workflow you are looking at on the right. Both stay stuck to the top. */
+  /* z-index 70, not 20: a peeked step or Make module lifts itself to 41 so its panel clears
+     its neighbours, and at 20 the header lost to it — a module circle drew straight over the
+     legend row. Still below the notes widget (900+) and the step modal (100). */
+  .top{
+    background:var(--paper);border-bottom:1px solid var(--line);padding:12px 26px 11px;
+    position:sticky;top:0;z-index:70;
+  }
+  .toprow1{display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
+  .toprow2{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;flex-wrap:wrap;margin-top:9px;}
+  /* the legend gets its own line under the controls: with the name toggle on the left and
+     three workflow pills on the right there is no room for eight swatches between them,
+     and it wrapped into a third ragged row. */
+  .toprow3{display:flex;justify-content:center;margin-top:9px;padding-top:8px;border-top:1px solid var(--line);}
+  .top .back{
+    flex:0 0 auto;text-decoration:none;font-size:12.5px;font-weight:700;color:var(--muted);
+    border:1px solid var(--line);border-radius:100px;padding:7px 14px;background:var(--paper);
+  }
+  .top .back:hover{border-color:var(--accent-deep);color:var(--ink);}
+  .brandlogo{display:block;width:118px;height:auto;flex:0 0 auto;}
+  .top .head{flex:1 1 auto;min-width:230px;}
+  .top .k{font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--muted);font-weight:700;}
+  .top h1{font-family:var(--serif);font-weight:600;font-size:21px;line-height:1.15;margin-top:3px;}
+  .top .hint{font-size:12.5px;color:var(--muted);margin-top:3px;}
+  .top .hint b{color:var(--ink);}
+  /* Row 2 has three parts: who you are (left), what the colours mean (middle), which
+     workflow (right). The injected "You are" bar is appended last by the widget, so the
+     order is set here rather than by DOM position.
+     Its own top margin, padding and divider rule were drawn for a stacked header and left
+     a floating half-width line here, hence the reset. */
+  .toprow2 .trs-idbar{margin:0;padding:0;border-top:none;flex:0 1 auto;order:1;}
+  .toprow2 .wfwrap{order:2;}
+  /* The injected "Sign in to edit" link lands in a row that is otherwise entirely pills, and
+     a default blue underline in the middle of them reads as something broken rather than
+     something quiet. Given the same shape as the back button, one size down so it still
+     defers to the four names beside it. */
+  .toprow2 .trs-idbar-link{
+    text-decoration:none;background:var(--paper);border:1px solid var(--line);border-radius:100px;
+    padding:5px 12px;font-size:11px;font-weight:700;color:var(--muted);white-space:nowrap;
+    letter-spacing:.01em;
+  }
+  .toprow2 .trs-idbar-link:hover{border-color:var(--accent-deep);color:var(--ink);}
+
+  /* ===== workflow switch, lower right of the header ===== */
+  .wfwrap{display:flex;flex-direction:column;align-items:flex-end;gap:5px;}
+  .wflbl{font-size:9.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);}
+  .tabs{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;}
+  .tab{
+    background:var(--paper);border:1px solid var(--line);border-radius:11px;padding:6px 13px;
+    font-size:12.5px;font-weight:700;color:var(--muted);cursor:pointer;font-family:inherit;text-align:left;
+  }
+  .tab:hover{border-color:var(--accent-deep);color:var(--ink);}
+  .tab.active{background:var(--dark);border-color:var(--dark);color:#fff;}
+  .tab{white-space:nowrap;}
+
+  .banner{
+    margin:14px 26px 4px;padding:13px 17px;background:var(--amber-bg);border:1px solid var(--amber-line);
+    border-radius:12px;font-size:13px;line-height:1.6;color:var(--amber-ink);
+  }
+  .banner code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;background:rgba(255,255,255,.6);padding:1px 5px;border-radius:4px;}
+  .banner + .banner{margin-top:8px;}
+
+  /* ===== the four notes, collapsed =====
+     These are prerequisites, not decoration, so they fold to one line each and stop pushing
+     the canvas below the fold. Hidden must never read as unimportant: a collapsed row still
+     carries its own headline, an amber dot while it is unread, and an explicit "Read this".
+     Once a note has been opened the dot hollows out, so what is left glowing is what is left
+     to read, and the header says how many that is. */
+  .noteshead{
+    display:flex;align-items:center;gap:11px;margin:15px 26px 0;flex-wrap:wrap;
+    font-size:11px;letter-spacing:.11em;text-transform:uppercase;font-weight:800;color:var(--amber-ink);
+  }
+  .noteshead .nh-count{
+    background:var(--amber);color:#fff;border-radius:100px;padding:3px 10px;letter-spacing:.04em;
+  }
+  .noteshead .nh-all{
+    margin-left:auto;font:inherit;font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+    font-weight:800;color:var(--amber-ink);background:var(--paper);border:1px solid var(--amber-line);
+    border-radius:100px;padding:5px 13px;cursor:pointer;
+  }
+  .noteshead .nh-all:hover{background:var(--amber-bg);border-color:var(--amber);}
+
+  details.banner{padding:0;}
+  details.banner > summary{
+    display:flex;align-items:flex-start;gap:10px;list-style:none;cursor:pointer;
+    padding:12px 17px;font-weight:700;
+  }
+  details.banner > summary::-webkit-details-marker{display:none;}
+  details.banner > summary:hover{background:rgba(180,130,58,.07);border-radius:12px;}
+  details[open].banner > summary:hover{border-radius:12px 12px 0 0;}
+  .b-dot{
+    flex:0 0 auto;width:9px;height:9px;border-radius:50%;margin-top:6px;
+    background:var(--amber);box-shadow:0 0 0 3px rgba(180,130,58,.18);
+  }
+  /* read: hollow, no halo. Still visible, just no longer asking for attention. */
+  details.banner.read .b-dot{background:transparent;border:1.5px solid var(--amber-line);box-shadow:none;}
+  .b-lead{flex:1 1 auto;}
+  .b-cue{
+    flex:0 0 auto;display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:800;
+    letter-spacing:.07em;text-transform:uppercase;color:var(--amber);white-space:nowrap;margin-top:2px;
+  }
+  .b-cue::before{content:'Read this';}
+  details[open].banner .b-cue::before{content:'Hide';}
+  .b-cue svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;transition:transform .15s;}
+  details[open].banner .b-cue svg{transform:rotate(180deg);}
+  .b-body{padding:0 17px 14px 30px;font-weight:400;}
+  /* on paper, a closed note is a lost note */
+  @media print{
+    .noteshead .nh-all{display:none;}
+    details.banner > .b-body{display:block !important;}
+    .b-cue{display:none;}
+  }
+
+  .legend{
+    display:flex;gap:4px 14px;flex-wrap:wrap;justify-content:center;
+    font-size:11px;color:var(--muted);
+  }
+  /* display:flex beats the [hidden] attribute's own display:none, so both legends drew at
+     once and Goal / exit sat jammed against Webhooks. It has to be said explicitly. */
+  .legend[hidden]{display:none;}
+  .legend span{display:inline-flex;align-items:center;gap:5px;white-space:nowrap;}
+  .lz{width:9px;height:9px;border-radius:2px;display:inline-block;}
+
+  /* ===== canvas + nodes ===== */
+  .canvas{background:
+      radial-gradient(circle, #E2DCD0 1px, transparent 1.4px) 0 0/22px 22px,
+      var(--canvas);
+    padding:34px 20px 64px;min-height:70vh;}
+  .flow{display:none;flex-direction:column;align-items:center;}
+  .flow.active{display:flex;}
+
+  .rail{width:2px;height:30px;background:var(--rail);position:relative;}
+  .rail::after{content:'+';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+    width:18px;height:18px;background:var(--paper);border:1.5px solid var(--rail);border-radius:50%;color:var(--muted);
+    font-size:13px;line-height:15px;text-align:center;font-weight:700;}
+
+  .node{position:relative;width:380px;max-width:92vw;background:var(--paper);border:1px solid var(--line);
+    border-radius:14px;padding:13px 15px;box-shadow:0 1px 3px rgba(45,46,55,.05);cursor:pointer;}
+  .node:hover,.node.peek{border-color:var(--accent-deep);box-shadow:0 6px 20px rgba(45,46,55,.12);}
+  .node.peek{z-index:41;}
+  .nrow{display:flex;align-items:center;gap:12px;}
+  .ico{width:38px;height:38px;border-radius:10px;flex:0 0 auto;display:grid;place-items:center;color:#fff;}
+  .ico svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+  .ntitle{font-weight:700;font-size:14.5px;line-height:1.25;}
+  .nsub{font-size:12px;color:var(--muted);margin-top:1px;}
+  .ntype{position:absolute;top:10px;right:14px;font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;
+    font-weight:800;color:var(--muted);}
+  .branches{display:flex;gap:8px;flex-wrap:wrap;margin:11px 0 1px 50px;}
+  .bchip{font-size:11px;font-weight:600;background:var(--amber-bg);color:var(--amber-ink);border:1px solid var(--amber-line);border-radius:20px;padding:4px 10px;}
+  .bchip.stop{background:var(--sand);color:#55565F;border-color:var(--line);}
+  .bchip.go{background:#E4F1EA;color:#2C5A44;border-color:#C9E4D5;}
+  /* two channels on one step (the expiry touch): say so on the pill itself */
+  .chanpair{display:inline-flex;gap:5px;margin:10px 0 0 50px;}
+  .chanpair i{font-style:normal;font-size:10px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;
+    border-radius:100px;padding:3px 9px;color:#fff;}
+
+  /* ===== the note button, moved OUT of the pill =====
+     It used to sit inside the card at the top right, on top of the type label, at 10px.
+     Tara and Emma never saw it. Now it overhangs the bottom-right corner, carries the word
+     "Note", and is sized to be pressed on a phone. */
+  .node > .trs-pin-btn{
+    position:absolute;bottom:-16px;right:-12px;z-index:8;
+    background:var(--paper);border:1.5px solid var(--accent-deep);color:var(--ink);
+    box-shadow:0 4px 14px rgba(45,46,55,.18);
+    font-size:11px;padding:6px 13px;gap:6px;
+  }
+  .node > .trs-pin-btn svg{width:13px;height:13px;}
+  .node > .trs-pin-btn:hover{background:var(--accent);border-color:var(--accent-deep);}
+  /* same button on a Make module, but the module is a column with the circle at the top, so
+     it sits under the label rather than overhanging a card corner */
+  .mkmod > .trs-pin-btn{
+    position:static;margin:9px auto 0;background:var(--paper);border:1.5px solid var(--accent-deep);
+    color:var(--ink);font-size:10.5px;padding:4px 11px;gap:5px;
+  }
+  .mkmod > .trs-pin-btn svg{width:12px;height:12px;}
+  .mkmod > .trs-pin-btn:hover{background:var(--accent);}
+
+  /* ===== hover panels: note LEFT, previews RIGHT =====
+     These used to vanish the moment the pointer left the pill, which made the "open the
+     full draft" footer unclickable. Now they are shown by a class, they accept the pointer,
+     and a hide is delayed and cancelled if the pointer lands on the panel. */
+  .side{position:absolute;top:-10px;opacity:0;visibility:hidden;transition:opacity .12s;z-index:45;pointer-events:none;}
+  /* last steps in a flow: grow upward, so a closed panel never extends the page */
+  .node.peek-up .side{top:auto;bottom:-10px;}
+  .node.peek .side{opacity:1;visibility:visible;pointer-events:auto;}
+  /* 340 rather than 300: the tips carry code now, and a snippet that has to be scrolled
+     sideways inside a panel that closes when you leave it is a snippet nobody reads. */
+  .desc{right:calc(100% + 14px);width:340px;background:var(--paper);border:1px solid var(--line);
+    border-right:5px solid var(--accent-deep);border-radius:12px;padding:14px 16px;box-shadow:0 12px 34px rgba(45,46,55,.18);}
+  /* an invisible bridge across the gap, so travelling from pill to panel never breaks */
+  .desc::after{content:'';position:absolute;right:-19px;top:0;bottom:0;width:19px;}
+  .desc .dch{font-size:9.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-deep);margin-bottom:5px;}
+  .desc .dsub{font-weight:700;font-size:12.5px;margin-bottom:5px;}
+  .desc .dbody{font-size:12.5px;line-height:1.55;color:#3C3D45;background:var(--sand);border-radius:8px;padding:9px 11px;
+    max-height:230px;overflow:auto;white-space:pre-line;}
+  /* A peek panel is read standing up, at a glance, while the pointer is held still. It is
+     not a document. Set a size down from body copy on purpose: the full note is one click
+     away, so this only has to be scannable, not comfortable to settle into. */
+  /* NOT scoped to .desc. The Make panels use the same .dnote and were never reached by the
+     old .desc .dnote rule, so their lead paragraph fell back to the inherited 16px and drew
+     half again as large as the GHL lanes' — which is what read as "the notes are huge". */
+  .dnote{font-size:11px;color:#3C3D45;margin-top:6px;line-height:1.5;}
+  .desc .locked{font-size:10.5px;color:#9C9A93;font-style:italic;margin-top:6px;}
+
+  /* ===== the shortened peek =====
+     The mapping steps used to carry a whole paragraph in the hover panel, which nobody
+     reads standing up. The panel now holds a lead, the facts as rows, and the one line of
+     code or copy that settles it; the full note is one click away in the modal. */
+  .dflag{
+    float:right;font-size:9px;letter-spacing:.09em;background:var(--amber);color:#fff;
+    border-radius:100px;padding:2px 8px;margin:-2px 0 0 8px;
+  }
+  .dflag.ok{background:var(--accent-deep);}
+  .drows{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;margin-top:8px;font-size:10.5px;align-items:baseline;}
+  .drk{color:var(--muted);font-weight:700;white-space:nowrap;}
+  .drv{color:var(--ink);}
+  .drows code,.dnote code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;
+    background:var(--sand);padding:1px 4px;border-radius:3px;}
+  .dcode{
+    margin-top:8px;background:#2D2E37;color:#E8E4DA;border-radius:8px;padding:8px 10px;
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:9.5px;line-height:1.6;
+    white-space:pre;overflow-x:auto;
+  }
+  .dcode b{color:var(--accent);font-weight:600;}
+  .dmake{
+    display:flex;align-items:center;gap:7px;width:100%;margin-top:9px;cursor:pointer;font:inherit;
+    text-align:left;background:#F4F1FA;border:1px solid #DCD3EE;border-radius:9px;padding:6px 9px;
+    font-size:10px;font-weight:700;color:#4A3E6B;
+  }
+  .dmake:hover{background:#EBE4F8;border-color:#B9A9DE;}
+  .dmake i{font-style:normal;background:var(--mk-hook);color:#fff;border-radius:6px;width:19px;height:19px;
+    display:grid;place-items:center;font-size:10.5px;font-weight:800;flex:0 0 auto;}
+  .dmore{margin-top:8px;font-size:9.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-deep);}
+
+  /* the plain modal (a step with no email or WhatsApp) now carries the same furniture */
+  .mplain .drows,.mplain .dcode{margin-top:14px;}
+  .mplain .dcode{font-size:12px;padding:13px 15px;}
+  .mplain .drows{font-size:13px;}
+  /* and a step that DOES have a preview keeps its full note above the handsets */
+  .mlong{padding:13px 18px 15px;background:var(--amber-bg);border-bottom:1px solid var(--amber-line);
+    color:var(--amber-ink);}
+  .mlong p{font-size:12.5px;line-height:1.6;}
+  .mlong .drows{margin-top:0;margin-bottom:11px;font-size:12.5px;}
+  .mlong .drk{color:#8A6D3B;}
+  .mlong .drv{color:var(--amber-ink);}
+  .mlong .dcode{margin:0 0 11px;}
+
+  /* the right-hand stack. One card for an email step, two for a step that sends both. */
+  .pvstack{left:calc(100% + 14px);width:300px;display:flex;flex-direction:column;gap:10px;}
+  .pvstack::before{content:'';position:absolute;left:-19px;top:0;bottom:0;width:19px;}
+  .pv{background:var(--paper);border:1px solid var(--line);border-radius:12px;overflow:hidden;
+    box-shadow:0 14px 40px rgba(45,46,55,.2);cursor:pointer;}
+  .pv:hover{border-color:var(--accent-deep);}
+  .pvhead{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);
+    padding:8px 12px;border-bottom:1px solid var(--line);background:#FCFBF8;display:flex;align-items:center;gap:6px;}
+  .pvhead .pvdot{width:8px;height:8px;border-radius:50%;flex:0 0 auto;}
+  .pvframe{width:298px;height:210px;overflow:hidden;position:relative;background:#EFEBE3;}
+  .pvframe iframe{width:656px;height:1500px;border:0;transform:scale(.4543);transform-origin:top left;pointer-events:none;}
+  .pvfade{position:absolute;left:0;right:0;bottom:0;height:52px;background:linear-gradient(to bottom,rgba(239,235,227,0),#EFEBE3);pointer-events:none;}
+  .pvwa{background:#ECE5DD;padding:10px 12px 14px;position:relative;max-height:214px;overflow:hidden;}
+  .pvwa .pvfade{background:linear-gradient(to bottom,rgba(236,229,221,0),#ECE5DD);}
+  .pvwabub{max-width:94%;background:#fff;border-radius:3px 11px 11px 11px;padding:9px 11px;
+    font-size:12px;line-height:1.5;color:#111;white-space:pre-line;box-shadow:0 1px 1px rgba(0,0,0,.12);}
+  /* region switch inside the peek: this is the Abu Dhabi / Dubai pair that went missing */
+  .pvregion{display:flex;gap:5px;padding:8px 12px;background:#FCFBF8;border-bottom:1px solid var(--line);}
+  .pvrg{border:1px solid var(--line);background:var(--paper);border-radius:100px;padding:4px 12px;font:inherit;
+    font-size:11px;font-weight:700;color:var(--muted);cursor:pointer;}
+  .pvrg.active{background:var(--wa);border-color:var(--wa);color:#fff;}
+  /* the official submitted-body count, carried on the region button itself so both regions'
+     numbers are readable without switching between them */
+  .bchars{font-weight:800;opacity:.62;font-variant-numeric:tabular-nums;}
+  .pvrg.active .bchars,.grp button.active .bchars{opacity:.85;}
+  .pvlimit{font-size:10.5px;font-weight:700;padding:6px 12px;border-top:1px solid var(--line);background:#FCFBF8;}
+  .pvlimit.over{color:#A33C3C;background:#FBEDED;}
+  .pvlimit.ok{color:#2C5A44;}
+  .pvfoot{display:flex;align-items:center;justify-content:center;gap:6px;padding:9px;font-size:11px;font-weight:800;
+    color:var(--accent-deep);background:var(--paper);border-top:1px solid var(--line);}
+  .pvfoot svg{width:12px;height:12px;stroke:var(--accent-deep);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+  .pvpending{padding:16px 14px 18px;text-align:center;}
+  .pvpico{width:36px;height:36px;border-radius:10px;margin:2px auto 10px;display:grid;place-items:center;background:var(--sand);color:var(--amber);font-size:17px;}
+  .pvptitle{font-size:13px;font-weight:800;margin-bottom:8px;}
+  .pvpnote{font-size:11.5px;color:var(--muted);line-height:1.5;}
+
+  /* not enough room either side on a narrow screen: drop the panels above and below */
+  @media(max-width:1340px){
+    .desc{right:auto;left:0;top:auto;bottom:calc(100% + 12px);width:min(92vw,320px);}
+    .desc::after{right:auto;left:0;right:0;top:auto;bottom:-19px;width:auto;height:19px;}
+    .pvstack{left:0;top:calc(100% + 12px);width:min(92vw,320px);}
+    .pvstack::before{left:0;right:0;top:-19px;bottom:auto;width:auto;height:19px;}
+  }
+
+  /* ===== modal ===== */
+  .mback{position:fixed;inset:0;background:rgba(30,26,22,.6);display:none;align-items:flex-start;justify-content:center;
+    z-index:100;padding:26px 14px;overflow:auto;}
+  .mback.open{display:flex;}
+  .modal{background:var(--paper);border-radius:18px;width:920px;max-width:97vw;box-shadow:0 30px 80px rgba(0,0,0,.4);overflow:hidden;}
+  .mhead{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--line);}
+  .mico{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;color:#fff;flex:0 0 auto;}
+  .mico svg{width:18px;height:18px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+  .mtt{font-weight:700;font-size:15.5px;line-height:1.2;}
+  .mss{font-size:12px;color:var(--muted);margin-top:2px;}
+  .mx{margin-left:auto;border:none;background:var(--sand);width:34px;height:34px;border-radius:9px;cursor:pointer;
+    font-size:20px;line-height:1;color:var(--muted);flex:0 0 auto;}
+  .mx:hover{background:#E4DED2;color:var(--ink);}
+  .mctl{display:flex;gap:16px;align-items:center;flex-wrap:wrap;padding:11px 18px;background:#FCFBF8;border-bottom:1px solid var(--line);}
+  .mctl .grp{display:flex;gap:6px;align-items:center;}
+  .mctl .glbl{font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+  .mctl button{border:1px solid var(--line);background:var(--paper);border-radius:100px;padding:6px 15px;font:inherit;
+    font-size:12.5px;font-weight:700;color:var(--muted);cursor:pointer;}
+  .mctl button.active{background:var(--dark);border-color:var(--dark);color:#fff;}
+  .mctl .chars{margin-left:auto;font-size:12px;font-weight:700;}
+  .mctl .chars.over{color:#A33C3C;} .mctl .chars.ok{color:#2C5A44;}
+
+  /* ===== device frames and email chrome: now in mail-preview.css =====
+     .mstage .devcol .devswitch .phone .screen .statusbar .scrollarea .homebar .navbar
+     .avatar .gm-* .ol-* all moved there on 8 Aug so the result mockup renders in the same
+     frames instead of carrying a second copy. The WhatsApp chrome below stays here, and
+     still styles off .phone.samsung / .phone.iphone from that file. */
+  .mstage{background:var(--sand);}
+  .wa-thread{scrollbar-width:none;-ms-overflow-style:none;}
+  .wa-thread::-webkit-scrollbar{width:0;height:0;display:none;}
+
+  /* WhatsApp chrome */
+  .wa-and-bar{display:flex;align-items:center;gap:11px;padding:9px 12px;background:#075E54;color:#fff;flex:0 0 auto;}
+  .wa-ios-bar{display:flex;align-items:center;gap:9px;padding:7px 12px;background:#F6F6F6;border-bottom:1px solid #DCDCDC;color:#111;flex:0 0 auto;}
+  .wa-bar-name{font:700 15px/1.25 Roboto,Arial,sans-serif;}
+  .wa-bar-name small{display:block;font-weight:400;font-size:11.5px;opacity:.85;}
+  .wa-ios-mid{flex:1 1 auto;text-align:center;font:600 14px/1.2 -apple-system,'Segoe UI',Arial,sans-serif;}
+  .wa-ios-mid small{display:block;font-weight:400;font-size:11px;color:#8E8E93;}
+  .wa-chevron{color:#007AFF;font-size:22px;line-height:1;font-weight:600;}
+  .wa-thread{flex:1 1 auto;overflow-y:auto;background:#ECE5DD;padding:14px 11px 18px;}
+  .wa-daypill{width:max-content;margin:0 auto 12px;background:#E1F2FB;color:#4A6572;border-radius:8px;
+    padding:4px 12px;font:600 11px/1 Roboto,Arial,sans-serif;}
+  /* incoming, because this is her phone, not ours: white bubble, tail on the left */
+  .wa-in{max-width:87%;background:#fff;padding:8px 11px 7px;box-shadow:0 1px .5px rgba(11,20,26,.13);
+    font-size:14px;line-height:1.5;color:#111;white-space:pre-line;position:relative;}
+  .phone.samsung .wa-in{border-radius:0 8px 8px 8px;}
+  .phone.iphone .wa-in{border-radius:6px 17px 17px 17px;}
+  .wa-time{display:block;text-align:right;font-size:10.5px;color:#8C9AA0;margin-top:4px;}
+  .wa-btns{max-width:87%;margin-top:2px;}
+  .wa-btn{background:#fff;color:#00A5F4;text-align:center;padding:9px;margin-top:2px;font-size:13.5px;font-weight:600;
+    box-shadow:0 1px .5px rgba(11,20,26,.13);}
+  .phone.samsung .wa-btn{border-radius:6px;} .phone.iphone .wa-btn{border-radius:12px;}
+
+  /* ===== the reply bar =====
+     A chat screen without the compose row does not read as WhatsApp. It is inert here (there
+     is nothing to send) but it has to be there, and the two platforms lay it out differently:
+     Android puts the attach and camera icons INSIDE the input pill with the mic in its own
+     green circle; iOS puts a plus outside on the left and the camera and mic outside on the
+     right. */
+  .wa-compose{display:flex;align-items:flex-end;gap:7px;flex:0 0 auto;}
+  .wa-compose svg{fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;}
+  .wa-input{
+    flex:1 1 auto;min-width:0;display:flex;align-items:center;gap:9px;background:#fff;
+    box-shadow:0 1px 1px rgba(11,20,26,.1);
+  }
+  .wa-input .ph{flex:1 1 auto;min-width:0;color:#8C9AA0;}
+
+  /* Android */
+  .wa-compose.and{background:#ECE5DD;padding:6px 8px 8px;}
+  .wa-compose.and .wa-input{border-radius:26px;padding:11px 14px;font:400 15px/1 Roboto,Arial,sans-serif;color:#54656F;}
+  .wa-compose.and .wa-input svg{width:21px;height:21px;flex:0 0 auto;}
+  .wa-mic{
+    width:47px;height:47px;border-radius:50%;background:#00A884;color:#fff;flex:0 0 auto;
+    display:grid;place-items:center;box-shadow:0 1px 2px rgba(11,20,26,.2);
+  }
+  .wa-mic svg{width:23px;height:23px;stroke-width:2;}
+
+  /* iOS */
+  .wa-compose.ios{background:#F6F6F6;border-top:1px solid #DCDCDC;padding:7px 10px 9px;color:#8E8E93;}
+  .wa-compose.ios .wa-input{
+    border-radius:20px;padding:9px 13px;font:400 16px/1 -apple-system,'Segoe UI',Arial,sans-serif;
+    color:#8E8E93;border:1px solid #DDD;box-shadow:none;
+  }
+  .wa-compose.ios .wa-input svg{width:20px;height:20px;flex:0 0 auto;}
+  .wa-compose.ios .out{flex:0 0 auto;display:grid;place-items:center;}
+  .wa-compose.ios .out svg{width:23px;height:23px;}
+  .wa-plus{
+    flex:0 0 auto;width:27px;height:27px;border-radius:50%;background:#8E8E93;color:#F6F6F6;
+    display:grid;place-items:center;font:400 21px/1 -apple-system,Arial,sans-serif;padding-bottom:2px;
+  }
+
+  .mplain{padding:26px 22px;background:var(--paper);}
+  .mplainbody{font-size:14px;line-height:1.65;color:#3C3D45;white-space:pre-line;background:var(--sand);border-radius:10px;padding:14px 16px;}
+  .mfoot{display:flex;align-items:center;gap:12px;padding:13px 18px;border-top:1px solid var(--line);background:var(--paper);flex-wrap:wrap;}
+  .mnote2{flex:1 1 260px;font-size:11.5px;color:var(--muted);line-height:1.5;}
+  .mopen{display:inline-flex;align-items:center;gap:6px;background:var(--dark);color:#fff;border:none;border-radius:100px;
+    padding:11px 18px;font:inherit;font-size:13px;font-weight:700;cursor:pointer;flex:0 0 auto;}
+  .mopen:hover{background:#1F2027;}
+  .mopen svg{width:13px;height:13px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+
+  /* ==================================================================
+     THE MAKE.COM LANE
+     The fourth pill. The other three are GHL, and they are drawn as GHL draws them:
+     a vertical stack of steps. Make is not that and should not be forced to look like it.
+     A Make scenario is a horizontal chain of circular modules, numbered in run order, with
+     the filters sitting ON the links rather than inside a step. So this lane is drawn the
+     way the tool itself draws it, which is the only way the drawing is any use to whoever
+     has to build it.
+     ================================================================== */
+  .flow.make{align-items:center;}
+  .mkwrap{width:100%;max-width:1330px;}
+
+  /* Two scenarios in one lane, stacked. Make itself shows one at a time, but these two are
+     read against each other: one ends by writing voucher:paid, the other is the workflow
+     that tag starts. The gap is wide enough that scenario 1's peek panels, which drop below
+     their module, land in empty space rather than on scenario 2's bar. */
+  .mkscen + .mkscen{margin-top:96px;padding-top:34px;border-top:1px dashed var(--rail);}
+
+  /* the scenario bar: name on the left, how it runs on the right */
+  .mkbar{
+    display:flex;align-items:center;gap:16px;flex-wrap:wrap;background:var(--paper);
+    border:1px solid var(--line);border-radius:14px;padding:12px 16px;
+    box-shadow:0 1px 3px rgba(45,46,55,.05);
+  }
+  .mkbar-l{display:flex;align-items:center;gap:12px;flex:1 1 320px;min-width:0;}
+  .mkgear{
+    width:38px;height:38px;border-radius:11px;background:#6E5BA0;color:#fff;flex:0 0 auto;
+    display:grid;place-items:center;
+  }
+  .mkgear svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+  .mkname{font-weight:700;font-size:15px;line-height:1.2;}
+  .mkname em{
+    font-style:normal;font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;
+    color:var(--muted);display:block;margin-bottom:1px;
+  }
+  .mkpath{font-size:11.5px;color:var(--muted);margin-top:2px;}
+  .mkfootnote{
+    max-width:820px;margin:20px auto 0;font-size:11.5px;line-height:1.65;color:var(--muted);
+    text-align:center;
+  }
+  .mkfootnote b{color:var(--ink);}
+  .mkfootnote code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;
+    background:var(--sand);padding:1px 5px;border-radius:4px;}
+  .mkbar-r{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;}
+  .mkchip{
+    font-size:10.5px;font-weight:700;border-radius:100px;padding:5px 11px;white-space:nowrap;
+    background:var(--sand);color:#55565F;border:1px solid var(--line);
+  }
+  .mkchip.warn{background:var(--amber-bg);color:var(--amber-ink);border-color:var(--amber-line);}
+
+  /* the chain */
+  .mkrow{
+    display:flex;flex-wrap:wrap;justify-content:center;align-items:flex-start;
+    margin-top:26px;row-gap:44px;
+  }
+  .mkmod{
+    position:relative;width:126px;text-align:center;cursor:pointer;
+  }
+  .mkcirc{
+    width:70px;height:70px;border-radius:50%;margin:0 auto;background:var(--paper);
+    border:2.5px solid var(--c,var(--muted));display:grid;place-items:center;position:relative;
+    box-shadow:0 2px 8px rgba(45,46,55,.09);transition:box-shadow .14s,transform .14s;
+  }
+  .mkmod:hover .mkcirc,.mkmod.peek .mkcirc{box-shadow:0 8px 22px rgba(45,46,55,.2);transform:translateY(-2px);}
+  .mkcirc svg{width:30px;height:30px;stroke:var(--c);fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;}
+  .mkcirc .mkmark{font-size:19px;font-weight:800;letter-spacing:-.03em;color:var(--c);}
+  /* the module number, exactly where Make puts it */
+  .mknum{
+    position:absolute;top:-4px;left:8px;width:21px;height:21px;border-radius:50%;
+    background:var(--dark);color:#fff;font-size:11px;font-weight:800;line-height:21px;z-index:2;
+  }
+  /* the little action glyph, so a row of five identical app circles is still readable */
+  .mkbadge{
+    position:absolute;right:-3px;bottom:-3px;width:23px;height:23px;border-radius:50%;
+    background:var(--c);display:grid;place-items:center;border:2px solid var(--paper);
+  }
+  .mkbadge svg{width:12px;height:12px;stroke:#fff;stroke-width:2.4;}
+  .mkapp{font-size:9px;letter-spacing:.11em;text-transform:uppercase;font-weight:800;color:var(--c);margin-top:9px;}
+  .mktitle{font-size:12.5px;font-weight:700;line-height:1.25;margin-top:2px;}
+  .mksub{font-size:11px;color:var(--muted);line-height:1.35;margin-top:2px;}
+  .mkmod.pulse .mkcirc{animation:mkpulse 1.5s ease-out 2;}
+  @keyframes mkpulse{
+    0%{box-shadow:0 0 0 0 rgba(58,168,146,.55);} 70%{box-shadow:0 0 0 16px rgba(58,168,146,0);}
+    100%{box-shadow:0 0 0 0 rgba(58,168,146,0);}
+  }
+
+  /* the link between two modules, with the filter sitting on it */
+  .mklink{width:52px;height:2px;background:var(--rail);margin-top:34px;position:relative;flex:0 0 auto;}
+  .mklink::after{
+    content:'';position:absolute;right:-1px;top:50%;transform:translateY(-50%);
+    border-left:7px solid var(--rail);border-top:5px solid transparent;border-bottom:5px solid transparent;
+  }
+  .mklink.filt{background:repeating-linear-gradient(90deg,var(--rail) 0 5px,transparent 5px 9px);}
+  .mkfilt{
+    position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+    width:25px;height:25px;border-radius:50%;background:var(--paper);border:1.5px solid var(--amber);
+    display:grid;place-items:center;
+  }
+  .mkfilt svg{width:12px;height:12px;stroke:var(--amber);fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
+  .mkfiltlbl{
+    position:absolute;left:50%;top:calc(50% + 18px);transform:translateX(-50%);white-space:nowrap;
+    font-size:9px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--amber);
+  }
+
+  /* the error route: hangs off its own module, dashed, the way Make draws a handler */
+  .mkerr{
+    margin:12px auto 0;width:118px;border:1.5px dashed var(--mk-err);border-radius:10px;
+    background:#FBEDED;color:#8B3535;padding:6px 8px;font-size:10px;line-height:1.35;font-weight:700;
+    position:relative;
+  }
+  .mkerr::before{
+    content:'';position:absolute;left:50%;top:-13px;width:1.5px;height:13px;
+    background:repeating-linear-gradient(180deg,var(--mk-err) 0 4px,transparent 4px 7px);
+  }
+  .mkerr span{display:block;font-weight:400;color:#A05454;margin-top:1px;}
+
+  /* the peek panel drops below the module, since the chain runs sideways */
+  .mkmod .mkpanel{
+    position:absolute;top:calc(100% + 16px);left:50%;transform:translateX(-50%);width:344px;
+    background:var(--paper);border:1px solid var(--line);border-top:5px solid var(--c);
+    border-radius:12px;padding:13px 15px;box-shadow:0 14px 40px rgba(45,46,55,.2);text-align:left;
+  }
+  .mkmod .mkpanel::before{content:'';position:absolute;left:0;right:0;top:-21px;height:21px;}
+  .mkmod.pleft .mkpanel{left:0;transform:none;}
+  .mkmod.pright .mkpanel{left:auto;right:0;transform:none;}
+  .mkmod.peek{z-index:41;}
+  .mkmod.peek .side{opacity:1;visibility:visible;pointer-events:auto;}
+  .mkpanel .dch{font-size:9.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--c);margin-bottom:4px;}
+  .mkpanel .dsub{font-weight:700;font-size:12.5px;margin-bottom:5px;}
+
+  /* what runs where, under the chain */
+  .mklanes{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px;margin-top:38px;
+  }
+  .mklane{
+    background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:12px 14px;
+  }
+  .mklane b{display:block;font-size:10px;letter-spacing:.11em;text-transform:uppercase;color:var(--muted);}
+  .mklane .lh{font-weight:700;font-size:13.5px;margin-top:3px;}
+  .mklane p{font-size:11.5px;color:var(--muted);line-height:1.5;margin-top:5px;}
+  .mklane.todo{border-color:var(--amber-line);background:var(--amber-bg);}
+  .mklane.todo p{color:var(--amber-ink);}
+
+  /* the Make module setup, in the modal */
+  .mkcfg{padding:4px 0 0;}
+  .mksec{border-top:1px solid var(--line);padding:15px 20px 17px;}
+  .mksec:first-child{border-top:none;}
+  .mksec > h4{font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);font-weight:800;}
+  .mksec > p{font-size:13px;line-height:1.6;color:#3C3D45;margin-top:8px;}
+  .mkfields{display:grid;grid-template-columns:auto 1fr;gap:7px 14px;margin-top:11px;align-items:baseline;}
+  .mkfk{font-size:11.5px;font-weight:700;color:var(--muted);white-space:nowrap;}
+  .mkfv{font-size:12.5px;color:var(--ink);word-break:break-word;}
+  .mkfv code,.mksec code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;
+    background:var(--sand);padding:1px 5px;border-radius:4px;}
+  .mkpre{
+    margin-top:11px;background:#2D2E37;color:#E8E4DA;border-radius:10px;padding:13px 15px;
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11.5px;line-height:1.6;
+    white-space:pre;overflow-x:auto;
+  }
+  .mkwarn{
+    margin-top:12px;background:var(--amber-bg);border:1px solid var(--amber-line);border-radius:10px;
+    padding:10px 13px;font-size:12px;line-height:1.55;color:var(--amber-ink);
+  }
+  .mkwarn b{font-weight:800;}
+  /* the nineteen fields: a list, not a wall */
+  .mktable{margin-top:11px;max-height:250px;overflow:auto;border:1px solid var(--line);border-radius:9px;}
+  .mktable table{border-collapse:collapse;width:100%;font-size:12px;}
+  .mktable th{position:sticky;top:0;background:#FCFBF8;text-align:left;font-size:9.5px;letter-spacing:.09em;
+    text-transform:uppercase;color:var(--muted);padding:7px 10px;border-bottom:1px solid var(--line);}
+  .mktable td{padding:6px 10px;border-bottom:1px solid #F1EDE4;}
+  .mktable tr:last-child td{border-bottom:none;}
+  .mktable td:nth-child(1){color:var(--muted);width:1%;white-space:nowrap;}
+  .mktable td:nth-child(2),.mktable td:nth-child(3){font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11.5px;}
+  .mktable tr.hot td{background:#FBF3E2;}
+
+  @media(max-width:900px){
+    .mklink{width:34px;}
+    /* Anchoring a 340px panel to a 126px module runs it off the left edge as soon as the
+       chain wraps. On a narrow screen it becomes a sheet at the foot of the window instead,
+       which always fits and does not depend on where in the row the module ended up. */
+    .mkmod .mkpanel,.mkmod.pleft .mkpanel,.mkmod.pright .mkpanel{
+      position:fixed;left:10px;right:10px;top:auto;bottom:10px;width:auto;transform:none;
+      max-height:56vh;overflow:auto;z-index:60;
+    }
+    .mkmod .mkpanel::before{display:none;}
+  }
+
+  /* ===== the campaign clock (schedule.js) =====
+     Its own header row rather than a corner of row 2: a date input next to the workflow pills
+     reads as a filter on which workflow you are looking at, which is the one thing it is not.
+     It sets the clock for the whole page. */
+  .toprow-clock{
+    display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+    margin-top:9px;padding-top:9px;border-top:1px solid var(--line);
+  }
+  .clockwrap{display:flex;align-items:center;gap:9px;}
+  .clocklbl{font-size:9.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);}
+  .clockinput{
+    font-family:var(--sans);font-size:13px;font-weight:600;color:var(--ink);
+    border:1px solid var(--line);border-radius:9px;padding:6px 10px;background:var(--paper);
+  }
+  .clockinput:focus{outline:none;border-color:var(--accent-deep);box-shadow:0 0 0 3px rgba(58,168,146,.16);}
+  .clockreset{
+    font-family:var(--sans);font-size:11.5px;font-weight:700;color:var(--muted);cursor:pointer;
+    border:1px solid var(--line);border-radius:100px;padding:6px 12px;background:var(--paper);
+  }
+  .clockreset:hover{border-color:var(--accent-deep);color:var(--accent-deep);}
+  .clockout{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .clockday{font-size:12.5px;color:var(--muted);}
+  .clockday b{color:var(--ink);}
+  .clockflag{
+    font-size:11px;font-weight:700;border-radius:100px;padding:4px 11px;
+    background:#E4F1EA;color:#2C5A44;border:1px solid #C9E4D5;
+  }
+  .clockflag.off{background:var(--amber-bg);color:var(--amber-ink);border-color:var(--amber-line);}
+
+  /* the date chip on a step. Sits opposite .ntype in the band above the title, so the two
+     never meet however long the type word is. */
+  body.has-clock .node{padding-top:30px;}
+  .nday{position:absolute;top:9px;left:15px;display:flex;align-items:baseline;gap:6px;}
+  .nday b{font-size:11.5px;font-weight:800;color:var(--ink);}
+  .nday i{font-style:normal;font-size:9.5px;font-weight:700;letter-spacing:.06em;
+    text-transform:uppercase;color:var(--muted);}
+  .nday.rel b{color:var(--amber-ink);}
+
+  /* ===== the Timeline lane ===== */
+  .flow.timeline{align-items:center;}
+  .tlwrap{width:min(860px,94vw);}
+  .tlwarn{
+    background:var(--amber-bg);border:1px solid var(--amber-line);border-left:3px solid var(--amber);
+    border-radius:11px;padding:13px 16px;margin-bottom:14px;font-size:13px;line-height:1.62;
+    color:var(--amber-ink);
+  }
+  .tlwarn.hard{background:#FBEDED;border-color:#EFD2D2;border-left-color:#A33C3C;color:#6B2B2B;}
+  .tlwarn code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11.5px;}
+  .tlsec{margin:26px 0 0;}
+  .tlh{font-family:var(--serif);font-size:22px;font-weight:600;letter-spacing:-.01em;}
+  .tlp{font-size:13px;color:var(--muted);margin:5px 0 14px;max-width:66ch;}
+  .tldays{list-style:none;}
+  .tlday{
+    display:grid;grid-template-columns:118px 1fr;gap:14px;align-items:start;
+    padding:11px 0;border-top:1px solid var(--line);
+  }
+  .tlday.last .tldate b{color:var(--amber-ink);}
+  .tldate{display:flex;flex-direction:column;gap:1px;padding-top:2px;}
+  .tldate b{font-size:14px;font-weight:800;}
+  .tldate i{font-style:normal;font-size:9.5px;font-weight:700;letter-spacing:.08em;
+    text-transform:uppercase;color:var(--muted);}
+  .tlitems{display:flex;flex-direction:column;gap:6px;}
+  .tlitem{
+    display:flex;align-items:baseline;gap:9px;background:var(--paper);border:1px solid var(--line);
+    border-radius:10px;padding:8px 12px;
+  }
+  .tldot{width:8px;height:8px;border-radius:50%;flex:0 0 auto;transform:translateY(-1px);}
+  .tlt{font-size:13px;font-weight:600;}
+  .tls{font-size:11.5px;color:var(--muted);}
+  .tlarc{margin-top:16px;}
+  .tlarch{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;margin-bottom:2px;}
+  .tlarch b{font-size:14.5px;}
+  .tlarch span{font-size:12px;color:var(--muted);}
+  .tlarch span code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;}
+  .tldays.rel .tldate b{color:var(--amber-ink);}
+  .tlfoot{font-size:12px;color:var(--muted);margin-top:24px;padding-top:12px;
+    border-top:1px solid var(--line);max-width:72ch;}
+
+  @media(max-width:640px){
+    .tlday{grid-template-columns:1fr;gap:7px;}
+    .tldate{flex-direction:row;align-items:baseline;gap:8px;}
+    .tlitem{flex-wrap:wrap;}
+  }

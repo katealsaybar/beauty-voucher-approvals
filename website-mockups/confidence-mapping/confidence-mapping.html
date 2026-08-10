@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<script type="application/json" id="cowork-artifact-meta">
+{
+  "name": "Confidence Mapping: Website Mockup",
+  "schemaVersion": 1,
+  "description": "Mockup of the Confidence Mapping page in the live site's design system, with the six copy swaps and eleven build fixes applied. Toggle between the live page as it reads today and the edited version, with every change marked.",
+  "mcpTools": [],
+  "mcpServerNames": []
+}
+</script>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Confidence Mapping Mockup: with the edits applied</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../shared/notes-widget.css">
+<link rel="stylesheet" href="confidence-mapping.css">
+<!-- Phone view. AFTER the page's own <style> so the handset rules and the View
+     switch win where they overlap. mail-preview.* draws the two handsets; the pack
+     uses the same Galaxy S25 / iPhone 16 Pro pair everywhere it shows a phone. -->
+<link rel="stylesheet" href="../../shared/mail-preview.css">
+<link rel="stylesheet" href="../../shared/phone-view.css">
+<!-- ?pv=1 means this page is being read inside the phone frame on another mockup, so
+     the review chrome comes off and only the mocked site is left. Set here, in the
+     head, so it is never painted and then taken away. -->
+<script>if(/[?&]pv=1(&|$)/.test(location.search)&&window.self!==window.top)document.documentElement.classList.add('pv-embed');</script>
+</head>
+<body data-note-pack="beauty-voucher-2026-08" class="v-fixed" data-auth-root="../../">
+
+  <div class="top">
+    <!-- class="topbar" is the hook the notes widget uses to inject the "You are" bar -->
+    <div class="inner topbar">
+      <img class="brandlogo" src="../../assets/tara-rose-logo-black.png" alt="Tara Rose Salon">
+      <h1 class="pagetitle">Confidence Mapping Mockup</h1>
+      <span class="swlabel">Viewing</span>
+      <div class="switch">
+        <button type="button" id="btn-fixed" class="on">With the edits</button>
+        <button type="button" id="btn-live">Live today</button>
+      </div>
+      <button type="button" class="diffbtn" id="btn-diff">Show what changed</button>
+      <a class="back" href="../../index.html">&larr; Approval pack</a>
+    </div>
+  </div>
+
+  <div class="band">
+    <details class="howto">
+      <summary>How to read this</summary>
+      <div class="hint">Set in the live site's own design system, so the type, spacing and colour match what a client actually sees. This is option <b>(a)</b> drawn out: all six copy swaps applied, plus the eleven build fixes; those are marked in blue only so you can see where they land, they need nothing from you, they're defects, not writing. <b>Switch to "Live today"</b> in the header to see what is on the site right now. <b>Show what changed</b> outlines every edit and labels it copy, build, or still-a-decision. The rest of this review is pinned: look for a 📌 next to the part of the page it's about, and click it to read the note. Every copy swap here is reversible on your call; the build fixes are already in because they're defects.</div>
+    </details>
+    <div class="note"><strong>Needs a reply.</strong> One: <strong>a</strong>, <strong>b</strong> or <strong>c</strong> on the six copy lines that predate the locked doctrine. This shows <strong>option (a), all six applied</strong>. Option (b) applies four and leaves the hero line and the naming; option (c) leaves all six and Kate logs an exception. Two: are the six awards in the Awards strip further down still current and evidenced, yes or no. Doctrine says we never publish one we can't evidence. Reply in <a href="../../index.html#mapping"><strong>Confidence Mapping</strong></a>.</div>
+  </div>
+
+  <div class="browser">
+    <div class="chrome">
+      <div class="lights"><i></i><i></i><i></i></div>
+      <div class="urlbar">tararosesalon.com/en/ae/<b>confidence-mapping/</b></div>
+    </div>
+
+    <div class="site">
+
+      <div class="sitenav">
+        <div class="wrap">
+          <div class="wordmark">TARA ROSE<small>UAE</small></div>
+          <span class="navspacer"></span>
+          <a class="navlink" href="#">Main website &rarr;</a>
+          <a class="pill" href="#quiz">Start your mapping</a>
+        </div>
+      </div>
+
+      <!-- ============ HERO ============ -->
+      <div class="sect dark centred" data-mockblock data-fix>
+        <span data-mocklabel hidden>Hero</span>
+        <div class="wrap">
+          <div class="eyebrow">Education</div>
+          <h2 class="display">Free. <em>Before the chair.</em><span class="tag build">Build 6 &middot; one H1, not three</span><span class="pin stop"><span class="pinicon" tabindex="0">📌</span><div class="pop">Found 7 Aug, not on the audit's list of seventeen: the audit lists <strong>three H1 tags</strong> as build defect 6, but the page now serves only one. Either it was fixed since the review or it was miscounted, so Kate is re-checking rather than "fixing" something that's already right.</div></span></h2>
+          <div class="col">
+            <p class="lede was">Five short steps, at your own pace. We map what your hair needs before you commit to anything, the way a stylist would.</p>
+            <p class="lede now">Six short stages, at your own pace. We map what your hair needs before you commit to anything, the way a stylist would.<span class="tag build">Build 12 &middot; the count matches the bar</span></p>
+          </div>
+          <div class="ctarow"><a class="pill" href="#quiz">Start your Confidence Mapping<span class="tag build">Build 11 &middot; anchor tested</span></a></div>
+          <div class="microline">
+            <span class="was">A diagnosis, not a commitment &middot; Free &middot; No pressure</span>
+            <span class="now">A direction, not a commitment &middot; Free &middot; No pressure</span>
+            <span class="tag copy">Copy 2 &middot; the page said diagnosis, then said it was not one</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sect paper centred" style="padding:44px 0;">
+        <div class="wrap">
+          <div class="pills">
+            <span class="chip">Free</span><span class="chip">No pressure</span>
+            <span class="chip">Personalised</span><span class="chip">Six stages<span class="pin flag"><span class="pinicon" tabindex="0">📌</span><div class="pop">Reads six now, not five. The bar always said "of 6" while the copy said "five short steps" in three places, and the hero chip said "Five steps". Both corrected here. Why not simply "five": <code>client-facing-content.md</code> lists <strong>"5-Step consultation" as a retired name</strong>, so counting to five in client copy was drifting back toward it. The <a href="../../emails/welcome-3-confidence-mapping.html" target="_blank" rel="noopener">welcome email</a> still says "five questions" and needs the same pass.</div></span></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ INTRO ============ -->
+      <div class="sect centred" data-mockblock data-fix>
+        <span data-mocklabel hidden>Intro</span>
+        <div class="wrap">
+          <div class="eyebrow">Your Confidence Map</div>
+          <h3 class="h2">Listen. Look. Live. <em>Map.</em><span class="tag build">Build 1 &middot; stray quote mark removed</span></h3>
+          <div class="col">
+            <p class="lede was">This is how a Tara Rose stylist reads your hair, before you ever sit in the chair. Five short steps, honest answers, and at the end a full plan written for you: the treatments, the home care, the rhythm. It is free, there is no obligation to book, and nothing is stored on your device unless you choose to have your <strong>Journal</strong> sent.</p>
+            <p class="lede now">This is how a Tara Rose stylist reads your hair, before you ever sit in the chair. Five short stages about your hair, one for your details, and at the end a full plan written for you: the treatments, the home care, the rhythm. It is free, there is no obligation to book, and nothing is stored on your device unless you choose to have your <strong>Confidence Map</strong> sent.</p>
+          </div>
+          <div class="microline">One name for one thing<span class="tag copy">Copy 4</span></div>
+        </div>
+      </div>
+
+      <!-- ============ QUIZ ============ -->
+      <div class="sect paper" id="quiz" data-mockblock>
+        <span data-mocklabel hidden>The six stages</span>
+        <div class="wrap">
+          <div class="quiz">
+            <div class="qprog"><span>Stage 1 of 6 &middot; Listen</span><span>17%<span class="pin good"><span class="pinicon" tabindex="0">📌</span><div class="pop">All six stages are now drawn, 8 Aug. Before today this squeezed Stages 2&ndash;5 into four summary lines and never named Stage 6, which is why it read as a two-question quiz: the stages were always there, the <em>drawing</em> was abridged. Every question and option here is pulled from <em>/en/ae/confidence-mapping/</em> itself: all seventeen questions are in the page's HTML at load, revealed by script as she advances. Wording now matches the live form exactly, including the three Stage 2 checkbox groups (Condition, Colour, Shape and length).</div></span></span></div>
+            <div class="bar"><i style="width:17%"></i></div>
+            <div class="qh">First, how you feel in it.</div>
+            <div class="ql">Confidence is the real reason you are here, not just the hair. So we start with you.</div>
+            <div class="qq">When did you last feel really confident about your hair?</div>
+            <div class="opts">
+              <span class="opt">In the last week or two</span><span class="opt">A few months ago</span>
+              <span class="opt">Longer than I can remember</span><span class="opt">I am not sure I ever really have</span>
+            </div>
+            <div class="qq">Have you had a salon experience that was hard to move past?</div>
+            <div class="opts">
+              <span class="opt">Yes, recently</span><span class="opt">Yes, in the past</span><span class="opt">No, not really</span>
+            </div>
+            <div class="qnav"><a class="pill" href="#">Continue &rarr;</a></div>
+          </div>
+
+          <!-- STAGE 2. Drawn in full 8 Aug. This stage used to be one row in a summary list,
+               which hid the fact that it is the single most load-bearing question on the page:
+               the Home Ritual Kit decision tree reads this tick and nothing else to choose her
+               bundle. The eleven options are the kit tree's own wording, so what she ticks and
+               what the stylist reads off the card are the same words. -->
+          <div class="quiz" data-fix data-build>
+            <div class="qprog"><span>Stage 2 of 6 &middot; Look</span><span>33%</span></div>
+            <div class="bar"><i style="width:33%"></i></div>
+            <div class="qh">What your hair is doing.<span class="pin stop"><span class="pinicon" tabindex="0">📌</span><div class="pop">Why this stage matters more than every other stage put together: the <a href="../../ritual-kit/ritual-kit.html" target="_blank" rel="noopener">Home Ritual Kit decision tree</a> reads only Stage 2 (her bundle), Stage 3 (henna/keratin flags) and Stage 4 (detox override). Everything a stylist hands her comes from those three. Edit an option here and the kit tree needs editing in the same sitting, or the two silently stop matching, no error, just the wrong bag. <strong>Found doing this:</strong> the tree lists "More shedding or thinning" as a Stage 2 tick, but on the live form it's a separate question further down ("Have you noticed your hair changing recently?"), and shedding is the one concern the tree itself flags as possibly medical. Either the tree moves it, or the form does, before a stylist builds a bag from it. <strong>Kate and Emma.</strong></div></span></div>
+            <div class="ql">The honest version, not the tidy one. Tick everything that sounds like you, even if it feels like a long list. This is the answer your Home Ritual Kit is built from.</div>
+            <div class="qq">Condition</div>
+            <div class="opts">
+              <span class="opt">Dry, frizzy or hard to manage</span>
+              <span class="opt">Breakage, damage or weakness</span>
+              <span class="opt">Itchy, oily or flaky scalp</span>
+              <span class="opt">Curls or texture that will not behave</span>
+              <span class="opt">Feels coated, heavy or weighed down</span>
+              <span class="opt">I want it smoother, less styling time</span>
+            </div>
+            <div class="qq">Colour</div>
+            <div class="opts">
+              <span class="opt">My blonde goes brassy or warm</span>
+              <span class="opt hl">My brunette looks flat or dull</span>
+              <span class="opt hl">My colour fades too fast</span>
+              <span class="opt">A colour I want to correct or fix</span>
+            </div>
+            <div class="microline">The two amber ticks have no signed-off kit line yet<span class="tag dec">Open Decision 5</span></div>
+            <div class="qq">Shape and length</div>
+            <div class="opts">
+              <span class="opt">The shape has grown out</span>
+              <span class="opt">A trim that never holds its shape</span>
+              <span class="opt">I want more length or thickness</span>
+            </div>
+            <div class="microline">Shape and length only, with no Condition or Colour tick, falls through to the hydration build<span class="tag build">Feeds the kit tree</span></div>
+            <div class="qq">Have you noticed your hair changing recently?</div>
+            <div class="opts">
+              <span class="opt hl">More shedding or thinning</span>
+              <span class="opt">Drier or weaker than it was</span>
+              <span class="opt">More grey coming through</span>
+              <span class="opt">The texture has changed</span>
+              <span class="opt">No real change</span>
+            </div>
+            <div class="microline">Shedding lives HERE, not with the Condition ticks. The kit tree looks for it in the wrong place<span class="tag dec">Fix the kit tree</span></div>
+            <div class="qq">How does the condition feel today? 1 fragile to 5 strong.</div>
+            <div class="opts">
+              <span class="opt">1 &middot; Fragile</span><span class="opt">2</span><span class="opt">3</span>
+              <span class="opt">4</span><span class="opt">5 &middot; Strong</span>
+            </div>
+            <div class="qq">And what are you hoping for?</div>
+            <div class="opts">
+              <span class="opt">To maintain what I have, keep it at its best</span>
+              <span class="opt">A refresh, a gentle update</span>
+              <span class="opt hl was">A transformation, a real change</span>
+              <span class="opt hl now">A big change, a real change</span>
+              <span class="opt">To fix or correct something</span>
+              <span class="opt">Not sure yet, guide me</span>
+            </div>
+            <div class="microline">"transformation" is prose-banned<span class="tag copy">Copy 1</span></div>
+            <div class="qnav"><a class="pill" href="#">Continue &rarr;</a></div>
+          </div>
+
+          <!-- STAGE 3. The kit tree reads the henna and keratin answer as a safety flag, not a
+               product choice: keratin means no clarifying cleanser without the stylist signing
+               it off, henna travels as a note to the colourist. -->
+          <div class="quiz" data-build>
+            <div class="qprog"><span>Stage 3 of 6 &middot; Colour</span><span>50%</span></div>
+            <div class="bar"><i style="width:50%"></i></div>
+            <div class="qh">Your colour, honestly.<span class="pin flag"><span class="pinicon" tabindex="0">📌</span><div class="pop">Two smaller things the live form settled. The henna/keratin and supermarket/scalp-reset answers the kit tree relies on match the live form word for word, so that part of the contract is sound. Still inferred: the stage boundaries for 2&ndash;5. The live page has no per-stage containers in its HTML, so the split drawn here follows question order and stage names. Worth a glance from whoever built the form.</div></span></div>
+            <div class="ql">Box colour, a home kit, henna, a keratin you had two years ago. None of it is a confession. It just tells us what the hair has already been through, so we plan around it rather than into it.</div>
+            <div class="qq">Your natural base?</div>
+            <div class="opts">
+              <span class="opt">Blonde or light</span><span class="opt">Brunette or dark</span>
+              <span class="opt">Red or auburn</span><span class="opt">Grey or silver coming through</span>
+              <span class="opt">A mix</span><span class="opt">Not sure</span>
+            </div>
+            <div class="qq">Coloured or natural right now?</div>
+            <div class="opts">
+              <span class="opt">Coloured</span>
+              <span class="opt">Natural</span>
+              <span class="opt">Growing colour out</span>
+              <span class="opt">Highlights or balayage</span>
+            </div>
+            <div class="qq">Has your hair ever had henna or a keratin treatment?</div>
+            <div class="opts">
+              <span class="opt hl">Yes, henna</span>
+              <span class="opt hl">Yes, keratin or a smoothing treatment</span>
+              <span class="opt hl">Both</span>
+              <span class="opt">Neither</span>
+              <span class="opt hl">Not sure</span>
+            </div>
+            <div class="microline">The amber answers put a stylist sign-off on her kit before it leaves the salon<span class="tag build">Feeds the kit tree</span></div>
+            <div class="qnav"><a class="pill" href="#">Continue &rarr;</a></div>
+          </div>
+
+          <!-- STAGE 4. Two answers here can override Stage 2 entirely. "Never, I did not know I
+               should" on the scalp reset makes her a detox first whatever she ticked, and the
+               supermarket answer is the opening for the wash-pair conversation. -->
+          <div class="quiz" data-build>
+            <div class="qprog"><span>Stage 4 of 6 &middot; Live</span><span>67%</span></div>
+            <div class="bar"><i style="width:67%"></i></div>
+            <div class="qh">Your routine, and the life around it.</div>
+            <div class="ql">What happens between appointments decides how long the appointment lasts. This is the half nobody asks about.</div>
+            <div class="qq">What is your daily routine with your hair?</div>
+            <div class="opts">
+              <span class="opt">Heat styling most days</span><span class="opt">Wash and go</span>
+              <span class="opt">Air dry, minimal styling</span><span class="opt">Tied back or protective styles</span>
+              <span class="opt">It varies a lot</span>
+            </div>
+            <div class="qq">What do you use at home?</div>
+            <div class="opts">
+              <span class="opt">Salon products, matched to my hair</span>
+              <span class="opt hl">Whatever is on the supermarket shelf</span>
+              <span class="opt">A mix of things</span>
+              <span class="opt">Honestly, I am not sure</span>
+              <span class="opt">Not much at all</span>
+            </div>
+            <div class="qq">How often do you reset or detox your scalp?</div>
+            <div class="opts">
+              <span class="opt">Regularly</span>
+              <span class="opt">Now and then</span>
+              <span class="opt">Rarely</span>
+              <span class="opt hl">Never, I did not know I should</span>
+            </div>
+            <div class="microline">"Never" overrides her Stage 2 tick and makes her a detox build<span class="tag build">Feeds the kit tree</span></div>
+            <div class="qnav"><a class="pill" href="#">Continue &rarr;</a></div>
+          </div>
+
+          <!-- STAGE 5. Nothing here reaches the kit. It is the stage that makes the map feel
+               written for her rather than assembled, so it earns its place on its own. -->
+          <div class="quiz">
+            <div class="qprog"><span>Stage 5 of 6 &middot; You</span><span>83%</span></div>
+            <div class="bar"><i style="width:83%"></i></div>
+            <div class="qh">And you, not just your hair.</div>
+            <div class="ql">Hair sits on top of a life. Sleep, water, stress and what is coming up in your diary all show up in it, so we ask.</div>
+            <div class="qq">Anything coming up you would love to feel incredible for?</div>
+            <div class="opts">
+              <span class="opt">A wedding or a big event</span>
+              <span class="opt">A holiday</span>
+              <span class="opt">Photos or a shoot</span>
+              <span class="opt">A fresh start for a new season</span>
+              <span class="opt">Nothing specific, just for me</span>
+            </div>
+            <div class="qq">How are your stress and sleep lately?</div>
+            <div class="opts">
+              <span class="opt">Calm and well rested</span>
+              <span class="opt">Up and down</span>
+              <span class="opt">Stressed, and not sleeping enough</span>
+              <span class="opt">Honestly, running on empty</span>
+            </div>
+            <div class="qq">Do you take anything for your hair, skin or nails?</div>
+            <div class="opts">
+              <span class="opt">Yes, supplements regularly</span><span class="opt">Now and then</span>
+              <span class="opt">No, nothing</span><span class="opt">I would not know what to take</span>
+            </div>
+            <div class="qnav"><a class="pill" href="#">See my map &rarr;</a></div>
+          </div>
+
+          <div class="quiz">
+            <div class="stagelist">
+              <div class="stagerow"><b>Stage 6 &middot; Your details</b><span>The last step, further down this page. Your name, WhatsApp and email, so we can send the map and hold your session.</span></div>
+            </div>
+          </div>
+
+          <!-- the third place the deliverable is named, and the one most often missed -->
+          <div class="quiz" data-fix style="text-align:center;">
+            <p class="lede was" style="margin-top:0;">This is where your plan begins. Your visit-by-visit rhythm is written in full in your <strong>Journal</strong>.</p>
+            <p class="lede now" style="margin-top:0;">This is where your plan begins. Your visit-by-visit rhythm is written in full in your <strong>Confidence Map</strong>.</p>
+            <div class="microline">Third instance of the naming, at the end of the quiz<span class="tag copy">Copy 4</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ FORM ============ -->
+      <div class="sect centred" data-mockblock data-fix>
+        <span data-mocklabel hidden>Send my map form</span>
+        <div class="wrap">
+          <div class="eyebrow">Stage 6 of 6 &middot; Your details</div>
+          <h3 class="h2">Your full Confidence Map is written. <em>Shall we send it?</em></h3>
+          <div class="col">
+            <p class="lede">The whole plan, matched to your answers: the exact treatments, your home care, and your rhythm, visit by visit. Leave your details and we will send it, and hold your free Confidence Mapping session.</p>
+          </div>
+
+          <div class="card" style="max-width:640px;margin:38px auto 0;text-align:left;">
+            <div class="field"><label>First name *</label><div class="box">Your first name</div></div>
+            <div class="field"><label>WhatsApp number *</label><div class="box">+971</div></div>
+            <div class="field"><label>Email *</label><div class="box">you@example.com</div></div>
+
+            <!-- The consent row is boxed rather than left as a plain tick line: it is the one
+                 thing on this page that is unlawful as it stands, so it should not read as
+                 just another checkbox in a list. -->
+            <div class="consent was">
+              <div class="tick"><i></i><span>Send me my <strong>Journal</strong> and helpful hair guidance. I can stop any time. <strong style="color:var(--red);">*required</strong></span></div>
+              <div class="consentnote">Ticking this is currently a <strong>condition of getting the map</strong>. Under UAE PDPL that is not freely given consent, on a form whose own privacy notice claims compliance.</div>
+            </div>
+            <div class="consent now">
+              <div class="tick"><i></i><span>Send me my <strong>Confidence Map</strong> and helpful hair guidance. I can stop any time. <em>Optional.</em></span></div>
+              <div class="consentnote">Unticked by default and no longer required. She gets her map either way.</div>
+            </div>
+            <div style="margin-top:10px;">
+              <span class="tag copy">Copy 4 &middot; naming</span>
+              <span class="tag dec">Consent fix &middot; moving today, not waiting on the a/b/c call</span>
+              <span class="pin stop"><span class="pinicon" tabindex="0">📌</span><div class="pop">Moving today regardless of the a/b/c call: the marketing-consent tickbox is currently set to <strong>required</strong>, which makes opting in the price of getting the map. That's not lawful consent under UAE PDPL on a form whose own privacy notice claims compliance. It's a form setting, not copy, so nothing written changes. Shown here unticked and optional.</div></span>
+            </div>
+
+            <div class="tick"><i></i><span>You may reach me on WhatsApp about my session.</span></div>
+
+            <div class="privacy">
+              Tara Rose Salon (Dubai and Abu Dhabi, UAE) is the data controller. We keep your details for 24 months to send your Confidence Map and manage your enquiry, then remove them. Your data may be processed on GHL, hosted in the US. You can access, correct or delete your data any time at privacy@tararosesalon.com. See our Privacy Policy.
+              <span class="tag build">Build 4 &middot; one Privacy Policy URL, not two</span>
+              <span class="tag build">Build 8 &middot; hidden field labels renamed for screen readers</span>
+            </div>
+            <div class="qnav"><a class="pill" href="#">See my map &rarr;</a></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ HOME RITUAL KIT ============
+           New section, 8 Aug. The reason it belongs on THIS page rather than only on the
+           voucher page: her Stage 2 answer is what picks the products, and the welcome email
+           already tells her the kit cannot be released until she has been mapped. Without this
+           block the page asks her to do the mapping and never says what the mapping unlocks.
+           Deliberately NO brand names and NO prices. Those are shelf-value numbers off the
+           stock sheet and they live in the staff-only Ritual Kit decision tree, not in front
+           of a client. What she sees is the shape of the kit and what her answers change. -->
+      <div class="sect paper centred" data-mockblock data-build>
+        <span data-mocklabel hidden>Home Ritual Kit</span>
+        <div class="wrap">
+          <div class="eyebrow">What your answers unlock</div>
+          <h3 class="h2">Your Home Ritual Kit is <em>built from Stage 2.</em></h3>
+          <div class="col">
+            <p class="lede">Every Beauty Voucher includes a Home Ritual Kit, and it is not a standard bag handed to everybody. What goes in it is chosen from what you ticked about your own hair, which is why we cannot make it up before you have been mapped. Do the mapping and it is put together for you.</p>
+          </div>
+
+          <div class="stagelist" style="max-width:760px;margin:38px auto 0;text-align:left;">
+            <div class="stagerow"><b>1 &middot; Your hero</b><span>The one item the whole kit is built around, matched to what you ticked at Stage 2.</span></div>
+            <div class="stagerow"><b>2 &middot; Heat shield</b><span>In every kit, every tier. Heat, sun and friction are the everyday things that undo a result.</span></div>
+            <div class="stagerow"><b>3 &middot; Your shampoo</b><span>Matched to the same answer, because the wash is half of the routine and the half nobody thinks about.</span></div>
+            <div class="stagerow"><b>4 &middot; Your conditioner</b><span>The pair to it. Splitting the pair is the commonest way a routine quietly stops working.</span></div>
+            <div class="stagerow"><b>5 &middot; Weekly mask</b><span>Sits on top of the daily routine, so the result builds rather than only holds.</span></div>
+            <div class="stagerow"><b>6 &middot; Scalp or water defence</b><span>The scalp is the skin your hair grows from. Settle it and everything above it works better.</span></div>
+          </div>
+
+          <div class="col" style="margin-top:34px;">
+            <p class="lede" style="margin-top:0;">How many of the six are in your kit depends on the voucher you hold: two on Dip Your Toes, four on Season of You, six on the All-In VIP Year. They are always filled in that order, so the first thing in the bag is always the thing your hair needs most.</p>
+          </div>
+          <div class="microline">Products differ between our Abu Dhabi and Dubai salons, because the shelves differ. The kit does not.</div>
+        </div>
+      </div>
+
+      <!-- ============ PULL QUOTE ============ -->
+      <div class="pquote" data-mockblock data-fix>
+        <span data-mocklabel hidden>Pull quote</span>
+        <div class="wrap">
+          <div class="qm was">&ldquo;</div>
+          <div class="qm now">&ldquo; &rdquo;</div>
+          <div class="qt">Visit 1 creates the result. Visit 2 protects it. <em>Visit 3 keeps it on track.</em></div>
+          <div class="attr was">&ndash; The Tara Rose Way</div>
+          <div class="attr now">The Tara Rose Way</div>
+          <div class="microline">
+            <span class="tag copy">Copy 3 &middot; dash removed</span>
+            <span class="tag build">Build 2 &middot; quote mark now closes</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ FAQ ============ -->
+      <div class="sect centred" data-mockblock data-fix>
+        <span data-mocklabel hidden>FAQ</span>
+        <div class="wrap">
+          <div class="eyebrow">The honest answers</div>
+          <h3 class="h2">Good to <em>know.</em><span class="tag build">Build 7 &middot; duplicate empty heading removed</span></h3>
+          <div class="faq col" style="margin-left:auto;margin-right:auto;">
+            <div class="q"><div class="qt">Is Confidence Mapping really free?</div><div class="qa">Yes. It is free, there is no obligation to book, and you keep the plan either way.</div></div>
+            <div class="q"><div class="qt">Where do my answers go?</div><div class="qa">They are used to write your Confidence Map and manage your enquiry. Nothing is stored on your device unless you choose to have your map sent.</div></div>
+            <div class="q">
+              <div class="qt">Does this replace the consultation?</div>
+              <div class="qa was">No. Every Tara Rose appointment begins with a thoughtful consultation &ndash; designed to understand your hair, skin, lifestyle, and goals before recommending next steps.</div>
+              <div class="qa now">No. Every Tara Rose appointment begins with a thoughtful consultation, designed to understand your hair, skin, lifestyle and goals before recommending next steps.</div>
+              <span class="tag copy">Copy 3 &middot; dash removed</span>
+            </div>
+            <div class="q"><div class="qt">Do I have to book a service after?</div><div class="qa">No. The map is yours whether you book or not.</div></div>
+          </div>
+          <h3 class="h2" style="margin-top:56px;font-size:28px;">
+            <span class="was">Not Sure What&rsquo;s Right for You?</span>
+            <span class="now">Not sure what&rsquo;s right for you?</span>
+            <span class="tag build">Build 10 &middot; sentence case</span>
+            <span class="tag dec">Build 12 &middot; new find</span>
+            <span class="pin stop"><span class="pinicon" tabindex="0">📌</span><div class="pop">Found 7 Aug, not on the audit's list of seventeen: on the live page this heading has nothing under it: a title sitting between the FAQ and the closing call to action, no block. The audit caught its casing but not that it's empty. Copy is drafted below; approve it or say cut the heading.</div></span>
+          </h3>
+          <div class="col was" style="margin:0 auto;">
+            <p class="lede" style="color:#B24A4A;">On the live page this heading has nothing under it. It is a title with no block, sitting between the FAQ and the closing call to action.</p>
+          </div>
+          <div class="col now" style="margin:0 auto;">
+            <p class="lede">Start with the map. It is free, it takes five minutes, and it tells you what your hair actually needs before you commit to a single appointment. If you would rather talk it through, our team will read it with you.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ CLOSING CTA ============ -->
+      <section id="m-cta" class="sect paper centred" data-mockblock>
+        <span data-mocklabel hidden>Closing call to action</span>
+        <div class="wrap">
+          <div class="eyebrow">Tara Rose &middot; Abu Dhabi &amp; Dubai</div>
+          <h3 class="h2">Stop guessing. <em>Start with the map.</em></h3>
+          <div class="ctarow"><a class="pill" href="#quiz">Start your Confidence Mapping</a></div>
+        </div>
+      </section>
+
+      <!-- ============ CONFIDENCE PROMISE ============ -->
+      <section id="m-promise" class="sect centred" data-mockblock>
+        <span data-mocklabel hidden>The Confidence Promise</span>
+        <div class="wrap">
+          <div class="eyebrow">The Confidence Promise</div>
+          <div class="col">
+            <p class="lede" style="font-size:19px;color:var(--site-ink);">If something does not feel right within seven days of any colour or treatment service, we invite you back to refine it. No blame, just care.</p>
+          </div>
+          <div class="microline" style="color:var(--site-green);">Refine, never refund.</div>
+        </div>
+      </section>
+
+      <!-- ============ AWARDS ============ -->
+      <div class="sect dark centred" data-mockblock data-fix>
+        <span data-mocklabel hidden>Awards strip</span>
+        <div class="wrap">
+          <div class="eyebrow">Real diagnosis. Real results.</div>
+          <div class="col">
+            <p class="lede was">Business Director of the Year, three years running, and in the Hall of Fame. Team of the Year, four times. Colourist, Salon Stylist and Hair Salon of the Year. Eleven years, four salons across Dubai and Abu Dhabi</p>
+            <p class="lede now">Business Director of the Year, three years running, and in the Professional Beauty Hall of Fame. Team of the Year, four times. Colourist, Salon Stylist and Hair Salon of the Year. Eleven years, four salons across Dubai and Abu Dhabi.</p>
+          </div>
+          <div class="microline">
+            <span class="tag dec">Copy 6 &middot; yes / no from Tara: are all six current and evidenced?</span>
+            <span class="tag build">Build 9 &middot; full stop added</span>
+            <span class="pin flag"><span class="pinicon" tabindex="0">📌</span><div class="pop">This is the second of the two replies this page needs: are all six of these still current and evidenced: yes or no, in Confidence Mapping. Doctrine says we never publish an award we can't evidence.</div></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ FOOTER ============ -->
+      <div class="sitefoot" data-mockblock data-fix>
+        <span data-mocklabel hidden>Footer</span>
+        <div class="wrap">
+          <div class="sig was">High standards in hair, beauty and wellness, delivered with care, expertise and intention.</div>
+          <div class="sig now">High standards in hair, beauty and wellness, delivered with care, expertise and intention. <strong style="color:var(--site-mint);">We see you.</strong></div>
+          <span class="tag copy">Copy 5 &middot; locked signature restored</span>
+          <div class="locs">
+            Al Quoz &middot; Motor City &middot; Mamsha al Saadiyat &middot;
+            <span class="was">Khalifa City</span><span class="now">Khalifa City A</span>
+            <span class="tag build">Build 5</span>
+          </div>
+          <div class="locs">
+            <span class="was">+971 48 3 27061</span><span class="now">+971 4 832 7061</span>
+            <span class="tag build">Build 3 &middot; the dial link was already right, the printed number was not</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+<script src="confidence-mapping.js"></script>
+<!-- phone-view.js reads DEVICES/phone()/statusBar() out of mail-preview.js, so that
+     one loads first. Both go after the page's own script: the View switch replays a
+     tap inside the phone onto the real page, and the handlers have to exist by then. -->
+<script src="../../shared/mail-preview.js"></script>
+<script src="../../shared/phone-view.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../../auth/supabase-client.js"></script>
+<script src="../../shared/notes-widget.js"></script>
+</body>
+</html>

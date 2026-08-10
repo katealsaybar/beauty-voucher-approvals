@@ -1,0 +1,356 @@
+  /* --site-* are the LIVE tararosesalon.com values, read off the beauty-voucher page on
+     7 Aug 2026 with getComputedStyle. 96px section padding, Playfair at weight 400, the
+     1180px container and the mint #7CE8D2 are what the real pages use. Everything else is
+     the approval pack's own review furniture, kept in the pack palette on purpose. */
+  :root{
+    --site-sand:#F1ECE3; --site-paper:#FAF8F4; --site-dark:#1C1B18; --site-ink:#2D2E37;
+    --site-green:#1C7563; --site-mint:#7CE8D2; --site-mint-ink:#0E2A25;
+    --site-line:rgba(45,46,55,.12);
+    --site-card-shadow:0 1px 0 0 rgba(255,255,255,.72) inset,
+                       0 -1px 0 0 rgba(28,26,22,.05) inset,
+                       0 2px 6px -2px rgba(28,26,22,.06);
+    --bg:#FAF8F4; --paper:#FFFFFF; --ink:#2D2E37; --muted:#6E6E77;
+    --line:#E7E2D8; --sand:#F1ECE3; --dark:#2D2E37;
+    --amber:#B4823A; --amber-bg:#FBF3E2; --blue:#3B6E8F; --blue-bg:#E6F0F5;
+    --green:#3E7A5E; --green-bg:#E4F1EA; --red:#B24A4A; --red-bg:#FBEDED;
+    --serif:'Playfair Display',Georgia,serif;
+    --sans:'Inter',system-ui,-apple-system,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{font-family:var(--sans);background:var(--sand);color:var(--ink);line-height:1.7;font-size:15.5px;}
+  a{color:inherit;}
+
+  /* ============================ review chrome ============================ */
+  /* ONE sticky row: brand, before/after switch, diff toggle and the widget's "You are" bar.
+     Order values, not source order, arrange it: the widget appends its bar last. */
+  .top{position:sticky;top:0;z-index:60;background:var(--paper);border-bottom:1px solid var(--line);}
+  .top .inner{
+    max-width:1440px;margin:0 auto;padding:9px 24px;
+    display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+  }
+  /* aspect-ratio, not height:auto. The source PNG is 720x211 and until it loads an
+     auto height has no ratio to work from, so the header laid out ~450px tall on first
+     paint. Anything measuring the header (the sticky offset below) then read that
+     wrong value and never recovered. */
+  .brandlogo{order:1;width:62px;height:auto;aspect-ratio:720/211;flex:0 0 auto;}
+  h1.pagetitle{order:2;margin:0 auto 0 0;font-family:var(--serif);font-size:16px;font-weight:600;line-height:1.3;}
+  .top .inner > .trs-idbar{order:3;margin:0;padding:0;border-top:0;gap:8px;}
+  .swlabel{order:4;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);}
+  .switch{
+    order:5;display:flex;background:var(--sand);border:1px solid var(--line);
+    border-radius:100px;padding:3px;gap:3px;margin-left:-8px;
+  }
+  .switch button{
+    font:inherit;font-size:13px;font-weight:700;border:0;background:transparent;color:var(--muted);
+    padding:7px 15px;border-radius:100px;cursor:pointer;transition:background .15s,color .15s;
+  }
+  .switch button.on{background:var(--dark);color:#fff;}
+  .diffbtn{
+    order:6;font:inherit;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;
+    border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:100px;padding:8px 16px;
+  }
+  .diffbtn.on{background:var(--amber-bg);border-color:#E4CC9A;color:var(--amber);}
+  .back{order:7;font-size:12.5px;font-weight:600;color:var(--muted);text-decoration:none;white-space:nowrap;}
+  .back:hover{color:var(--ink);}
+
+  .band{max-width:1280px;margin:0 auto;padding:0 24px;}
+  .howto{margin:16px 0 0;}
+  .howto summary{font-size:12.5px;font-weight:600;color:var(--muted);cursor:pointer;list-style:none;}
+  .howto summary::-webkit-details-marker{display:none;}
+  .howto summary::before{content:"\25B8  ";}
+  .howto[open] summary::before{content:"\25BE  ";}
+  .hint{font-size:13px;color:var(--muted);max-width:820px;padding:6px 0 2px;}
+  .note{
+    background:var(--paper);border:1px solid var(--line);border-left:3px solid var(--line);
+    border-radius:0 10px 10px 0;padding:11px 15px;margin:12px 0;font-size:13.5px;
+  }
+  .note.flag{border-left-color:var(--amber);background:var(--amber-bg);}
+  .note.good{border-left-color:var(--green);background:var(--green-bg);}
+  .note.info{border-left-color:var(--blue);background:var(--blue-bg);}
+  .note.stop{border-left-color:var(--red);background:var(--red-bg);}
+
+  /* ============================ browser frame ============================ */
+  .browser{
+    max-width:1280px;margin:20px auto 60px;background:var(--site-sand);
+    border:1px solid #DCD6CA;border-radius:14px;overflow:hidden;
+    box-shadow:0 24px 60px rgba(45,46,55,.13);
+  }
+  .chrome{display:flex;align-items:center;gap:12px;padding:11px 14px;background:#EDE8DE;border-bottom:1px solid #DCD6CA;}
+  .lights{display:flex;gap:6px;flex-shrink:0;}
+  .lights i{width:11px;height:11px;border-radius:50%;background:#C9C2B4;display:block;}
+  .urlbar{
+    flex:1;background:#fff;border:1px solid #DCD6CA;border-radius:100px;padding:6px 14px;
+    font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+  .urlbar b{color:var(--ink);font-weight:600;}
+
+  /* ======================= the mocked page (live system) ================== */
+  .site{background:var(--site-sand);color:var(--site-ink);font-size:15px;line-height:1.4;}
+  .site .wrap{max-width:1180px;margin:0 auto;padding:0 24px;}
+  .site .col{max-width:640px;}
+  [data-mockblock]{position:relative;}
+
+  .sitenav{background:var(--site-paper);border-bottom:1px solid var(--site-line);padding:18px 0;}
+  .sitenav .wrap{display:flex;align-items:center;gap:18px;}
+  .wordmark{font-family:var(--serif);font-weight:400;font-size:21px;letter-spacing:.28em;line-height:1;}
+  .wordmark small{display:block;font-size:9px;letter-spacing:.34em;color:var(--muted);margin-top:5px;text-align:center;}
+  .navspacer{margin-left:auto;}
+  .navlink{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;text-decoration:none;border-bottom:1px solid currentColor;padding-bottom:2px;}
+  .pill{
+    display:inline-flex;align-items:center;gap:8px;background:var(--site-mint);color:var(--site-mint-ink);
+    text-decoration:none;border-radius:100px;padding:14px 24px;
+    font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;
+  }
+
+  .sect{padding:96px 0;}
+  .sect.paper{background:var(--site-paper);}
+  .sect.dark{background:var(--site-dark);color:#F1ECE3;}
+  .centred{text-align:center;}
+  .centred .col{margin:0 auto;}
+
+  .eyebrow{font-size:14px;font-weight:500;letter-spacing:.8px;text-transform:uppercase;color:var(--site-green);margin-bottom:18px;}
+  .dark .eyebrow{color:var(--site-mint);}
+  /* Playfair at 400, not 600. The live page sets the display face regular and lets the
+     size carry it. Bolding it is the single thing that most makes a copy look wrong. */
+  .display{font-family:var(--serif);font-weight:400;letter-spacing:-.022em;line-height:1.03;font-size:clamp(34px,5vw,74px);}
+  .display em{font-style:italic;font-weight:400;}
+  .h2{font-family:var(--serif);font-weight:400;letter-spacing:-.018em;line-height:1.1;font-size:clamp(28px,3.4vw,44px);}
+  .h2 em{font-style:italic;}
+  .lede{font-size:16px;line-height:1.65;margin-top:22px;color:#4A4B52;}
+  .dark .lede{color:#C4C0B8;}
+  .ctarow{display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin-top:34px;}
+  .centred .ctarow{justify-content:center;}
+  .microline{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;color:#8A867E;margin-top:26px;}
+
+  .pills{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+  .chip{
+    border:1px solid var(--site-line);border-radius:100px;padding:9px 18px;background:var(--site-paper);
+    font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;color:#8A867E;
+  }
+
+  /* position:relative is load-bearing: the floated note pin is absolutely positioned inside */
+  .card{
+    position:relative;
+    background:var(--site-paper);border:1px solid var(--site-line);border-radius:12px;
+    padding:26px 22px;box-shadow:var(--site-card-shadow);
+  }
+
+  /* quiz */
+  /* position:relative so the floated note pin anchors to the quiz card, not the section */
+  .quiz{position:relative;max-width:760px;margin:44px auto 0;text-align:left;}
+  .qprog{display:flex;justify-content:space-between;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;color:#8A867E;}
+  .bar{height:3px;background:var(--site-line);border-radius:3px;margin:12px 0 26px;overflow:hidden;}
+  .bar i{display:block;height:100%;background:var(--site-green);}
+  .quiz .qh{font-family:var(--serif);font-size:30px;font-weight:400;letter-spacing:-.01em;margin-bottom:10px;}
+  .quiz .ql{font-size:14.5px;line-height:1.65;color:#54555C;margin-bottom:26px;}
+  .qq{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;color:var(--site-green);margin:26px 0 12px;}
+  .opts{display:flex;flex-wrap:wrap;gap:9px;}
+  .opt{
+    border:1px solid var(--site-line);border-radius:100px;padding:10px 18px;font-size:13.5px;
+    background:var(--site-paper);box-shadow:var(--site-card-shadow);
+  }
+  .opt.hl{border-color:var(--amber);background:var(--amber-bg);color:var(--amber);font-weight:600;}
+  .qnav{display:flex;justify-content:flex-end;margin-top:30px;}
+
+  .stagelist{display:grid;gap:10px;margin-top:26px;}
+  .stagerow{
+    display:flex;gap:16px;align-items:baseline;border-bottom:1px solid var(--site-line);
+    padding:14px 2px;font-size:14px;color:#54555C;
+  }
+  .stagerow b{font-family:var(--serif);font-size:17px;font-weight:400;color:var(--site-ink);white-space:nowrap;}
+
+  /* form */
+  .field{margin-bottom:16px;}
+  .field label{display:block;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;color:#8A867E;margin-bottom:7px;}
+  .field .box{border:1px solid var(--site-line);border-radius:8px;padding:13px 14px;background:#fff;font-size:14px;color:#A9A69E;}
+  .tick{display:flex;gap:11px;align-items:flex-start;font-size:13.5px;line-height:1.6;color:#54555C;margin-top:16px;}
+  .tick i{width:17px;height:17px;border:1.5px solid var(--site-line);border-radius:4px;flex-shrink:0;margin-top:3px;background:#fff;}
+  .privacy{font-size:12px;color:#8A867E;margin-top:20px;line-height:1.7;}
+  /* the consent row, boxed so it does not read as just another checkbox */
+  .consent{margin-top:18px;border-radius:10px;padding:14px 16px;border:1px solid;}
+  body.v-live .consent{background:var(--red-bg);border-color:#E8C4C4;}
+  body.v-fixed .consent{background:var(--green-bg);border-color:#BFDCCC;}
+  .consent .tick{margin-top:0;}
+  .consentnote{font-size:12.5px;line-height:1.6;color:#54555C;margin-top:10px;padding-top:10px;border-top:1px solid rgba(45,46,55,.1);}
+
+  .pquote{background:var(--site-dark);color:#F1ECE3;padding:96px 0;text-align:center;}
+  .pquote .qm{font-family:var(--serif);font-size:52px;color:var(--site-mint);line-height:1;}
+  .pquote .qt{font-family:var(--serif);font-size:clamp(26px,3.2vw,40px);font-weight:400;letter-spacing:-.018em;line-height:1.15;max-width:760px;margin:12px auto 20px;}
+  .pquote .attr{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;color:#8A867E;}
+
+  .faq{margin-top:38px;border-top:1px solid var(--site-line);text-align:left;}
+  .faq .q{padding:22px 0;border-bottom:1px solid var(--site-line);}
+  .faq .qt{font-family:var(--serif);font-size:21px;font-weight:400;letter-spacing:-.01em;margin-bottom:8px;}
+  .faq .qa{font-size:14px;line-height:1.65;color:#54555C;}
+
+  /* extra top padding so the section-level note pin clears the signature line: the pin is
+     absolutely positioned at the top of the block and the footer's 52px was one pixel
+     short of its height */
+  .sitefoot{background:var(--site-dark);color:#8A867E;padding:66px 0 52px;font-size:13px;line-height:1.8;}
+  .sitefoot .sig{color:#E4E0D8;font-size:15px;}
+  .sitefoot .locs{margin-top:16px;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;}
+
+  /* before / after: hide the version you are NOT looking at, so each visible element keeps
+     its own display value: the pairs are a mix of spans, divs, paragraphs and pills. */
+  body.v-live .now{display:none !important;}
+  body.v-fixed .was{display:none !important;}
+
+  /* ============================ the note pin ============================= */
+  /* The widget's floated pin is icon-only at 60% opacity, which is invisible on a full-page
+     mockup. Here it is a labelled mint pill at full strength, because leaving notes IS the
+     job on this page. The label is added in CSS: the widget omits the word on floated pins. */
+  .trs-pin-float{
+    top:14px;right:16px;opacity:1;
+    background:var(--site-mint);border-color:var(--site-mint);color:var(--site-mint-ink);
+    padding:11px 20px;font-size:11.5px;letter-spacing:.12em;gap:9px;
+    box-shadow:0 6px 18px rgba(28,26,22,.22);
+  }
+  .trs-pin-float::after{content:"Leave a note";}
+  .trs-pin-float svg{width:17px;height:17px;}
+  .trs-pin-float:hover{background:#5FD9C0;border-color:#5FD9C0;color:var(--site-mint-ink);}
+  .trs-pin-float.has-notes{background:var(--amber);border-color:var(--amber);color:#fff;}
+  .trs-pin-float.has-notes::after{content:"Notes";}
+  /* Nested pins get a compact variant, and they live in the GUTTER rather than on top of
+     the block. The quiz, the FAQ and the form are all narrow columns centred in a 1180
+     container, so there is ~190px of empty page either side, so sitting the pin there means
+     it can never cover copy. Inside the block it landed on the progress percentage and on
+     the closing line of the quiz (found 7 Aug). */
+  .quiz > .trs-pin-float,.faq .q > .trs-pin-float,.card > .trs-pin-float{
+    top:0;right:auto;left:calc(100% + 18px);
+    padding:7px 13px;font-size:10px;gap:6px;
+    box-shadow:0 3px 10px rgba(28,26,22,.16);
+  }
+  .quiz > .trs-pin-float::after,.faq .q > .trs-pin-float::after,.card > .trs-pin-float::after{content:"Note";}
+  .quiz > .trs-pin-float svg,.faq .q > .trs-pin-float svg,.card > .trs-pin-float svg{width:13px;height:13px;}
+  .trs-pin-clear{padding-right:104px;}
+  /* the gutter version needs no heading indent: nothing is underneath it */
+  .quiz .trs-pin-clear,.faq .q .trs-pin-clear,.card .trs-pin-clear{padding-right:0;}
+  /* No gutter left on a narrow window, so the pin straddles the top edge instead, sitting
+     in the margin above the block rather than over its first line. */
+  @media(max-width:1180px){
+    .quiz > .trs-pin-float,.faq .q > .trs-pin-float,.card > .trs-pin-float{
+      left:auto;right:0;top:-15px;
+    }
+    .quiz .trs-pin-clear,.faq .q .trs-pin-clear,.card .trs-pin-clear{padding-right:78px;}
+  }
+
+  /* ======================= inline author sticky notes ==================== */
+  /* Small 📌 tabs dropped right next to the bit of the page they're about, instead of one
+     long scroll of paragraphs before the mockup even starts. Pure hover/focus reveal, no
+     click and no JS: the note shows while the cursor (or keyboard focus) is on the pin and
+     disappears the moment it isn't, so nothing stays stuck open on the page. */
+  /* every property a heading/em ancestor could hand down gets reset here, since a pin can
+     land inside the serif display font, an italic run, or a dark section */
+  .pin{
+    position:relative;display:inline-block;vertical-align:middle;margin-left:7px;
+    font-family:var(--sans);font-style:normal;font-weight:400;letter-spacing:normal;
+    text-transform:none;line-height:1.4;
+  }
+  .pin .pinicon{
+    cursor:default;width:25px;height:25px;border-radius:7px;
+    display:inline-flex;align-items:center;justify-content:center;font-size:12.5px;
+    background:var(--amber-bg);border:1px solid #E4CC9A;color:initial;
+    box-shadow:0 2px 6px rgba(28,26,22,.16);
+    transform:rotate(-5deg);transition:transform .12s ease;
+  }
+  .pin:hover .pinicon,.pin:focus-within .pinicon{transform:rotate(0deg) scale(1.08);}
+  .pin .pop{
+    position:absolute;z-index:70;top:33px;left:50%;transform:translateX(-50%) rotate(-1deg);
+    width:260px;max-width:66vw;text-align:left;
+    font-family:var(--sans);font-style:normal;font-weight:400;font-size:12.5px;
+    letter-spacing:normal;text-transform:none;line-height:1.6;
+    color:var(--ink);background:var(--amber-bg);border:1px solid #E4CC9A;
+    border-radius:4px 12px 12px 12px;padding:13px 15px;
+    box-shadow:0 14px 32px rgba(28,26,22,.26);
+    display:none;
+  }
+  .pin:hover .pop,.pin:focus-within .pop{display:block;}
+  .pin .pop strong,.pin .pop em,.pin .pop code{font-family:inherit;}
+  .pin .pop code{background:rgba(45,46,55,.08);padding:1px 5px;border-radius:4px;font-size:11.5px;}
+  .pin.stop .pinicon,.pin.stop .pop{background:var(--red-bg);border-color:#E8C4C4;}
+  .pin.good .pinicon,.pin.good .pop{background:var(--green-bg);border-color:#BFDCCC;}
+  .pin.info .pinicon,.pin.info .pop{background:var(--blue-bg);border-color:#BBD6E4;}
+  .dark .pin .pinicon{box-shadow:0 2px 6px rgba(0,0,0,.4);}
+
+  /* diff mode */
+  .tag{
+    display:none;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;
+    border-radius:100px;padding:3px 9px;vertical-align:middle;margin-left:8px;
+  }
+  .tag.copy{background:var(--amber-bg);color:var(--amber);border:1px solid #E4CC9A;}
+  .tag.build{background:var(--blue-bg);color:var(--blue);border:1px solid #BBD6E4;}
+  .tag.dec{background:var(--red-bg);color:var(--red);border:1px solid #E8C4C4;}
+  body.diff .tag{display:inline-block;}
+  body.diff [data-fix]{outline:2px dashed var(--amber);outline-offset:8px;border-radius:6px;}
+  body.diff [data-build]{outline:2px dashed var(--blue);outline-offset:8px;border-radius:6px;}
+
+  @media(max-width:1000px){ .sect,.pquote{padding:64px 0;} }
+  @media(max-width:820px){
+    .browser{border-radius:0;margin-left:-24px;margin-right:-24px;max-width:none;}
+    .sitenav .wrap{flex-wrap:wrap;gap:12px;}
+    /* anything wider than the screen drags the whole page sideways with it */
+    table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  }
+
+  /* ============================ handset (≤520px) ============================
+     The live desktop rhythm does not survive 360px unchanged: 96px of section
+     padding is a quarter of the screen spent on nothing, and a 14px uppercase
+     eyebrow at .8px tracking runs to three lines before the headline starts.
+     Same design, re-proportioned. 520 rather than 820 because a tablet has the
+     room for the desktop proportions and reads better with them. */
+  @media(max-width:520px){
+    .site .wrap{padding:0 18px;}
+
+    .sitenav{padding:11px 0;}
+    .sitenav .wrap{gap:10px;}
+    .wordmark{font-size:15px;letter-spacing:.18em;}
+    .wordmark small{font-size:7px;letter-spacing:.26em;margin-top:3px;}
+    .navlink{font-size:9.5px;}
+    .sitenav .pill{padding:10px 15px;font-size:9.5px;letter-spacing:.1em;}
+
+    .sect{padding:40px 0 44px;}
+    .pquote{padding:44px 0;}
+    .pquote .qm{font-size:40px;}
+    .eyebrow{font-size:10.5px;letter-spacing:.12em;line-height:1.5;margin-bottom:12px;}
+    .display{font-size:31px;line-height:1.08;}
+    .h2{font-size:25px;}
+    .lede{font-size:15px;margin-top:14px;}
+    .ctarow{margin-top:22px;gap:10px;}
+    .ctarow .pill{width:100%;justify-content:center;}
+    .microline{margin-top:18px;font-size:10px;}
+    .card{padding:20px 17px;}
+
+    /* the quiz is the page. Its own card padding plus the section padding was
+       double-spending the width. */
+    .quiz{margin-top:28px;}
+    .quiz .qh{font-size:23px;}
+    .quiz .ql{font-size:14px;margin-bottom:20px;}
+    .qq{margin:20px 0 10px;}
+    .opts{gap:7px;}
+    .opt{padding:9px 14px;font-size:12.5px;}
+    /* baseline-aligned columns turn into a squashed two-column list at 360; stack
+       the stage number over its description instead */
+    .stagerow{flex-direction:column;gap:4px;padding:12px 2px;}
+    .faq .qt{font-size:18px;}
+    .sitefoot{padding:40px 0 34px;}
+
+    /* ===== the annotation pins, on a handset =====
+       The pins stay: they open on :focus-within as well as :hover and the icon
+       carries tabindex, so a tap opens them.
+       IN THE PHONE VIEW the popover below is suppressed and the note is drawn
+       BESIDE the handset instead (phone-view.css / .pv-note): a note about the
+       page is not part of the page. These rules are for the other case: someone
+       opening this mockup directly on a real phone, where there is nowhere outside
+       to draw it. A 260px tooltip anchored under a pin gets clipped by a 360px
+       screen whenever the pin sits near an edge, so there it becomes a sheet at
+       the bottom instead. Tap elsewhere and focus leaves, which closes it. */
+    .pin{margin-left:5px;}
+    .pin .pinicon{width:22px;height:22px;font-size:11.5px;border-radius:6px;}
+    .pin .pop{
+      position:fixed;top:auto;bottom:12px;left:12px;right:12px;
+      width:auto;max-width:none;transform:none;border-radius:12px;
+      font-size:13px;padding:14px 16px;
+      box-shadow:0 -8px 34px rgba(28,26,22,.3);
+    }
+  }

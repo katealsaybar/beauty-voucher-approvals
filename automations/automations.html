@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Beauty Voucher: GHL Automations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/notes-widget.css">
+<!-- The handsets, the status bar and the Gmail/Outlook/Apple Mail chrome live here now, shared
+     with mapping-result/mapping-result.html so there is one renderer rather than two that
+     drift. The WhatsApp chrome below stayed in this file: only this page needs it. -->
+<link rel="stylesheet" href="../shared/mail-preview.css">
+<link rel="stylesheet" href="automations.css">
+</head>
+<!-- same pack_id as the approval pack, so every note lands in one stream and the
+     dashboard sees all of it in one place -->
+<body data-note-pack="beauty-voucher-2026-08" data-auth-root="../">
+  <div class="top">
+    <div class="toprow1">
+      <a class="back" href="../index.html">&larr; Approval pack</a>
+      <img class="brandlogo" src="../assets/tara-rose-logo-black.png" alt="Tara Rose Salon">
+      <div class="head">
+        <div class="k">Beauty Voucher &middot; GoHighLevel + Make.com</div>
+        <!-- Retitled 8 Aug. Three of the four lanes are GHL and one is not, and the one that
+             is not is the lane nobody has built, so a title that says GHL quietly hides the
+             gap it is meant to expose. -->
+        <h1>Workflow View: as it would sit across the platforms we automate on</h1>
+        <div class="hint"><b>Hover a step</b> for the peek panels, which stay put so you can click into them. <b>Click a step</b> for the full note, or the draft on a phone screen.</div>
+      </div>
+    </div>
+    <!-- class="topbar" is the hook the notes widget looks for when it injects the
+         "You are" name toggle, so the toggle lands in this row rather than at the top
+         of the canvas. -->
+    <div class="topbar toprow2">
+      <div class="wfwrap">
+        <div class="wflbl">Three GHL workflows, and the two bridges that feed them</div>
+        <div class="tabs" id="tabs"></div>
+      </div>
+    </div>
+    <!-- Two legends, one per kind of lane, swapped by activateTab(). A Make scenario has
+         no waits and no goals; showing GHL's eight swatches over it would be furniture. -->
+    <div class="toprow3">
+      <div class="legend" data-lg="ghl">
+        <span><i class="lz" style="background:var(--trigger)"></i>Trigger</span>
+        <span><i class="lz" style="background:var(--email)"></i>Email</span>
+        <span><i class="lz" style="background:var(--wa)"></i>WhatsApp</span>
+        <span><i class="lz" style="background:var(--wait)"></i>Wait</span>
+        <span><i class="lz" style="background:var(--iff)"></i>If / Else</span>
+        <span><i class="lz" style="background:var(--tag)"></i>Add tag</span>
+        <span><i class="lz" style="background:var(--task)"></i>Task</span>
+        <span><i class="lz" style="background:var(--goal)"></i>Goal / exit</span>
+      </div>
+      <div class="legend" data-lg="make" hidden>
+        <span><i class="lz" style="background:var(--mk-hook)"></i>Webhooks</span>
+        <span><i class="lz" style="background:var(--mk-stripe)"></i>Stripe</span>
+        <span><i class="lz" style="background:var(--mk-tools)"></i>Tools</span>
+        <span><i class="lz" style="background:var(--mk-ghl)"></i>GoHighLevel</span>
+        <span><i class="lz" style="background:var(--amber)"></i>Filter, on the link</span>
+        <span><i class="lz" style="background:var(--mk-err)"></i>Error handler</span>
+        <span>Modules run left to right, in the order they are numbered</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="noteshead">
+    <span>Read before you review</span>
+    <span class="nh-count" id="nhCount">4 notes</span>
+    <button class="nh-all" id="nhAll" type="button">Open all</button>
+  </div>
+
+  <details class="banner" data-nid="fonts">
+    <summary>
+      <span class="b-dot"></span>
+      <span class="b-lead">Fonts and logo are now correct in the files themselves.</span>
+      <span class="b-cue"><svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></span>
+    </summary>
+    <div class="b-body">
+    All thirteen emails are set in <code>Georgia,'Times New Roman',serif</code> for headlines
+    and <code>'Inter',Arial,sans-serif</code> for body copy, so nothing depends on a webfont
+    loading. The button labels ask for <code>'Playfair Display'</code> first at weight 400, with
+    Georgia behind it, so Apple Mail and these previews show Playfair and Gmail and Outlook fall
+    back to Georgia regular. Either way the label is no longer bold.
+    The logo is no longer an image: the wordmark is <strong>typeset in live text</strong>,
+    so it still reads when a client blocks images and there is no hosted file to go missing.
+    When these are pasted into GHL, do not let the builder re-style the headings back to a
+    webfont.
+    </div>
+  </details>
+
+  <details class="banner" data-nid="whatsapp">
+    <summary>
+      <span class="b-dot"></span>
+      <span class="b-lead">Why the shorter WhatsApp message is the only one we can send.</span>
+      <span class="b-cue"><svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></span>
+    </summary>
+    <div class="b-body">
+    WhatsApp is not email. Any message we send to a client who has not written to us first has
+    to be submitted to Meta and approved before it can go out at all, and Meta caps the message
+    at <strong>1,024 characters</strong>. Our Abu Dhabi broadcast came to 1,193. Over the cap,
+    Meta does not trim it and does not warn us later: it simply refuses the message, so
+    the step would sit in the workflow with nothing to send and the client would hear nothing.
+    Same rule on the buttons: each one is capped at 25 characters and two of ours were 26.
+    So the shorter version is not a style choice, it is the only version that can exist. The
+    voucher link carries the three tiers instead, which reads better on a phone anyway. You can
+    still read the longer draft: open any WhatsApp step and switch to <em>Longer draft</em>, and
+    it will tell you it cannot be submitted.
+    </div>
+  </details>
+
+  <details class="banner" data-nid="routing">
+    <summary>
+      <span class="b-dot"></span>
+      <span class="b-lead">The emirate routing is drawn here but not built.</span>
+      <span class="b-cue"><svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></span>
+    </summary>
+    <div class="b-body">
+    Five nodes are new as of
+    7 August and every one of them is a <em>drawing</em>: <code>If/Else &middot; Emirate known?</code>
+    and <code>WhatsApp &middot; Which emirate?</code> in Lead Nurture,
+    <code>If/Else &middot; Emirate from payment</code> and <code>Task &middot; Emirate mismatch</code>
+    in the Welcome Pack, and <code>If/Else &middot; Emirate</code> in Confidence
+    Mapping. Nobody has touched the live GHL account. Until they are built by hand, the workflows
+    hold both regional message sets and nothing chooses between them, so the Day 0 send cannot
+    know which promise it is allowed to make. The order of work, the field design and what can
+    and cannot land by Monday are in
+    <strong>docs/EMIRATE-ROUTING-BUILD-SPEC.md</strong>.
+    </div>
+  </details>
+
+  <details class="banner" data-nid="cmform">
+    <summary>
+      <span class="b-dot"></span>
+      <span class="b-lead">Confidence Mapping: the missing bridge to GHL is now designed, not missing.</span>
+      <span class="b-cue"><svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></span>
+    </summary>
+    <div class="b-body">
+    It is <strong>Gravity Forms 21 on WordPress</strong>, not a GHL-native form, so nothing maps
+    itself, and <code>Locale</code> is <strong>not the emirate</strong> (it's the page's
+    <code>lang</code> attribute, <code>en-us</code> for every lead, nothing to recover). Checked
+    wp-admin directly on 8 Aug: no Webhooks feed, no Zapier feed, and the one plugin built for
+    this job is off and unscoped site-wide. Decision: a Make.com scenario carries it instead.
+    <br><br>
+    <!-- The scenario used to be a flat SVG sitting inside this note, which is the wrong place
+         for it twice over: it was too small to read the module settings off, and a scenario
+         with seven modules does not fit in a paragraph. It has its own lane now, drawn the way
+         Make draws a scenario, with every module's setup one click away. -->
+    <strong>Seven modules, drawn in full on its own lane:</strong> a Custom Webhook fed by a
+    Gravity Forms feed, one Tools module that splits <code>pain</code> into its own tags and sets
+    the emirate honestly to <code>unknown</code>, then GoHighLevel upserting the contact on phone,
+    tagging it, writing the reading-order note, and raising the contact-centre task behind a
+    filter. Hover any module for what it does; click it for the settings to build it from.
+    <br><br>
+    The <strong>second scenario</strong> on the same lane is the Stripe bridge the Welcome Pack has
+    always assumed exists: a payment in, the emirate decoded from the link she used, and
+    <code>voucher:paid</code> applied <em>last</em>, so the Welcome Pack never starts before the
+    fields it reads have been written. Nothing in that one has been inspected, and it says so.
+    <div style="margin:14px 0 4px;">
+      <button type="button" class="nh-all" style="margin:0;background:var(--paper);"
+              onclick="window.trsActivateLane &amp;&amp; window.trsActivateLane('make')">
+        Open the Make.com bridges lane &rarr;
+      </button>
+    </div>
+    Field keys, the two types that will bite (<code>pain</code> as Single Line Text, <code>condition</code>
+    as Text not Number), the note layout and the two-ended test are in
+    <strong>docs/CONFIDENCE-MAPPING-FIELD-SPEC.md</strong>. The same GHL contact, drawn as it will
+    look once this lands, is in <a href="../mapping-result/mapping-result.html" target="_blank" rel="noopener">mapping-result.html</a>.
+    </div>
+  </details>
+
+  <details class="banner" data-nid="todo">
+    <summary>
+      <span class="b-dot"></span>
+      <span class="b-lead">Two things still to build, and one to confirm.</span>
+      <span class="b-cue"><svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></span>
+    </summary>
+    <div class="b-body">
+    The waits are fixed-date
+    for this window and need rebuilding as relative delays after the campaign. Until the
+    Phorest&nbsp;&rarr;&nbsp;GHL webhook exists, reception applies
+    <code>voucher:redeemed</code> at checkout by hand. And confirm the exact unsubscribe
+    merge field in this GHL account: the templates carry
+    <code>{{unsubscribe_link}}</code>, and in these previews it points at the live site so
+    you can see it is a working link.
+    </div>
+  </details>
+
+  <div class="canvas" id="canvas"></div>
+
+  <div class="mback" id="mback"><div class="modal" role="dialog" aria-modal="true" id="modal"></div></div>
+
+<!-- EMAILS + WA are generated from emails/*.html and whatsapp-templates.json.
+     Rebuild with: python build-previews.py -->
+<script src="../data/automations-data.js"></script>
+<!-- The handsets and the email chrome. MUST come before the inline script below: these are
+     top-level const/function declarations in a classic script, so they are visible to any
+     later script but not to an earlier one. -->
+<script src="../shared/mail-preview.js"></script>
+<script src="automations.js"></script>
+<!-- The campaign clock. Reads WF and the rendered canvas, so it MUST come after
+     automations.js: it paints dates onto steps that already exist rather than changing how
+     they are drawn. Remove this one line and the page is exactly what it was before 10 Aug. -->
+<script src="schedule.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../auth/supabase-client.js"></script>
+<script src="../shared/notes-widget.js"></script>
+</body>
+</html>
