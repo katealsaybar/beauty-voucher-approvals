@@ -248,8 +248,23 @@ already does it, by letting a wide table scroll inside its own box.
 ### The campaign clock (added 10 Aug 2026)
 
 `automations/automations.html` drew the arc as *Day 0 · Day 2 · Day 4 · Day 6 · Day 8*, which is
-how GHL thinks about it and not how anyone planning a campaign does. Set one date in the header
+how GHL thinks about it and not how anyone planning a campaign does. Set the dates in the header
 and every Lead Nurture step picks up a real one. It is remembered per browser.
+
+**Two dates, not one, because there are two ways to move a campaign.** The first version had only
+a start and derived the close from it, which quietly assumed the close was the thing allowed to
+move. It is not: *30 September* is written into the body of all five nurture emails. So the header
+carries a start, a close, and a switch for which one gives way:
+
+- **Keep the close, fit the arc.** The close stays put and the five sends spread across whatever
+  window is left — a later start means a tighter arc, an earlier one means more air. The copy
+  keeps its promise. This is the default.
+- **Keep the arc, move the close.** The eight-day arc stays exactly as drawn and the two dates
+  travel together. The close comes off 30 September and the copy in five files has to change, which
+  is Tara's call rather than a build setting.
+
+Squeeze the window far enough and two sends land on the same morning. That is allowed and then
+said out loud, in the header and on the affected Timeline row, rather than silently clamped.
 
 **Two clocks, and keeping them apart is the whole point.** Lead Nurture is a broadcast: everybody
 gets Day 0 on the same morning, so its steps carry real dates. The Welcome Pack and Confidence
@@ -263,20 +278,105 @@ tab answers it.
 
 **It found two things the day it was built,** which is the argument for it existing:
 
-1. **Day 8 has to land on 28 August**, because all five nurture emails say that date in their body
-   and `nurture-5` says the window "closes tonight". That fixes the start at **20 August** — so
-   the arc does not begin on the 10th, and the Monday-10-August deadline in the build specs is a
-   *build* deadline, not a send date. Move the start off 20 August and the header says how far
-   off the copy it now is.
-2. **`nurture-4` is titled "Four days left" and goes out on Day 6, two days before Day 8.** Either
-   the wait becomes four days, the email moves to Day 4, or the copy reads "Two days left". The
-   copy is locked, so it is Tara's call. The lane carries this warning permanently; it is not a
-   date-setting problem and it does not go away when the dates line up.
+1. **Day 8 has to land on the close**, because all five nurture emails name that date in their body
+   and `nurture-5` says the window "closes tonight". The Monday-in-August deadline in the build
+   specs is a *build* deadline, not a send date. Move the close and the header says how far off
+   the copy it now is.
+2. **`nurture-4` is titled "Four days left" and goes out two days before the close on the arc as
+   drawn.** Either the email moves earlier, or the copy reads "Two days left", or the window
+   stretches. The gap is now computed rather than asserted, so the lane names the third option
+   exactly: **a fifteen-day window** puts that send four days out, making the locked headline true
+   with no copy change at all. That is the only setting in which it is true, so check this line
+   first whenever the arc moves.
+
+### Rescheduled to 17 August – 30 September (12 Aug 2026)
+
+The window now **opens Monday 17 August and closes Wednesday 30 September**. Six weeks, not three.
+That is one date swap and one structural decision, and they are not the same size of change.
+
+**The swap.** *28 August* became *30 September* in eighteen files: five nurture emails, two mapping
+emails, the eight WhatsApp templates, the landing and terms mockups, the approval pack itself,
+`pack/decide.js` and the emirate routing spec. `data/automations-data.js` is generated, so it was
+rebuilt with `python build/build-previews.py` rather than edited; the longest WhatsApp body is 862
+of the 1024 characters Meta allows, so nothing came close to failing submission.
+
+**The decision.** Five emails cannot carry six weeks. Fitted across the whole window they land
+eleven days apart and every urgency line in them is false for a month. So the purchase window and
+the nurture arc were separated: the window is one span, the arc is a **fifteen-day countdown that
+runs at the end of it**, 15 to 30 September. Fifteen because that is the one window where "Four
+days left" is literally true, which is finding 2 above, now used rather than just reported.
+
+Three consequences worth carrying forward:
+
+- The header control is labelled **"First nurture send"**, not "Campaign starts". Since the
+  reschedule those are two different days a month apart.
+- `OPEN` is a new constant and **nothing in the arc hangs off it**. It is displayed, and the
+  Timeline names the run-up as a decision, so a reviewer does not read the gap as a mistake.
+- The `localStorage` key was bumped to `trs-bv-campaign-clock-v2`. Any browser that had set a
+  date under the old key held an August arc that is no longer the campaign, and it would have
+  silently overridden every default above.
+
+**The calendar was moved next, and made a setting rather than a date swap** (same day, see the
+section below). It was deliberately left out of the swap above rather than half-moved, because
+79 rows dated into August is not a find and replace.
+
+**"Day 4" stays the name of a step, not a count.** Once the arc has been fitted to a longer or
+shorter window, Day 4 may be the third morning or the seventh. The date underneath moves; the day
+number does not, because every node title on the canvas says Day 4 and the file is called
+`nurture3`. Renaming those from the clock would make the map disagree with itself.
 
 The day offsets live in one table at the top of `schedule.js`, not scattered across the workflow
 nodes, so the schedule is one thing you can read and correct. The file is a layer over the map,
 not a rewrite of it: it paints onto steps that already exist, and removing its one `<script>` tag
 returns the page to exactly what it was.
+
+### One window, read by both pages, and a posting plan that moves with it (12 Aug 2026)
+
+The reschedule above exposed the real fault: `automations/schedule.js` held the campaign dates and
+`data/calendar-data.js` held its own copy of them. They drifted the moment the campaign moved, and
+for a day the pack described two different campaigns in two tabs. Three things were done about it.
+
+**One source for the dates.** `data/campaign-dates.js` holds `BV_WINDOW` (`open`, `close`, `arc`)
+and nothing else. Both pages load it before anything that reads a date. `schedule.js` takes `OPEN`,
+`CLOSE_COPY` and its fifteen-day default from it, and every line on that page that quotes the close
+now prints it rather than spelling it out, so moving the window in one file cannot leave the page
+quoting a date that is in no email.
+
+**Rows carry anchors, not dates.** Every row in `calendar-data.js` is now `{ a: 'open', o: 4 }`,
+`{ a: 'flow', w: 1, o: 2 }` or `{ a: 'close', o: -4 }`. `calendar.js` turns that into the same `d`
+string everything downstream already reads, so the grid, the agenda, the note pins and the
+sign-off block are untouched. Two rules hold it honest, and both are written at the top of the
+data file:
+
+- **A countdown row is anchored to `close`, never to `flow`,** and the number in it is a token
+  (`{Days}`, `{n}`, `{closeDow}`, `{elapsed}`) worked out at render from where the row lands. A
+  number typed into a hook is a promise nothing is checking. Tokens are body text only, never
+  titles: a note is pinned to a title, so a title that moves with the window loses its notes.
+- **Flow rows stretch, they do not multiply.** One week of weekly rhythm is written and the window
+  is six weeks, so the calendar reports the hole rather than repeating a week to fill it.
+
+**The control.** Same two date inputs, same wording, same CSS classes as the campaign clock on the
+Workflow View, because it is the same idea. What it sets is different and the line under it says
+so: this one sets the **window**; the one on the automations page sets the **nurture arc**, which
+is a fifteen-day countdown at the end of that window. They share a default and keep separate
+overrides, because moving one is not a request to move the other. It flags four things: a close
+that has drifted off the date written into five emails, an opening that is not a Monday (the
+weekly rhythm rows were written for one and three name their weekday), a window too short for the
+plan, and the days inside the window with nothing planned at all.
+
+**What is still open, and it is the real work.** On the default window the plan covers **20 of the
+45 days**: launch week, one week of rhythm, and the countdown into the close. **25 days, 31 August
+to 24 September, carry no plan.** The Calendar says so in the clock row and again in the pillar mix
+panel, which is written from the plan now rather than asserted. Filling it is content work at the
+agreed cadence and it needs Hanneh and Tara, not another pass over the data file. Add weeks as
+rows with `w: 2`, `w: 3` and so on, then check the Mix panel rather than trusting the count.
+
+Two titles changed, because they carried a number that would drift: *"What closes on Friday, and
+what does not"* is now *"What closes, and what does not"*, and *"Two days · two weeks of results in
+ten seconds"* is now *"Two days · every result since the window opened"*. Any note pinned to those
+two rows is pinned to the old title. Notes on every other row follow their post; notes pinned to a
+**day** stay on the calendar date they were left on, which after a reschedule can look orphaned. It
+is not gone, it is on that date, and the page says so.
 
 ### The runbook, and the note it put in seven emails (added 10 Aug 2026)
 

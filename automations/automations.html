@@ -192,6 +192,9 @@
 
 <!-- EMAILS + WA are generated from emails/*.html and whatsapp-templates.json.
      Rebuild with: python build-previews.py -->
+<!-- The campaign window, shared with the Posting Calendar so the two pages cannot describe two
+     different campaigns. schedule.js reads its defaults from it. -->
+<script src="../data/campaign-dates.js"></script>
 <script src="../data/automations-data.js"></script>
 <!-- The handsets and the email chrome. MUST come before the inline script below: these are
      top-level const/function declarations in a classic script, so they are visible to any

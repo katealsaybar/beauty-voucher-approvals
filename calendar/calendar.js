@@ -27,6 +27,17 @@
     return hh + (a[1] === '00' ? '' : ':' + a[1]) + ap;
   }
 
+  function shift(isoStr, n) {
+    var p = parts(isoStr);
+    var d = new Date(Date.UTC(p.y, p.m - 1, p.d + n));
+    return iso(d.getUTCFullYear(), d.getUTCMonth() + 1, d.getUTCDate());
+  }
+  function between(a, b) {
+    var x = parts(a), y = parts(b);
+    return Math.round((Date.UTC(y.y, y.m - 1, y.d) - Date.UTC(x.y, x.m - 1, x.d)) / 86400000);
+  }
+  function monthDay(isoStr) { var p = parts(isoStr); return p.d + ' ' + MON[p.m - 1]; }
+
   // Today is read live, in Dubai, rather than taken from the data file. Tara and Emma open
   // this pack over several days, and a hardcoded date would leave the today marker and the
   // countdown pills a day or two behind, which is exactly the number the closing week has to
@@ -42,19 +53,112 @@
     }
   }
 
-  var TODAY  = todayInDubai();
-  var LAUNCH = CAL_CAMPAIGN.launch;
-  var CLOSE  = CAL_CAMPAIGN.close;
+  var TODAY = todayInDubai();
+
+  // ---------- the campaign window ----------
+  // The dates used to be typed into every row. They are a setting now, the same way the
+  // nurture arc is a setting on the Workflow View, because a campaign that moves and a plan
+  // that does not is how the pack ended up describing two different campaigns at once.
+  //
+  // The defaults come from data/campaign-dates.js, which both pages read, so there is one
+  // window and not two. The override is this page's own: moving the window here is not the
+  // same request as moving the nurture arc there, and neither should quietly move the other.
+  var STORE     = 'trs-bv-calendar-window-v1';
+  var DEF_OPEN  = CAL_CAMPAIGN.open;
+  var DEF_CLOSE = CAL_CAMPAIGN.close;
+  var LAUNCH_WEEK = 7;          // days of launch week, so the weekly rhythm starts at open + 7
+
+  var win = loadWindow();
+
+  function loadWindow() {
+    var o = DEF_OPEN, c = DEF_CLOSE;
+    try {
+      var raw = JSON.parse(window.localStorage.getItem(STORE) || 'null');
+      if (raw && /^\d{4}-\d{2}-\d{2}$/.test(raw.open))  o = raw.open;
+      if (raw && /^\d{4}-\d{2}-\d{2}$/.test(raw.close)) c = raw.close;
+    } catch (e) {}
+    // A close on or before the open is not a window. Fall back to the length of the real one
+    // rather than to a guess, so a corrupted store still draws the campaign that exists.
+    if (between(o, c) < 1) c = shift(o, between(DEF_OPEN, DEF_CLOSE));
+    return { open: o, close: c };
+  }
+  function saveWindow() {
+    try { window.localStorage.setItem(STORE, JSON.stringify(win)); } catch (e) {}
+  }
+
+  // ---------- anchors ----------
+  // A row carries an anchor, not a date. See the header of data/calendar-data.js for what
+  // each one means. Everything downstream still reads `p.d`, which is written here.
+  function resolve(a) {
+    if (!a || typeof a !== 'object') return null;
+    if (a.a === 'open')  return shift(win.open,  a.o || 0);
+    if (a.a === 'close') return shift(win.close, a.o || 0);
+    if (a.a === 'flow')  return shift(win.open, LAUNCH_WEEK + ((a.w || 1) - 1) * 7 + (a.o || 0));
+    return null;
+  }
+
+  // ---------- tokens ----------
+  // Any number of days, and any weekday named against the close, is worked out here from
+  // where the row actually lands. A number typed into a hook is a promise nothing is
+  // checking; this is the checking.
+  var WORDS = ['zero','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve'];
+  function numWord(n) { return n >= 0 && n <= 12 ? WORDS[n] : String(n); }
+  function cap(s) { return String(s).charAt(0).toUpperCase() + String(s).slice(1); }
+  // Weeks read better than days once there are a lot of them, but only when the number is
+  // honest: seven days is "one week", ten days is not "one week".
+  function elapsedPhrase(n) {
+    if (n <= 0) return 'no time at all';
+    if (n % 7 === 0) return numWord(n / 7) + ' week' + (n === 7 ? '' : 's');
+    if (n < 14) return numWord(n) + ' days';
+    return numWord(Math.round(n / 7)) + ' weeks';
+  }
+  function tokens(str, dStr) {
+    if (!str) return str;
+    var left  = between(dStr, win.close);
+    var since = between(win.open, dStr);
+    var map = {
+      n: numWord(left),
+      N: cap(numWord(left)),
+      days: numWord(left) + ' day' + (left === 1 ? '' : 's'),
+      Days: cap(numWord(left)) + ' day' + (left === 1 ? '' : 's'),
+      open: monthDay(win.open),
+      close: monthDay(win.close),
+      closeDow: DOW[dowOf(win.close)],
+      closeDowNext: DOW[dowOf(shift(win.close, 1))],
+      elapsed: elapsedPhrase(since),
+      Elapsed: cap(elapsedPhrase(since))
+    };
+    // An unknown token is left visible rather than blanked. A row reading "{fortnight}" on
+    // the page is a typo somebody will fix; a row reading "" is a brief with a hole in it.
+    return str.replace(/\{(\w+)\}/g, function (m, k) {
+      return map[k] === undefined ? m : map[k];
+    });
+  }
 
   // ---------- index the plan by day ----------
+  // Rebuilt every time the window moves. The original wording is kept on the row, because
+  // resolving a token twice would eat the token.
+  var TEXT = ['angle', 'hook', 'cta', 'flag'];
   var byDay = {};
-  CAL_POSTS.forEach(function (p, i) {
-    p._i = i;
-    (byDay[p.d] = byDay[p.d] || []).push(p);
-  });
-  Object.keys(byDay).forEach(function (d) {
-    byDay[d].sort(function (a, b) { return a.t < b.t ? -1 : a.t > b.t ? 1 : 0; });
-  });
+  function applyWindow() {
+    byDay = {};
+    CAL_POSTS.forEach(function (p, i) {
+      p._i = i;
+      if (!p._raw) {
+        p._raw = {};
+        TEXT.forEach(function (k) { p._raw[k] = p[k]; });
+      }
+      p.d = resolve(p.a);
+      TEXT.forEach(function (k) {
+        if (p._raw[k] != null) p[k] = tokens(p._raw[k], p.d);
+      });
+      (byDay[p.d] = byDay[p.d] || []).push(p);
+    });
+    Object.keys(byDay).forEach(function (d) {
+      byDay[d].sort(function (a, b) { return a.t < b.t ? -1 : a.t > b.t ? 1 : 0; });
+    });
+  }
+  applyWindow();
 
   var on = {};   // which channels are ticked
   Object.keys(CAL_CHANNELS).forEach(function (k) { on[k] = CAL_CHANNELS[k].on !== false; });
@@ -64,10 +168,9 @@
   // days-to-close ribbon, for the last week only. It is the number the whole closing week
   // has to agree on, so the grid says it rather than each post claiming its own
   function closeTag(isoStr) {
-    if (isoStr === LAUNCH) return { cls: 'launch', txt: 'Opens' };
-    if (isoStr === CLOSE)  return { cls: 'close',  txt: 'Closes' };
-    var a = parts(isoStr), b = parts(CLOSE);
-    var diff = Math.round((Date.UTC(b.y, b.m - 1, b.d) - Date.UTC(a.y, a.m - 1, a.d)) / 86400000);
+    if (isoStr === win.open)  return { cls: 'launch', txt: 'Opens' };
+    if (isoStr === win.close) return { cls: 'close',  txt: 'Closes' };
+    var diff = between(isoStr, win.close);
     if (diff > 0 && diff <= 5) return { cls: 'count', txt: diff + ' day' + (diff > 1 ? 's' : '') };
     return null;
   }
@@ -110,8 +213,150 @@
     render();
   });
 
+  // ---------- the window control ----------
+  // Same two date inputs, same wording and the same CSS class names as the campaign clock on
+  // the Workflow View. It is the same idea, so it should not be a second visual language for
+  // it. What it sets is different, and the hint line under it says which.
+  var clockRow = document.createElement('div');
+  clockRow.className = 'toprow-clock';
+  clockRow.innerHTML =
+    '<div class="clockwrap">' +
+      '<label class="clocklbl" for="bvOpen">Window opens</label>' +
+      '<input type="date" id="bvOpen" class="clockinput">' +
+      '<label class="clocklbl" for="bvClose">Closes</label>' +
+      '<input type="date" id="bvClose" class="clockinput">' +
+      '<button type="button" class="clockreset" id="bvReset" title="Back to the campaign the ' +
+        'pack describes: opens ' + monthDay(DEF_OPEN) + ', closes ' + monthDay(DEF_CLOSE) + '">Reset</button>' +
+    '</div>' +
+    '<div class="clockout" id="bvOut"></div>';
+
+  var noteRow = document.createElement('div');
+  noteRow.className = 'toprow-mode';
+  noteRow.innerHTML =
+    '<span class="clocklbl">What moves with these dates</span>' +
+    '<span class="clockhint">Every row is anchored rather than dated: launch week is measured ' +
+      'forward from the opening, the countdown backward from the close, and the weekly rhythm ' +
+      'sits in between. Move a date and the plan moves with it. A note pinned to a POST follows ' +
+      'the post, because it is pinned to the title. A note pinned to a DAY stays on the calendar ' +
+      'date it was left on, so after a move it can look orphaned; it is not gone, it is on that ' +
+      'date. The nurture arc is set on the Workflow View, not here: it is a fifteen-day countdown ' +
+      'at the end of this window rather than the window itself.</span>';
+
+  var topEl2 = document.querySelector('.top');
+  var row3El = document.querySelector('.toprow3');
+  if (topEl2 && row3El) { topEl2.insertBefore(clockRow, row3El); topEl2.insertBefore(noteRow, row3El); }
+
+  var openIn  = document.getElementById('bvOpen');
+  var closeIn = document.getElementById('bvClose');
+
+  // How much of the window the plan actually reaches. There is one week of flow rows and the
+  // window is six, so most of the middle is empty. That is a real state of the plan and the
+  // page reports it rather than stretching one week of content over six.
+  function coverage() {
+    var live = {};
+    CAL_POSTS.forEach(function (p) {
+      if (p.ch === 'beat' || p.ch === 'prep') return;
+      if (between(win.open, p.d) < 0 || between(p.d, win.close) < 0) return;
+      live[p.d] = true;
+    });
+    var total = between(win.open, win.close) + 1;
+    var best = { n: 0, from: null, to: null }, run = 0;
+    for (var i = 0; i < total; i++) {
+      var d = shift(win.open, i);
+      if (live[d]) { run = 0; continue; }
+      run++;
+      if (run > best.n) best = { n: run, from: shift(d, -(run - 1)), to: d };
+    }
+    return { total: total, covered: Object.keys(live).length, gap: best };
+  }
+
+  // The last row of the weekly rhythm, and the first row of the countdown. If the first is on
+  // or after the second the window is too short for the plan as written, which is a setting
+  // producing a real collision rather than an error to hide.
+  function flowEnd() {
+    var last = null;
+    CAL_POSTS.forEach(function (p) {
+      if (p.a && p.a.a === 'flow' && (last === null || between(last, p.d) > 0)) last = p.d;
+    });
+    return last;
+  }
+
+  function renderClock() {
+    openIn.value  = win.open;
+    closeIn.value = win.close;
+
+    var cov   = coverage();
+    var drift = between(DEF_CLOSE, win.close);
+    var out   = [];
+
+    out.push('<span class="clockday" title="The purchase window. Every row in the plan is ' +
+      'anchored to one end of it or to the weeks in between.">' +
+      '<b>' + cov.total + ' days</b> · ' + pretty(win.open) + ' to ' + pretty(win.close) + '</span>');
+
+    out.push('<span class="clockflag ' + (drift === 0 ? 'ok' : 'off') + '">' +
+      (drift === 0
+        ? 'Matches the ' + monthDay(DEF_CLOSE) + ' written into the emails'
+        : numWord(Math.abs(drift)) + ' day' + (Math.abs(drift) === 1 ? '' : 's') +
+          (drift > 0 ? ' after' : ' before') + ' the ' + monthDay(DEF_CLOSE) +
+          ' written into the emails') + '</span>');
+
+    // The weekly rhythm rows were written for a Monday opening. They keep their weekday only
+    // while the window opens on one, and three of them say the day out loud in their title.
+    if (dowOf(win.open) !== 1) {
+      out.push('<span class="clockflag off">Opens on a ' + DOW[dowOf(win.open)] +
+        ', so the weekly rhythm lands on different weekdays from the ones it was written for</span>');
+    }
+
+    var fe = flowEnd();
+    if (fe && between(fe, shift(win.close, -5)) < 0) {
+      out.push('<span class="clockflag off">Too short: the weekly rhythm now runs past the ' +
+        'start of the countdown</span>');
+    } else if (cov.gap.n > 0) {
+      out.push('<span class="clockflag off">' + cov.gap.n + ' day' + (cov.gap.n === 1 ? '' : 's') +
+        ' with nothing planned, ' + monthDay(cov.gap.from) + ' to ' + monthDay(cov.gap.to) + '</span>');
+    }
+
+    document.getElementById('bvOut').innerHTML = out.join('');
+
+    var k = document.querySelector('.top .k');
+    if (k) {
+      k.innerHTML = 'Summer Beauty Ritual Voucher &middot; ' + monthDay(win.open) +
+        ' to ' + monthDay(win.close) + ' ' + parts(win.close).y;
+    }
+  }
+
+  function setWindow(o, c) {
+    win.open = o;
+    win.close = c;
+    if (between(win.open, win.close) < 1) win.close = shift(win.open, 1);
+    saveWindow();
+    applyWindow();
+    renderClock();
+    renderMix();
+    render();
+  }
+
+  openIn.addEventListener('change', function () {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(openIn.value)) return renderClock();
+    setWindow(openIn.value, win.close);
+  });
+  closeIn.addEventListener('change', function () {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(closeIn.value)) return renderClock();
+    setWindow(win.open, closeIn.value);
+  });
+  document.getElementById('bvReset').addEventListener('click', function () {
+    setWindow(DEF_OPEN, DEF_CLOSE);
+  });
+
   // ---------- month grid ----------
-  var view = { y: 2026, m: 8 };
+  // Opens on the month the reader is in if that month is inside the window, and on the month
+  // the window opens in otherwise. A hardcoded month was how this page carried on showing
+  // August after the campaign had moved.
+  var view = (function () {
+    var t = parts(TODAY), o = parts(win.open);
+    var inside = between(win.open, TODAY) >= 0 && between(TODAY, win.close) >= 0;
+    return inside ? { y: t.y, m: t.m } : { y: o.y, m: o.m };
+  })();
   var weeksEl = document.getElementById('weeks');
   var mlblEl  = document.getElementById('mlbl');
 
@@ -331,6 +576,36 @@
           '<div class="mixtarget" style="left:' + (tgt / max * 100).toFixed(1) + '%" title="Target ' + tgt + '%"></div></div>' +
         '<div class="mixval ' + cls + '"><b>' + Math.round(pct) + '%</b> <span style="opacity:.7">/ ' + tgt + '</span></div></div>';
     }).join('');
+
+    // Why it deviates, written from the plan rather than asserted, because the old paragraph
+    // described a three-week August window and outlived it by a day.
+    var cov = coverage();
+    var flags = CAL_POSTS.filter(function (p) { return p.flag; }).length;
+    document.getElementById('mixwhy').innerHTML =
+      '<strong>Where it deviates, and why:</strong> Conversion runs over target and ' +
+      'Transformation under, and the reason is the shape of what is written rather than a ' +
+      'choice about the mix. The plan covers <b>' + cov.covered + ' of the ' + cov.total +
+      ' days</b> in the window: launch week, one week of the weekly rhythm, and the countdown ' +
+      'into the close. A countdown week is structurally conversion-heavy and there is not yet ' +
+      'a run of finished results inside the window to show, so transformation has nowhere to ' +
+      'sit. ' +
+      (cov.gap.n > 0
+        ? 'The fix is not to dilute the closing week. It is to write the missing middle: <b>' +
+          cov.gap.n + ' day' + (cov.gap.n === 1 ? '' : 's') + '</b> from ' + monthDay(cov.gap.from) +
+          ' to ' + monthDay(cov.gap.to) + ' carry no plan at all, and that is the stretch that ' +
+          'should run heavy on Transformation and Behind the scenes as the placed plans start ' +
+          'being used. It needs writing, not re-anchoring. Worth a decision from Tara on who ' +
+          'writes it and by when.'
+        : 'Every day in the window now carries a plan, so the mix above is the mix that will ' +
+          'actually go out.') +
+      ' <b>' + numWord(flags) + ' row' + (flags === 1 ? '' : 's') + '</b> carr' +
+      (flags === 1 ? 'ies' : 'y') + ' a flag and must not be drafted until the decision lands.';
+
+    // Starts a sentence in the banner, so it is capitalised there. The old copy said "two"
+    // and there have been four flags on the plan since the Terms were split per emirate.
+    var b = document.getElementById('flagcount');
+    if (b) b.textContent = cap(numWord(flags)) + ' row' + (flags === 1 ? '' : 's') +
+      (flags === 1 ? ' carries' : ' carry') + ' a flag';
   }
 
   // The sticky weekday row has to sit exactly under the header, and the header changes
@@ -361,6 +636,7 @@
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(syncHeaderHeight);
 
   renderCals();
+  renderClock();
   renderMix();
   render();
   syncHeaderHeight();

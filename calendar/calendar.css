@@ -66,6 +66,42 @@
   .rhythm{font-size:11px;color:var(--muted);white-space:nowrap;}
   .rhythm b{color:var(--ink);}
 
+  /* ===== the window control (calendar.js) =====
+     The same class names and the same look as the campaign clock on the Workflow View. It is
+     the same idea on both pages, so it should not be a second visual language for it. Its own
+     header row rather than a corner of the month switch: two date inputs next to the month
+     arrows would read as a filter on what you are looking at, which is the one thing it is
+     not. It sets the plan. */
+  .toprow-clock{
+    display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+    margin-top:9px;padding-top:9px;border-top:1px solid var(--line);
+  }
+  .clockwrap{display:flex;align-items:center;gap:9px;flex-wrap:wrap;}
+  .clocklbl{font-size:9.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);}
+  .clockinput{
+    font-family:var(--sans);font-size:13px;font-weight:600;color:var(--ink);
+    border:1px solid var(--line);border-radius:9px;padding:6px 10px;background:var(--paper);
+  }
+  .clockinput:focus{outline:none;border-color:var(--accent-deep);box-shadow:0 0 0 3px rgba(58,168,146,.16);}
+  .clockreset{
+    font-family:var(--sans);font-size:11.5px;font-weight:700;color:var(--muted);cursor:pointer;
+    border:1px solid var(--line);border-radius:100px;padding:6px 12px;background:var(--paper);
+  }
+  .clockreset:hover{border-color:var(--accent-deep);color:var(--accent-deep);}
+  .clockout{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .clockday{font-size:12.5px;color:var(--muted);}
+  .clockday b{color:var(--ink);}
+  .clockflag{
+    font-size:11px;font-weight:700;border-radius:100px;padding:4px 11px;
+    background:var(--green-bg);color:#2C5A44;border:1px solid #C9E4D5;
+  }
+  .clockflag.off{background:var(--amber-bg);color:var(--amber-ink);border-color:var(--amber-line);}
+
+  /* the line under it: what a date change does and does not carry with it. Its own row rather
+     than a third chip in the row above, because it is an explanation and not a reading. */
+  .toprow-mode{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-top:8px;}
+  .clockhint{flex:1 1 320px;font-size:11.5px;line-height:1.5;color:var(--muted);max-width:96ch;}
+
   /* ===== banners ===== */
   .banner{margin:14px 22px 0;padding:12px 16px;background:var(--amber-bg);border:1px solid var(--amber-line);
     border-radius:12px;font-size:13px;line-height:1.6;color:var(--amber-ink);}

@@ -40,7 +40,7 @@ const WF=[
    {t:'wait',title:'Wait · to Day 6',sub:'skip if paid',tip:{ch:'Wait',note:'Holds until Day 6.'}},
    {t:'email',title:'Email · Day 6',sub:'"Four days left"',emailKey:'nurture4',tip:{ch:'Email',sub:'Four days left',note:'Real scarcity only, the close date. No fake countdowns.'}},
    {t:'wait',title:'Wait · to Day 8',sub:'skip if paid',tip:{ch:'Wait',note:'Holds until the final day.'}},
-   {t:'email',title:'Email · Day 8',sub:'"Final day"',emailKey:'nurture5',tip:{ch:'Email',sub:'Final day',note:'Final day. The window closes tonight, 28 August. Credit placed as a plan for the year ahead.'}},
+   {t:'email',title:'Email · Day 8',sub:'"Final day"',emailKey:'nurture5',tip:{ch:'Email',sub:'Final day',note:'Final day. The window closes tonight, 30 September. Credit placed as a plan for the year ahead.'}},
    {t:'iff',title:'If/Else · Client button',sub:"Belle's 3-way router",branches:[{c:'go',l:'"Tell me more" → intent:warm'},{c:'',l:'no button → continue'},{c:'stop',l:'"I already have mine" → self:availed'}],tip:{ch:'If / Else',note:'Each message carries tappable buttons. "Tell me more" tags intent:warm and escalates. "I already have mine" tags self:availed, stops the nurture and flags the contact centre to confirm the payment. No button pressed = the arc runs on. self:availed never auto-marks her paid. Labels are kept inside Meta\'s 25-character button cap.'}},
    {t:'goal',title:'Goal: Tag added voucher:paid',sub:'exit + start Welcome Pack',tip:{ch:'Goal / exit',note:'Universal exit. The moment voucher:paid lands (Stripe bridge, Tabby manual tag, or reception at the till), the whole nurture ends for her and the Welcome Pack begins.'}}
  ]},
@@ -150,7 +150,7 @@ const WF=[
      note:'The one email already built the right way, and the pattern the other twelve should follow: one asset, parametrised, rather than two that drift apart.',
      rows:[['Body','&ldquo;at the salons named on your voucher&rdquo;'],['Specifics','a <code>{{voucher_availability_line}}</code> merge field'],['Today','that field is empty, so it renders blank']],
      code:'{{voucher_availability_line}}\n  &#8594; set one custom value per emirate\n  &#8594; blank is safe; wrong is not',
-     long:'Lays the three tiers out plainly, no jargon, closes 28 August. Already fixed and worth copying: the body says "at the salons named on your voucher" and the emirate specifics sit in a {{voucher_availability_line}} merge field. Corrected 7 Aug, comment at line 66. The wording is safe in both emirates as it stands, but the merge field is not populated, so today the coverage block renders blank rather than promising the wrong facial. Set the custom value per emirate from the approved lines in the pack.'}},
+     long:'Lays the three tiers out plainly, no jargon, closes 30 September. Already fixed and worth copying: the body says "at the salons named on your voucher" and the emirate specifics sit in a {{voucher_availability_line}} merge field. Corrected 7 Aug, comment at line 66. The wording is safe in both emirates as it stands, but the merge field is not populated, so today the coverage block renders blank rather than promising the wrong facial. Set the custom value per emirate from the approved lines in the pack.'}},
    {t:'goal',title:'Goal: voucher:paid OR map:booked',sub:'exit',tip:{ch:'Goal / exit',note:'Either tag ends the workflow. Booking always beats selling.'}}
  ]}
 ];

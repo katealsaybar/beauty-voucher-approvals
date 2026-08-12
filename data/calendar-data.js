@@ -1,7 +1,7 @@
 // Beauty Voucher, social posting calendar, data only.
 //
-// This is the posting plan for the campaign window (7 to 31 August 2026), built against the
-// rhythm and pillar mix already agreed in the approval pack's Social Media Calendar section:
+// This is the posting plan for the campaign window, built against the rhythm and pillar mix
+// already agreed in the approval pack's Social Media Calendar section:
 //   Reels 4 to 5/wk · static 3 to 4/wk · Stories daily · TikTok 3 to 5/wk · Facebook 3/wk
 //   Education 30% · Transformation 25% · Behind the scenes 20% · Identity 15% · Community
 //   and Conversion 10%. One pillar per post, never blended.
@@ -12,6 +12,42 @@
 //
 // Kept separate from calendar.html on purpose (same as automations-data.js) so the plan can
 // be edited week to week without touching the page.
+//
+// ===== ANCHORS, added 12 Aug 2026 =====
+//
+// Rows used to carry an absolute date. That worked until the campaign moved, at which point
+// 79 rows described a campaign nobody was running. A row now carries an ANCHOR, and
+// calendar.js turns it into the `d` string every other part of the page still reads:
+//
+//   { a: 'open',  o: -3 }        three days BEFORE the window opens
+//   { a: 'open',  o:  4 }        four days after it opens, so launch week is o: 0 to 6
+//   { a: 'flow',  w: 1, o: 2 }   week w of the weekly rhythm, o days in. Week 1 starts the
+//                                day after launch week ends. This is the middle of the run.
+//   { a: 'close', o: -4 }        four days before the close. Every countdown row is here.
+//   { a: 'close', o:  2 }        two days after it, for the redemption rows
+//
+// Two rules, and each of them is the reason a row breaks if it is skipped:
+//
+//   1. A COUNTDOWN ROW IS ANCHORED TO `close`, NEVER TO `flow`. A post that says "four days
+//      left" and floats is a post that will one day lie. If a row states a number of days,
+//      the number is written as a token and worked out at render from where the row actually
+//      lands. Type a number into a hook and it is a promise nothing is checking.
+//
+//   2. FLOW ROWS STRETCH, THEY DO NOT MULTIPLY. A longer window means more weeks of rhythm to
+//      WRITE, not the same week quietly repeated. There is one week of flow rows in this file
+//      and the window is six weeks, so most of the middle is empty. The calendar says that on
+//      the page rather than papering over it. Weeks 2 to 5 are the writing job, and it needs
+//      Hanneh and Tara, not a find and replace.
+//
+// TOKENS, resolved by calendar.js against the row's own date. Body text only, never titles:
+// a title is what a note pins to, so a title that changes with the window loses its notes.
+//
+//   {n} {N}                bare count of days to the close: "four", "36"
+//   {days} {Days}          the same, with its unit: "four days", "One day"
+//   {open} {close}         the two window dates: "17 August", "30 September"
+//   {closeDow}             the weekday the window closes on: "Wednesday"
+//   {closeDowNext}         the morning after it closes: "Thursday"
+//   {elapsed} {Elapsed}    how far into the window this row sits: "one week", "eight days"
 //
 // BRAND REVIEW, 7 Aug 2026 (trs-brand-guardian v3.2). Every hook and every client-facing CTA
 // was gated. Thirteen blocks and nineteen soft findings were applied here. The four that
@@ -24,15 +60,17 @@
 //      transferred). The two gifting rows are written to the gift card instead, which the
 //      Terms do carry. Flagged: Tara can reopen the stronger angle by amending term 7.
 //   4. Em-dashes are banned everywhere, including these comments. Universal, no exemptions.
-// Two rows still carry a flag and must not be drafted until the decision lands.
+// Four rows carry a flag and must not be drafted until the decision lands.
 
 /* eslint-disable */
 
+// The window itself lives in campaign-dates.js, loaded before this file, so the automations
+// map and this calendar cannot describe two different campaigns again. `today` is only a
+// fallback for a browser with no Intl support; calendar.js reads the real one live in Dubai.
 const CAL_CAMPAIGN = {
-  launch: '2026-08-10',
-  close: '2026-08-28',
-  today: '2026-08-07',
-  months: ['2026-08', '2026-09']
+  open:  (typeof BV_WINDOW !== 'undefined' ? BV_WINDOW.open  : '2026-08-17'),
+  close: (typeof BV_WINDOW !== 'undefined' ? BV_WINDOW.close : '2026-09-30'),
+  today: '2026-08-12'
 };
 
 // Colour = channel, the way a Google Calendar colour means a calendar. Salon palette where
@@ -73,9 +111,9 @@ const CAL_FORMATS = {
 //         'fixed', a date, not a draft (launch, close, prep)
 const CAL_POSTS = [
 
-  /* ── Pre-launch · 7 to 9 August ──────────────────────────────────────────── */
+  /* ── Prep · the three days before the window opens ────────────────────────── */
 
-  { d: '2026-08-07', t: '09:00', ch: 'prep', pillar: 'ops', status: 'now',
+  { a: { a: 'open', o: -3 }, t: '09:00', ch: 'prep', pillar: 'ops', status: 'now',
     title: 'Draft launch week into Notion',
     owner: 'Hanneh',
     angle: 'All ten launch-week posts written into the Content DB, each against one pillar, one avatar, one platform, one format, with the Publish On date filled in so the care standard picks them up on its hourly run.',
@@ -83,47 +121,47 @@ const CAL_POSTS = [
     cta: 'Status set to Scripted, Needs Review.',
     branch: 'All four' },
 
-  { d: '2026-08-07', t: '14:00', ch: 'prep', pillar: 'ops', status: 'now',
+  { a: { a: 'open', o: -3 }, t: '14:00', ch: 'prep', pillar: 'ops', status: 'now',
     title: 'Assets brief to design',
     owner: 'Kate',
     angle: 'Reel covers, static tiles and Story frames for launch week. The tiers have to read correctly on a phone: prepaid, bonus, total credit, validity. No tier shown without its validity.',
     hook: '',
-    cta: 'Files back by Saturday so Sunday is approvals, not design.',
+    cta: 'Files back two days before opening, so the day before is approvals, not design.',
     branch: 'All four' },
 
-  { d: '2026-08-08', t: '10:00', ch: 'story', pillar: 'identity', status: 'now',
+  { a: { a: 'open', o: -2 }, t: '10:00', ch: 'story', pillar: 'identity', status: 'now',
     title: 'Teaser · the woman who books everyone else in first',
     owner: 'Hanneh',
-    angle: 'Two frames, no offer and no price. Recognition only, so Monday lands on a warm audience rather than a cold one.',
+    angle: 'Two frames, no offer and no price. Recognition only, so opening day lands on a warm audience rather than a cold one.',
     hook: 'You book everyone else in first. When was the last time someone booked you?',
-    cta: 'Something opens Monday.',
+    cta: 'Something opens in two days.',
     branch: 'All four' },
 
-  { d: '2026-08-08', t: '12:00', ch: 'prep', pillar: 'ops', status: 'now',
+  { a: { a: 'open', o: -2 }, t: '12:00', ch: 'prep', pillar: 'ops', status: 'now',
     title: 'Care standard sweep before launch',
     owner: 'Kate',
-    angle: 'Anything sitting on FAIL is stuck and will never publish. Clear the FAILs today, because Sunday night is the last approval window before Monday.',
+    angle: 'Anything sitting on FAIL is stuck and will never publish. Clear the FAILs today, because tomorrow night is the last approval window before the window opens.',
     hook: '',
     cta: 'Zero FAILs by end of day.',
     branch: 'All four' },
 
-  { d: '2026-08-09', t: '10:00', ch: 'story', pillar: 'identity', status: 'now',
+  { a: { a: 'open', o: -1 }, t: '10:00', ch: 'story', pillar: 'identity', status: 'now',
     title: 'Poll · when did you last book something only for you?',
     owner: 'Hanneh',
-    angle: 'A poll, not a promotion. The answers tell us which line to lead with on Monday, and it warms the audience for the launch film.',
+    angle: 'A poll, not a promotion. The answers tell us which line to lead with on opening day, and it warms the audience for the launch film.',
     hook: 'When did you last book something that was only for you?',
     cta: 'Poll: This year / I honestly cannot remember.',
     branch: 'All four' },
 
-  { d: '2026-08-09', t: '19:30', ch: 'reel', pillar: 'identity', status: 'now',
+  { a: { a: 'open', o: -1 }, t: '19:30', ch: 'reel', pillar: 'identity', status: 'now',
     title: 'Teaser film · the chair that is yours',
     owner: 'Hanneh',
-    angle: 'Fifteen seconds, salon footage, one line of text on screen. No tiers, no prices, no link. It exists to make Monday feel expected.',
+    angle: 'Fifteen seconds, salon footage, one line of text on screen. No tiers, no prices, no link. It exists to make tomorrow feel expected.',
     hook: 'You have not sat in this chair for yourself in a long time.',
-    cta: 'Monday.',
+    cta: 'Tomorrow.',
     branch: 'All four' },
 
-  { d: '2026-08-09', t: '21:00', ch: 'prep', pillar: 'ops', status: 'now',
+  { a: { a: 'open', o: -1 }, t: '21:00', ch: 'prep', pillar: 'ops', status: 'now',
     title: 'Tara\'s approvals due',
     owner: 'Tara',
     angle: 'Anything still on Needs Review auto-approves at midnight before its publish date. Silence publishes it, so a post that should not go out needs an actual no, not just no reply.',
@@ -131,17 +169,17 @@ const CAL_POSTS = [
     cta: 'Reply on WhatsApp: yes, or what needs changing.',
     branch: 'All four' },
 
-  /* ── Launch week · 10 to 16 August ───────────────────────────────────────── */
+  /* ── Launch week · the first seven days of the window ─────────────────────── */
 
-  { d: '2026-08-10', t: '09:00', ch: 'beat', pillar: 'ops', status: 'fixed',
+  { a: { a: 'open', o: 0 }, t: '09:00', ch: 'beat', pillar: 'ops', status: 'fixed',
     title: 'Voucher opens · launch day',
     owner: 'Kate',
-    angle: 'Six Stripe links live across Abu Dhabi, Al Quoz and Motor City. Reception briefed on both cities, including that a voucher is held against the emirate it was bought in. The WhatsApp broadcast and the first nurture email go out today.',
+    angle: 'Six Stripe links live across Abu Dhabi, Al Quoz and Motor City. Reception briefed on both cities, including that a voucher is held against the emirate it was bought in. The WhatsApp broadcast goes out today.',
     hook: '',
     cta: 'Check every link resolves, and that each one points at the right emirate, before the 19:30 Reel.',
     branch: 'All four' },
 
-  { d: '2026-08-10', t: '10:00', ch: 'story', pillar: 'conversion', status: 'plan',
+  { a: { a: 'open', o: 0 }, t: '10:00', ch: 'story', pillar: 'conversion', status: 'plan',
     title: 'Launch day takeover · five frames',
     owner: 'Hanneh',
     angle: 'Frame 1 the line, frame 2 what it is not, frame 3 the three tiers, frame 4 the Self-Care Bonus, frame 5 the link sticker. Stories carry the link, so this is where the first placements come from.',
@@ -149,7 +187,7 @@ const CAL_POSTS = [
     cta: 'Link sticker on the last frame.',
     branch: 'All four' },
 
-  { d: '2026-08-10', t: '11:30', ch: 'fb', pillar: 'identity', status: 'plan',
+  { a: { a: 'open', o: 0 }, t: '11:30', ch: 'fb', pillar: 'identity', status: 'plan',
     title: 'Why we built this · from Tara',
     owner: 'Hanneh',
     angle: 'Longer copy in Tara\'s own voice, first person singular the whole way through, on why a prepaid plan exists at all: the women who look after everyone else first never book the thing they most need. Facebook holds the long version. Do not drift into "we" halfway down.',
@@ -157,7 +195,7 @@ const CAL_POSTS = [
     cta: 'The three tiers are here.',
     branch: 'All four' },
 
-  { d: '2026-08-10', t: '13:00', ch: 'static', pillar: 'education', status: 'plan',
+  { a: { a: 'open', o: 0 }, t: '13:00', ch: 'static', pillar: 'education', status: 'plan',
     title: 'The three tiers, plainly',
     owner: 'Hanneh',
     angle: 'One tile, three tiers, no cleverness. Prepaid, bonus, total credit, validity. Dip Your Toes is paid in full; the upper two split into four with Tabby. These numbers are identical in both emirates, so one tile serves both.',
@@ -165,23 +203,23 @@ const CAL_POSTS = [
     cta: 'Six, nine or twelve months. Link in bio.',
     branch: 'All four' },
 
-  { d: '2026-08-10', t: '19:30', ch: 'reel', pillar: 'education', status: 'plan',
+  { a: { a: 'open', o: 0 }, t: '19:30', ch: 'reel', pillar: 'education', status: 'plan',
     title: 'It is not money off',
     owner: 'Hanneh',
     angle: 'The single idea the whole campaign rests on. Money off takes something off the price; this puts credit on your account and adds more on top. If she understands only one thing, it is this one. Never reach for the banned word, not even to deny it.',
     hook: 'This is not money off. You place your credit, we add more on top.',
-    cta: 'Open until 28 August. Link in bio.',
+    cta: 'Open until {close}. Link in bio.',
     branch: 'All four' },
 
-  { d: '2026-08-10', t: '20:30', ch: 'tiktok', pillar: 'education', status: 'plan',
+  { a: { a: 'open', o: 0 }, t: '20:30', ch: 'tiktok', pillar: 'education', status: 'plan',
     title: 'The part you keep putting off',
     owner: 'Hanneh',
     angle: 'Raw, to camera, no captions on screen. The Self-Care Bonus is pointed at exactly the thing she has moved three times: the facial, the treatment, the hour that is only hers.',
     hook: 'There is one thing on your list you have moved three times. This is for that.',
-    cta: 'Until 28 August.',
+    cta: 'Until {close}.',
     branch: 'All four' },
 
-  { d: '2026-08-11', t: '10:00', ch: 'story', pillar: 'education', status: 'plan',
+  { a: { a: 'open', o: 1 }, t: '10:00', ch: 'story', pillar: 'education', status: 'plan',
     title: 'Ask us anything about the voucher',
     owner: 'Whoever is on socials',
     angle: 'Question sticker, answered live through the day. Every answer becomes a saved highlight and, where it repeats, a static post later in the week.',
@@ -189,7 +227,7 @@ const CAL_POSTS = [
     cta: 'Question sticker + answers in the afternoon.',
     branch: 'All four' },
 
-  { d: '2026-08-11', t: '11:30', ch: 'fb', pillar: 'education', status: 'plan',
+  { a: { a: 'open', o: 1 }, t: '11:30', ch: 'fb', pillar: 'education', status: 'plan',
     title: 'Which tier is for whom',
     owner: 'Hanneh',
     angle: 'Decision help rather than promotion. Dip Your Toes for the client finding her way back in, Season of You for the one who wants the year on rhythm without committing to twelve months, All-In VIP Year for the regular who is here every six weeks anyway. Facebook holds the longer read.',
@@ -197,7 +235,7 @@ const CAL_POSTS = [
     cta: 'Reply here and we will help you choose.',
     branch: 'All four' },
 
-  { d: '2026-08-11', t: '19:30', ch: 'reel', pillar: 'education', status: 'plan',
+  { a: { a: 'open', o: 1 }, t: '19:30', ch: 'reel', pillar: 'education', status: 'plan',
     title: 'Where the Self-Care Bonus goes',
     owner: 'Hanneh',
     angle: 'The bonus is not general credit and saying so plainly prevents the complaint later: beauty services, treatments, keratin services and blowdries only. Clear on the way in, no surprise at the till.',
@@ -205,7 +243,7 @@ const CAL_POSTS = [
     cta: 'Season of You, nine months. Link in bio.',
     branch: 'All four' },
 
-  { d: '2026-08-12', t: '10:00', ch: 'story', pillar: 'bts', status: 'plan',
+  { a: { a: 'open', o: 2 }, t: '10:00', ch: 'story', pillar: 'bts', status: 'plan',
     title: 'Behind reception · the first plans placed',
     owner: 'Whoever is on socials',
     angle: 'Real footage from the desk, the actual first placements of the week. Proof it is happening, not a graphic saying it is happening. State the real number from the desk that morning, or say none at all. Never a placeholder figure.',
@@ -213,7 +251,7 @@ const CAL_POSTS = [
     cta: 'Link sticker.',
     branch: 'Mamsha al Saadiyat' },
 
-  { d: '2026-08-12', t: '13:00', ch: 'static', pillar: 'identity', status: 'plan',
+  { a: { a: 'open', o: 2 }, t: '13:00', ch: 'static', pillar: 'identity', status: 'plan',
     title: 'For the woman who looks after everyone else first',
     owner: 'Hanneh',
     angle: 'No prices on this one. It is the avatar post: she is the one who remembers everyone\'s dates and skips her own. Recognition before offer.',
@@ -221,15 +259,15 @@ const CAL_POSTS = [
     cta: 'Soft: read the three tiers when you are ready.',
     branch: 'All four' },
 
-  { d: '2026-08-12', t: '20:30', ch: 'tiktok', pillar: 'education', status: 'plan',
+  { a: { a: 'open', o: 2 }, t: '20:30', ch: 'tiktok', pillar: 'education', status: 'plan',
     title: 'Three tiers in fifteen seconds',
     owner: 'Hanneh',
     angle: 'Fast, plain, numbers on screen and said out loud in one format the whole way through. Made to be re-watched and sent to a friend, which is how the tiers get understood without a sales conversation.',
     hook: 'AED 1,000 becomes 1,150. AED 2,500 becomes 3,000. AED 4,500 becomes 5,400.',
-    cta: 'Closes 28 August.',
+    cta: 'Closes {close}.',
     branch: 'All four' },
 
-  { d: '2026-08-13', t: '10:00', ch: 'story', pillar: 'education', status: 'plan',
+  { a: { a: 'open', o: 3 }, t: '10:00', ch: 'story', pillar: 'education', status: 'plan',
     title: 'Confidence Mapping · what it actually is',
     owner: 'Hanneh',
     angle: 'Three frames explaining Confidence Mapping plainly: a few stages, then your credit is pointed at what you actually keep putting off rather than spread thin across everything. Call it Confidence Mapping every time, never "the quiz".',
@@ -237,7 +275,7 @@ const CAL_POSTS = [
     cta: 'Link sticker to Confidence Mapping.',
     branch: 'All four' },
 
-  { d: '2026-08-13', t: '11:30', ch: 'fb', pillar: 'transformation', status: 'plan',
+  { a: { a: 'open', o: 3 }, t: '11:30', ch: 'fb', pillar: 'transformation', status: 'plan',
     title: 'A client, in her own words',
     owner: 'Hanneh',
     angle: 'One real client, her actual words only, transcribed verbatim and permission logged before anything is drafted. Do not tidy the quote and do not write a placeholder version, because a drafted testimonial is a testimonial that ships. Facebook rewards the longer read, so the whole quote runs rather than a trimmed line.',
@@ -245,7 +283,7 @@ const CAL_POSTS = [
     cta: 'Name her tier only if she is happy for it to be named.',
     branch: 'Khalifa City A' },
 
-  { d: '2026-08-13', t: '19:30', ch: 'reel', pillar: 'transformation', status: 'plan',
+  { a: { a: 'open', o: 3 }, t: '19:30', ch: 'reel', pillar: 'transformation', status: 'plan',
     title: 'Nine months, mapped',
     owner: 'Hanneh',
     angle: 'What a placed plan actually looks like across nine months: the colour on rhythm, the treatment that finally happens, the facial that stops being moved. Time, not products.',
@@ -253,7 +291,7 @@ const CAL_POSTS = [
     cta: 'Season of You. Nine months.',
     branch: 'All four' },
 
-  { d: '2026-08-14', t: '10:00', ch: 'story', pillar: 'bts', status: 'plan',
+  { a: { a: 'open', o: 4 }, t: '10:00', ch: 'story', pillar: 'bts', status: 'plan',
     title: 'Friday in the salon',
     owner: 'Whoever is on socials',
     angle: 'The busiest day, filmed as it is. No script. Ends on what is genuinely still open tomorrow, and only if the diary actually shows it. Do not say the salon is full and then offer spaces in the same breath.',
@@ -261,7 +299,7 @@ const CAL_POSTS = [
     cta: 'Two spaces tomorrow if you want one.',
     branch: 'Al Quoz' },
 
-  { d: '2026-08-14', t: '13:00', ch: 'static', pillar: 'education', status: 'plan',
+  { a: { a: 'open', o: 4 }, t: '13:00', ch: 'static', pillar: 'education', status: 'plan',
     title: 'Tabby · split the upper two into four',
     owner: 'Hanneh',
     angle: 'Same credit, four payments, nothing added. This is the post that answers the price hesitation without touching the price. Dip Your Toes is paid in full and the tile has to say so. Approval sits with Tabby, on their terms, and saying that here prevents the first declined client becoming a complaint.',
@@ -269,7 +307,7 @@ const CAL_POSTS = [
     cta: 'On Season of You and All-In VIP Year, subject to Tabby approval.',
     branch: 'All four' },
 
-  { d: '2026-08-15', t: '10:00', ch: 'story', pillar: 'bts', status: 'plan',
+  { a: { a: 'open', o: 5 }, t: '10:00', ch: 'story', pillar: 'bts', status: 'plan',
     title: 'Weekend chairs',
     owner: 'Whoever is on socials',
     angle: 'Saturday, in the room. Faces, hands, the sound of it. Community pillar work that keeps the feed from being all offer.',
@@ -277,7 +315,7 @@ const CAL_POSTS = [
     cta: 'Link sticker on the last frame only.',
     branch: 'Mamsha al Saadiyat' },
 
-  { d: '2026-08-15', t: '19:30', ch: 'reel', pillar: 'community', status: 'plan',
+  { a: { a: 'open', o: 5 }, t: '19:30', ch: 'reel', pillar: 'community', status: 'plan',
     title: 'The card you hand to someone else',
     owner: 'Hanneh',
     angle: 'The gifting buyer is genuinely different: she will spend on her mother, her sister, her friend before herself. Written to the gift card, which is one card, tiered in value, and meant to be given away. Not written to gifting the whole voucher, which the Terms do not carry.',
@@ -286,7 +324,7 @@ const CAL_POSTS = [
     branch: 'All four',
     flag: 'Gifting the WHOLE voucher is not carried by the Terms: the main credit cannot be transferred to another person unless Tara agrees. The landing page FAQ used to promise it is "sent in her name". That was rewritten on 10 Aug to lead with the gift card, which is the part that genuinely is hers to hand over, so the page and the Terms disagree. This row is written to the gift card only. If Tara amends the term, the stronger whole-voucher angle comes back.' },
 
-  { d: '2026-08-15', t: '20:30', ch: 'tiktok', pillar: 'transformation', status: 'plan',
+  { a: { a: 'open', o: 5 }, t: '20:30', ch: 'tiktok', pillar: 'transformation', status: 'plan',
     title: 'The hour that is only yours',
     owner: 'Hanneh',
     angle: 'One treatment, filmed close and quiet. No numbers at all. It works because the platform rewards atmosphere over explanation.',
@@ -294,15 +332,15 @@ const CAL_POSTS = [
     cta: 'Bio.',
     branch: 'All four' },
 
-  { d: '2026-08-16', t: '10:00', ch: 'story', pillar: 'community', status: 'plan',
+  { a: { a: 'open', o: 6 }, t: '10:00', ch: 'story', pillar: 'community', status: 'plan',
     title: 'Sunday reset',
     owner: 'Whoever is on socials',
-    angle: 'A quiet frame and one question in a poll: what would you point your bonus at? The answers feed week two.',
+    angle: 'A quiet frame and one question in a poll: what would you point your bonus at? The answers feed the week after.',
     hook: 'What would you finally book?',
     cta: 'Poll: the facial / the treatment / the hour to myself.',
     branch: 'All four' },
 
-  { d: '2026-08-16', t: '11:30', ch: 'fb', pillar: 'community', status: 'plan',
+  { a: { a: 'open', o: 6 }, t: '11:30', ch: 'fb', pillar: 'community', status: 'plan',
     title: 'Where your credit spends',
     owner: 'Hanneh',
     angle: 'The branch rules are the most common question at the desk, and the Terms are now split per emirate: a voucher is held against the emirate it was bought in and cannot cross. Facebook has the room to say both halves properly in one post, which a single line on a tile cannot. Lift the wording from term 2 rather than paraphrasing it.',
@@ -311,7 +349,7 @@ const CAL_POSTS = [
     branch: 'All four',
     flag: 'Check against term 2 of BOTH vouchers on the day, and do not publish a line that implies credit works across the two emirates. Motor City is now named on the Dubai voucher as a hair salon, so the old Motor City question is answered, but the cross-emirate rule is the one that gets this post wrong.' },
 
-  { d: '2026-08-16', t: '13:00', ch: 'static', pillar: 'education', status: 'plan',
+  { a: { a: 'open', o: 6 }, t: '13:00', ch: 'static', pillar: 'education', status: 'plan',
     title: 'What your credit covers',
     owner: 'Hanneh',
     angle: 'Services yes, home care no, new hair extensions no, cash no. Saying it here is cheaper than saying it at the till, and it is straight out of the Terms. Avoid "any service": the Dubai menu differs by salon, so the honest phrasing is your own salon\'s menu.',
@@ -319,9 +357,12 @@ const CAL_POSTS = [
     cta: 'Home care and new extensions are the two it does not cover. Full terms on the page.',
     branch: 'All four' },
 
-  /* ── Week two · 17 to 23 August · proof and the bonus ────────────────────── */
+  /* ── The weekly rhythm · week 1 · proof and the bonus ─────────────────────────
+     This is the only week of flow rows written so far. The window is six weeks, so weeks 2
+     to 5 are missing and the calendar says so on the page rather than stretching these
+     thinner or repeating them. Adding a week is adding rows with w: 2, w: 3 and so on. */
 
-  { d: '2026-08-17', t: '10:00', ch: 'story', pillar: 'bts', status: 'plan',
+  { a: { a: 'flow', w: 1, o: 0 }, t: '10:00', ch: 'story', pillar: 'bts', status: 'plan',
     title: 'Monday · what is open this week',
     owner: 'Whoever is on socials',
     angle: 'The diary, honestly. Real availability creates real movement; invented scarcity does not survive a phone call to reception. This instruction applies to every availability post in the plan.',
@@ -329,15 +370,15 @@ const CAL_POSTS = [
     cta: 'Message us to take one.',
     branch: 'All four' },
 
-  { d: '2026-08-17', t: '13:00', ch: 'static', pillar: 'conversion', status: 'plan',
+  { a: { a: 'flow', w: 1, o: 0 }, t: '13:00', ch: 'static', pillar: 'conversion', status: 'plan',
     title: 'Season of You · the reason to start in the middle',
     owner: 'Hanneh',
-    angle: 'Lead with the middle tier rather than the top one, and give the reason rather than a popularity claim. On 17 August the campaign is a week old, so there is nothing behind "most women choose". Nine months, AED 3,000 to spend, AED 500 of it pointed at the beauty she keeps postponing.',
+    angle: 'Lead with the middle tier rather than the top one, and give the reason rather than a popularity claim. By this post the campaign is {elapsed} old, so there is nothing behind "most women choose". Nine months, AED 3,000 to spend, AED 500 of it pointed at the beauty she keeps postponing.',
     hook: 'There is a reason to start in the middle. Nine months, AED 3,000 to spend, and AED 500 of it pointed at what you keep postponing.',
     cta: 'Place AED 2,500, spend AED 3,000.',
     branch: 'All four' },
 
-  { d: '2026-08-17', t: '19:30', ch: 'reel', pillar: 'transformation', status: 'plan',
+  { a: { a: 'flow', w: 1, o: 0 }, t: '19:30', ch: 'reel', pillar: 'transformation', status: 'plan',
     title: 'The facial you keep moving',
     owner: 'Hanneh',
     angle: 'Name the specific behaviour: booked, moved, moved again, quietly dropped. Then show it happening. This is the emotional centre of the whole window.',
@@ -345,7 +386,7 @@ const CAL_POSTS = [
     cta: 'Your Self-Care Bonus is for exactly this.',
     branch: 'All four' },
 
-  { d: '2026-08-18', t: '10:00', ch: 'story', pillar: 'education', status: 'plan',
+  { a: { a: 'flow', w: 1, o: 1 }, t: '10:00', ch: 'story', pillar: 'education', status: 'plan',
     title: 'Reception answers · hair and beauty on one plan?',
     owner: 'Whoever is on socials',
     angle: 'The desk\'s most repeated question, answered by the person who answers it forty times a week. Credit spends on the services on your salon\'s menu; the bonus is beauty, treatments, keratin services and blowdries.',
@@ -353,7 +394,7 @@ const CAL_POSTS = [
     cta: 'Ask us anything else.',
     branch: 'All four' },
 
-  { d: '2026-08-18', t: '13:00', ch: 'static', pillar: 'education', status: 'plan',
+  { a: { a: 'flow', w: 1, o: 1 }, t: '13:00', ch: 'static', pillar: 'education', status: 'plan',
     title: 'Your credit is safe if you need to move a visit',
     owner: 'Hanneh',
     angle: 'The quiet fear behind prepaying: what if I cannot come. Answer it in public. Moving a visit never touches the credit, which stays for the full validity of the tier. Say nothing about notice periods until term 10 is decided, because the two options say different things.',
@@ -362,15 +403,15 @@ const CAL_POSTS = [
     branch: 'All four',
     flag: 'HOLD. Term 10, the cancellation wording, is still an open decision (Flag 2 in the pack). Option A carries a 48-hour notice and the "never affects your credit" line; Option B carries neither. Do not draft a notice period into this post until Tara has chosen. The hook is safe under either option.' },
 
-  { d: '2026-08-18', t: '20:30', ch: 'tiktok', pillar: 'transformation', status: 'plan',
+  { a: { a: 'flow', w: 1, o: 1 }, t: '20:30', ch: 'tiktok', pillar: 'transformation', status: 'plan',
     title: 'The first visit off a placed plan',
     owner: 'Hanneh',
     angle: 'Follow one client who placed hers in week one through her first visit. Raw, unnarrated, and it does what no explanation of the mechanic can: shows the plan being used rather than described.',
-    hook: 'She placed hers eight days ago. This is her first visit off it.',
-    cta: 'Ten days left.',
+    hook: 'She placed hers {elapsed} ago. This is her first visit off it.',
+    cta: '{Days} left.',
     branch: 'All four' },
 
-  { d: '2026-08-19', t: '10:00', ch: 'story', pillar: 'bts', status: 'plan',
+  { a: { a: 'flow', w: 1, o: 2 }, t: '10:00', ch: 'story', pillar: 'bts', status: 'plan',
     title: 'Mid-week · two chairs tomorrow',
     owner: 'Whoever is on socials',
     angle: 'Short, real, specific. Names the branch and the time, because a vague opening is not an opening. An invitation, not a race.',
@@ -378,7 +419,7 @@ const CAL_POSTS = [
     cta: 'Message us and we will hold one.',
     branch: 'Khalifa City A' },
 
-  { d: '2026-08-19', t: '11:30', ch: 'fb', pillar: 'identity', status: 'plan',
+  { a: { a: 'flow', w: 1, o: 2 }, t: '11:30', ch: 'fb', pillar: 'identity', status: 'plan',
     title: 'The Confidence Promise, in plain words',
     owner: 'Hanneh',
     angle: 'The Promise is verbatim only, introduced once by its name, and never paraphrased or softened. It covers the service, not the purchase: we refine, we never refund. Say that plainly here, because in a prepaid campaign where credit is non-refundable, any hint of money back reads as a refund offer and undoes the doctrine.',
@@ -386,7 +427,7 @@ const CAL_POSTS = [
     cta: 'That is the Confidence Promise. It is about refining the result, not the voucher.',
     branch: 'All four' },
 
-  { d: '2026-08-19', t: '19:30', ch: 'reel', pillar: 'transformation', status: 'plan',
+  { a: { a: 'flow', w: 1, o: 2 }, t: '19:30', ch: 'reel', pillar: 'transformation', status: 'plan',
     title: 'Eight weeks of care, not one visit',
     owner: 'Hanneh',
     angle: 'The same client at three points, weeks apart. The argument for a plan over a single visit, made visually rather than stated.',
@@ -394,7 +435,7 @@ const CAL_POSTS = [
     cta: 'That is what the credit is for.',
     branch: 'All four' },
 
-  { d: '2026-08-20', t: '10:00', ch: 'story', pillar: 'education', status: 'plan',
+  { a: { a: 'flow', w: 1, o: 3 }, t: '10:00', ch: 'story', pillar: 'education', status: 'plan',
     title: 'What Confidence Mapping asks you',
     owner: 'Hanneh',
     angle: 'Show the actual stages from the live page rather than inventing a number of questions. Curiosity does the work, and the frames double as an explanation of why the mapping exists at all. The last stage is You, which is the one nobody expects on a hair form.',
@@ -402,7 +443,7 @@ const CAL_POSTS = [
     cta: 'Link sticker to Confidence Mapping.',
     branch: 'All four' },
 
-  { d: '2026-08-20', t: '19:30', ch: 'reel', pillar: 'education', status: 'plan',
+  { a: { a: 'flow', w: 1, o: 3 }, t: '19:30', ch: 'reel', pillar: 'education', status: 'plan',
     title: 'Six months, nine months, twelve',
     owner: 'Hanneh',
     angle: 'Validity as the deciding factor rather than price. How long she realistically needs to use the credit is a better question than how much she wants to place.',
@@ -410,7 +451,7 @@ const CAL_POSTS = [
     cta: 'Validity runs from the day you place it.',
     branch: 'All four' },
 
-  { d: '2026-08-20', t: '20:30', ch: 'tiktok', pillar: 'identity', status: 'plan',
+  { a: { a: 'flow', w: 1, o: 3 }, t: '20:30', ch: 'tiktok', pillar: 'identity', status: 'plan',
     title: 'The women who look after everyone else',
     owner: 'Hanneh',
     angle: 'To camera, unpolished, one thought. It has to land as recognition rather than as a verdict on her, so the second line explains the pattern instead of blaming her for it.',
@@ -418,7 +459,7 @@ const CAL_POSTS = [
     cta: 'No link. Bio only.',
     branch: 'All four' },
 
-  { d: '2026-08-21', t: '10:00', ch: 'story', pillar: 'bts', status: 'plan',
+  { a: { a: 'flow', w: 1, o: 4 }, t: '10:00', ch: 'story', pillar: 'bts', status: 'plan',
     title: 'Friday · the team\'s own picks',
     owner: 'Whoever is on socials',
     angle: 'Which tier the team would place, and why, in their own words. Staff belief is the thing clients read fastest, and it doubles as internal buy-in for the incentive.',
@@ -426,7 +467,7 @@ const CAL_POSTS = [
     cta: 'Link sticker.',
     branch: 'All four' },
 
-  { d: '2026-08-21', t: '19:30', ch: 'reel', pillar: 'bts', status: 'plan',
+  { a: { a: 'flow', w: 1, o: 4 }, t: '19:30', ch: 'reel', pillar: 'bts', status: 'plan',
     title: 'Inside a Confidence Mapping',
     owner: 'Hanneh',
     angle: 'Film a real mapping, with permission. The expertise pillar: she is not choosing from a menu, she is being read by someone who knows hair. Confidence Mapping is free on every tier and free without one, so do not gate it behind the upper tiers.',
@@ -434,7 +475,7 @@ const CAL_POSTS = [
     cta: 'Free with every tier, and free without one.',
     branch: 'Mamsha al Saadiyat' },
 
-  { d: '2026-08-22', t: '10:00', ch: 'story', pillar: 'bts', status: 'plan',
+  { a: { a: 'flow', w: 1, o: 5 }, t: '10:00', ch: 'story', pillar: 'bts', status: 'plan',
     title: 'Saturday, Mamsha al Saadiyat',
     owner: 'Whoever is on socials',
     angle: 'In the room, no offer. One link sticker at the end. Presence work, and it keeps the daily Story habit from turning into a daily advert.',
@@ -442,16 +483,16 @@ const CAL_POSTS = [
     cta: 'Link sticker, last frame.',
     branch: 'Mamsha al Saadiyat' },
 
-  { d: '2026-08-22', t: '11:30', ch: 'fb', pillar: 'community', status: 'plan',
+  { a: { a: 'flow', w: 1, o: 5 }, t: '11:30', ch: 'fb', pillar: 'community', status: 'plan',
     title: 'Why women give this card',
     owner: 'Hanneh',
     angle: 'The gifting story at length: the daughter who hands it to her mother, the friend who hands it over after a hard year. Facebook skews to the buyer who is spending on someone else. Written to the gift card, not to transferring the voucher itself.',
     hook: 'The best ones are handed over by someone who noticed.',
     cta: 'One card in every plan, yours to give away.',
     branch: 'All four',
-    flag: 'Same open decision as 15 August: the Terms do not allow the main credit to be transferred, so this row is written to the gift card only. Waiting on Tara.' },
+    flag: 'Same open decision as the gifting Reel in launch week: the Terms do not allow the main credit to be transferred, so this row is written to the gift card only. Waiting on Tara.' },
 
-  { d: '2026-08-22', t: '13:00', ch: 'static', pillar: 'community', status: 'plan',
+  { a: { a: 'flow', w: 1, o: 5 }, t: '13:00', ch: 'static', pillar: 'community', status: 'plan',
     title: 'The gift card, sent in her name',
     owner: 'Hanneh',
     angle: 'One gift card, not several, because that is what Phorest issues, and the value is tiered: AED 100 with Dip Your Toes, AED 300 with Season of You, AED 500 with All-In VIP Year. Included with all three tiers. Redeemable against an eligible service at the same salons named in term 2, not cash and not retail.',
@@ -459,31 +500,15 @@ const CAL_POSTS = [
     cta: 'Included with all three tiers.',
     branch: 'All four' },
 
-  { d: '2026-08-22', t: '20:30', ch: 'tiktok', pillar: 'education', status: 'plan',
+  { a: { a: 'flow', w: 1, o: 5 }, t: '20:30', ch: 'tiktok', pillar: 'education', status: 'plan',
     title: 'Reception\'s most asked question',
     owner: 'Hanneh',
     angle: 'Filmed at the desk, answered in one breath. Native to the platform because it is a real person answering a real question, not a brand explaining a mechanic.',
     hook: 'Everyone asks the same thing first.',
-    cta: 'Six days.',
+    cta: '{Days}.',
     branch: 'All four' },
 
-  { d: '2026-08-23', t: '10:00', ch: 'story', pillar: 'conversion', status: 'plan',
-    title: 'Five days · countdown begins',
-    owner: 'Hanneh',
-    angle: 'The countdown starts here and runs daily to Friday. Real urgency: the window genuinely closes on 28 August, so the number can be stated flatly. Every post on a given day has to say the same number.',
-    hook: 'Five days.',
-    cta: 'Link sticker every frame from here.',
-    branch: 'All four' },
-
-  { d: '2026-08-23', t: '11:30', ch: 'fb', pillar: 'conversion', status: 'plan',
-    title: 'Five days left',
-    owner: 'Hanneh',
-    angle: 'A plain summary post for the audience that has seen nothing yet: what it is, the three numbers, where it is redeemed, when it closes. No new idea, just the whole thing in one place. Five days, not a week, so it matches the morning Story.',
-    hook: 'If you have been meaning to look at this, this is the week.',
-    cta: 'Closes 28 August.',
-    branch: 'All four' },
-
-  { d: '2026-08-23', t: '19:30', ch: 'reel', pillar: 'education', status: 'plan',
+  { a: { a: 'flow', w: 1, o: 6 }, t: '19:30', ch: 'reel', pillar: 'education', status: 'plan',
     title: 'How Tabby works, start to finish',
     owner: 'Hanneh',
     angle: 'Screen recording of the actual flow so there is no mystery at the payment step. The credit is identical either way, and approval sits with Tabby on their terms.',
@@ -491,89 +516,108 @@ const CAL_POSTS = [
     cta: 'On Season of You and All-In VIP Year. Approval sits with Tabby.',
     branch: 'All four' },
 
-  /* ── Closing week · 24 to 28 August ──────────────────────────────────────── */
+  /* ── The close · the last five days, anchored to the close itself ─────────────
+     Every row from here is `close`-anchored and every number in them is a token. A countdown
+     that floats is a countdown that eventually lies, and these are the rows the nurture
+     emails and the WhatsApp reminders have to agree with on the same morning. */
 
-  { d: '2026-08-24', t: '09:00', ch: 'beat', pillar: 'ops', status: 'fixed',
+  { a: { a: 'close', o: -5 }, t: '10:00', ch: 'story', pillar: 'conversion', status: 'plan',
+    title: 'Five days · countdown begins',
+    owner: 'Hanneh',
+    angle: 'The countdown starts here and runs daily to the close. Real urgency: the window genuinely closes on {close}, so the number can be stated flatly. Every post on a given day has to say the same number, which is why the number is worked out from the close rather than typed into the row.',
+    hook: '{Days}.',
+    cta: 'Link sticker every frame from here.',
+    branch: 'All four' },
+
+  { a: { a: 'close', o: -5 }, t: '11:30', ch: 'fb', pillar: 'conversion', status: 'plan',
+    title: 'Five days left',
+    owner: 'Hanneh',
+    angle: 'A plain summary post for the audience that has seen nothing yet: what it is, the three numbers, where it is redeemed, when it closes. No new idea, just the whole thing in one place. The count comes off the close, so this post and the morning Story cannot disagree.',
+    hook: 'If you have been meaning to look at this, this is the week.',
+    cta: 'Closes {close}.',
+    branch: 'All four' },
+
+  { a: { a: 'close', o: -4 }, t: '09:00', ch: 'beat', pillar: 'ops', status: 'fixed',
     title: 'Four-days-left wave · email + WhatsApp',
     owner: 'Kate',
-    angle: 'The nurture email and the reminder template both land today. Social has to say the same number as the inbox, or the campaign starts contradicting itself in the last week.',
+    angle: 'The nurture email and the reminder template both land today. Social has to say the same number as the inbox, or the campaign starts contradicting itself in the last week. This is the day nurture-4 goes out, and its headline is only true because this row and that email are both four days off the close.',
     hook: '',
     cta: 'Check the wording matches before the 13:00 static.',
     branch: 'All four' },
 
-  { d: '2026-08-24', t: '10:00', ch: 'story', pillar: 'conversion', status: 'plan',
+  { a: { a: 'close', o: -4 }, t: '10:00', ch: 'story', pillar: 'conversion', status: 'plan',
     title: 'Four days',
     owner: 'Hanneh',
     angle: 'One frame, one number, link sticker. Every day from here is the same shape so the countdown is legible at a glance.',
-    hook: 'Four days.',
+    hook: '{Days}.',
     cta: 'Link sticker.',
     branch: 'All four' },
 
-  { d: '2026-08-24', t: '13:00', ch: 'static', pillar: 'education', status: 'plan',
-    title: 'What closes on Friday, and what does not',
+  { a: { a: 'close', o: -4 }, t: '13:00', ch: 'static', pillar: 'education', status: 'plan',
+    title: 'What closes, and what does not',
     owner: 'Hanneh',
-    angle: 'The distinction that prevents a fortnight of confused messages: the purchase window closes on 28 August, but the credit keeps its full validity and can be booked against long after.',
-    hook: 'Friday closes the window, not your credit.',
+    angle: 'The distinction that prevents a fortnight of confused messages: the purchase window closes on {close}, but the credit keeps its full validity and can be booked against long after.',
+    hook: '{closeDow} closes the window, not your credit.',
     cta: 'Book against it any time inside your validity.',
     branch: 'All four' },
 
-  { d: '2026-08-24', t: '19:30', ch: 'reel', pillar: 'conversion', status: 'plan',
+  { a: { a: 'close', o: -4 }, t: '19:30', ch: 'reel', pillar: 'conversion', status: 'plan',
     title: 'Four days left, said plainly',
     owner: 'Hanneh',
-    angle: 'No pressure language, no invented scarcity, and no promises about what happens after August, because term 15 lets Tara amend the campaign and nobody has authorised a forward claim. The window is real and closing, and that is the whole reason to say it.',
-    hook: 'Four days. When the window closes, it closes.',
+    angle: 'No pressure language, no invented scarcity, and no promises about what happens after the window, because term 15 lets Tara amend the campaign and nobody has authorised a forward claim. The window is real and closing, and that is the whole reason to say it.',
+    hook: '{Days}. When the window closes, it closes.',
     cta: 'Link in bio.',
     branch: 'All four' },
 
-  { d: '2026-08-25', t: '10:00', ch: 'story', pillar: 'conversion', status: 'plan',
+  { a: { a: 'close', o: -3 }, t: '10:00', ch: 'story', pillar: 'conversion', status: 'plan',
     title: 'Three days',
     owner: 'Hanneh',
     angle: 'Same frame, new number, plus one line from a client who placed hers in week one.',
-    hook: 'Three days.',
+    hook: '{Days}.',
     cta: 'Link sticker.',
     branch: 'All four' },
 
-  { d: '2026-08-25', t: '19:30', ch: 'reel', pillar: 'transformation', status: 'plan',
+  { a: { a: 'close', o: -3 }, t: '19:30', ch: 'reel', pillar: 'transformation', status: 'plan',
     title: 'She placed hers on day one. Here is what she has booked.',
     owner: 'Hanneh',
-    angle: 'Proof in the last week does more than any argument. A real plan, two weeks in, and the list of visits already in the diary against it.',
-    hook: 'Two weeks in, and this is already in her diary.',
-    cta: 'Three days to place yours.',
+    angle: 'Proof in the last week does more than any argument. A real plan, {elapsed} in, and the list of visits already in the diary against it.',
+    hook: '{Elapsed} in, and this is already in her diary.',
+    cta: '{Days} to place yours.',
     branch: 'All four' },
 
-  { d: '2026-08-25', t: '20:30', ch: 'tiktok', pillar: 'education', status: 'plan',
+  { a: { a: 'close', o: -3 }, t: '20:30', ch: 'tiktok', pillar: 'education', status: 'plan',
     title: 'The honest reason to place it now',
     owner: 'Hanneh',
-    angle: 'To camera. The honest version: nothing gets more expensive on Saturday, the window simply shuts, and a plan you place in August is a plan that exists for the rest of the year.',
-    hook: 'Nothing gets more expensive on Saturday. It just stops being available.',
-    cta: 'Three days.',
+    angle: 'To camera. The honest version: nothing gets more expensive on {closeDowNext}, the window simply shuts, and a plan placed inside it is a plan that exists for the rest of the year.',
+    hook: 'Nothing gets more expensive on {closeDowNext}. It just stops being available.',
+    cta: '{Days}.',
     branch: 'All four' },
 
-  { d: '2026-08-26', t: '10:00', ch: 'story', pillar: 'conversion', status: 'plan',
+  { a: { a: 'close', o: -2 }, t: '10:00', ch: 'story', pillar: 'conversion', status: 'plan',
     title: 'Two days',
     owner: 'Hanneh',
     angle: 'Countdown frame plus a question sticker, so anyone still hesitating can ask instead of drifting off. Plural voice: this is the salon speaking, not one person.',
-    hook: 'Two days. If you are still weighing it up, ask us.',
+    hook: '{Days}. If you are still weighing it up, ask us.',
     cta: 'Question sticker + link sticker.',
     branch: 'All four' },
 
-  { d: '2026-08-26', t: '13:00', ch: 'static', pillar: 'education', status: 'plan',
+  { a: { a: 'close', o: -2 }, t: '13:00', ch: 'static', pillar: 'education', status: 'plan',
     title: 'The three tiers, side by side, last time',
     owner: 'Hanneh',
     angle: 'The clearest tile of the campaign, published once more for the people who are only now paying attention. Numbers, validity, Tabby, nothing else.',
     hook: 'One last look at all three.',
-    cta: 'Closes Friday.',
+    cta: 'Closes {closeDow}.',
     branch: 'All four' },
 
-  { d: '2026-08-26', t: '20:30', ch: 'tiktok', pillar: 'transformation', status: 'plan',
-    title: 'Two days · two weeks of results in ten seconds',
+  { a: { a: 'close', o: -2 }, t: '20:30', ch: 'tiktok', pillar: 'transformation', status: 'plan',
+    title: 'Two days · every result since the window opened',
     owner: 'Hanneh',
-    angle: 'Every result filmed since launch, cut fast, date on screen at the end. Recycled footage on purpose: the last week is not the week to shoot new things, and the strongest closing argument is a fortnight of finished work. Launch was 10 August, so the honest count is two weeks.',
-    hook: 'Two weeks of this. Two days left to start yours.',
+    angle: 'Every result filmed since the window opened, cut fast, date on screen at the end. Recycled footage on purpose: the last week is not the week to shoot new things, and the strongest closing argument is a run of finished work. The window opened on {open}, so the honest count is {elapsed}.',
+    hook: '{Elapsed} of this. {Days} left to start yours.',
     cta: 'Bio.',
     branch: 'All four' },
 
-  { d: '2026-08-27', t: '10:00', ch: 'story', pillar: 'conversion', status: 'plan',
+  { a: { a: 'close', o: -1 }, t: '10:00', ch: 'story', pillar: 'conversion', status: 'plan',
     title: 'One day',
     owner: 'Hanneh',
     angle: 'Countdown, and a reminder that reception will help her choose on WhatsApp if she does not want to decide alone.',
@@ -581,7 +625,7 @@ const CAL_POSTS = [
     cta: 'Reply here and we will help you choose.',
     branch: 'All four' },
 
-  { d: '2026-08-27', t: '11:30', ch: 'fb', pillar: 'conversion', status: 'plan',
+  { a: { a: 'close', o: -1 }, t: '11:30', ch: 'fb', pillar: 'conversion', status: 'plan',
     title: 'Closing tomorrow',
     owner: 'Hanneh',
     angle: 'Final Facebook post: the whole offer, one more time, with the closing time stated in local terms so nobody is guessing what "tomorrow" means. No claim about whether it returns later in the year, because nobody has decided that.',
@@ -589,23 +633,23 @@ const CAL_POSTS = [
     cta: 'The three tiers are here.',
     branch: 'All four' },
 
-  { d: '2026-08-27', t: '19:30', ch: 'reel', pillar: 'identity', status: 'plan',
+  { a: { a: 'close', o: -1 }, t: '19:30', ch: 'reel', pillar: 'identity', status: 'plan',
     title: 'Tomorrow it closes',
     owner: 'Hanneh',
-    angle: 'Warm, not shouted. Speak to the woman who has watched every post for a fortnight and still has not placed hers, and give her a reason that is about her rather than about the deadline. Never a verdict on her.',
-    hook: 'Two weeks of thinking about it is not indecision. It is what happens when you are last on your own list.',
+    angle: 'Warm, not shouted. Speak to the woman who has watched every post since the window opened and still has not placed hers, and give her a reason that is about her rather than about the deadline. Never a verdict on her.',
+    hook: '{Elapsed} of thinking about it is not indecision. It is what happens when you are last on your own list.',
     cta: 'Tomorrow is the last day.',
     branch: 'All four' },
 
-  { d: '2026-08-28', t: '09:00', ch: 'beat', pillar: 'ops', status: 'fixed',
+  { a: { a: 'close', o: 0 }, t: '09:00', ch: 'beat', pillar: 'ops', status: 'fixed',
     title: 'Final day · the window closes tonight',
     owner: 'Kate',
-    angle: 'Final-day email and WhatsApp go out. Reception on notice for a busy phone. Links must be taken down or switched off after close, or Saturday produces a placement nobody can honour.',
+    angle: 'Final-day email and WhatsApp go out. Reception on notice for a busy phone. Links must be taken down or switched off after close, or {closeDowNext} produces a placement nobody can honour.',
     hook: '',
     cta: 'Confirm the closing hour, then use that same hour in the email, the WhatsApp and every post today. Confirm who switches the Stripe links off, and when.',
     branch: 'All four' },
 
-  { d: '2026-08-28', t: '09:30', ch: 'static', pillar: 'conversion', status: 'plan',
+  { a: { a: 'close', o: 0 }, t: '09:30', ch: 'static', pillar: 'conversion', status: 'plan',
     title: 'Closing tonight',
     owner: 'Hanneh',
     angle: 'Posted early so it sits at the top of the grid all day. One line, three numbers, and the closing hour once it is confirmed on the 09:00 beat.',
@@ -613,7 +657,7 @@ const CAL_POSTS = [
     cta: 'Link in bio.',
     branch: 'All four' },
 
-  { d: '2026-08-28', t: '10:00', ch: 'story', pillar: 'conversion', status: 'plan',
+  { a: { a: 'close', o: 0 }, t: '10:00', ch: 'story', pillar: 'conversion', status: 'plan',
     title: 'Final day · morning frame',
     owner: 'Hanneh',
     angle: 'First of three frames today. Morning, afternoon, evening, each one further along. Do not stack them all in the morning.',
@@ -621,7 +665,7 @@ const CAL_POSTS = [
     cta: 'Link sticker.',
     branch: 'All four' },
 
-  { d: '2026-08-28', t: '11:30', ch: 'fb', pillar: 'conversion', status: 'plan',
+  { a: { a: 'close', o: 0 }, t: '11:30', ch: 'fb', pillar: 'conversion', status: 'plan',
     title: 'Closes tonight',
     owner: 'Hanneh',
     angle: 'Short for once. Facebook has had the long versions; today it needs the hour and the link.',
@@ -629,7 +673,7 @@ const CAL_POSTS = [
     cta: 'Place yours before we close.',
     branch: 'All four' },
 
-  { d: '2026-08-28', t: '15:00', ch: 'story', pillar: 'bts', status: 'plan',
+  { a: { a: 'close', o: 0 }, t: '15:00', ch: 'story', pillar: 'bts', status: 'plan',
     title: 'Final day · afternoon frame',
     owner: 'Whoever is on socials',
     angle: 'Live from the desk on the last afternoon. Real, not staged, and it does more than a graphic at this point. Show the desk rather than claiming the phone has not stopped.',
@@ -637,7 +681,7 @@ const CAL_POSTS = [
     cta: 'Link sticker.',
     branch: 'All four' },
 
-  { d: '2026-08-28', t: '19:30', ch: 'reel', pillar: 'conversion', status: 'plan',
+  { a: { a: 'close', o: 0 }, t: '19:30', ch: 'reel', pillar: 'conversion', status: 'plan',
     title: 'Final hours',
     owner: 'Hanneh',
     angle: 'The last post of the campaign. Close on the same line it opened with, so the whole window reads as one thought rather than a run of adverts.',
@@ -645,7 +689,7 @@ const CAL_POSTS = [
     cta: 'Link in bio until the window closes tonight.',
     branch: 'All four' },
 
-  { d: '2026-08-28', t: '20:00', ch: 'story', pillar: 'conversion', status: 'plan',
+  { a: { a: 'close', o: 0 }, t: '20:00', ch: 'story', pillar: 'conversion', status: 'plan',
     title: 'Final day · last frame',
     owner: 'Hanneh',
     angle: 'One frame, the confirmed closing hour, the link. Nothing else.',
@@ -653,7 +697,7 @@ const CAL_POSTS = [
     cta: 'Link sticker.',
     branch: 'All four' },
 
-  { d: '2026-08-28', t: '20:30', ch: 'tiktok', pillar: 'conversion', status: 'plan',
+  { a: { a: 'close', o: 0 }, t: '20:30', ch: 'tiktok', pillar: 'conversion', status: 'plan',
     title: 'Last call',
     owner: 'Hanneh',
     angle: 'Fifteen seconds, to camera, tonight only. Plain, and it should sound like a person rather than a countdown clock.',
@@ -661,17 +705,17 @@ const CAL_POSTS = [
     cta: 'Bio.',
     branch: 'All four' },
 
-  /* ── After the close · 29 to 31 August ───────────────────────────────────── */
+  /* ── After the close · redemption care ───────────────────────────────────── */
 
-  { d: '2026-08-29', t: '10:00', ch: 'story', pillar: 'community', status: 'plan',
+  { a: { a: 'close', o: 1 }, t: '10:00', ch: 'story', pillar: 'community', status: 'plan',
     title: 'Closed · thank you',
     owner: 'Hanneh',
-    angle: 'The window is shut, said warmly, with what happens next for everyone who placed one. Silence after three weeks of posting reads as if we stopped caring the moment the payments landed.',
+    angle: 'The window is shut, said warmly, with what happens next for everyone who placed one. Silence after {elapsed} of posting reads as if we stopped caring the moment the payments landed.',
     hook: 'That is the window closed. Thank you.',
     cta: 'If you placed one, watch your inbox today.',
     branch: 'All four' },
 
-  { d: '2026-08-29', t: '13:00', ch: 'static', pillar: 'community', status: 'plan',
+  { a: { a: 'close', o: 1 }, t: '13:00', ch: 'static', pillar: 'community', status: 'plan',
     title: 'Thank you, and what happens next',
     owner: 'Hanneh',
     angle: 'Named steps rather than a thank-you graphic: your credit is on your account, your Confidence Mapping is booked, reception will help you place the first visits.',
@@ -679,7 +723,7 @@ const CAL_POSTS = [
     cta: 'Message us to book your first visit.',
     branch: 'All four' },
 
-  { d: '2026-08-30', t: '10:00', ch: 'story', pillar: 'education', status: 'plan',
+  { a: { a: 'close', o: 2 }, t: '10:00', ch: 'story', pillar: 'education', status: 'plan',
     title: 'Booking your credit, step by step',
     owner: 'Hanneh',
     angle: 'Three frames on how to actually use it, because the most expensive outcome of this campaign is credit that never gets redeemed.',
@@ -687,15 +731,15 @@ const CAL_POSTS = [
     cta: 'Message the salon and we will map the first three visits.',
     branch: 'All four' },
 
-  { d: '2026-08-30', t: '19:30', ch: 'reel', pillar: 'bts', status: 'plan',
+  { a: { a: 'close', o: 2 }, t: '19:30', ch: 'reel', pillar: 'bts', status: 'plan',
     title: 'The first bookings coming in',
     owner: 'Hanneh',
     angle: 'The campaign\'s real ending: not the payments, the visits. Film the diary filling up with plans being used.',
-    hook: 'This is what the last three weeks were actually for.',
+    hook: 'This is what the last {elapsed} were actually for.',
     cta: 'No link. This one is for the women who placed one.',
     branch: 'All four' },
 
-  { d: '2026-08-31', t: '09:00', ch: 'beat', pillar: 'ops', status: 'fixed',
+  { a: { a: 'close', o: 3 }, t: '09:00', ch: 'beat', pillar: 'ops', status: 'fixed',
     title: 'Redemption care begins',
     owner: 'Kate',
     angle: 'Until the Phorest to GHL webhook exists, reception applies voucher:redeemed by hand at checkout. If that slips, the expiry touch fires at the wrong women, and that is where unredeemed-credit complaints start.',
@@ -703,7 +747,7 @@ const CAL_POSTS = [
     cta: 'Daily check on the tag for the first two weeks.',
     branch: 'All four' },
 
-  { d: '2026-08-31', t: '10:00', ch: 'story', pillar: 'community', status: 'plan',
+  { a: { a: 'close', o: 3 }, t: '10:00', ch: 'story', pillar: 'community', status: 'plan',
     title: 'Reception is on WhatsApp',
     owner: 'Whoever is on socials',
     angle: 'One frame. Anything at all about your credit, ask the desk. Keeps the door open now the campaign posts have stopped.',
@@ -711,7 +755,7 @@ const CAL_POSTS = [
     cta: 'WhatsApp link sticker.',
     branch: 'All four' },
 
-  { d: '2026-08-31', t: '13:00', ch: 'static', pillar: 'education', status: 'plan',
+  { a: { a: 'close', o: 3 }, t: '13:00', ch: 'static', pillar: 'education', status: 'plan',
     title: 'How to use your credit',
     owner: 'Hanneh',
     angle: 'The saveable version of the redemption rules: services on your salon\'s menu, home care and new extensions excluded, the bonus for beauty, treatments, keratin services and blowdries, validity from the day it was placed, and redeemed in the emirate it was bought in. Pin it.',

@@ -18,7 +18,9 @@
       <a class="back" href="../index.html">&larr; Approval pack</a>
       <img class="brandlogo" src="../assets/tara-rose-logo-black.png" alt="Tara Rose Salon">
       <div class="head">
-        <div class="k">Summer Beauty Ritual Voucher &middot; 7 &ndash; 31 August 2026</div>
+        <!-- Rewritten by calendar.js from the window control below, so it cannot outlive a
+             reschedule the way the old hardcoded "7 to 31 August" did. -->
+        <div class="k">Summer Beauty Ritual Voucher &middot; 17 August to 30 September 2026</div>
         <h1>Posting Calendar</h1>
         <div class="hint"><b>Click a post</b> for the brief: pillar, format, angle, the hook to start from and the call to action. <b>Untick a channel</b> to read one platform on its own.</div>
       </div>
@@ -52,7 +54,7 @@
   </div>
 
   <div class="banner">
-    <strong>This is the plan, not the copy.</strong> Every row is a brief: one pillar, one avatar, one platform, one format, with a hook to start from. The caption is still written in Notion, still has to pass the care standard, and still needs an approval before it publishes, and silence approves it at midnight before its publish date, so a post that should not go out needs an actual no. Two rows carry a flag; open them before drafting.
+    <strong>This is the plan, not the copy.</strong> Every row is a brief: one pillar, one avatar, one platform, one format, with a hook to start from. The caption is still written in Notion, still has to pass the care standard, and still needs an approval before it publishes, and silence approves it at midnight before its publish date, so a post that should not go out needs an actual no. <span id="flagcount">Four rows carry a flag</span>; open them before drafting.
   </div>
 
   <!-- Rendered by the sign-off script at the foot of the page, once it knows who is reading
@@ -68,7 +70,10 @@
       <div class="mixnote">Target across an ordinary month: Education 30% &middot; Transformation 25% &middot; Behind the scenes 20% &middot; Identity 15% &middot; Community and Conversion 10%.</div>
     </div>
     <div class="mixrows" id="mixrows"></div>
-    <div class="mixwhy"><strong>Where it deviates, and why:</strong> Conversion runs well over target and Transformation well under. A three-week closing window cannot carry an ordinary month's mix: the last five days are structurally a countdown, and there are barely two weeks of finished results to show inside the window itself. The fix is not to dilute the closing week; it is to run September heavy on Transformation and Behind the scenes as the placed plans start being used. Worth a decision from Tara either way.</div>
+    <!-- Written by calendar.js against the window that is actually set. The paragraph that
+         used to live here described a three-week August window and was untrue the day after
+         the campaign moved. -->
+    <div class="mixwhy" id="mixwhy"></div>
   </div>
 
   <div class="sheet">
@@ -87,6 +92,9 @@
     <div class="modal" id="modal"></div>
   </div>
 
+<!-- The window itself, shared with the Workflow View, so the two pages cannot describe two
+     different campaigns. It must load before calendar-data.js, which reads its defaults. -->
+<script src="../data/campaign-dates.js"></script>
 <script src="../data/calendar-data.js"></script>
 <script src="calendar.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
