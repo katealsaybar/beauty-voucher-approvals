@@ -79,19 +79,26 @@
      every date below it by one. A number is a day; [a,b] is a range the build has not
      pinned down; null is "no position on a clock". */
   var OFFSETS = {
+    blast:   [0,0,0,0,0, null, 2, null,null,null],
     nurture: [0,0,0,0,0,0,0, 2,2,2, 4,4, 6,6, 8,8, null,null],
     welcome: [0,0,0,0,0, [1,2],[1,2], [5,7],[5,7],[5,7], null,null,null],
     mapping: [0,0,0,0,0,0,0, 1,1,1, 3,3, 6,6, null]
   };
 
-  /* Which clock each workflow is on. */
+  /* Which clock each workflow is on. Three modes, not two, since the blast lane landed on
+     17 Aug: it is absolute like the nurture arc, but it is anchored to the window OPENING
+     rather than to the arc start, and the difference is four weeks. Dating it off the arc
+     would announce the window a month after it opened, which is the exact gap this lane
+     exists to fill. */
   var CLOCK = {
+    blast:   'open',
     nurture: 'campaign',
     welcome: 'contact',
     mapping: 'contact'
   };
 
   var ENTRY = {
+    blast:   'the day the purchase window opens',
     welcome: 'the moment <code>voucher:paid</code> lands',
     mapping: 'the moment she submits the quiz'
   };
@@ -199,6 +206,13 @@
     if(CLOCK[flow] === 'campaign'){
       return { text: fmt(dateOf(from)), day: 'Day ' + from };
     }
+    /* The third clock. Absolute, like the campaign one, but counted from the day the window
+       goes live rather than from the first nurture send, so the announcement cannot drift a
+       month behind the thing it announces. Nothing here moves when the arc is re-dated in the
+       header, which is the point: OPEN is a fact about the campaign, not a setting. */
+    if(CLOCK[flow] === 'open'){
+      return { text: fmt(addDays(parse(OPEN), from)), day: 'Open +' + from };
+    }
     if(from === 0) return { text: 'Same minute', day: '+0' };
     return {
       text: range ? '+' + from + '–' + to + ' days' : '+' + plural(from, 'day'),
@@ -234,7 +248,8 @@
           chip.className = 'nday';
           node.insertBefore(chip, node.firstChild);
         }
-        chip.className = 'nday' + (CLOCK[flow] === 'campaign' ? ' abs' : ' rel');
+        chip.className = 'nday' + (CLOCK[flow] === 'campaign' ? ' abs'
+                                 : CLOCK[flow] === 'open'     ? ' open' : ' rel');
         chip.innerHTML = '<b>' + lab.text + '</b><i>' + lab.day + '</i>';
       });
     });

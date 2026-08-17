@@ -16,7 +16,7 @@ real {{merge_field}} tokens, which is what gets pasted into GHL.
 TWO pages consume the output now, not one, so a change here shows up in both:
   automations/automations.html      = EMAILS + WA, every node's preview and phone frame
   mapping-result/mapping-result.html = EMAILS.journal, the mapping email in a phone
-Only these thirteen emails and eight templates are generated. The mockup pages themselves are
+Only these fourteen emails and eight templates are generated. The mockup pages themselves are
 hand-written and are not built by this script; nothing here needs to know about them.
 """
 
@@ -36,6 +36,10 @@ WA_MAX_BUTTONS = 3        # quick-reply buttons per template
 
 # preview key -> file in emails/. The key is what a workflow node references.
 EMAIL_FILES = [
+    # The announcement blast. Added 17 Aug: it existed in emails/ for days and was referenced
+    # by nothing, so the workflow map could not say who received it. It is the only asset here
+    # that goes to a hand-built list rather than to a workflow-held contact.
+    ("blast",    "beauty-voucher-email-blast.html"),
     ("nurture1", "nurture-1-you-never-skip-your-hair.html"),
     ("nurture2", "nurture-2-keep-putting-off.html"),
     ("nurture3", "nurture-3-three-tiers-plainly.html"),

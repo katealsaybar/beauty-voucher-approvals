@@ -29,13 +29,15 @@
         <h1>Workflow View: as it would sit across the platforms we automate on</h1>
         <div class="hint"><b>Hover a step</b> for the peek panels, which stay put so you can click into them. <b>Click a step</b> for the full note, or the draft on a phone screen.</div>
       </div>
+      <button class="hdrtog" id="hdrTog" type="button" aria-expanded="false">Show guide</button>
     </div>
     <!-- class="topbar" is the hook the notes widget looks for when it injects the
          "You are" name toggle, so the toggle lands in this row rather than at the top
          of the canvas. -->
     <div class="topbar toprow2">
       <div class="wfwrap">
-        <div class="wflbl">Three GHL workflows, and the two bridges that feed them</div>
+        <!-- Four since the blast lane landed on 17 Aug. -->
+        <div class="wflbl">Four GHL workflows, and the two bridges that feed them</div>
         <div class="tabs" id="tabs"></div>
       </div>
     </div>
@@ -66,9 +68,53 @@
 
   <div class="noteshead">
     <span>Read before you review</span>
-    <span class="nh-count" id="nhCount">4 notes</span>
+    <!-- No number typed in here. It said "4 notes" while there were five banners, and it was
+         wrong again the moment a sixth landed. automations.js counts details.banner and fills
+         this in, so the count cannot drift from the stack it is counting. -->
+    <span class="nh-count" id="nhCount"></span>
     <button class="nh-all" id="nhAll" type="button">Open all</button>
+    <button class="nh-tog" id="nhTog" type="button" aria-expanded="false" aria-controls="noteStack">Show the notes</button>
   </div>
+
+  <!-- The stack folds into the row above. Six rows before the canvas was the other half of the
+       fold problem the header toggle only half fixed. Nothing here is lost when it is folded:
+       every body was already behind a <details>, and the count pill above keeps saying how many
+       are still unread. On paper the whole thing is forced open. -->
+  <div class="notestack" id="noteStack">
+
+  <!-- FIRST in the stack on purpose: it is the one that can cause a client to receive an offer
+       she has already paid for. -->
+  <details class="banner" data-nid="blastlist">
+    <summary>
+      <span class="b-dot"></span>
+      <span class="b-lead">The blast audience is built by hand, and one third of it cannot be filtered.</span>
+      <span class="b-cue"><svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></span>
+    </summary>
+    <div class="b-body">
+    The <code>If/Else &middot; Already bought?</code> step in the blast lane is drawn on the canvas,
+    and a step drawn on a canvas reads as a step that exists. This one does not work yet, and the
+    reason is not a code gap.
+    <br><br>
+    It reads <code>voucher:paid</code>, and that tag is applied <strong>by hand</strong>. Most
+    purchases are expected to happen <em>in salon</em>, a card tapped on the POS machine, and Tabby
+    is manual too, so a coordinator or someone on Bell&rsquo;s team has to tag her in GHL after the
+    payment. Same day at best, never real-time: a woman who paid at the till this morning can still
+    be in this afternoon&rsquo;s send. The training document for that tagging is still an
+    <strong>open action on David and Alissa</strong>.
+    <br><br>
+    The Respond CSV is worse, because it is not a matter of timing. It carries
+    <strong>no tags at all</strong>, and it is the oldest and most valuable third of the audience,
+    two years and older. No GHL filter can see whether she has already bought, so this gate is blind
+    to that list by construction, not by accident. It has to be de-duplicated against the paid list
+    <strong>by hand, on the day of the send</strong>. Nothing on this page can do it for you.
+    <div style="margin:14px 0 4px;">
+      <button type="button" class="nh-all" style="margin:0;background:var(--paper);"
+              onclick="window.trsActivateLane &amp;&amp; window.trsActivateLane('blast')">
+        Open the Blast lane and read the three lists &rarr;
+      </button>
+    </div>
+    </div>
+  </details>
 
   <details class="banner" data-nid="fonts">
     <summary>
@@ -186,7 +232,17 @@
     </div>
   </details>
 
+  </div><!-- /.notestack -->
+
   <div class="canvas" id="canvas"></div>
+
+  <!-- Zoom, the way the GHL builder does it: a floating pill, and ctrl/⌘ + scroll on the canvas.
+       Bottom LEFT on purpose — the notes widget puts its own bubble bottom right. -->
+  <div class="zoomctl" id="zoomCtl">
+    <button type="button" class="zbtn" id="zOut" aria-label="Zoom out" title="Zoom out (ctrl + scroll down)">&minus;</button>
+    <button type="button" class="zlvl" id="zLvl" title="Back to 100%">100%</button>
+    <button type="button" class="zbtn" id="zIn" aria-label="Zoom in" title="Zoom in (ctrl + scroll up)">+</button>
+  </div>
 
   <div class="mback" id="mback"><div class="modal" role="dialog" aria-modal="true" id="modal"></div></div>
 

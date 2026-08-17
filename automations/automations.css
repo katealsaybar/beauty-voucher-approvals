@@ -45,6 +45,39 @@
   .top h1{font-family:var(--serif);font-weight:600;font-size:21px;line-height:1.15;margin-top:3px;}
   .top .hint{font-size:12.5px;color:var(--muted);margin-top:3px;}
   .top .hint b{color:var(--ink);}
+
+  /* ===== the header, collapsible =====
+     Three rows deep is about a third of a laptop viewport before the canvas starts, and the
+     three rows are orientation: a first-visit need, not a permanent one. Collapsed keeps the
+     eyebrow, so a folded header still says what page this is, and it keeps z-index 70 (see the
+     note above .top: a peeked Make module drew straight over the tab row at anything lower). */
+  .hdrtog{
+    flex:0 0 auto;font:inherit;font-size:11px;font-weight:800;letter-spacing:.08em;
+    text-transform:uppercase;color:var(--muted);background:var(--paper);
+    border:1px solid var(--line);border-radius:100px;padding:6px 13px;cursor:pointer;
+  }
+  .hdrtog:hover{border-color:var(--accent-deep);color:var(--ink);}
+  /* screen only, so paper never has to un-do a display:none — see the same note on the
+     folded banner stack below */
+  @media screen{
+    body.hdr-collapsed .top{padding:8px 26px 7px;}
+    body.hdr-collapsed .top h1,
+    body.hdr-collapsed .top .hint,
+    body.hdr-collapsed .toprow3,
+    body.hdr-collapsed .wflbl{display:none;}
+    /* the campaign clock's two rows are injected into .top by schedule.js. Without these the
+       "one compact bar" is still three rows deep and the toggle looks broken. */
+    body.hdr-collapsed .toprow-clock,
+    body.hdr-collapsed .toprow-mode{display:none;}
+    body.hdr-collapsed .toprow2{margin-top:0;}
+    body.hdr-collapsed .brandlogo{width:92px;}
+  }
+  /* on paper a collapsed header is a lost header, and a zoomed lane is a lane at the wrong size */
+  @media print{
+    .hdrtog{display:none;}
+    .zoomctl{display:none;}
+    .canvas > .flow{zoom:1 !important;}
+  }
   /* Row 2 has three parts: who you are (left), what the colours mean (middle), which
      workflow (right). The injected "You are" bar is appended last by the widget, so the
      order is set here rather than by DOM position.
@@ -101,6 +134,24 @@
     border-radius:100px;padding:5px 13px;cursor:pointer;
   }
   .noteshead .nh-all:hover{background:var(--amber-bg);border-color:var(--amber);}
+  /* the stack toggle. Same shape as "Open all" but filled, because it is the control that
+     decides whether the other one is reachable at all. */
+  .noteshead .nh-tog{
+    font:inherit;font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:800;
+    color:#fff;background:var(--amber);border:1px solid var(--amber);border-radius:100px;
+    padding:5px 13px;cursor:pointer;
+  }
+  .noteshead .nh-tog:hover{background:var(--amber-ink);border-color:var(--amber-ink);}
+  /* Folded: the row keeps the label and the unread count, and "Open all" has nothing to open.
+     Scoped to screen rather than un-done again inside @media print: reverting a display:none on
+     .toprow3 would have handed it the UA's `block` instead of the `flex` it is drawn with, and a
+     rule that never applies on paper cannot be got wrong on paper. */
+  @media screen{
+    body.notes-collapsed .notestack{display:none;}
+    body.notes-collapsed .noteshead .nh-all{display:none;}
+    body.notes-collapsed .noteshead .nh-tog{margin-left:auto;}
+    body.notes-collapsed .noteshead{margin-bottom:4px;}
+  }
 
   details.banner{padding:0;}
   details.banner > summary{
@@ -126,9 +177,10 @@
   .b-cue svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;transition:transform .15s;}
   details[open].banner .b-cue svg{transform:rotate(180deg);}
   .b-body{padding:0 17px 14px 30px;font-weight:400;}
-  /* on paper, a closed note is a lost note */
+  /* on paper, a closed note is a lost note — and a folded stack is six lost notes */
   @media print{
     .noteshead .nh-all{display:none;}
+    .noteshead .nh-tog{display:none;}
     details.banner > .b-body{display:block !important;}
     .b-cue{display:none;}
   }
@@ -150,13 +202,79 @@
     padding:34px 20px 64px;min-height:70vh;}
   .flow{display:none;flex-direction:column;align-items:center;}
   .flow.active{display:flex;}
+  /* ===== zoom =====
+     On the lane, never on .canvas: the canvas keeps its own padding, min-height and dotted grid at
+     a constant size, so the diagram scales on the paper rather than scaling the paper with it.
+     `zoom` rather than `transform:scale` because zoom reflows — no dead band under a zoomed-out
+     lane, no blurred text, and the canvas height follows the content. */
+  .canvas > .flow{zoom:var(--zoom,1);}
+  .zoomctl{
+    position:fixed;left:18px;bottom:18px;z-index:80;display:flex;align-items:center;gap:2px;
+    background:var(--paper);border:1px solid var(--line);border-radius:100px;padding:4px;
+    box-shadow:0 6px 20px rgba(45,46,55,.14);
+  }
+  .zoomctl button{font:inherit;background:none;border:0;cursor:pointer;color:var(--muted);border-radius:100px;}
+  .zoomctl .zbtn{
+    width:27px;height:27px;display:grid;place-items:center;font-size:16px;font-weight:700;line-height:1;
+  }
+  .zoomctl .zlvl{
+    min-width:52px;text-align:center;font-size:11px;font-weight:800;letter-spacing:.06em;
+    padding:6px 4px;color:var(--ink);
+  }
+  .zoomctl button:hover:not(:disabled){background:var(--sand);color:var(--ink);}
+  .zoomctl button:disabled{opacity:.32;cursor:default;}
+
+  /* ===== the audience band =====
+     A reviewer looking at "Lead Nurture" could not tell who was in it, which was the whole
+     complaint. Three fixed columns rather than free prose, because "who is excluded" is the
+     column people skip writing and it is the column that causes the incidents. */
+  .aud{
+    width:min(880px,calc(94vw / var(--zoom,1)));background:var(--paper);border:1px solid var(--line);
+    border-radius:14px;margin-bottom:26px;padding:15px 18px;
+  }
+  .audtop{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;}
+  .audk{font-size:10px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);}
+  .audtop b{font-size:15px;font-weight:700;}
+  .audsub{font-size:12px;color:var(--muted);}
+  /* the cells reach out to the card's own padding rather than sitting inside it a second
+     time, so the dividers run the full height of the row */
+  .audgrid{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:0;
+    margin:12px -18px 0;padding:0 4px;border-top:1px solid var(--line);
+  }
+  .audcell{padding:11px 14px;min-width:0;}
+  .audcell + .audcell{border-left:1px solid var(--line);}
+  .audcell i{
+    display:block;font-style:normal;font-size:9.5px;font-weight:800;letter-spacing:.1em;
+    text-transform:uppercase;margin-bottom:5px;
+  }
+  .audcell.go i{color:#2C5A44;}
+  .audcell.no i{color:var(--muted);}
+  .audcell.src i{color:var(--amber-ink);}
+  .audcell p{font-size:12.5px;line-height:1.55;color:var(--ink);}
+  .aud code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11.5px;
+    background:var(--sand);padding:1px 5px;border-radius:4px;}
+  .audwarn{
+    background:var(--amber-bg);border:1px solid var(--amber-line);border-radius:10px;
+    padding:10px 13px;margin-top:11px;font-size:12.5px;line-height:1.55;color:var(--amber-ink);
+  }
+  /* first-child, not b: the warn copy uses inline <b> for emphasis and those must stay inline */
+  .audwarn > b:first-child{
+    display:block;font-size:9.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--amber-ink);margin-bottom:4px;
+  }
+  .audwarn code{background:rgba(255,255,255,.6);}
+  @media(max-width:700px){
+    .audgrid{grid-template-columns:1fr;padding:0;}
+    .audcell + .audcell{border-left:0;border-top:1px solid var(--line);}
+  }
 
   .rail{width:2px;height:30px;background:var(--rail);position:relative;}
   .rail::after{content:'+';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
     width:18px;height:18px;background:var(--paper);border:1.5px solid var(--rail);border-radius:50%;color:var(--muted);
     font-size:13px;line-height:15px;text-align:center;font-weight:700;}
 
-  .node{position:relative;width:380px;max-width:92vw;background:var(--paper);border:1px solid var(--line);
+  .node{position:relative;width:380px;max-width:calc(92vw / var(--zoom,1));background:var(--paper);border:1px solid var(--line);
     border-radius:14px;padding:13px 15px;box-shadow:0 1px 3px rgba(45,46,55,.05);cursor:pointer;}
   .node:hover,.node.peek{border-color:var(--accent-deep);box-shadow:0 6px 20px rgba(45,46,55,.12);}
   .node.peek{z-index:41;}
@@ -167,10 +285,119 @@
   .nsub{font-size:12px;color:var(--muted);margin-top:1px;}
   .ntype{position:absolute;top:10px;right:14px;font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;
     font-weight:800;color:var(--muted);}
+  /* .branches / .bchip are no longer emitted by nodeHTML — the forks below replaced them — but
+     they MUST stay: .legchip is styled off these three rules, so deleting them silently
+     un-styles every leg on the page. */
   .branches{display:flex;gap:8px;flex-wrap:wrap;margin:11px 0 1px 50px;}
-  .bchip{font-size:11px;font-weight:600;background:var(--amber-bg);color:var(--amber-ink);border:1px solid var(--amber-line);border-radius:20px;padding:4px 10px;}
-  .bchip.stop{background:var(--sand);color:#55565F;border-color:var(--line);}
-  .bchip.go{background:#E4F1EA;color:#2C5A44;border-color:#C9E4D5;}
+  .bchip,.legchip{font-size:11px;font-weight:600;background:var(--amber-bg);color:var(--amber-ink);border:1px solid var(--amber-line);border-radius:20px;padding:4px 10px;}
+  .bchip.stop,.leg.stop .legchip{background:var(--sand);color:#55565F;border-color:var(--line);}
+  .bchip.go,.leg.go .legchip{background:#E4F1EA;color:#2C5A44;border-color:#C9E4D5;}
+
+  /* ===== a real fork, drawn below the step =====
+     An If/Else used to list its branches as pills inside the card, in one centred column, so a
+     3-way router looked exactly like a linear step with some tags on it. The comb is built from
+     per-leg pseudo-elements rather than one absolutely positioned bar, so it survives any number
+     of legs and any wrap without arithmetic; the outer legs draw only their inner half, which is
+     what stops the comb overhanging the ends. */
+  .fork{display:flex;flex-direction:column;align-items:center;width:min(880px,calc(94vw / var(--zoom,1)));}
+  .forkstem{width:2px;height:16px;background:var(--rail);}
+  .fork .legs{display:flex;align-items:flex-start;justify-content:center;width:100%;}
+  .fork .leg{position:relative;flex:1 1 0;min-width:0;display:flex;flex-direction:column;
+    align-items:center;padding:22px 8px 0;text-align:center;}
+  /* the horizontal comb: each leg draws its own half */
+  .fork .leg::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--rail);}
+  .fork .leg:first-child::before{left:50%;}
+  .fork .leg:last-child::before{right:50%;}
+  .fork .leg:only-child::before{display:none;}
+  /* the drop into the leg */
+  .fork .leg::after{content:'';position:absolute;top:0;left:50%;margin-left:-1px;width:2px;height:22px;
+    background:var(--rail);}
+  /* Where the line continues sits ON the centre line, so the step below the fork is under the
+     pill (or the merge bar) it actually follows rather than in the gap between two pills. --f
+     slides the row until that point is centred; --m caps the leg width so the outermost leg still
+     lands inside the canvas, at any window width and at any zoom (hence the /var(--zoom)). 28px,
+     not 20px, leaves the vertical scrollbar its width — 50vw is half the viewport, not half the
+     canvas. [data-legw] rather than .fork: the bypass rail and its rejoin need the same leg width
+     to place themselves, and they are siblings of the fork, not children. */
+  [data-legw]{
+    --legw:min(calc(min(880px,calc(94vw / var(--zoom,1))) / var(--n)),
+                calc((50vw - 28px) / var(--m) / var(--zoom,1)));
+  }
+  .fork .legs{width:calc(var(--legw) * var(--n));transform:translateX(calc(var(--legw) * var(--f)));}
+  /* stretch, not flex-start: the tails have to end at the same y across every leg or the bars
+     below them join nothing */
+  .fork .legs{align-items:stretch;}
+  .fork .leg{flex:0 0 var(--legw);justify-content:flex-start;}
+
+  .legchip{max-width:100%;}
+  .legcap{font-size:9.5px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;
+    color:var(--muted);margin-top:6px;position:relative;}
+  /* an end has to read as an end, so exits and holds get a flat terminal cap under the label.
+     Keyed on the KIND, not on the colour: a grey leg can still be the one that carries on. */
+  .leg[data-k="exit"] .legcap::after,
+  .leg[data-k="hold"] .legcap::after{
+    content:'';position:absolute;left:50%;margin-left:-7px;bottom:-7px;
+    width:14px;height:2px;background:var(--rail);
+  }
+  /* a hold has not left the workflow, it is just parked, so it is drawn open rather than solid */
+  .leg[data-k="hold"] .legcap::after{background:transparent;border-top:2px dashed var(--rail);height:0;}
+  .leg[data-k="hold"] .legcap{color:var(--amber-ink);}
+  /* and the legs that DO run on get a tail down to the bar below, which is what stops them
+     reading as three steps that stop dead */
+  .legtail{margin-top:auto;width:2px;height:15px;background:var(--rail);align-self:center;}
+
+  /* the bars the tails run into. .merge joins the legs that reach the next step, and sits on the
+     centre line because --f already put their midpoint there. .skipbar joins the legs that go
+     round the next step, off to one side. */
+  .merge,.skipbar{
+    height:2px;background:var(--rail);width:var(--barw);
+    transform:translateX(var(--barx));
+  }
+  .skipbar{background:var(--amber-line);}
+
+  /* ===== the bypass: a branch that goes ROUND the next step and rejoins under it =====
+     The rail is a border on a wrapper around the step it skips, so it grows with that step
+     instead of being measured in JS. --bw is how far off the centre line it runs, in leg widths,
+     which is exactly where the skipping leg's tail ended. */
+  .bypass{align-self:stretch;display:flex;flex-direction:column;align-items:center;position:relative;}
+  .bypass::before{
+    content:'';position:absolute;top:0;bottom:0;width:2px;background:var(--amber-line);
+  }
+  .bypass.left::before{left:calc(50% - var(--bw));}
+  .bypass.right::before{left:calc(50% + var(--bw));}
+  /* and the elbow back in: a bar from the rail to the centre line, then the arc carries on */
+  .rejoin{position:relative;height:19px;width:var(--bw);}
+  .rejoin::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--amber-line);}
+  .rejoin::after{content:'';position:absolute;top:0;bottom:0;width:2px;background:var(--rail);}
+  .rejoin.left{transform:translateX(calc(var(--bw) / -2));}
+  .rejoin.left::after{right:0;}
+  .rejoin.right{transform:translateX(calc(var(--bw) / 2));}
+  .rejoin.right::after{left:0;}
+
+  /* a 3-leg comb at 92vw is unreadable, so it becomes a spine with elbows instead */
+  @media (max-width:700px){
+    .fork .legs{flex-direction:column;align-items:stretch;padding-left:26px;}
+    .fork .leg{flex:0 0 auto;align-items:flex-start;text-align:left;padding:12px 0 0 16px;}
+    .fork .leg::before{left:0;right:auto;top:0;bottom:auto;width:2px;height:100%;}  /* the spine */
+    .fork .leg::after{top:22px;left:0;width:16px;height:2px;margin-left:0;}          /* the elbow */
+    .fork .leg:first-child::before{left:0;}
+    .fork .leg:last-child::before{right:auto;height:22px;}
+    .leg.stop .legcap::after{left:0;margin-left:0;}
+    /* stacked, there is no comb and no centre line to line anything up with. width back to 100%,
+       not auto: auto shrink-to-fits a column flex item and the chips lose the room they need. */
+    .fork .legs{width:100%;transform:none;align-items:stretch;}
+    .fork .leg{flex:0 0 auto;}
+    /* the tails and the two bars are comb geometry; stacked, the spine already says it */
+    .legtail,.merge,.skipbar{display:none;}
+    /* the bypass becomes a rail down the left margin, in line with the spine above it */
+    .bypass.left::before,.bypass.right::before{left:13px;}
+    .rejoin{width:auto;align-self:stretch;transform:none;height:16px;}
+    .rejoin.left,.rejoin.right{transform:none;}
+    .rejoin::before{left:13px;right:auto;width:26px;}
+    /* .left/.right in the selector, not bare .rejoin::after: the base rules that pin this to one
+       end are two-class selectors and would otherwise outrank the reset */
+    .rejoin.left::after,.rejoin.right::after{left:13px;right:auto;}
+  }
   /* two channels on one step (the expiry touch): say so on the pill itself */
   .chanpair{display:inline-flex;gap:5px;margin:10px 0 0 50px;}
   .chanpair i{font-style:normal;font-size:10px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;
@@ -627,6 +854,20 @@
   }
   .clockflag.off{background:var(--amber-bg);color:var(--amber-ink);border-color:var(--amber-line);}
 
+  /* the second clock row: which end of the campaign gives way when the other moves. Its own
+     line rather than a third item in the row above, because it is a choice about the two
+     inputs and not a third input. */
+  .toprow-mode{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:8px;}
+  .clockmode{display:inline-flex;gap:2px;padding:2px;background:var(--sand);
+    border:1px solid var(--line);border-radius:100px;}
+  .clockmode button{
+    font-family:var(--sans);font-size:11.5px;font-weight:700;color:var(--muted);cursor:pointer;
+    border:0;background:none;border-radius:100px;padding:5px 13px;white-space:nowrap;
+  }
+  .clockmode button:hover{color:var(--ink);}
+  .clockmode button[aria-pressed="true"]{background:var(--ink);color:#fff;}
+  .clockhint{flex:1 1 320px;font-size:11.5px;line-height:1.5;color:var(--muted);max-width:78ch;}
+
   /* the date chip on a step. Sits opposite .ntype in the band above the title, so the two
      never meet however long the type word is. */
   body.has-clock .node{padding-top:30px;}
@@ -635,16 +876,21 @@
   .nday i{font-style:normal;font-size:9.5px;font-weight:700;letter-spacing:.06em;
     text-transform:uppercase;color:var(--muted);}
   .nday.rel b{color:var(--amber-ink);}
+  /* the third clock: the blast lane is dated off the window OPENING, not off the nurture arc,
+     so it has to be visibly on a different clock from the dates in the lane below it */
+  .nday.open b{color:var(--trigger);}
+  .nday.open i{color:var(--trigger);opacity:.72;}
 
   /* ===== the Timeline lane ===== */
   .flow.timeline{align-items:center;}
-  .tlwrap{width:min(860px,94vw);}
+  .tlwrap{width:min(860px,calc(94vw / var(--zoom,1)));}
   .tlwarn{
     background:var(--amber-bg);border:1px solid var(--amber-line);border-left:3px solid var(--amber);
     border-radius:11px;padding:13px 16px;margin-bottom:14px;font-size:13px;line-height:1.62;
     color:var(--amber-ink);
   }
   .tlwarn.hard{background:#FBEDED;border-color:#EFD2D2;border-left-color:#A33C3C;color:#6B2B2B;}
+  .tlwarn.ok{background:#E4F1EA;border-color:#C9E4D5;border-left-color:var(--accent-deep);color:#2C5A44;}
   .tlwarn code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11.5px;}
   .tlsec{margin:26px 0 0;}
   .tlh{font-family:var(--serif);font-size:22px;font-weight:600;letter-spacing:-.01em;}
@@ -655,6 +901,10 @@
     padding:11px 0;border-top:1px solid var(--line);
   }
   .tlday.last .tldate b{color:var(--amber-ink);}
+  /* two sends squeezed onto one morning: the row says so on sight, not only in the note above */
+  .tlday.clash{background:#FBEDED;border-radius:10px;}
+  .tlday.clash .tldate b{color:#A33C3C;}
+  .tlday.clash .tldate{padding-left:10px;}
   .tldate{display:flex;flex-direction:column;gap:1px;padding-top:2px;}
   .tldate b{font-size:14px;font-weight:800;}
   .tldate i{font-style:normal;font-size:9.5px;font-weight:700;letter-spacing:.08em;

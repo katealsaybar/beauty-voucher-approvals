@@ -17,18 +17,61 @@ const OPEN_ICON='<svg viewBox="0 0 24 24"><path d="M15 3h6v6"/><path d="M10 14 2
    waKeys   -> one or more keys in WA. More than one renders the region switch.
    A step with BOTH gets two preview cards, because it really does send both. */
 const WF=[
- {id:'nurture',name:'Lead Nurture (A / B)',short:'Lead Nurture',sub:'pre-purchase · stops when she pays',nodes:[
+ /* ===== the blast, added 17 Aug =====
+    This lane did not exist and the asset did. emails/beauty-voucher-email-blast.html sat in
+    the folder for days referenced by nothing, which meant the workflow map could not answer
+    the only question that matters about a blast: who receives it. It is the one send in this
+    campaign that goes to a list built by hand rather than to a contact a workflow is already
+    holding, so it is the one send where "who is in this" cannot be inferred from a tag. */
+ {id:'blast',name:'Announcement blast',short:'Blast',sub:'awareness · runs from the day the window opens',
+  audience:{
+    to:'Three lists, built by hand, none of them the whole database. <b>1 Respond</b> long-term clients, two years and older, exported as a CSV of email addresses. <b>2 GHL existing clients</b>, roughly the last twelve months. <b>3 GHL new leads</b>, never purchased, mostly Facebook and Instagram.',
+    not:'<code>voucher:paid</code> &middot; <code>suppress:campaign</code> (DND and difficult clients) &middot; <code>+973</code> Bahrain numbers &middot; anyone already inside the nurture arc.',
+    src:'Respond is a manual CSV export. The two GHL lists are saved smart lists. Sizes are unknown until the Phorest top-clients report (last three months) comes back, and the send cannot be sized or dripped before then.',
+    warn:'The Respond CSV carries <b>no tags at all</b>, so no GHL filter can see whether she has already bought. That list has to be de-duplicated against the paid list <b>by hand, on the day of the send</b>. This is the reason the blast email no longer carries an "already placed your credit?" paragraph: the exclusion belongs here, as a step, not in the copy as an apology.'},
+  nodes:[
+   {t:'trigger',title:'Segment built by hand',sub:'three lists, not one database',tip:{ch:'Trigger',sub:'Three audiences, one send',
+     note:'Not a form and not a tag: someone assembles this. Respond holds the long-term client data (2+ years) and only exports as a CSV of email addresses. GHL holds the newer contacts, roughly the last twelve months, plus the never-purchased leads from Facebook and Instagram. Most contacts are already synced into GHL per Bell, but the sync is <b>not real-time</b>, so the two sources overlap and the overlap is invisible until they are compared. Using Respond itself for the send was considered and dropped on cost; a Make.com scenario to sync Respond into GHL was discussed and is <b>not</b> confirmed as the path. Until it is, this step is a person with two exports and a spreadsheet.'}},
+   {t:'iff',title:'If/Else · Already bought?',sub:'the gate that replaces the apology',branches:[{c:'stop',k:'exit',l:'voucher:paid → exit'},{c:'stop',k:'exit',l:'self:availed → exit, task'},{c:'',k:'carry',l:'no tag → continue'}],
+    tip:{ch:'If / Else',sub:'Suppression, before anything sends',
+     note:'This is the step the campaign was missing. Most clients are expected to buy <b>in salon</b>, tapping a card on the POS machine, and Tabby is <b>manual</b>: a coordinator or someone on Bell’s team has to tag her in GHL after payment, within the day. So <code>voucher:paid</code> is same-day at best, never real-time, and this gate is only as good as the tagging. Two consequences worth saying out loud. <b>One:</b> a woman who paid at the till this morning can still be in this afternoon’s send. <b>Two:</b> the Respond CSV has no tags, so this If/Else cannot see it at all and the de-duplication has to happen before import. The training document for the tagging is still an open action on David and Alissa.'}},
+   {t:'iff',title:'If/Else · Consent + filters',sub:'Bahrain / suppress / consent',branches:[{c:'stop',k:'exit',l:'+973 or suppress → exit'},{c:'go',k:'carry',l:'consent → email + WhatsApp'},{c:'',k:'carry',l:'no consent → email only'}],
+    tip:{ch:'If / Else',note:'Same PDPL gate as the nurture arc, and it has to run here too rather than only there, because this send reaches contacts the arc has never held. Bahrain numbers never enter: Bahrain has only just opened and its own voucher is a separate build. Consent decides the channel, not preference.'}},
+   {t:'tag',title:'Add tag: bv:blast + source',sub:'respond / ghl-client / ghl-lead',
+    tip:{ch:'Add tag',note:'One tag for the campaign and one for which of the three lists she came from. This is the only way the sold-voucher count can later be split by source, which is the question leadership will ask first. Without it, every purchase in the window looks like it came from nowhere.'}},
+   {t:'email',title:'Email · the announcement',sub:'"You look after everyone else first"',emailKey:'blast',
+    tip:{ch:'Email',sub:'The awareness blast',
+     note:'Newsletter-style rather than plain text, with the three tiers, the Self-Care Bonus, the gift-card angle and the Confidence Promise, closing on <b>Reserve Your Voucher</b> into the landing page. Tara Rose has <b>never sent a marketing email before</b>, so this is the first thing this domain has ever sent at volume: it goes out on a drip across the window, not in one push, or the sending reputation is spent on the first send. Three image slots are still empty and waiting on the social media manager’s assets. The "already placed your credit?" block was removed on 17 Aug and its job moved to the suppression step above.'}},
+   {t:'wait',title:'Drip · spread across the window',sub:'never the whole list at once',
+    tip:{ch:'Wait',note:'Not a delay before a next message, a throttle on this one. Batch the list and let it go out gradually across the window rather than in a single push. Two separate reasons, and both of them bite on a first-ever send: email reputation on a domain with no sending history, and the fact that every reply lands on a human at the salon. The batch size cannot be set until the Phorest report gives the list size.'}},
+   {t:'wa',title:'WhatsApp · voucher link',sub:'throttled · copy not drafted yet',
+    tip:{ch:'WhatsApp',sub:'The blast on WhatsApp',
+     note:'Direct link to the beauty voucher page. Tara Rose’s WhatsApp has a strong sender reputation and a large volume sent at once is the fastest way to lose it, so this is throttled the same way the email is. <b>The copy for this does not exist yet</b> and is an open action: it is not the nurture Day 0 broadcast template, which is written for a contact already inside the arc. A new template also means Meta approval before it can send at all.'}},
+   {t:'iff',title:'If/Else · Did she come through?',sub:'what turns a name into a lead',branches:[{c:'go',k:'carry',l:'clicked or replied → bv:lead'},{c:'',k:'hold',l:'nothing → stays on the list'}],
+    tip:{ch:'If / Else',note:'A click on the landing page, or a reply on WhatsApp, is what promotes her out of the blast list and into the nurture arc. Everyone else stays where they are and receives the arc anyway when it opens, because the arc is broadcast-fed. Drawn as a branch rather than left implied, because it is the join between the two lanes and it was the thing nobody could point to on the old map.'}},
+   {t:'goal',title:'Hands off to Lead Nurture',sub:'Day 0 of the 15-day arc',
+    tip:{ch:'Goal / handover',note:'The blast is awareness; the arc is the close. The arc opens on its own date and is fed by this same segment, which is why its trigger reads <em>broadcast segment</em> and not <em>reserve form</em>. Note the gap the clock in the header shows: the window opens well before the first nurture send, and this lane is what occupies that gap.'}},
+   {t:'goal',title:'Exit on voucher:paid',sub:'→ Welcome Pack',
+    tip:{ch:'Goal / exit',note:'Same universal exit as everywhere else. The moment the tag lands, however it lands, she stops being blasted and starts being welcomed.'}}
+ ]},
+ {id:'nurture',name:'Lead Nurture (A / B)',short:'Lead Nurture',sub:'pre-purchase · stops when she pays',
+  audience:{
+    to:'The same three blast segments, consented, who have <b>not</b> paid. Broadcast-fed, decided 17 Aug.',
+    not:'<code>voucher:paid</code> (universal goal exit) &middot; <code>+973</code> &middot; <code>suppress:campaign</code> &middot; reserve-form submitters, who are handled by hand instead.',
+    src:'The broadcast segment, not a form. Emirate is read from the Phorest stamp on the segment, because a broadcast cannot carry a hidden form field the way a form can.',
+    warn:'A woman who fills in the reserve form does <b>not</b> belong in this arc: all five emails ask her to reserve or choose a tier, which is copy for someone who has done neither. Form submitters get a contact-centre task and the right Stripe link.'},
+  nodes:[
    /* The trigger and the Day 0 title disagree, and the emails settle it: nurture1 closes on
       "Reserve my tier" and nurture3 on "Choose my tier", which is copy written for a woman who
       has done nothing yet. That is a broadcast audience, not a form submitter. Left drawn as
       it is, with the contradiction named, because it is Tara's call and not a drafting fix;
       see Part 1.1 of EMIRATE-ROUTING-BUILD-SPEC.md. */
-   {t:'trigger',title:'Reserve form submitted',sub:'contested: broadcast or form?',tip:{ch:'Trigger',note:'OPEN QUESTION, answer needed before anything is built. The trigger says reserve form and a tier field routes Workflow A vs B, but Day 0 is titled "Initial broadcast" and all five emails ask her to reserve or choose a tier, which is copy for someone who has done neither. Two populations have been merged. A form can carry a hidden emirate field; a broadcast to existing contacts cannot and must take its emirate from Phorest instead. Recommendation: broadcast-fed for this window, reserve-form leads get a contact-centre task and the right Stripe link instead of the 8-day arc.'}},
+   {t:'trigger',title:'Broadcast segment enters',sub:'settled 17 Aug: not the reserve form',tip:{ch:'Trigger',sub:'Broadcast-fed',flag:'SETTLED 17 AUG',note:'This was an open question for a week and it is now answered: <b>broadcast-fed</b>. It read "reserve form submitted" while Day 0 was titled "Initial broadcast" and all five emails asked her to reserve or choose a tier, which is copy for a woman who has done neither. Two populations had been merged into one trigger. The copy settled it. <b>What follows from the decision:</b> the segment is the one the blast lane builds, so the emirate has to come from the Phorest stamp on that segment rather than a hidden form field, because a broadcast cannot carry one. <b>Reserve-form leads are out of this arc entirely</b>: they already chose a tier, so they get a contact-centre task and the correct Stripe link, not eight days of being asked to choose. See Part 1.1 of EMIRATE-ROUTING-BUILD-SPEC.md.'}},
    {t:'tag',title:'Add tag: bv:lead',sub:'+ campaign:beauty-voucher-v2',tip:{ch:'Add tag',note:'Marks her as a campaign lead before payment. Audience is segmented + consented UAE contacts only, never the whole synced database.'}},
-   {t:'iff',title:'If/Else · Consent + filters',sub:'Bahrain / suppress / consent',branches:[{c:'stop',l:'+973 or suppress → exit'},{c:'go',l:'consent → email + WhatsApp'},{c:'',l:'no consent → email only'}],tip:{ch:'If / Else',note:'PDPL gate. Bahrain numbers and suppress:campaign (DND, difficult clients) never enter. Consent decides the channel: this is law, not preference.'}},
+   {t:'iff',title:'If/Else · Consent + filters',sub:'Bahrain / suppress / consent',branches:[{c:'stop',k:'exit',l:'+973 or suppress → exit'},{c:'go',k:'carry',l:'consent → email + WhatsApp'},{c:'',k:'carry',l:'no consent → email only'}],tip:{ch:'If / Else',note:'PDPL gate. Bahrain numbers and suppress:campaign (DND, difficult clients) never enter. Consent decides the channel: this is law, not preference.'}},
    /* THE MISSING NODE. Deliberately below the consent gate, not above it: asking a woman which
       emirate she is in is still a message, so consent has to decide whether we may ask at all. */
-   {t:'iff',title:'If/Else · Emirate known?',sub:'picks the regional variant',branches:[{c:'go',l:'abu-dhabi → AD set'},{c:'go',l:'dubai → Dubai set'},{c:'',l:'unknown → neutral + ask'}],tip:{ch:'If / Else',note:'TO BUILD. Reads the emirate contact FIELD, not the tag, because the emails need the same value to render their coverage line and GHL merge fields cannot read tags. Everything below inherits the branch: the Day 0 and Day 2 pills still show both variants so you can read them side by side, but this is what picks one at send. Nothing writes emirate yet: that is the website picker, the quiz Locale field, the Phorest stamp on the broadcast segment, or reception.'}},
+   {t:'iff',title:'If/Else · Emirate known?',sub:'picks the regional variant',branches:[{c:'go',k:'skip',l:'abu-dhabi → AD set'},{c:'go',k:'skip',l:'dubai → Dubai set'},{c:'',k:'carry',l:'unknown → neutral + ask'}],tip:{ch:'If / Else',note:'TO BUILD. Reads the emirate contact FIELD, not the tag, because the emails need the same value to render their coverage line and GHL merge fields cannot read tags. Everything below inherits the branch: the Day 0 and Day 2 pills still show both variants so you can read them side by side, but this is what picks one at send. Nothing writes emirate yet: that is the website picker, the quiz Locale field, the Phorest stamp on the broadcast segment, or reception.'}},
    {t:'wa',title:'WhatsApp · Which emirate?',sub:'unknown branch only · not built yet',tip:{ch:'WhatsApp',sub:'The emirate ask',note:'Unknown-emirate branch only. Two buttons, Abu Dhabi and Dubai, which write the field and move her onto a regional branch from Day 2 onward. She still gets the neutral Day 0 straight away; the arc never waits for an answer. New template, so Meta has to approve it before it can send at all, and that is the single item most likely to miss Monday. Fallback: hold this cohort out of the Day 0 WhatsApp and send the neutral email only, whose WhatsApp CTA opens a chat, and once she writes first, the 24-hour service window lets us reply with no template.'}},
    {t:'email',title:'Email · Day 0',sub:'"You never skip your hair"',emailKey:'nurture1',tip:{ch:'Email',sub:'You never skip your hair',note:'Opening of the locked close-out arc. She never skips her hair; the voucher makes the visits she already makes worth more, with a Self-Care Bonus pointed at the part she keeps putting off. Not money off, a plan. Emirate-neutral as written, so it needs no variant.'}},
    {t:'wa',title:'WhatsApp · Day 0',sub:'Initial broadcast · picked above',waKeys:['broadcast_ad','broadcast_dubai'],tip:{ch:'WhatsApp',sub:'Initial broadcast',note:'The campaign announcement, with the three ways in (reserve / gift / reply). Two regional variants, chosen by the emirate If/Else above: the buttons carry salon names, and Meta fixes button labels at template level, so WhatsApp has to stay split where email does not. The Abu Dhabi long version is over Meta\'s character limit; see the shortened one.'}},
@@ -36,15 +79,21 @@ const WF=[
    {t:'email',title:'Email · Day 2',sub:'"The part you keep putting off"',emailKey:'nurture2',tip:{ch:'Email',sub:'The part of you that you keep putting off',note:'The emotional middle of the arc: the treatment she always means to do for herself and never books. The Self-Care Bonus is built for exactly that.'}},
    {t:'wa',title:'WhatsApp · Day 2',sub:'48–72h reminder · picked above',waKeys:['reminder_ad','reminder_dubai'],tip:{ch:'WhatsApp',sub:'48–72h reminder',note:'Gentle close-date reminder, never "pay now." Two regional variants, chosen by the same emirate If/Else. A contact who answered the emirate ask joins her regional branch here, at Day 2. Day 0 has already gone out neutral by then, which is the point.'}},
    {t:'wait',title:'Wait · to Day 4',sub:'skip if paid',tip:{ch:'Wait',note:'Holds until Day 4 of the arc.'}},
-   {t:'email',title:'Email · Day 4',sub:'"The three tiers plainly" · 1 string to fix',emailKey:'nurture3',tip:{ch:'Email',sub:'The three tiers plainly',note:'Dip Your Toes 1,000 → 1,150 · Season of You 2,500 → 3,000 (+500 bonus) · All-In VIP Year 4,500 → 5,400 (+900 bonus). Tabby on the upper two, same credit. Spending cap, not unlimited. ONE STRING STILL WRONG: line 107 promises "any service at any of our four salons", which neither voucher can deliver. Swap in the neutral line already live in two other emails, "at the salons named on your voucher", rather than splitting the asset. Same fix for the landing page, which carries the same sentence.'}},
+   {t:'email',title:'Email · Day 4',sub:'"The three tiers plainly"',emailKey:'nurture3',tip:{ch:'Email',sub:'The three tiers plainly',flag:'FIXED 17 AUG',flagOk:true,note:'Dip Your Toes 1,000 → 1,150 · Season of You 2,500 → 3,000 (+500 bonus) · All-In VIP Year 4,500 → 5,400 (+900 bonus). Tabby on the upper two, same credit. Spending cap, not unlimited. FIXED 17 AUG. Previously promised "any service at any of our four salons", which neither voucher can deliver. Now reads "at the salons named on your voucher", the neutral line, so the asset stays single rather than being split per region. The landing page was checked at the same time and does not carry that sentence: the only "four salons" left on it is the eleven-years credential, which is a fact about the business and not a claim about where this voucher spends.'}},
    {t:'wait',title:'Wait · to Day 6',sub:'skip if paid',tip:{ch:'Wait',note:'Holds until Day 6.'}},
    {t:'email',title:'Email · Day 6',sub:'"Four days left"',emailKey:'nurture4',tip:{ch:'Email',sub:'Four days left',note:'Real scarcity only, the close date. No fake countdowns.'}},
    {t:'wait',title:'Wait · to Day 8',sub:'skip if paid',tip:{ch:'Wait',note:'Holds until the final day.'}},
    {t:'email',title:'Email · Day 8',sub:'"Final day"',emailKey:'nurture5',tip:{ch:'Email',sub:'Final day',note:'Final day. The window closes tonight, 30 September. Credit placed as a plan for the year ahead.'}},
-   {t:'iff',title:'If/Else · Client button',sub:"Belle's 3-way router",branches:[{c:'go',l:'"Tell me more" → intent:warm'},{c:'',l:'no button → continue'},{c:'stop',l:'"I already have mine" → self:availed'}],tip:{ch:'If / Else',note:'Each message carries tappable buttons. "Tell me more" tags intent:warm and escalates. "I already have mine" tags self:availed, stops the nurture and flags the contact centre to confirm the payment. No button pressed = the arc runs on. self:availed never auto-marks her paid. Labels are kept inside Meta\'s 25-character button cap.'}},
+   {t:'iff',title:'If/Else · Client button',sub:"Belle's 3-way router",branches:[{c:'go',k:'carry',l:'"Tell me more" → intent:warm'},{c:'',k:'carry',l:'no button → continue'},{c:'stop',k:'exit',l:'"I already have mine" → self:availed'}],tip:{ch:'If / Else',note:'Each message carries tappable buttons. "Tell me more" tags intent:warm and escalates. "I already have mine" tags self:availed, stops the nurture and flags the contact centre to confirm the payment. No button pressed = the arc runs on. self:availed never auto-marks her paid. Labels are kept inside Meta\'s 25-character button cap.'}},
    {t:'goal',title:'Goal: Tag added voucher:paid',sub:'exit + start Welcome Pack',tip:{ch:'Goal / exit',note:'Universal exit. The moment voucher:paid lands (Stripe bridge, Tabby manual tag, or reception at the till), the whole nurture ends for her and the Welcome Pack begins.'}}
  ]},
- {id:'welcome',name:'Welcome Pack',short:'Welcome Pack',sub:'post-purchase · starts on voucher:paid',nodes:[
+ {id:'welcome',name:'Welcome Pack',short:'Welcome Pack',sub:'post-purchase · starts on voucher:paid',
+  audience:{
+    to:'Anyone carrying <code>voucher:paid</code>, whichever of the three ways applied it: Stripe online, a card tapped on the POS machine in salon, or Tabby.',
+    not:'<code>voucher:redeemed</code> ends everything immediately. Never chase a woman who already booked.',
+    src:'The Stripe bridge applies the tag automatically. In salon and on Tabby it is applied <b>by hand</b> by the coordinators and Bell&rsquo;s team, same day.',
+    warn:'Bell and the salon coordinators expect <b>most</b> purchases to happen in salon, so most Welcome Packs will start from a manual tag. Every wait below counts from the moment someone remembered to tag her, not from when she paid. Nine Stripe accounts, not twelve: Khalifa City and Saadiyat share one, Motor City and Al Quoz have their own.'},
+  nodes:[
    {t:'trigger',title:'Trigger: Tag added voucher:paid',sub:'any tier, any method',
     tip:{ch:'Trigger',
      note:'Fires the moment <code>voucher:paid</code> is applied, identically whichever of the three ways applied it.',
@@ -55,7 +104,7 @@ const WF=[
       phone number tells you nothing; the Stripe link tells you everything. Note what it does
       NOT tell you: Saadiyat has no working Stripe, so its clients pay through the Khalifa City
       link and a KCA payment means Abu Dhabi, not KCA. Emirate reliable, branch not. */
-   {t:'iff',title:'If/Else · Emirate from payment',sub:'the Stripe link is the proof',branches:[{c:'go',l:'agrees with field → continue'},{c:'',l:'empty → fill from the link'},{c:'stop',l:'disagrees → task, hold sends'}],
+   {t:'iff',title:'If/Else · Emirate from payment',sub:'the Stripe link is the proof',branches:[{c:'go',k:'skip',l:'agrees with field → continue'},{c:'',k:'skip',l:'empty → fill from the link'},{c:'stop',k:'carry',l:'disagrees → task, hold sends'}],
     tip:{ch:'If / Else',flag:'TO BUILD',
      note:'Nine Stripe links, three per paying branch, so the link she paid through names the emirate with certainty. <code>+971</code> covers the whole country; her phone number does not.',
      rows:[['T&amp;C term 3','the credit is held to the emirate it was bought in'],['So','the payment wins on emirate, every time'],['Empty field','a clean fill, holds nothing']],
@@ -66,19 +115,25 @@ const WF=[
    {t:'email',title:'Email 1 · immediately',sub:'Confirmation + Confidence Promise',emailKey:'welcome1',tip:{ch:'Email',sub:'Your voucher is confirmed',note:'Carries the Confidence Promise verbatim, once, plus the branch question so her kit and priority slots are pointed at the right salon. Already parametrised rather than split: it uses {{branch_a_name}} and {{branch_b_name}}, and the comment at line 43 asks for a "GHL conditional on the voucher region". That region has never existed as a field, so today these render BLANK: a confirmation with two empty buttons, and no error anywhere. This is the model for every other email: parametrise, do not duplicate.'}},
    {t:'wa',title:'WhatsApp · same minute',sub:'Confirmation + branch choice · Abu Dhabi / Dubai',
     waKeys:['welcome_confirm_ad','welcome_confirm_dubai'],
-    branches:[{c:'go',l:'branch tapped → tag branch:[x]'},{c:'',l:'"Help me choose" → CC task'},{c:'stop',l:'no reply → ask again in Email 2'}],
+    branches:[{c:'go',k:'carry',l:'branch tapped → tag branch:[x]'},{c:'',k:'carry',l:'"Help me choose" → CC task'},{c:'stop',k:'carry',l:'no reply → ask again in Email 2'}],
     tip:{ch:'WhatsApp',sub:'Payment confirmation + branch choice',
       note:'Sent in the same minute as Email 1, so the confirmation reaches her wherever she looks first. Each template offers only the two salons on its own voucher, whereas the old version listed all four, two of which a Dubai client cannot use. Corrected 7 Aug: the templates are right, but nothing chose between them, so the claim held for the template and not for the workflow. The If/Else after the trigger is what picks one. Meta fixes button labels at template level and they cannot take a merge field, which is why this stays two templates while the emails stay one. The third button is the guide: "Help me choose" raises a contact-centre task instead of leaving her stuck.'}},
    {t:'wait',title:'Wait · 1–2 days',sub:'',tip:{ch:'Wait',note:'Short pause before the value email.'}},
-   {t:'email',title:'Email 2 · what your credit covers',sub:'2 strings to fix',emailKey:'welcome2',tip:{ch:'Email',sub:'What your credit covers',note:'How the credit spends: any service up to the credit value, the two exclusions (home care, new extensions). The Self-Care Bonus paragraph shows only for Season of You / VIP. TWO STRINGS STILL WRONG, and this is the worst of the thirteen: the body at line 41 and the hidden preheader at line 21 both promise "any service at any of our four salons". The preheader is what she reads in her inbox list, next to the subject, before she opens anything. Same neutral swap as Day 4.'}},
+   {t:'email',title:'Email 2 · what your credit covers',sub:'the two exclusions',emailKey:'welcome2',tip:{ch:'Email',sub:'What your credit covers',flag:'FIXED 17 AUG',flagOk:true,note:'How the credit spends: any service up to the credit value, the two exclusions (home care, new extensions). The Self-Care Bonus paragraph shows only for Season of You / VIP. FIXED 17 AUG, in two places, and this was the worst of the thirteen: the body and the hidden preheader both promised "any service at any of our four salons". Both now read "at the salons named on your voucher", the neutral line, so the asset stays single rather than being split per region. The preheader mattered most: it is what she reads in her inbox list, next to the subject, before she opens anything.'}},
    {t:'wait',title:'Wait · to Day 5–7',sub:'',tip:{ch:'Wait',note:'Holds before the mapping push.'}},
-   {t:'iff',title:'If/Else · booked or mapped?',sub:'suppress Email 3 if so',branches:[{c:'go',l:'booked/redeemed → skip'},{c:'',l:'not yet → send Email 3'}],tip:{ch:'If / Else',note:'Email 3 only sends if there is no map:booked, no voucher:redeemed, and no booking on record.'}},
+   {t:'iff',title:'If/Else · booked or mapped?',sub:'suppress Email 3 if so',branches:[{c:'go',k:'skip',l:'booked/redeemed → skip'},{c:'',k:'carry',l:'not yet → send Email 3'}],tip:{ch:'If / Else',note:'Email 3 only sends if there is no map:booked, no voucher:redeemed, and no booking on record.'}},
    {t:'email',title:'Email 3 · Confidence Mapping push',sub:'only if not booked',emailKey:'welcome3',tip:{ch:'Email',sub:'Map your plan',note:'Invites her to do the free Confidence Mapping so her Home Ritual Kit can be personalised and released. The kit cannot be issued until the mapping is done.'}},
    {t:'goal',title:'On voucher:redeemed → Email 4',sub:'rebooking + referral',tip:{ch:'Goal / trigger',note:'Fires on her first redemption visit. Email 4 sets the rebooking rhythm and the refer-a-friend reward. Until the Phorest→GHL webhook exists, reception applies voucher:redeemed at checkout.'}},
    {t:'email',title:'Expiry touch · 30 days left',sub:'email + WhatsApp, both',emailKey:'expiry',waKeys:['expiry_touch'],tip:{ch:'Email + WhatsApp',sub:'30 days left on her credit',note:'Sent when her tier has 30 days left to run (so at 5, 8 or 11 months by tier), and only if the credit is not yet redeemed. Both channels, because this is where unredeemed-credit complaints live, and it must survive the campaign closing.'}},
    {t:'goal',title:'Hard exit: voucher:redeemed',sub:'stop everything',tip:{ch:'Goal / exit',note:'Redemption stops all welcome and nurture messaging immediately. Never chase a woman who already booked.'}}
  ]},
- {id:'mapping',name:'Confidence Mapping',short:'Confidence Mapping',sub:'quiz funnel · feeds the same Paid? hub',nodes:[
+ {id:'mapping',name:'Confidence Mapping',short:'Confidence Mapping',sub:'quiz funnel · feeds the same Paid? hub',
+  audience:{
+    to:'Anyone who submits the Confidence Mapping quiz on the website, voucher or no voucher. Not restricted to buyers.',
+    not:'<code>voucher:paid</code> or <code>map:booked</code>. Either one ends it, because booking always beats selling.',
+    src:'Gravity Forms 21 on WordPress, carried into GHL by Make scenario 1. Nothing maps itself.',
+    warn:'The answers have to reach people who will never log into GHL: receptionists, stylists and beauticians building the Home Ritual Kit. A shared master list is needed, and the training document covering where the data lands and who reads it is still an open action. This quiz is also reused by the Junior Stylist campaign, so whatever is built here is built twice over.'},
+  nodes:[
    /* Verified by reading the live page on 8 Aug, not inferred. It is Gravity Forms 21 on
       WordPress, NOT a GHL-native form, so nothing maps itself and every field below needs
       an explicit destination. Full evidence in CONFIDENCE-MAPPING-FIELD-SPEC.md.
@@ -121,7 +176,7 @@ const WF=[
      long:'TO BUILD. One formatted note written to the contact at the same moment the fields are set, and before the task below is created. Ordered for a person, not for the form: what she came for, then what she said is wrong in her own words, then the one thing that can go expensively wrong (HENNA OR KERATIN MEANS A STRAND TEST COMES FIRST), then her life around it, then her rather than her hair, then the emirate flagged if unknown. Full layout in CONFIDENCE-MAPPING-FIELD-SPEC.md Part 6. Values read as raw keys (fade-fast, heat-daily) rather than sentences, on purpose: a translation table in the bridge is one more thing that drifts out of sync with the quiz.'}},
    /* REDRAWN 8 Aug. The previous version of this node routed on Locale and was built on a
       premise that turns out to be false. See the tip. */
-   {t:'iff',title:'If/Else · Emirate',sub:'the quiz cannot supply it',branches:[{c:'stop',l:'always → unknown'},{c:'',l:'→ ask on WhatsApp'}],
+   {t:'iff',title:'If/Else · Emirate',sub:'the quiz cannot supply it',branches:[{c:'stop',k:'carry',l:'always → unknown'},{c:'',k:'carry',l:'→ ask on WhatsApp'}],
     tip:{ch:'If / Else',flag:'CORRECTED 8 AUG',
      note:'This used to read <b>Locale &#8594; emirate</b>. It cannot. Locale is the page&rsquo;s language tag, the same <code>en-us</code> for every lead, so there is nothing to recover.',
      rows:[['For Monday','every mapping lead is <code>emirate:unknown</code>'],['Then','the WhatsApp ask in Lead Nurture'],['Real fix','a 20th field, a website release']],
@@ -140,7 +195,7 @@ const WF=[
      make:6,
      long:'Creates a CC task: first human contact within 2 hours, WhatsApp if consented, call otherwise. NOW CARRIES HER ANSWERS: the task description links the contact note written two steps above, so whoever rings has the whole map in front of them rather than just route and top pain. This is the gap that mattered most: the page promises "we diagnose first and recommend second, so nothing in your plan is guessed", and a first human contact made without her answers is the one thing the page says we do not do.'}},
    {t:'wait',title:'Wait · 24 hours',sub:'if not booked',tip:{ch:'Wait',note:'Waits a day before the highest-leverage message.'}},
-   {t:'iff',title:'If/Else · booked?',sub:'booking beats selling',branches:[{c:'go',l:'booked → goal map:booked'},{c:'',l:'not booked → bridge message'}],tip:{ch:'If / Else',note:'If she has booked, exit on map:booked. Otherwise send the mapping-to-voucher bridge.'}},
+   {t:'iff',title:'If/Else · booked?',sub:'booking beats selling',branches:[{c:'go',k:'exit',l:'booked → goal map:booked'},{c:'',k:'carry',l:'not booked → bridge message'}],tip:{ch:'If / Else',note:'If she has booked, exit on map:booked. Otherwise send the mapping-to-voucher bridge.'}},
    {t:'wa',title:'WhatsApp · +24h bridge',sub:'email + WhatsApp, both',emailKey:'bridge',waKeys:['bridge'],tip:{ch:'WhatsApp + Email',sub:'Mapping-to-voucher bridge',note:'The highest-leverage message in the funnel. Locked copy (Handover Part 5.2), word for word in both channels.'}},
    {t:'wait',title:'Wait · to Day 3',sub:'gentle follow-up',tip:{ch:'Wait',note:'Holds until Day 3 for the gentle "chair kept warm" follow-up.'}},
    {t:'email',title:'Email · Day 3',sub:'"Your chair is still kept warm"',emailKey:'chair',tip:{ch:'Email',sub:'Your chair is still kept warm',note:'Gentle, no-pressure follow-up if not booked.'}},
@@ -634,13 +689,111 @@ function waLimitText(k){
     (over?' · over Meta’s limit':' · voucher URL counted');
 }
 
+/* A fork, not a list of pills. Branches used to render as .bchip pills INSIDE the card in one
+   centred column, so a 3-way router looked exactly like a linear step with some tags on it and
+   there was no fork anywhere on the page.
+   The horizontal comb is built from per-leg pseudo-elements rather than one absolutely
+   positioned bar, so it survives any number of legs and any wrap without arithmetic. Half-width
+   on the outer legs is what stops the comb overhanging the ends.
+   Nothing here carries class "node": schedule.js counts .node per flow and maps array index to
+   DOM order, so a leg picking up that class would shift every date on the page and leave one
+   console warning as the only symptom. */
+/* Every leg carries its own KIND, in the data, because inferring it from the colour class was
+   wrong: `c` says what sort of outcome it is, not whether the line continues through it. The
+   Blast "Did she come through?" fork proved it — the branch that reaches the next step is the
+   green one, and the amber one holds. Four kinds, and between them no leg dead-ends unless it
+   really does end:
+     carry  reaches the next step. The line continues through it.
+     skip   carries on, but bypasses the next step, which belongs to another branch, and
+            rejoins under it.
+     exit   leaves the workflow. Flat terminal cap.
+     hold   stays where she is. Nothing further in THIS lane.
+   Fallback for a leg with no kind: stop → exit, anything else → carry. */
+function legKind(b){ return b.k || (b.c === 'stop' ? 'exit' : 'carry'); }
+
+var LEGCAP = {carry:'Carries on below', skip:'Skips the next step',
+              exit:'Exits here',        hold:'Stays here'};
+
+/* Returns the fork's markup plus, if any branch bypasses a step, what the lane loop needs to
+   wrap that step in a bypass rail. Not a bare string any more, because the rail has to span the
+   step BELOW the fork and only the loop knows where that step ends. */
+function forkParts(n){
+  if(!n.branches) return null;
+  var B = n.branches, N = B.length, carry = [], skip = [];
+  B.forEach(function(b,i){
+    var k = legKind(b);
+    if(k === 'carry') carry.push(i);
+    else if(k === 'skip') skip.push(i);
+  });
+
+  /* WHERE THE LINE CONTINUES. One carrying leg and the trunk sits under that pill; several and
+     it sits under the bar where they merge, which is the midpoint of them. Nothing carries at
+     all (every branch exits) and there is nothing to line up with, so it stays centred.
+     Three numbers go to the CSS, which does the arithmetic in calc so it survives a resize:
+       --n  leg count
+       --f  how far to slide the row so that point lands on the centre line, in leg widths
+       --m  the furthest leg edge from it, also in leg widths, which caps the leg width so a
+            3-way fork cannot push its outer leg off the canvas */
+  var anchor = carry.length
+    ? carry.reduce(function(a,b){ return a + b; }, 0) / carry.length
+    : (N - 1) / 2;
+  var vars = '--n:' + N + ';--f:' + (N/2 - anchor - 0.5) +
+             ';--m:' + Math.max(anchor + 0.5, N - 0.5 - anchor);
+
+  var legs = B.map(function(b,i){
+    var k = legKind(b);
+    return '<div class="leg ' + (b.c === 'stop' ? 'stop' : (b.c === 'go' ? 'go' : 'on')) +
+      '" data-k="' + k + '">' +
+      '<span class="legchip">' + b.l + '</span>' +
+      '<span class="legcap">' + LEGCAP[k] + '</span>' +
+      /* the tail is what stops a leg looking like a dead end: carry and skip legs run on down
+         to the bar below, exits and holds stop at their cap */
+      (k === 'carry' || k === 'skip' ? '<span class="legtail"></span>' : '') +
+    '</div>';
+  }).join('');
+
+  /* the bars the tails run into: carrying legs converge on the trunk, skipping legs converge on
+     the rail that goes round the next step. A single leg needs no bar, its tail is the line. */
+  var bar = function(list, cls){
+    if(list.length < 2) return '';
+    var span = list[list.length-1] - list[0],
+        off  = (list[0] + list[list.length-1]) / 2 - anchor;
+    return '<div class="' + cls + '" style="--barw:calc(var(--legw) * ' + span +
+           ');--barx:calc(var(--legw) * ' + off + ')"></div>';
+  };
+
+  var out = {
+    html: '<div class="fork" data-legw data-legs="' + N + '" style="' + vars + '">' +
+      '<span class="forkstem"></span>' +
+      '<div class="legs">' + legs + '</div>' +
+      bar(carry, 'merge') + bar(skip, 'skipbar') +
+    '</div>',
+    vars: vars,
+    skip: null
+  };
+
+  if(skip.length){
+    /* One rail carries every skipping leg on this fork, started under the leg furthest from the
+       trunk so it clears the others, and it goes round however many steps the widest skip needs.
+       Every skip in this pack is a single step; n on the branch overrides it. */
+    var far = skip.reduce(function(a,b){
+      return Math.abs(b - anchor) > Math.abs(a - anchor) ? b : a;
+    }, skip[0]);
+    out.skip = {
+      steps: Math.max.apply(null, skip.map(function(i){ return B[i].n || 1; })),
+      side:  far < anchor ? 'left' : 'right',
+      mag:   Math.abs(far - anchor)
+    };
+  }
+  return out;
+}
+
 function nodeHTML(n,fl,idx){
   var col=COLOR[n.t]||'#666', type=TYPELABEL[n.t]||'', tp=n.tip||{};
 
+  /* branches are drawn below the card now, by forkHTML, so this is only ever the channel pair */
   var extra='';
-  if(n.branches){
-    extra='<div class="branches">'+n.branches.map(function(b){return '<span class="bchip '+b.c+'">'+b.l+'</span>';}).join('')+'</div>';
-  } else if(n.emailKey && n.waKeys){
+  if(n.emailKey && n.waKeys){
     extra='<div class="chanpair"><i style="background:'+COLOR.email+'">Email</i><i style="background:'+COLOR.wa+'">WhatsApp</i></div>';
   }
 
@@ -693,6 +846,58 @@ function nodeHTML(n,fl,idx){
     extra+desc+stack+'</div>';
 }
 
+/* ===== one lane, walked rather than mapped =====
+   It used to be nodes.map(node + rail). A bypass rail has to span the step it goes round, and the
+   only way to draw that without measuring heights in JS is to WRAP that step, so the rail is a
+   border on the wrapper and grows with whatever is inside it. That needs a walk: a fork can eat
+   the step that follows it.
+   The wrapper is a plain div and never a <section id> — that would steal the note namespace from
+   every step in the lane — and never carries class "node", so schedule.js still counts the same
+   steps in the same DOM order. */
+function laneHTML(w){
+  var out = audHTML(w), i = 0, N = w.nodes.length;
+  while(i < N){
+    var fk = forkParts(w.nodes[i]);
+    out += nodeHTML(w.nodes[i], w.id, i) + (fk ? fk.html : '');
+    i++;
+    if(fk && fk.skip && i < N){
+      var inner = '', taken = 0;
+      while(taken < fk.skip.steps && i < N){
+        inner += '<div class="rail"></div>' + nodeHTML(w.nodes[i], w.id, i);
+        i++; taken++;
+      }
+      out += '<div class="bypass ' + fk.skip.side + '" data-legw style="' + fk.vars +
+               ';--bw:calc(var(--legw) * ' + fk.skip.mag + ')">' + inner + '</div>' +
+             '<div class="rejoin ' + fk.skip.side + '" data-legw style="' + fk.vars +
+               ';--bw:calc(var(--legw) * ' + fk.skip.mag + ')"></div>';
+    }
+    if(i < N) out += '<div class="rail"></div>';
+  }
+  return out;
+}
+
+/* The band that answers the one question the map never answered: who is in this lane.
+   Deliberately three fixed columns rather than free prose, because "who is excluded" is the
+   column people skip writing and it is the column that causes the incidents.
+   Class is .aud and never .node: schedule.js counts .node per flow and maps array index to
+   DOM order, so a band carrying that class would shift every date on the page and say so in
+   nothing but one console warning. Same reason it is not wrapped in a section[id]: that would
+   steal the note namespace from every step in the lane. */
+function audHTML(w){
+  var a = w.audience;
+  if(!a) return '';
+  return '<div class="aud">' +
+    '<div class="audtop"><span class="audk">Who this is for</span>' +
+      '<b>' + w.name + '</b><span class="audsub">' + (w.sub||'') + '</span></div>' +
+    '<div class="audgrid">' +
+      '<div class="audcell go"><i>Goes to</i><p>'  + a.to  + '</p></div>' +
+      '<div class="audcell no"><i>Never enters</i><p>' + a.not + '</p></div>' +
+      '<div class="audcell src"><i>Where the list comes from</i><p>' + a.src + '</p></div>' +
+    '</div>' +
+    (a.warn ? '<div class="audwarn"><b>Watch this</b>' + a.warn + '</div>' : '') +
+  '</div>';
+}
+
 const tabs=document.getElementById('tabs');
 const canvas=document.getElementById('canvas');
 const WFMAP={};
@@ -724,7 +929,7 @@ WF.forEach(function(w,i){
      identically-named nurture steps. The id keeps the "automations" prefix the dashboard
      groups on. */
   var fl=document.createElement('section');fl.className='flow'+(i===0?' active':'');fl.id='automations-'+w.id;
-  fl.innerHTML=w.nodes.map(function(n,idx){return nodeHTML(n,w.id,idx)+(idx<w.nodes.length-1?'<div class="rail"></div>':'');}).join('');
+  fl.innerHTML=laneHTML(w);
   canvas.appendChild(fl);
 
   /* The peek panels hang down from their node and are only visibility:hidden, so they are
@@ -1139,11 +1344,13 @@ function openMakeModal(ref){
 mback.addEventListener('click',function(e){ if(e.target===mback) closeModal(); });
 document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeModal(); });
 
-/* ===== the four notes =====
+/* ===== the banner notes =====
    Collapsed by default so the canvas is the first thing on screen, but the header keeps
    count of what has not been opened yet, so folding them away cannot quietly turn into
    nobody reading them. "Read" is remembered per browser; on file:// with storage blocked
-   it just falls back to everything showing as unread, which is the safe direction. */
+   it just falls back to everything showing as unread, which is the safe direction.
+   The count is COUNTED, never typed: the HTML said "4 notes" while there were five banners
+   and would have been wrong again the moment a sixth landed. */
 (function(){
   var notes=[].slice.call(document.querySelectorAll('details.banner'));
   if(!notes.length) return;
@@ -1189,3 +1396,92 @@ document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeModal
        logins reads it and says which module is wrong before it gets built */
     { sel: '.mkmod', into: null, labelSel: '.mktitle', float: false }
   ];
+
+/* ===== the header, collapsed by default =====
+   Default collapsed. The three header rows are orientation, and orientation is a first-visit
+   need, not a permanent one: on a laptop they cost about a third of the viewport on every
+   subsequent visit. localStorage, same pattern as the campaign clock in schedule.js.
+   The class goes on body rather than on .top because the clock rows are injected into .top by
+   schedule.js after this runs, and a body class reaches them whenever they arrive. */
+(function(){
+  var btn = document.getElementById('hdrTog');
+  if(!btn) return;
+  var KEY = 'trs-bv-automations-header-v1';
+  function set(collapsed){
+    document.body.classList.toggle('hdr-collapsed', collapsed);
+    btn.setAttribute('aria-expanded', String(!collapsed));
+    btn.textContent = collapsed ? 'Show guide' : 'Hide guide';
+    try{ localStorage.setItem(KEY, collapsed ? '1' : '0'); }catch(e){}
+  }
+  var saved = '1';
+  try{ var v = localStorage.getItem(KEY); if(v !== null) saved = v; }catch(e){}
+  set(saved === '1');
+  btn.onclick = function(){ set(!document.body.classList.contains('hdr-collapsed')); };
+})();
+
+/* ===== zoom, the way the GHL builder zooms =====
+   An 18-step lane does not fit a laptop at 100%, and the answer a reviewer wants is not "scroll
+   more", it is "show me less of it, bigger or smaller". Applied with `zoom` on each .flow rather
+   than a transform on the canvas: zoom REFLOWS, so the canvas grows and shrinks with its content
+   and there is no dead band under a zoomed-out lane and no blurred text. It also stays off the
+   canvas itself, which keeps the dotted grid at a constant size — the diagram scales, the paper
+   it sits on does not.
+   Capped at 130%: above that the 880px fork is wider than the canvas on a 1280px laptop, and the
+   fix for that would be a scrolling canvas, which would clip every peek panel. */
+(function(){
+  var STEPS = [50,60,70,80,90,100,110,120,130];
+  var out = document.getElementById('zOut'),
+      inn = document.getElementById('zIn'),
+      lvl = document.getElementById('zLvl');
+  if(!out || !inn || !lvl) return;
+  var KEY = 'trs-bv-automations-zoom-v1', HOME = STEPS.indexOf(100), i = HOME;
+  try{ var j = STEPS.indexOf(parseInt(localStorage.getItem(KEY),10)); if(j >= 0) i = j; }catch(e){}
+  function set(next){
+    i = Math.max(0, Math.min(STEPS.length - 1, next));
+    var z = STEPS[i];
+    /* on the root, not on .canvas: the fork's leg-width cap reads --zoom in a calc() too, so a
+       zoomed-in 3-way fork still keeps its outer leg inside the canvas */
+    document.documentElement.style.setProperty('--zoom', z / 100);
+    lvl.textContent = z + '%';
+    out.disabled = i === 0;
+    inn.disabled = i === STEPS.length - 1;
+    try{ localStorage.setItem(KEY, String(z)); }catch(e){}
+  }
+  out.onclick = function(){ set(i - 1); };
+  inn.onclick = function(){ set(i + 1); };
+  lvl.onclick = function(){ set(HOME); };
+  canvas.addEventListener('wheel', function(e){
+    if(!e.ctrlKey && !e.metaKey) return;   /* a plain wheel must still scroll the page */
+    e.preventDefault();
+    set(i + (e.deltaY < 0 ? 1 : -1));
+  }, {passive:false});
+  set(i);
+})();
+
+/* ===== the banner stack, folded into its own header row =====
+   .top was not the only thing eating the fold: .noteshead plus six banners is another seven
+   rows before the canvas. Six rows become one, one click brings them back.
+   Not folded into the header toggle above, deliberately: these are labelled "Read before you
+   review", so the row, the label and the unread count stay visible whatever this is set to.
+   Nothing is hidden here that was not already behind a <details> — the bodies were always
+   collapsed, and the count pill keeps saying how many have not been opened. */
+(function(){
+  var btn   = document.getElementById('nhTog');
+  var stack = document.getElementById('noteStack');
+  if(!btn || !stack) return;
+  var KEY = 'trs-bv-automations-notes-v1';
+  var n   = stack.querySelectorAll('details.banner').length;
+  function set(collapsed){
+    document.body.classList.toggle('notes-collapsed', collapsed);
+    btn.setAttribute('aria-expanded', String(!collapsed));
+    btn.textContent = collapsed ? 'Show the notes' : 'Fold the notes';
+    btn.title = collapsed
+      ? 'Open the ' + n + ' notes that sit above the canvas'
+      : 'Fold the ' + n + ' notes back into this row';
+    try{ localStorage.setItem(KEY, collapsed ? '1' : '0'); }catch(e){}
+  }
+  var saved = '1';
+  try{ var v = localStorage.getItem(KEY); if(v !== null) saved = v; }catch(e){}
+  set(saved === '1');
+  btn.onclick = function(){ set(!document.body.classList.contains('notes-collapsed')); };
+})();
