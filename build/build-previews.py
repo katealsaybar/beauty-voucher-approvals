@@ -80,6 +80,14 @@ SAMPLE = {
     "{{branch_a_url}}": LIVE,
     "{{branch_b_url}}": LIVE,
     "{{help_me_choose_url}}": LIVE,
+    # The logo. Both pages that render these previews sit one folder deep, so one
+    # relative path serves both. At send time this is the GHL-hosted white logo.
+    "{{LOGO_URL}}": "../assets/tara-rose-logo-white.png",
+    # The three blast photos, chosen 18 Aug and cut to the slot specs. Same relative
+    # path logic as the logo: both consuming pages sit one folder deep.
+    "{{HERO_IMAGE_URL}}": "../assets/blast-hero.jpg",
+    "{{IMAGE_2_URL}}": "../assets/blast-square-2.jpg",
+    "{{IMAGE_3_URL}}": "../assets/blast-square-3.jpg",
 }
 
 

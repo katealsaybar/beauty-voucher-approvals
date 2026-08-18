@@ -2,7 +2,7 @@
 
 Written 12 Aug 2026, at the end of the session that moved the campaign. Paste this whole file
 into a fresh Claude Code session, or open one in `D:\WORK\Claude\claude-cowork-build` and say
-*"read `beauty-voucher-approval-pack/docs/CALENDAR-RESCHEDULE-PROMPT.md` and do it"*.
+*"read `wellness-voucher-approval-pack/docs/CALENDAR-RESCHEDULE-PROMPT.md` and do it"*.
 
 > **STATUS, later on 12 Aug 2026. Jobs 1 and 2 are DONE. Job 3 is not, and it is the whole of
 > what is left.**
@@ -27,7 +27,7 @@ into a fresh Claude Code session, or open one in `D:\WORK\Claude\claude-cowork-b
 
 ## What already happened, so you do not redo it
 
-On 12 Aug 2026 the Beauty Voucher campaign was rescheduled. The window now **opens Monday
+On 12 Aug 2026 the Wellness Voucher campaign was rescheduled. The window now **opens Monday
 17 August 2026 and closes Wednesday 30 September 2026**, six weeks rather than three.
 
 Two things were done and are finished. Do not repeat them:

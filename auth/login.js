@@ -1,4 +1,4 @@
-// Beauty Voucher Approval Pack: sign-in.
+// Wellness Voucher Approval Pack: sign-in.
 //
 // Email + password against Supabase Auth. No sign-up here on purpose: accounts are created
 // in the Supabase dashboard, so nobody can grant themselves an account by visiting a public

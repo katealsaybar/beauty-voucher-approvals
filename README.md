@@ -1,6 +1,6 @@
-# Beauty Voucher: Approval Pack
+# Wellness Voucher: Approval Pack
 
-Tara's sign-off pack for the Summer Beauty Ritual Voucher (UAE), with a notes and
+Tara's sign-off pack for the Wellness Voucher (UAE), with a notes and
 suggestions layer on top so she can leave revisions directly on the document instead of
 sending them back in WhatsApp.
 
@@ -46,7 +46,7 @@ whole mechanism: one attribute, comma-separated:
 | Who | Sees | Which | Why |
 |---|---|---|---|
 | **Tara** | 16 | all but 11 | she signs the pack off |
-| **Emma** | 4 | 1 staff incentive, 2 colour credit cap, 5 Ritual Kit caps + trade cost, 17 Floor Briefing | the money, and the floor, since she coaches the team |
+| **Emma** | 4 | 1 staff incentive (declined 10 Aug, kept for the record), 2 colour credit cap, 5 Ritual Kit caps + trade cost, 17 Floor Briefing | the money, and the floor, since she coaches the team |
 | **Hanneh** | 2 | 14 pillar mix, 15 gifting transferability | anything social |
 | **Kate** | 1 | 11 the "five questions" count | a fact to confirm, not a call to make |
 
@@ -122,7 +122,7 @@ behaviour side by side. Nothing is inlined any more: each page's `<style>` block
 and a behaviour bug is another, instead of both being somewhere in a 900-line HTML file.
 
 ```text
-beauty-voucher-approval-pack/
+wellness-voucher-approval-pack/
 ├── index.html                 the pack, and the only URL anyone needs
 ├── README.md                  this file
 │
@@ -499,7 +499,7 @@ promotes the browse door, which is the right greeting for a reviewer who is here
   are the audit trail of what Tara asked for and what got actioned. Archive is the way to
   get rid of noise.
 - **The pack itself is NOT protected.** RLS guards the notes data only. If `index.html` is
-  served from a public URL, anyone with that URL can read the pack, staff incentive amounts
+  served from a public URL, anyone with that URL can read the pack, branch numbers
   included. Gating the page in JavaScript would not change that, since the raw file is still
   fetchable. If the content needs to be private, the hosting has to be private.
 - **The session now survives closing the tab.** It is in `localStorage`, not
@@ -530,5 +530,5 @@ Change it and the pack starts an empty thread, leaving the old round intact in t
 ## Local preview
 
 ```bash
-python -m http.server 8757 --directory beauty-voucher-approval-pack
+python -m http.server 8757 --directory wellness-voucher-approval-pack
 ```

@@ -1,4 +1,4 @@
-/* Beauty Voucher Approval Pack: notes + suggestions widget
+/* Wellness Voucher Approval Pack: notes + suggestions widget
    Copied in concept from the CWD knowledgebase Comments/Suggestions widgets, restyled to
    the pack's own palette. Falls back to its own colours if the host page doesn't define
    the --ink/--accent/etc. variables, so the widget stays portable. */

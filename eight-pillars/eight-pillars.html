@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>The 8 Pillars of Wellness &middot; Tara Rose</title>
+
+<!--
+  ==========================================================================
+  THE 8 PILLARS OF WELLNESS JOURNAL
+  ==========================================================================
+
+  Included with All-In VIP Year. Not on Dip Your Toes or Season of You.
+
+  This is Kate's Mischief & Mayhem four-week journey, rebranded from TRK to
+  TRS on 18 Aug 2026. The structure, the eight pillars, the Golden Rule and
+  the four-week arc are hers and are unchanged. What changed is the skin:
+  the terracotta TRK palette became the salon's sand and mint, DM Sans became
+  Inter, and the TRK header became the Tara Rose logo.
+
+  WHY THIS IS ONE HTML FILE AND NOT A PDF
+  It is both. window.print() with the print stylesheet below turns it into a
+  PDF the client saves herself, so nothing has to be generated server-side and
+  no PDF add-on has to exist. That is the same pattern the Confidence Map
+  journal should use, so the two behave identically.
+
+  WHY localStorage AND NOT A DATABASE
+  Her answers are hers. They stay on her device, nothing is transmitted, and
+  there is no PDPL surface to argue about. The trade is that clearing her
+  browser clears her answers, which is what the note above the buttons says
+  out loud rather than hiding.
+
+  THE LOGO
+  Uses the pack's asset, so this page matches the emails and the mockups. That
+  asset reads TARA ROSE / SALON. The live site reads SALONS, and the official
+  2026 folder in Tara's Drive only has SALON. That is one file swap in
+  assets/ once someone rules on it, and it updates this page, the emails and
+  every mockup at once. Do not fix it here alone.
+  ==========================================================================
+-->
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --sand:#F1ECE3; --paper:#FAF8F4; --dark:#1C1B18; --ink:#2D2E37;
+  --green:#1C7563; --mint:#7CE8D2; --mint-ink:#0E2A25;
+  --line:rgba(45,46,55,.12); --muted:#8A867E;
+  --serif:'Playfair Display',Georgia,serif; --sans:'Inter',Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--sans);background:var(--sand);color:var(--ink);line-height:1.7;font-size:16px;}
+
+.top{position:sticky;top:0;z-index:100;background:var(--dark);display:flex;align-items:center;
+  justify-content:space-between;gap:12px;padding:11px 16px;}
+.top img{height:26px;width:auto;display:block;}
+.top .lbl{color:#F1ECE3;font-size:10px;letter-spacing:.22em;text-transform:uppercase;font-weight:500;
+  flex:1;text-align:center;}
+.badge{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--mint-ink);
+  background:var(--mint);padding:5px 11px;border-radius:100px;white-space:nowrap;font-weight:600;}
+
+.pdfbar{background:var(--mint);padding:11px 16px;text-align:center;color:var(--mint-ink);font-size:13.5px;
+  display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;font-weight:500;}
+.pdfbar button{background:var(--dark);color:#fff;border:none;padding:7px 18px;border-radius:100px;
+  font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;cursor:pointer;font-family:var(--sans);}
+
+.cover{background:var(--dark);padding:52px 20px 58px;text-align:center;position:relative;overflow:hidden;}
+.cover::before{content:'';position:absolute;right:-70px;top:-70px;width:250px;height:250px;border-radius:50%;
+  background:var(--mint);opacity:.10;}
+.cover::after{content:'';position:absolute;left:-50px;bottom:-70px;width:190px;height:190px;border-radius:50%;
+  background:var(--green);opacity:.22;}
+.cover img{height:34px;width:auto;margin:0 auto 22px;display:block;position:relative;}
+.eyebrow{font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--mint);margin-bottom:14px;font-weight:600;}
+.cover h1{font-family:var(--serif);font-weight:400;font-size:38px;line-height:1.1;color:#fff;
+  letter-spacing:-.02em;margin-bottom:12px;position:relative;}
+.cover h1 em{font-style:italic;color:var(--mint);}
+.cover .sub{font-family:var(--serif);font-style:italic;font-size:15px;color:#C4C0B8;max-width:330px;
+  margin:0 auto 20px;position:relative;}
+.quote-lite{font-family:var(--serif);font-style:italic;font-size:13.5px;color:var(--mint);margin-top:18px;
+  padding:13px 20px;border:1px solid rgba(124,232,210,.28);border-radius:12px;position:relative;}
+
+.nav{display:flex;overflow-x:auto;gap:8px;padding:13px 16px;background:var(--paper);
+  border-bottom:1px solid var(--line);position:sticky;top:48px;z-index:99;-webkit-overflow-scrolling:touch;}
+.nav::-webkit-scrollbar{display:none;}
+.nav button{flex-shrink:0;padding:8px 16px;border-radius:100px;border:1px solid var(--line);background:transparent;
+  color:var(--muted);font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;cursor:pointer;
+  font-family:var(--sans);white-space:nowrap;}
+.nav button.on{background:var(--mint);color:var(--mint-ink);border-color:var(--mint);}
+
+.panel{display:none;padding:0 16px 70px;max-width:620px;margin:0 auto;}
+.panel.on{display:block;}
+
+.whead{padding:30px 0 20px;border-bottom:1px solid var(--line);margin-bottom:22px;}
+.wtag{font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--green);font-weight:600;margin-bottom:8px;}
+.whead h2{font-family:var(--serif);font-weight:400;font-size:27px;letter-spacing:-.015em;color:var(--ink);}
+.whead p{font-family:var(--serif);font-style:italic;font-size:14.5px;color:var(--muted);margin-top:7px;}
+
+.sect{margin-top:30px;padding-bottom:26px;border-bottom:1px solid var(--line);}
+.sect:last-child{border-bottom:none;}
+.sect h3{font-family:var(--serif);font-weight:400;font-size:20px;color:var(--ink);margin-bottom:5px;}
+.sect .desc{font-family:var(--serif);font-style:italic;font-size:13.5px;color:var(--muted);margin-bottom:15px;}
+.q{font-size:14px;font-weight:500;color:var(--ink);margin:16px 0 6px;}
+.lede{font-size:14.5px;line-height:1.7;color:var(--ink);}
+
+textarea,input[type="text"]{width:100%;border:1px solid var(--line);border-radius:12px;padding:12px 14px;
+  font-family:var(--sans);font-size:15px;color:var(--ink);background:#fff;resize:vertical;outline:none;
+  -webkit-appearance:none;}
+textarea:focus,input[type="text"]:focus{border-color:var(--green);}
+textarea{min-height:92px;}
+
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:15px;margin-bottom:10px;}
+.pillar{border-left:3px solid var(--mint);}
+.pillar .nm{font-size:14.5px;font-weight:600;color:var(--ink);margin-bottom:3px;}
+.pillar .dsc{font-family:var(--serif);font-style:italic;font-size:12.5px;color:var(--muted);margin-bottom:11px;}
+.score{display:flex;align-items:center;gap:11px;}
+.score label{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);min-width:44px;font-weight:600;}
+.score input[type="range"]{flex:1;accent-color:var(--green);}
+.val{font-size:15px;font-weight:600;color:var(--green);min-width:24px;text-align:right;}
+
+.rule{background:var(--dark);border-radius:14px;padding:15px 17px;margin-bottom:18px;}
+.rule .t{font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--mint);font-weight:600;margin-bottom:6px;}
+.rule .b{font-family:var(--serif);font-style:italic;font-size:13.5px;color:#C4C0B8;}
+
+.checks{display:flex;flex-direction:column;gap:8px;margin-top:8px;}
+.check{display:flex;align-items:flex-start;gap:10px;background:#fff;border:1px solid var(--line);
+  border-radius:10px;padding:10px 12px;}
+.check input{margin-top:3px;accent-color:var(--green);width:16px;height:16px;flex-shrink:0;}
+.check span{font-size:14px;color:var(--ink);}
+.col{border-radius:12px;overflow:hidden;}
+.col .h{padding:10px 14px;font-size:10px;letter-spacing:.18em;text-transform:uppercase;font-weight:600;}
+.col .h.out{background:#F7E9E6;color:#8B3220;}
+.col .h.in{background:#E1F5EE;color:var(--mint-ink);}
+.col .items{background:#fff;border:1px solid var(--line);border-top:none;border-radius:0 0 12px 12px;padding:8px 12px;}
+
+.ppf{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:11px;}
+.ppf .h{padding:10px 14px;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#fff;font-weight:600;}
+.ppf .h.p{background:var(--green);}
+.ppf .h.pr{background:var(--dark);}
+.ppf .h.f{background:var(--mint);color:var(--mint-ink);}
+.ppf .hint{font-family:var(--serif);font-style:italic;font-size:12.5px;color:var(--muted);padding:9px 14px 2px;}
+.ppf textarea{border:none;border-radius:0;min-height:82px;padding:8px 14px;}
+
+.phase{border-radius:12px;padding:14px;border:1px solid var(--line);background:#fff;margin-bottom:10px;}
+.phase.p1{border-left:4px solid var(--mint);}
+.phase.p2{border-left:4px solid var(--green);}
+.phase.p3{border-left:4px solid var(--dark);}
+.phase .l{font-size:10px;letter-spacing:.2em;text-transform:uppercase;font-weight:600;margin-bottom:4px;color:var(--green);}
+.phase .t{font-size:14px;font-weight:500;color:var(--ink);margin-bottom:8px;}
+
+.row{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.day{background:var(--paper);border:1px solid var(--line);border-radius:10px;text-align:center;padding:9px 6px;
+  font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:var(--green);min-width:58px;}
+.day.wide{min-width:96px;}
+
+.routine{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;margin-top:10px;}
+.routine .t{font-size:10px;letter-spacing:.2em;text-transform:uppercase;font-weight:600;margin-bottom:12px;color:var(--green);}
+.routine .lb{font-size:13.5px;color:var(--ink);margin:14px 0 6px;}
+.routine .lb:first-of-type{margin-top:0;}
+
+.quote{background:var(--dark);border-radius:14px;padding:21px;margin-top:16px;}
+.quote .t{font-family:var(--serif);font-style:italic;font-size:16.5px;color:#fff;line-height:1.6;}
+.quote .a{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--mint);margin-top:10px;font-weight:600;}
+
+.aff{background:var(--mint);border-radius:14px;padding:26px;text-align:center;margin-top:38px;}
+.aff .t{font-family:var(--serif);font-style:italic;font-size:20px;color:var(--mint-ink);line-height:1.5;}
+
+.note{font-size:12.5px;color:var(--muted);text-align:center;padding:0 22px 10px;}
+.bar{background:var(--paper);border-top:1px solid var(--line);padding:15px 16px;display:flex;
+  flex-direction:column;gap:10px;margin-top:38px;}
+.bar button{border-radius:100px;padding:14px;font-family:var(--sans);font-size:12px;letter-spacing:.12em;
+  text-transform:uppercase;font-weight:600;cursor:pointer;width:100%;}
+.b1{background:var(--mint);color:var(--mint-ink);border:none;}
+.b2{background:transparent;color:var(--ink);border:1px solid var(--line);}
+.msg{font-size:13px;color:var(--muted);text-align:center;}
+
+@media print{
+  .top,.pdfbar,.nav,.bar,.note{display:none!important;}
+  body{background:#fff;}
+  .panel{display:block!important;page-break-before:always;}
+  .panel:first-of-type{page-break-before:auto;}
+  .cover,.rule,.ppf .h,.aff,.quote,.col .h{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <img src="../assets/tara-rose-logo-white.png" alt="Tara Rose Salon">
+  <span class="lbl">The 8 Pillars of Wellness</span>
+  <span class="badge" id="badge">Saving</span>
+</div>
+
+<div class="pdfbar">
+  Your answers save on this device as you type.
+  <button onclick="window.print()">Save as PDF</button>
+</div>
+
+<div class="cover">
+  <img src="../assets/tara-rose-logo-white.png" alt="Tara Rose Salon">
+  <div class="eyebrow">Included with All-In VIP Year</div>
+  <h1>The 8 Pillars<br><em>of Wellness</em></h1>
+  <div class="sub">Four weeks. A candid conversation about the woman you are becoming.</div>
+  <div class="quote-lite">&ldquo;This is not about fixing yourself. It is about seeing yourself clearly.&rdquo; &middot; Tara Rose Kidd</div>
+</div>
+
+<div class="nav">
+  <button class="on" onclick="show(0,this)">Overview</button>
+  <button onclick="show(1,this)">Week 1 &middot; Foundation</button>
+  <button onclick="show(2,this)">Week 2 &middot; Mindset</button>
+  <button onclick="show(3,this)">Week 3 &middot; Goals</button>
+  <button onclick="show(4,this)">Week 4 &middot; Transformation</button>
+</div>
+
+<!-- ============ OVERVIEW ============ -->
+<div class="panel on" id="p0">
+  <div class="whead"><div class="wtag">Your journey</div><h2>Four weeks. Four shifts.</h2>
+    <p>Each week builds on the last. Small steps. Real change.</p></div>
+
+  <div class="sect"><h3>Week 1 &middot; Foundation</h3><div class="desc">The 8 Pillars. See yourself clearly.</div>
+    <p class="lede">Rate each pillar honestly. Find where you are struggling and where you are strong. Choose one focus. Take one small action.</p></div>
+  <div class="sect"><h3>Week 2 &middot; Mindset</h3><div class="desc">Rewire your thinking. The 80/20 rule.</div>
+    <p class="lede">Most of the change is mindset. Name the belief holding you back, replace it, and prove the new one with one small action.</p></div>
+  <div class="sect"><h3>Week 3 &middot; Goals and action</h3><div class="desc">Personal, professional, financial. The 2% rule.</div>
+    <p class="lede">Brainstorm freely, build your goal pyramid, then name what is in the way and turn it into a to-do list rather than a reason to stop.</p></div>
+  <div class="sect"><h3>Week 4 &middot; Transformation</h3><div class="desc">Daily rituals. Morning and evening.</div>
+    <p class="lede">How you begin your morning shapes your momentum. How you end your day shapes tomorrow. Build the practice.</p></div>
+
+  <div class="quote"><div class="t">&ldquo;Small consistent actions compound. You do not need to change everything at once. You just need to start.&rdquo;</div>
+    <div class="a">Tara Rose Kidd</div></div>
+
+  <div class="q">Why I am here. Three things I struggle with right now:</div>
+  <input type="text" placeholder="1." id="s1" oninput="save()">
+  <input type="text" placeholder="2." id="s2" oninput="save()" style="margin-top:8px;">
+  <input type="text" placeholder="3." id="s3" oninput="save()" style="margin-top:8px;">
+  <div class="q">One word for how I want to feel:</div>
+  <input type="text" placeholder="Grounded, free, confident" id="feel" oninput="save()">
+  <div class="q">One thing I want in the next twelve months:</div>
+  <input type="text" placeholder="Be specific" id="goal12" oninput="save()">
+
+  <div class="aff"><div class="t">&ldquo;I am not here to be perfect. I am here to be real.&rdquo;</div></div>
+</div>
+
+<!-- ============ WEEK 1 ============ -->
+<div class="panel" id="p1">
+  <div class="whead"><div class="wtag">Week 1 of 4</div><h2>Foundation &middot; The 8 Pillars</h2>
+    <p>This week is not about fixing yourself. It is about seeing yourself clearly.</p></div>
+
+  <div class="sect"><h3>Quick check in</h3>
+    <div class="q">How am I today?</div>
+    <div class="score"><label>Mood</label><input type="range" min="1" max="10" value="5" id="mood"
+      oninput="document.getElementById('moodv').textContent=this.value;save()"><span class="val" id="moodv">5</span></div>
+    <div class="q">What I need most this week:</div>
+    <input type="text" placeholder="One sentence" id="need" oninput="save()">
+  </div>
+
+  <div class="sect"><h3>Rate your pillars</h3>
+    <div class="rule"><div class="t">The golden rule</div>
+      <div class="b">You cannot use the number 7. Choose the truth: are you struggling, six or below, or thriving, eight or above? Be brave.</div></div>
+    <div id="pillars"></div>
+    <div class="q">My two lowest pillars, where I need support:</div>
+    <input type="text" placeholder="Financial and physical" id="low" oninput="save()">
+    <div class="q">My highest pillar, my strength:</div>
+    <input type="text" placeholder="Social" id="high" oninput="save()">
+  </div>
+
+  <div class="sect"><h3>Signs of alignment</h3><div class="desc">Tick what feels true right now.</div>
+    <div class="col"><div class="h out">Out of alignment</div><div class="items checks">
+      <label class="check"><input type="checkbox" id="oa1" onchange="save()"><span>Scattered or overwhelmed</span></label>
+      <label class="check"><input type="checkbox" id="oa2" onchange="save()"><span>Reactive and easily triggered</span></label>
+      <label class="check"><input type="checkbox" id="oa3" onchange="save()"><span>Drained, tired but wired</span></label>
+      <label class="check"><input type="checkbox" id="oa4" onchange="save()"><span>Avoiding things, putting them off</span></label>
+      <label class="check"><input type="checkbox" id="oa5" onchange="save()"><span>Over committing, weak boundaries</span></label>
+    </div></div>
+    <div class="col" style="margin-top:10px;"><div class="h in">In alignment</div><div class="items checks">
+      <label class="check"><input type="checkbox" id="ia1" onchange="save()"><span>Clear and focused</span></label>
+      <label class="check"><input type="checkbox" id="ia2" onchange="save()"><span>Present in the moment</span></label>
+      <label class="check"><input type="checkbox" id="ia3" onchange="save()"><span>Resourced and energised</span></label>
+      <label class="check"><input type="checkbox" id="ia4" onchange="save()"><span>Intentional with my time</span></label>
+      <label class="check"><input type="checkbox" id="ia5" onchange="save()"><span>Boundaries clear and held</span></label>
+    </div></div>
+  </div>
+
+  <div class="sect"><h3>Week 1 commitment</h3>
+    <div class="q">I will focus on the pillar of:</div><input type="text" placeholder="The one that feels most urgent" id="c1" oninput="save()">
+    <div class="q">Why this matters to me right now:</div><textarea placeholder="Be honest" id="c2" oninput="save()"></textarea>
+    <div class="q">My habit, and make it small:</div><input type="text" placeholder="Put on running shoes, not run 5k" id="c3" oninput="save()">
+    <div class="q">When and where I will do it:</div><input type="text" placeholder="Every morning at 7, in the kitchen" id="c4" oninput="save()">
+    <div class="q">One outcome I want in seven days:</div><input type="text" placeholder="Be specific" id="c5" oninput="save()">
+  </div>
+</div>
+
+<!-- ============ WEEK 2 ============ -->
+<div class="panel" id="p2">
+  <div class="whead"><div class="wtag">Week 2 of 4</div><h2>Mindset &middot; Rewire your thinking</h2>
+    <p>Change the belief, change the action, change the outcome.</p></div>
+
+  <div class="sect"><h3>The 80/20 shift</h3><div class="desc">Name the belief. Rewrite it. Prove it.</div>
+    <div class="card">
+      <div class="q" style="margin-top:0;color:var(--green);">A belief I am ready to release:</div>
+      <textarea placeholder="I am not good enough. I do not have time. I am not ready." id="b1" oninput="save()"></textarea>
+      <div class="q" style="color:var(--green);">The belief I choose instead:</div>
+      <textarea placeholder="I am capable of. I have what it takes to." id="b2" oninput="save()"></textarea>
+      <div class="q" style="color:var(--green);">One small action that proves it:</div>
+      <input type="text" placeholder="Today I will" id="b3" oninput="save()">
+    </div>
+  </div>
+
+  <div class="sect"><h3>My next level self</h3>
+    <div class="q">What would the next version of me do differently, starting today?</div>
+    <textarea placeholder="Answer honestly" id="nx" oninput="save()"></textarea>
+  </div>
+
+  <div class="sect"><h3>Barriers into breakthroughs</h3>
+    <div class="desc">Name what is in the way, then flip it. A to-do list, not a reason to stop.</div>
+    <div class="q">Barrier 1:</div><input type="text" placeholder="What is blocking me" id="x1a" oninput="save()">
+    <div class="q">Breakthrough:</div><input type="text" placeholder="One step forward" id="x1b" oninput="save()">
+    <div class="q">Barrier 2:</div><input type="text" placeholder="What is blocking me" id="x2a" oninput="save()">
+    <div class="q">Breakthrough:</div><input type="text" placeholder="One step forward" id="x2b" oninput="save()">
+    <div class="q">Barrier 3:</div><input type="text" placeholder="What is blocking me" id="x3a" oninput="save()">
+    <div class="q">Breakthrough:</div><input type="text" placeholder="One step forward" id="x3b" oninput="save()">
+  </div>
+
+  <div class="quote"><div class="t">&ldquo;You do not need to be a different person to start. You just need to look at where you are, with kindness.&rdquo;</div>
+    <div class="a">Tara Rose Kidd</div></div>
+</div>
+
+<!-- ============ WEEK 3 ============ -->
+<div class="panel" id="p3">
+  <div class="whead"><div class="wtag">Week 3 of 4</div><h2>Goals and action</h2>
+    <p>Personal, professional, financial. Brainstorm freely. No filtering, no judging.</p></div>
+
+  <div class="sect"><h3>Goal brainstorm</h3>
+    <div class="ppf"><div class="h p">Personal</div><div class="hint">What lights you up outside work?</div>
+      <textarea placeholder="Write freely" id="gp" oninput="save()"></textarea></div>
+    <div class="ppf"><div class="h pr">Professional</div><div class="hint">What do you want to master?</div>
+      <textarea placeholder="Write freely" id="gpr" oninput="save()"></textarea></div>
+    <div class="ppf"><div class="h f">Financial</div><div class="hint">What goal would feel like relief?</div>
+      <textarea placeholder="Write freely" id="gf" oninput="save()"></textarea></div>
+    <div class="q">Pick one from each. My top three:</div>
+    <textarea placeholder="My top three are" id="top3" oninput="save()" style="min-height:72px;"></textarea>
+  </div>
+
+  <div class="sect"><h3>The goal pyramid</h3><div class="desc">Start with what feels easiest and grow from there.</div>
+    <div class="phase p1"><div class="l">Phase 1 &middot; Now</div><div class="t">Quick wins I can act on this week</div>
+      <textarea placeholder="What can I start immediately?" id="ph1" style="min-height:72px;" oninput="save()"></textarea></div>
+    <div class="phase p2"><div class="l">Phase 2 &middot; Next</div><div class="t">Important, needs some preparation</div>
+      <textarea placeholder="What needs planning first?" id="ph2" style="min-height:72px;" oninput="save()"></textarea></div>
+    <div class="phase p3"><div class="l">Phase 3 &middot; The long view</div><div class="t">Where I see myself</div>
+      <textarea placeholder="The bigger picture" id="ph3" style="min-height:72px;" oninput="save()"></textarea></div>
+  </div>
+
+  <div class="sect"><h3>The 2% rule</h3>
+    <div class="desc">One small intentional step a day. You do not need to change everything overnight.</div>
+    <div id="days"></div>
+  </div>
+</div>
+
+<!-- ============ WEEK 4 ============ -->
+<div class="panel" id="p4">
+  <div class="whead"><div class="wtag">Week 4 of 4</div><h2>Transformation &middot; Daily rituals</h2>
+    <p>How you begin your morning shapes your momentum. How you end your day shapes tomorrow.</p></div>
+
+  <div class="sect"><h3>Morning</h3>
+    <div class="routine"><div class="t">Start with intention</div>
+      <div class="lb">Three things I am grateful for:</div><textarea placeholder="1.&#10;2.&#10;3." id="grat" style="min-height:92px;" oninput="save()"></textarea>
+      <div class="lb">Today I will picture:</div><input type="text" placeholder="Your Phase 3 goals, already achieved" id="vis" oninput="save()">
+      <div class="lb">My line for today:</div><input type="text" placeholder="I am" id="aff" oninput="save()">
+      <div class="lb">One aligned action I will take:</div><input type="text" placeholder="The thing that proves the new belief" id="act" oninput="save()">
+    </div>
+  </div>
+
+  <div class="sect"><h3>Evening</h3>
+    <div class="routine"><div class="t">Ground, release, renew</div>
+      <div class="lb">Three wins I am celebrating:</div><textarea placeholder="1.&#10;2.&#10;3." id="wins" style="min-height:92px;" oninput="save()"></textarea>
+      <div class="lb">A belief I noticed holding me back today:</div><input type="text" placeholder="Something that got in the way" id="eb" oninput="save()">
+      <div class="lb">How tomorrow&rsquo;s version of me shows up:</div><textarea placeholder="Picture her" id="tm" style="min-height:72px;" oninput="save()"></textarea>
+    </div>
+  </div>
+
+  <div class="sect"><h3>My aligned action plan</h3><div class="desc">One next step for each pillar.</div>
+    <div id="plan"></div>
+  </div>
+
+  <div class="sect"><h3>Final reflection</h3>
+    <div class="q">Since starting this, I have learned:</div><textarea placeholder="Write freely" id="f1" style="min-height:72px;" oninput="save()"></textarea>
+    <div class="q">I now know I am capable of:</div><textarea placeholder="What do you believe about yourself now?" id="f2" style="min-height:72px;" oninput="save()"></textarea>
+    <div class="q">My next step is:</div><input type="text" placeholder="The one thing you will do next" id="f3" oninput="save()">
+  </div>
+
+  <div class="aff"><div class="t">&ldquo;Keep it simple. Keep it honest. You showed up. You chose. You planned. That is the work.&rdquo;</div></div>
+</div>
+
+<div class="note">Your answers are saved on this device only, nothing is sent to us. Clearing your browser clears them, so save the PDF if you want to keep it.</div>
+<div class="bar">
+  <button class="b1" onclick="window.print()">Save as PDF</button>
+  <button class="b2" onclick="download()">Download my answers</button>
+  <div class="msg" id="msg"></div>
+</div>
+
+<script>
+/* The eight pillars, built from one list rather than eight blocks of copy-pasted markup, so a
+   wording change happens in one place. */
+var PILLARS=[
+ ['Physical','Body, energy, sleep, food, movement'],
+ ['Emotional','Understanding what you feel, and coping with stress'],
+ ['Financial','Your relationship with money, and feeling secure'],
+ ['Spiritual','Purpose, values, a sense of peace'],
+ ['Occupational','Work and life in balance, and feeling you contribute'],
+ ['Intellectual','Curiosity, creativity, still learning'],
+ ['Social','Connection, belonging, the people who hold you'],
+ ['Environmental','Your surroundings, safety, space that settles you']
+];
+document.getElementById('pillars').innerHTML=PILLARS.map(function(p,i){var n=i+1;
+ return '<div class="card pillar"><div class="nm">'+p[0]+'</div><div class="dsc">'+p[1]+'</div>'+
+  '<div class="score"><label>Score</label><input type="range" min="1" max="10" value="5" id="pl'+n+'" '+
+  'oninput="document.getElementById(\'plv'+n+'\').textContent=this.value;save()">'+
+  '<span class="val" id="plv'+n+'">5</span></div></div>';}).join('');
+document.getElementById('days').innerHTML=[1,2,3,4,5,6,7].map(function(d){
+ return '<div class="row"><div class="day">Day '+d+'</div><input type="text" placeholder="My 2% today" id="d'+d+'" oninput="save()"></div>';}).join('');
+document.getElementById('plan').innerHTML=PILLARS.map(function(p,i){
+ return '<div class="row"><div class="day wide">'+p[0]+'</div><input type="text" placeholder="My next step" id="ap'+(i+1)+'" oninput="save()"></div>';}).join('');
+
+var KEY='trs_eight_pillars';
+var IDS=['s1','s2','s3','feel','goal12','mood','need','low','high','c1','c2','c3','c4','c5',
+ 'oa1','oa2','oa3','oa4','oa5','ia1','ia2','ia3','ia4','ia5','b1','b2','b3','nx',
+ 'x1a','x1b','x2a','x2b','x3a','x3b','gp','gpr','gf','top3','ph1','ph2','ph3',
+ 'grat','vis','aff','act','wins','eb','tm','f1','f2','f3']
+ .concat(PILLARS.map(function(_,i){return 'pl'+(i+1);}))
+ .concat([1,2,3,4,5,6,7].map(function(d){return 'd'+d;}))
+ .concat(PILLARS.map(function(_,i){return 'ap'+(i+1);}));
+
+function load(){try{var d=JSON.parse(localStorage.getItem(KEY)||'{}');
+ IDS.forEach(function(id){var el=document.getElementById(id);if(!el||d[id]===undefined)return;
+  if(el.type==='checkbox')el.checked=d[id];
+  else{el.value=d[id];
+   if(el.type==='range'){var v=document.getElementById(id==='mood'?'moodv':id.replace('pl','plv'));if(v)v.textContent=d[id];}}
+ });}catch(e){}}
+
+var t;
+function save(){clearTimeout(t);t=setTimeout(function(){try{
+ var d={};IDS.forEach(function(id){var el=document.getElementById(id);
+  if(el)d[id]=el.type==='checkbox'?el.checked:el.value;});
+ localStorage.setItem(KEY,JSON.stringify(d));
+ var b=document.getElementById('badge');b.textContent='Saved';
+ setTimeout(function(){b.textContent='Saving';},1800);
+}catch(e){}},700);}
+
+function show(i,btn){
+ var ps=document.querySelectorAll('.panel');for(var k=0;k<ps.length;k++)ps[k].classList.remove('on');
+ var bs=document.querySelectorAll('.nav button');for(var k=0;k<bs.length;k++)bs[k].classList.remove('on');
+ document.getElementById('p'+i).classList.add('on');btn.classList.add('on');
+ window.scrollTo({top:0,behavior:'smooth'});}
+
+function download(){try{
+ var d=JSON.parse(localStorage.getItem(KEY)||'{}');
+ var a=document.createElement('a');
+ a.href=URL.createObjectURL(new Blob([JSON.stringify(d,null,2)],{type:'application/json'}));
+ a.download='tara-rose-eight-pillars.json';a.click();
+ document.getElementById('msg').textContent='Downloaded';
+ setTimeout(function(){document.getElementById('msg').textContent='';},2500);
+}catch(e){}}
+
+load();
+</script>
+</body>
+</html>

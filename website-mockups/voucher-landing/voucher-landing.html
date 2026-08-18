@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <script type="application/json" id="cowork-artifact-meta">
 {
-  "name": "Beauty Voucher: Website Mockup (two vouchers)",
+  "name": "Wellness Voucher: Website Mockup (two vouchers)",
   "schemaVersion": 1,
-  "description": "Mockup of the two split Beauty Voucher landing pages, one for Abu Dhabi and one for Dubai, drawn in the live site's own design system. Toggle between them, with a diff mode that highlights every block whose wording changes.",
+  "description": "Mockup of the two split Wellness Voucher landing pages, one for Abu Dhabi and one for Dubai, drawn in the live site's own design system. Toggle between them, with a diff mode that highlights every block whose wording changes.",
   "mcpTools": [],
   "mcpServerNames": []
 }
@@ -12,7 +12,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Website Mockup: Beauty Voucher, two vouchers</title>
+<title>Website Mockup: Wellness Voucher, two vouchers</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
@@ -72,7 +72,7 @@
       <!-- ============ SITE NAV ============ -->
       <div class="sitenav">
         <div class="wrap">
-          <div class="wordmark">TARA ROSE<small>UAE</small></div>
+          <img class="wordmarkimg" src="../../assets/tara-rose-logo-black.png" alt="Tara Rose Salon">
           <span class="emlabel">Where you book</span>
           <div class="empick">
             <button type="button" id="em-ad" class="on">Abu Dhabi</button>
@@ -89,14 +89,14 @@
         <div class="wrap">
           <span class="diffmark">Changes per emirate</span>
           <div class="eyebrow">
-            The Beauty Voucher &middot;
+            The Wellness Voucher &middot;
             <span class="only-ad">Abu Dhabi</span><span class="only-dxb">Dubai</span>
-            &middot; Summer window &middot; Open until 28 August
+            &middot; Open until 30 September
           </div>
           <h2 class="display">You look after everyone.<br><em>This is the year you come first.</em></h2>
           <div class="prose">
-            <p class="lede only-ad">For eleven years we have looked after women across our two Abu Dhabi salons. You never miss your colour. What you skip is the facial, the treatment, the hour that is only yours. So we built three prepaid Beauty Ritual vouchers: you place credit on your plan, we add a Self-Care Bonus on top pointed at exactly the part you keep putting off. Not money off. A plan.</p>
-            <p class="lede only-dxb">For eleven years we have looked after women across our two Dubai salons. You never miss your colour. What you skip is the facial, the treatment, the hour that is only yours. So we built three prepaid Beauty Ritual vouchers: you place credit on your plan, we add a Self-Care Bonus on top pointed at exactly the part you keep putting off. Not money off. A plan.</p>
+            <p class="lede only-ad">For eleven years we have looked after women across our two Abu Dhabi salons. You never miss your colour. What you skip is the facial, the treatment, the hour that is only yours. So we built three prepaid Wellness Vouchers: you place credit on your plan, we add a Self-Care Bonus on top pointed at exactly the part you keep putting off. Not money off. A plan.</p>
+            <p class="lede only-dxb">For eleven years we have looked after women across our two Dubai salons. You never miss your colour. What you skip is the facial, the treatment, the hour that is only yours. So we built three prepaid Wellness Vouchers: you place credit on your plan, we add a Self-Care Bonus on top pointed at exactly the part you keep putting off. Not money off. A plan.</p>
           </div>
           <div class="availband only-ad">Available at Mamsha al Saadiyat and Khalifa City A</div>
           <div class="availband only-dxb">Available in Dubai at Al Quoz and Motor City</div>
@@ -105,6 +105,33 @@
             <a class="pill ghost" href="#m-faq">See what she gets &rarr;</a>
           </div>
           <div class="microline">Three tiers &middot; AED 1,000 to AED 4,500 &middot; Your credit spends on any service<span class="pin good"><span class="pinicon" tabindex="0">📌</span><div class="pop">Already settled: two vouchers, one per emirate, same tiers and same prices. Nothing here changes what she pays; what changes is what each page <em>promises</em> she can spend it on.</div></span></div>
+        </div>
+      </section>
+
+      <!-- ============ PRESS ============
+           Unchanged from the live page. Drawn here because the page reads wrong without it:
+           the hero makes a claim and this is what backs it, and a mockup that skips it makes
+           the coverage block look like it arrives too early. No emirate variant, these are
+           the business's credentials, not the voucher's promise. -->
+      <section id="m-press" class="sect press" data-mockblock>
+        <span data-mocklabel hidden>Press strip</span>
+        <div class="wrap">
+          <div class="eyebrow">As featured in</div>
+          <div class="presslogos">
+            <span>Cosmopolitan</span><span>Experience Abu Dhabi</span>
+            <span>Professional Beauty</span><span>Good Salon Guide</span>
+          </div>
+          <blockquote class="pressquote">&ldquo;Tara Rose is a salon where we hope clients will feel at home when they visit.&rdquo;
+            <cite>Tara Rose Kidd &middot; in Professional Beauty</cite></blockquote>
+        </div>
+      </section>
+
+      <!-- ============ VALUE STRIP ============ Unchanged. -->
+      <section id="m-valuestrip" class="valuestrip" data-mockblock>
+        <span data-mocklabel hidden>Value strip</span>
+        <div class="wrap">
+          <span>Mapped Around You</span><span>Priority Booking</span><span>Yours to Gift</span>
+          <span>Confidence Promise</span><span>Wellness-Led</span><span>The 8-Step Hair Plan</span>
         </div>
       </section>
 
@@ -118,7 +145,7 @@
           <h3 class="h2 only-dxb">Two salons. Hair at both, <em>beauty at Al Quoz.</em></h3>
           <div class="prose">
             <p class="lede only-ad">Your credit spends on any service, up to your credit value: hair, colour, beauty, treatments and facials, at either Abu Dhabi salon. It is a spending cap, so anything above your credit is settled at the till.</p>
-            <p class="lede only-dxb">Your credit spends on any service, up to your credit value. Hair at both Al Quoz and Motor City. Beauty services and the Relaxation Facial at Al Quoz. It is a spending cap, so anything above your credit is settled at the till.</p>
+            <p class="lede only-dxb">Your credit spends on any service, up to your credit value. Hair at both Al Quoz and Motor City. Beauty services and the Signature Relaxing Facial at Al Quoz. It is a spending cap, so anything above your credit is settled at the till.</p>
           </div>
 
           <div class="grid2 only-ad">
@@ -383,6 +410,148 @@
         </div>
       </section>
 
+      <!-- ============ WHY IT EXISTS ============ Unchanged. -->
+      <section id="m-why" class="sect" data-mockblock>
+        <span data-mocklabel hidden>Why the voucher exists</span>
+        <div class="wrap">
+          <div class="eyebrow">Why the voucher exists</div>
+          <h3 class="h2">You come back because the plan works. <em>This backs it.</em></h3>
+          <div class="prose">
+            <p class="lede">As women, we put ourselves last. Beauty becomes the thing we skip while we carry everyone and everything else. The Wellness Voucher is permission to stop skipping it.</p>
+            <p class="lede">It is not money off to chase. It is your own plan, paid forward, so the money is set aside before life spends it on everyone else. You already trust what we build together. This means every visit you were always going to make is now worth more.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ FOUNDER ============ Unchanged, both pages. -->
+      <section id="m-founder" class="sect paper" data-mockblock>
+        <span data-mocklabel hidden>Founder story</span>
+        <div class="wrap">
+          <blockquote class="bigquote">&ldquo;We see the woman. Not just the hair.&rdquo;
+            <cite>Tara Rose Kidd, Founder</cite></blockquote>
+          <div class="eyebrow" style="margin-top:38px;">Tara Rose Kidd &middot; My Why</div>
+          <h3 class="h2">Why I built this, and why it is <em>not money off.</em></h3>
+          <div class="founder">
+            <div class="founderimg"><img src="../../assets/tara-rose-kidd.jpg" alt="Tara Rose Kidd, founder of Tara Rose Salon"></div>
+            <div class="prose" style="margin:0;">
+              <p class="lede">Eleven years ago I started Tara Rose. Not because the world needed another salon, but because I believed the team and the client should always be at the front of it. Everything we have built since comes back to that.</p>
+              <p class="lede">I am a busy working mum, so I know exactly what an hour like this is worth. It is never really about the hair. It is the one part of the week that belongs to you.</p>
+              <p class="lede">So this voucher is not money off, and it is not a reward for staying. It is me giving something back to the women who spend their lives looking after everyone else. The credit is yours, to spend on whatever you want. The Self-Care Bonus is pointed at the part you would never book for yourself.</p>
+              <p class="lede" style="font-weight:600;">&mdash; Tara Rose Kidd, Founder</p>
+            </div>
+          </div>
+          <div class="grid3 linkcards" style="text-align:left;">
+            <div class="card"><div class="cardkick">Her story</div><div class="cardtitle">Meet Tara</div><div class="cardlead">Eleven years, and a philosophy that was never about the hair.</div><a class="cardcta ghost" href="#">Read her story &rarr;</a></div>
+            <div class="card"><div class="cardkick">Our care</div><div class="cardtitle">The Confidence Promise</div><div class="cardlead">The care behind every colour and treatment we do.</div><a class="cardcta ghost" href="#m-promise">See the promise &rarr;</a></div>
+            <div class="card"><div class="cardkick">Start here</div><div class="cardtitle">Confidence Mapping</div><div class="cardlead">A free read of your hair, before you decide anything.</div><a class="cardcta ghost" href="#">Map your hair &rarr;</a></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ RECOGNITION ============
+           "Eleven years, four salons" STAYS on both pages, and the pin says why. It is a
+           credential about the business, which is true, and not a promise about where this
+           voucher spends, which is what the split is fixing. Cutting it would cost us the
+           proof and fix nothing. -->
+      <section id="m-recognition" class="sect centred" data-mockblock>
+        <span data-mocklabel hidden>Recognition</span>
+        <div class="wrap">
+          <div class="eyebrow">Real diagnosis. Real results.</div>
+          <h3 class="h2">Why the season is worth <em>setting aside with us.</em></h3>
+          <div class="grid3" style="text-align:left;">
+            <div class="card"><div class="cardtitle">Recognised work</div><div class="cardlead">Tara Rose Kidd, Business Director of the Year three years running, inducted into the Professional Beauty Hall of Fame.</div></div>
+            <div class="card"><div class="cardtitle">An awarded team</div><div class="cardlead">Team of the Year, four times. Colourist of the Year, Salon Stylist of the Year, and Hair Salon of the Year at Saadiyat.</div></div>
+            <div class="card"><div class="cardtitle">Eleven years, four salons<span class="pin info"><span class="pinicon" tabindex="0">📌</span><div class="pop">This one keeps &ldquo;four salons&rdquo; on <strong>both</strong> pages, on purpose. It is a credential about the business over eleven years, which is true and is worth saying. It is not a claim about where this voucher spends, which is what every other four-salon line on this page was doing wrongly.</div></span></div><div class="cardlead">Eleven years looking after women across Dubai and Abu Dhabi. The same method at every chair.</div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ FOUR SHIFTS ============ Unchanged. -->
+      <section id="m-shifts" class="sect paper centred" data-mockblock>
+        <span data-mocklabel hidden>The four shifts</span>
+        <div class="wrap">
+          <div class="eyebrow">The four shifts</div>
+          <h3 class="h2">The four shifts that make <em>a plan.</em></h3>
+          <div class="grid2" style="text-align:left;">
+            <div class="card"><div class="cardkick">1 &mdash; Service to Plan</div><div class="cardtitle">A plan, not a visit</div><div class="cardlead">A one-off appointment becomes an ongoing plan for your hair and beauty.</div></div>
+            <div class="card"><div class="cardkick">2 &mdash; Price to Investment</div><div class="cardtitle">Something to protect</div><div class="cardlead">A cost becomes something you are protecting, on rhythm.</div></div>
+            <div class="card"><div class="cardkick">3 &mdash; Cure to Rhythm</div><div class="cardtitle">A rhythm, not a rescue</div><div class="cardlead">A rescue becomes a rhythm that keeps the result working.</div></div>
+            <div class="card"><div class="cardkick">4 &mdash; Customer to Known</div><div class="cardtitle">Known, not processed</div><div class="cardlead">A transaction becomes a relationship where you are seen.</div></div>
+          </div>
+          <blockquote class="bigquote" style="margin-top:40px;">&ldquo;Great hair is not one visit. The plan is what makes it last.&rdquo;
+            <cite>The Tara Rose Belief</cite></blockquote>
+        </div>
+      </section>
+
+      <!-- ============ GALLERY ============ Unchanged. Placeholders, the live images stay. -->
+      <section id="m-gallery" class="sect centred" data-mockblock>
+        <span data-mocklabel hidden>Gallery</span>
+        <div class="wrap">
+          <div class="eyebrow">A first look</div>
+          <h3 class="h2">What a visit actually <em>feels like.</em></h3>
+          <div class="prose"><p class="lede">The room, the people, the care. Eleven years across Dubai and Abu Dhabi. Swipe through the hour that is yours.</p></div>
+          <div class="gallery">
+            <div class="gitem"><span>Image</span>The welcome, and the first question we ask you.</div>
+            <div class="gitem"><span>Image</span>Beauty that is yours, never a filter.</div>
+            <div class="gitem"><span>Image</span>Where your colour is created, and protected.</div>
+            <div class="gitem"><span>Image</span>The plan, mapped around you.</div>
+            <div class="gitem"><span>Image</span>The team who will know you by name.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ TABBY ============
+           One word changed. The live page says "Dip Your Toes is cash" here and in the fine
+           print, but the fine print in this pack and the FAQ both say "paid in full". Cash
+           reads as "no card", which is not what we mean and is not what the till does. One
+           wording, three places. -->
+      <section id="m-tabby" class="sect paper centred" data-mockblock data-diff>
+        <span data-mocklabel hidden>Tabby</span>
+        <div class="wrap">
+          <span class="diffmark">One word</span>
+          <div class="eyebrow">An easier way in</div>
+          <h3 class="h2">Split it into four. <em>Interest-free.</em></h3>
+          <div class="prose">
+            <p class="lede">Season of You is <strong>4 payments of AED 625</strong>. All-In VIP Year is <strong>4 of AED 1,125</strong>. Spread it across the season with Tabby, interest-free, at no extra cost to you. The same credit, the same bonus, the same gifts. Nothing changes except how you pay.</p>
+          </div>
+          <div class="microline">Tabby &middot; Season of You and All-In VIP Year &middot; Dip Your Toes is paid in full<span class="pin flag"><span class="pinicon" tabindex="0">📌</span><div class="pop">Live page says <strong>&ldquo;Dip Your Toes is cash&rdquo;</strong> here and in the fine print. &ldquo;Cash&rdquo; reads as card not accepted, which is not true. Standardised to <strong>paid in full</strong>, which is what the FAQ and the fine print in this pack already say.</div></span></div>
+        </div>
+      </section>
+
+      <!-- ============ THREE WAYS ============ Unchanged. -->
+      <section id="m-threeways" class="sect centred" data-mockblock>
+        <span data-mocklabel hidden>Three ways to say yes</span>
+        <div class="wrap">
+          <div class="eyebrow">Three ways to say yes</div>
+          <h3 class="h2">However you want to give it, <em>or keep it.</em></h3>
+          <div class="steps">
+            <div><div class="stepnum">01</div><div class="stept">Keep it for yourself</div><div class="stepb">Reserve your voucher and set the season aside for you.</div></div>
+            <div><div class="stepnum">02</div><div class="stept">Gift it</div><div class="stepb">The voucher she would never buy herself. Sent in her name, ready to book, with a note from you. A gift of being looked after, not another thing she did not ask for.</div></div>
+            <div><div class="stepnum">03</div><div class="stept">Come back next season</div><div class="stepb">If now is not the moment, the window reopens next quarter and the value returns with it. You have not missed your only chance, just this season's.</div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ AFTER YOU RESERVE ============
+           Step 3 gains a line on the Dubai page. This is the only place on the page that
+           describes what happens AFTER she pays, and on Dubai the answer depends on which
+           salon she picked, so it belongs here rather than only in the picker. -->
+      <section id="m-after" class="sect paper centred" data-mockblock data-diff>
+        <span data-mocklabel hidden>After you reserve</span>
+        <div class="wrap">
+          <span class="diffmark">One step gains a line</span>
+          <div class="eyebrow">After you reserve</div>
+          <h3 class="h2">What happens <em>next.</em></h3>
+          <ol class="afterlist">
+            <li><b>Step 1</b>Your voucher is reserved</li>
+            <li><b>Step 2</b>Your credit goes on your account<span class="only-dxb">, at the Dubai salon you chose</span></li>
+            <li><b>Step 3</b>Your Confidence Map, free</li>
+            <li><b>Step 4</b>Your first visit, planned around you</li>
+            <li><b>Step 5</b>Your season, held on rhythm</li>
+          </ol>
+        </div>
+      </section>
+
       <!-- ============ FAQ ============ -->
       <section id="m-faq" class="sect" data-mockblock data-diff>
         <span data-mocklabel hidden>FAQ</span>
@@ -400,7 +569,8 @@
             <!-- Rewritten 10 Aug, then rewritten again after brand review. The old answer was
                  "Yes. It is sent in her name", which the Terms do not allow: the main credit is
                  not transferable. The gift in this campaign is the friend's gift card, which
-                 every tier already includes and which genuinely is hers to hand over.
+                 every tier already includes and which genuinely is hers to give. It is issued
+                 digitally, so "give" means we email it to the person she names.
                  The first rewrite still failed, for a smaller version of the same reason: it
                  said "tell us before you pay and we will set it up in her name", while term 7
                  makes that Tara Rose's discretion, not an entitlement. The Terms are also silent
@@ -415,9 +585,80 @@
                  giftable, in the largest type on the page, and dropped her on a tier table with
                  no gift path in it. Fixing the FAQ and leaving that would have been fixing the
                  small print and leaving the billboard. -->
-            <div class="q"><div class="qt">Can I give it as a gift?</div><div class="qa">Yes, and there is a card for it. Every tier includes a gift card you hand to a friend, hers to book with, in her name. Your own credit stays on your account, because it is tied to you and the plan we build for your hair. If you want the whole voucher to be hers rather than yours, message us before you pay and we will talk it through with you first.</div></div>
+            <div class="q"><div class="qt">Can I give it as a gift?</div><div class="qa">Yes. Every tier includes a gift card for a friend: you tell us who she is, and we email it to her in your name, hers to book with. Nothing is posted or printed, everything is digital. Your own credit stays on your account, because it is tied to you and the plan we build for your hair. If you want the whole voucher to be hers rather than yours, message us before you pay and we will talk it through with you first.</div></div>
             <div class="q"><div class="qt">What if I miss this season's window?</div><div class="qa">The window reopens next quarter and the value comes back with it. You have not missed your only chance, just this season's.</div></div>
           </div>
+        </div>
+      </section>
+
+      <!-- ============ REVIEWS ============ Unchanged. Verbatim, never edited. -->
+      <section id="m-reviews" class="sect centred" data-mockblock>
+        <span data-mocklabel hidden>Reviews</span>
+        <div class="wrap">
+          <div class="eyebrow">In their words</div>
+          <h3 class="h2">What women say, <em>and what protects you.</em></h3>
+          <div class="prose"><p class="lede">Real reviews from our salons across Dubai and Abu Dhabi. Verbatim, never edited.</p></div>
+          <div class="grid2" style="text-align:left;">
+            <div class="card review"><div class="stars">&starf;&starf;&starf;&starf;&starf;</div><p>Absolutely love my hair with Zandri. A true colour specialist who delivered a flawless, vibrant result exactly as I wanted. Highly recommend for expert hair care.</p><div class="cardkick">Marelize M.</div></div>
+            <div class="card review"><div class="stars">&starf;&starf;&starf;&starf;&starf;</div><p>Loved my experience at Tara Rose. I have never had so many compliments on my hair, and the whole team made the visit a pleasure.</p><div class="cardkick">Sannah S.</div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ GUARANTEES + PROMISE ============
+           "Your credit is protected" gains its emirate. On the live page it says the credit
+           stays yours, which is true, without saying WHERE it stays, which is the one thing
+           a split voucher has to be straight about. -->
+      <section id="m-promise" class="sect paper centred" data-mockblock data-diff>
+        <span data-mocklabel hidden>The Confidence Promise</span>
+        <div class="wrap">
+          <span class="diffmark">One card gains its emirate</span>
+          <div class="grid3" style="text-align:left;">
+            <div class="card"><div class="cardtitle">The Confidence Promise</div><div class="cardlead">If something does not feel right within seven days of any colour or treatment service, we invite you back to refine it. No blame, just care.</div></div>
+            <div class="card"><div class="cardtitle">Your credit is protected</div><div class="cardlead">Once it is on your account it stays yours until it is used or the validity date passes. Not clawed back, not conditional. <span class="only-ad">It sits with your Abu Dhabi salons.</span><span class="only-dxb">It sits with the Dubai salon you chose.</span></div></div>
+            <div class="card"><div class="cardtitle">No surprises at the till</div><div class="cardlead">Larger colour work is covered up to a set amount per visit, and your stylist tells you before, never at the till.</div></div>
+          </div>
+          <div class="prose" style="margin-top:34px;">
+            <p class="lede"><strong>Refine, never refund.</strong> Not ready to reserve today? Start your Confidence Mapping, free, before the chair, with nothing to commit to. Buying for someone else? It can be held as a gift. And if now is not the moment, come back when it suits you and start with the free map.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ RESERVE FORM ============
+           The most changed block on the page after the coverage grid, and the one most likely
+           to be built wrong because nothing about it LOOKS different.
+
+           Two things. First, the form has to carry the emirate: today nothing writes it, so
+           the workflows hold both regional message sets and nothing chooses between them
+           before payment. A hidden field, set by which page she is on, is the whole fix.
+           Second, on Dubai the salon is a REQUIRED field, not a nicety, because Al Quoz and
+           Motor City have separate payment links and the form cannot route without it. If she
+           already chose in the picker above, this arrives pre-filled; it is repeated here so
+           a woman who scrolled straight to the form is never asked to go back up. -->
+      <section id="m-reserve" class="sect centred" data-mockblock data-diff>
+        <span data-mocklabel hidden>Reserve form</span>
+        <div class="wrap">
+          <span class="diffmark">Two fields change</span>
+          <div class="eyebrow">Reserve</div>
+          <h3 class="h2">Reserve your <em>wellness voucher.</em></h3>
+          <div class="formwrap">
+            <div class="hidden-field">
+              Hidden field &middot; <code>emirate</code> = <b class="only-ad">abu-dhabi</b><b class="only-dxb">dubai</b>
+              <span class="pin flag"><span class="pinicon" tabindex="0">📌</span><div class="pop"><strong>To build.</strong> Set from the page she is on, and from the emirate picker in the site header. Every workflow below this reads it: the Day 0 send cannot know which promise it is allowed to make until this field exists. See the flag in <a href="../../index.html#automations">GHL Automations</a>.</div></span>
+            </div>
+            <div class="field"><label>First name <i>*</i></label><div class="finput">Her first name</div></div>
+            <div class="field"><label>WhatsApp number <i>*</i></label><div class="finput">&#127462;&#127466; +971 &nbsp;&middot;&nbsp; 50 123 4567</div></div>
+            <div class="field"><label>Email <i>*</i></label><div class="finput">her@email.com</div></div>
+            <div class="field"><label>Which voucher is yours? <i>*</i></label><div class="finput sel">Choose your voucher &nbsp;&middot;&nbsp; Dip Your Toes AED 1,000 &nbsp;&middot;&nbsp; Season of You AED 2,500 &nbsp;&middot;&nbsp; All-In VIP Year AED 4,500</div></div>
+            <div class="field only-dxb"><label>Which Dubai salon? <i>*</i></label><div class="finput sel">Al Quoz &nbsp;&middot;&nbsp; Motor City<span class="pin flag"><span class="pinicon" tabindex="0">📌</span><div class="pop"><strong>Dubai page only, and required.</strong> The two salons have separate payment links, so the form cannot send her anywhere until this is answered. Pre-filled if she used the picker above.</div></span></div></div>
+            <div class="fcheck">This is a gift. Send it in her name, ready to book, with a note from me.</div>
+            <div class="fcheck"><b>Split it into four, interest-free.</b> Pay with Tabby at no extra cost, and the credit stays exactly the same: Season of You is 4 &times; AED 625, All-In VIP Year is 4 &times; AED 1,125. Available on Season of You and All-In VIP Year.</div>
+            <div class="fcheck on">I am happy for the Tara Rose team to contact me about my wellness voucher. <i>required</i></div>
+            <div class="fcheck">I am happy to be contacted on WhatsApp.</div>
+            <p class="legal">Tara Rose Salon is the data controller. We use what you send only to manage your voucher, and it lands with our team, never a personal inbox. You can access, correct or delete your details any time at privacy@tararosesalon.com.</p>
+            <div class="fsubmit">Reserve Your Voucher &rarr;</div>
+          </div>
+          <div class="microline" style="margin-top:22px;">Secured payment &middot; Visa &middot; Mastercard &middot; Tabby &mdash; your card is never stored, and your credit is added the moment your voucher is reserved</div>
         </div>
       </section>
 
@@ -428,6 +669,43 @@
           <span class="diffmark">Changes per emirate</span>
           <span class="only-ad">All figures are in UAE dirhams and include applicable value added tax. Your credit spends on any service at Mamsha al Saadiyat or Khalifa City A. It does not cover home care or the purchase of new hair extensions. On Season of You and All-In VIP Year, the Self-Care Bonus added on top is for beauty, treatments, keratin and blowdries. Dip Your Toes is paid in full. Season of You and All-In VIP Year can be split into four with Tabby, and the credit stays exactly the same. Vouchers are not refundable and not transferable, and run from the date of purchase. <a href="../terms/terms.html">Read the full terms and conditions.</a></span>
           <span class="only-dxb">All figures are in UAE dirhams and include applicable value added tax. Your credit spends on any service at Al Quoz, and on hair at Motor City. Beauty services and the Signature Relaxing Facial are at Al Quoz. Deep cleanse and clinical facials and LED are at our Abu Dhabi salons. Your credit does not cover home care or the purchase of new hair extensions. On Season of You and All-In VIP Year, the Self-Care Bonus added on top is for beauty, treatments, keratin and blowdries. Dip Your Toes is paid in full. Season of You and All-In VIP Year can be split into four with Tabby, and the credit stays exactly the same. Vouchers are not refundable and not transferable, and run from the date of purchase. <a href="../terms/terms.html">Read the full terms and conditions.</a></span>
+        </div>
+      </section>
+
+      <!-- ============ FOOTER ============
+           One link changes. "Voucher terms" points at the shared /terms-and-conditions/ page
+           today. There are two sets of terms now, one per voucher, so it has to point at the
+           right one or a woman reads the other emirate's rules in the one place she goes
+           looking for rules. -->
+      <section id="m-footer" class="sitefooter" data-mockblock data-diff>
+        <span data-mocklabel hidden>Footer</span>
+        <div class="wrap">
+          <span class="diffmark">One link</span>
+          <div class="footgrid">
+            <div>
+              <img class="wordmarkimg foot" src="../../assets/tara-rose-logo-white.png" alt="Tara Rose Salon">
+              <p>Tara Rose. We see the woman. Not just the hair.</p>
+              <p class="wsy">We see you.</p>
+            </div>
+            <div>
+              <b>The Wellness Voucher</b>
+              <a href="#m-reserve">Reserve Your Voucher</a>
+              <a href="#m-reserve">Gift it instead</a>
+              <a class="only-ad" href="../terms/terms.html">Voucher terms &middot; Abu Dhabi</a>
+              <a class="only-dxb" href="../terms/terms.html">Voucher terms &middot; Dubai</a>
+            </div>
+            <div>
+              <b>Contact</b>
+              <a href="#">tararosesalon.com</a>
+              <span class="only-ad">Abu Dhabi</span><span class="only-dxb">Dubai</span>
+            </div>
+            <div>
+              <b>Connect</b>
+              <a href="#">Instagram</a><a href="#">Facebook</a>
+              <a href="#">LinkedIn</a><a href="#">YouTube</a>
+            </div>
+          </div>
+          <p class="footlaw">Tara Rose Salon. Dubai and Abu Dhabi, United Arab Emirates. By submitting any form on this site you agree to our Privacy Policy. Contact: info@tararosesalon.com &middot; &copy; 2026 Tara Rose Salon.</p>
         </div>
       </section>
 

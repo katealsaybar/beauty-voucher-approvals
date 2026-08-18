@@ -1,4 +1,4 @@
--- Beauty Voucher Approval Pack: editor access (admin / viewer)
+-- Wellness Voucher Approval Pack: editor access (admin / viewer)
 -- Run this ONCE in Supabase: Dashboard → SQL Editor → New Query → paste → Run.
 -- Project: vlqvefsaxztitcbhirxt
 -- Safe to re-run: it recreates the function/trigger/policies and never resets a role that

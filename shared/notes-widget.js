@@ -1,4 +1,4 @@
-// Beauty Voucher Approval Pack: notes + suggestions widget.
+// Wellness Voucher Approval Pack: notes + suggestions widget.
 //
 // Concept copied from the CWD knowledgebase widgets (Comments Widget + Suggestions
 // Widget), merged into one slide-in panel with two tabs because this is one document

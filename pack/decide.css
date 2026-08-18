@@ -1,4 +1,4 @@
-/* Beauty Voucher Approval Pack: the front door and the decision queue.
+/* Wellness Voucher Approval Pack: the front door and the decision queue.
    Everything here is prefixed dq- and scoped inside #trsDecide, so it cannot leak into
    the pack underneath it. Colour variables are the pack's own (index.html :root); this
    file adds none of its own so the two screens stay the same document. */

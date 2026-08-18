@@ -38,11 +38,14 @@
 
       <!-- header -->
       <tr><td align="center" style="background-color:#0D0D0D;padding:34px 40px 30px 40px;">
-        <div style="width:52px;height:2px;background-color:#99F6E4;font-size:0;line-height:0;margin:0 auto 20px auto;">&nbsp;</div>
-        <!-- wordmark, typeset, no image, so it survives image blocking -->
-        <div style="font-family:'Inter',Arial,Helvetica,sans-serif;font-size:25px;font-weight:400;letter-spacing:.30em;text-indent:.30em;text-transform:uppercase;color:#FFFFFF;line-height:1.15;mso-line-height-rule:exactly;">Tara&nbsp;Rose</div>
-        <div style="font-family:'Inter',Arial,Helvetica,sans-serif;font-size:10px;font-weight:400;letter-spacing:.46em;text-indent:.46em;text-transform:uppercase;color:#99F6E4;line-height:1.2;padding-top:10px;">Salon</div>
-        <div style="font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:13.5px;color:#EEF3C7;padding-top:14px;">The Beauty Ritual Voucher</div>
+        <!-- The real logo, not type. The wordmark here used to be typeset on purpose, so it would
+             survive image blocking; Kate called it on 18 Aug because the typeset version is not
+             the logo's font. The alt text below is what a blocked-image client shows, so it is
+             exact. {{LOGO_URL}} must be the WHITE logo, hosted in GHL: this header is #0D0D0D.
+             Supply 360 x 106 px for a 180 x 53 display. -->
+        <img src="{{LOGO_URL}}" width="180" height="53" alt="Tara Rose Salon"
+             style="width:180px;max-width:180px;height:auto;display:block;margin:0 auto;border:0;outline:none;text-decoration:none;">
+        <div style="font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:13.5px;color:#EEF3C7;padding-top:14px;">The Wellness Voucher</div>
       </td></tr>
 
       <!-- headline -->

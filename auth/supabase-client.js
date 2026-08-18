@@ -1,4 +1,4 @@
-// Beauty Voucher Approval Pack: shared Supabase client + role check.
+// Wellness Voucher Approval Pack: shared Supabase client + role check.
 //
 // Same shape as the CWD knowledgebase (auth/supabase-client.js + auth-guard.js), reduced to
 // what this pack needs. The difference from CWD: nothing here is gated behind a login.

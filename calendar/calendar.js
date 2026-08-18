@@ -320,7 +320,7 @@
 
     var k = document.querySelector('.top .k');
     if (k) {
-      k.innerHTML = 'Summer Beauty Ritual Voucher &middot; ' + monthDay(win.open) +
+      k.innerHTML = 'Wellness Voucher &middot; ' + monthDay(win.open) +
         ' to ' + monthDay(win.close) + ' ' + parts(win.close).y;
     }
   }
@@ -807,7 +807,7 @@
     busy = true; problem = ''; render();
     db.from(T_NOTES).insert({
       pack_id: PACK_ID,
-      pack_title: 'Beauty Voucher',
+      pack_title: 'Wellness Voucher',
       anchor_id: ANCHOR,
       anchor_label: LABEL,
       author_name: who(),

@@ -1,4 +1,4 @@
--- Beauty Voucher Approval Pack: revision notes + suggestions
+-- Wellness Voucher Approval Pack: revision notes + suggestions
 -- Run in Supabase: Dashboard -> SQL Editor -> New Query -> paste -> Run.
 -- Project: vlqvefsaxztitcbhirxt
 --

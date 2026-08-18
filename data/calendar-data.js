@@ -1,4 +1,4 @@
-// Beauty Voucher, social posting calendar, data only.
+// Wellness Voucher, social posting calendar, data only.
 //
 // This is the posting plan for the campaign window, built against the rhythm and pillar mix
 // already agreed in the approval pack's Social Media Calendar section:

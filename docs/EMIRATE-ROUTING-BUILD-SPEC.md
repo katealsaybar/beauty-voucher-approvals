@@ -2,7 +2,7 @@
 
 **For:** whoever owns the GoHighLevel build
 **From:** Kate Alsaybar, 7 August 2026
-**Campaign:** Beauty Voucher Summer Window. Purchase closes 30 September 2026. Target launch Monday 10 August 2026.
+**Campaign:** Wellness Voucher window. Purchase closes 30 September 2026. Target launch Monday 10 August 2026.
 
 ## The boundary, stated once
 
@@ -474,7 +474,7 @@ in her inbox list, so it matters as much as the body.
 New template. Body 222 characters against Meta's 1,024. Buttons 9 and 5 against 25.
 `[Name]` is the `{{1}}` variable, per the convention in `whatsapp-templates.json` `_readme`.
 
-> Hi [Name], the Beauty Voucher is open until 30 September. There is one for our Abu Dhabi salons and one for our Dubai salons. Tell us where you will be spending your credit and we will send you the right one.
+> Hi [Name], the Wellness Voucher is open until 30 September. There is one for our Abu Dhabi salons and one for our Dubai salons. Tell us where you will be spending your credit and we will send you the right one.
 
 Buttons: `Abu Dhabi` · `Dubai`
 

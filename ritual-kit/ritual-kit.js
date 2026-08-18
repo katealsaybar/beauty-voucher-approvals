@@ -1,7 +1,7 @@
 /* ------------------------------------------------------------------
    Three tables, kept apart on purpose.
 
-   TIERS    how many slots are filled, and the cap.
+   TIERS    how many slots are prescribed, and the allowance towards them.
    SLOTS    the fixed order. Never reordered, never skipped.
    BUNDLES  per concern, per emirate, the six actual products and prices.
 
@@ -14,11 +14,11 @@
 ------------------------------------------------------------------- */
 
 var TIERS = {
-  t1:{name:'Dip Your Toes', care:'Protect',              slots:2, cap:350,
+  t1:{name:'Dip Your Toes', care:'Protect',              slots:2, cap:100,
       price:'AED 1,000 &rarr; 1,150 &middot; 6 months'},
-  t2:{name:'Season of You', care:'Protect &amp; Maintain', slots:4, cap:650,
+  t2:{name:'Season of You', care:'Protect &amp; Maintain', slots:4, cap:250,
       price:'AED 2,500 &rarr; 3,000 &middot; 9 months'},
-  t3:{name:'All-In VIP Year', care:'Full Insurance',     slots:6, cap:1050,
+  t3:{name:'All-In VIP Year', care:'Full Insurance',     slots:6, cap:450,
       price:'AED 4,500 &rarr; 5,400 &middot; 12 months'}
 };
 
@@ -231,7 +231,7 @@ function render(){
     html += '<div class="note info" style="margin:12px 0;"><strong>Worth saying out loud.</strong> A correction is what Full Insurance exists for. She is not on that tier, so be honest that this kit protects the correction rather than compounding it.</div>';
   }
   if(state.tier==='t1' && !detoxOverride && (c.k==='blonde' || c.k==='fade' || c.k==='brunette' || c.k==='correct')){
-    html += '<div class="note info" style="margin:12px 0;"><strong>Note the mismatch.</strong> Dip Your Toes has no colour on it, so this kit protects colour she already has rather than colour we did. Say that plainly.</div>';
+    html += '<div class="note info" style="margin:12px 0;"><strong>Note the mismatch.</strong> Dip Your Toes spends on any service, colour included, but AED 1,150 does not stretch to a correction, so in practice this kit protects colour she already has rather than colour we did. Say that plainly, and say it as a budget, not a rule.</div>';
   }
 
   if(state.henna==='keratin' && detoxOverride){
@@ -266,13 +266,13 @@ function render(){
 
   html +=
     '<div class="capbar"><div class="head">' +
-      '<span class="lbl">Staff only &middot; shelf value</span>' +
+      '<span class="lbl">Staff only &middot; shelf value against her allowance</span>' +
       '<span class="nums">AED ' + money(sum) + ' of ' + money(t.cap) + '</span>' +
     '</div>' +
     '<div class="track"><div class="fill' + (over?' over':'') + '" style="width:' + pct + '%"></div></div>' +
     '<div class="foot">' + (over
-      ? '<strong style="color:var(--red);">Over the cap by AED ' + money(sum - t.cap) + '.</strong> Swap an item down before it leaves the salon, or ask your manager. Do not hand it over and log it after.'
-      : 'AED ' + money(t.cap - sum) + ' of headroom. Do not spend it just because it is there, the kit is a prescription, not a budget.') +
+      ? '<strong>She pays AED ' + money(sum - t.cap) + ' at the till.</strong> Her allowance covers AED ' + money(t.cap) + ' of this kit, and the rest is hers to settle. <b>Tell her the number before you build the bag</b>, never after. She can also drop an item and pay nothing.'
+      : 'AED ' + money(t.cap - sum) + ' of her allowance unused. Do not pad the bag to spend it, the kit is a prescription and the allowance is a discount, not a target.') +
     '</div></div>';
 
   html +=
@@ -314,7 +314,7 @@ function buildMatrix(){
       '<td>' + c.tick + (c.status==='call' ? '<br><span class="chip call">Tara</span>' : '') +
         '<br><span style="color:var(--muted);font-size:12.5px;">' + c.cat + '</span></td>' +
       '<td style="font-size:13px;line-height:1.75;">' + list + '</td>' +
-      cell(2,350) + cell(4,650) + cell(6,1050);
+      cell(2,100) + cell(4,250) + cell(6,450);
     body.appendChild(tr);
   });
 }

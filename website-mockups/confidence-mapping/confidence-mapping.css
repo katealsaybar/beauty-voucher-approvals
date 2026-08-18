@@ -94,6 +94,7 @@
   .sitenav{background:var(--site-paper);border-bottom:1px solid var(--site-line);padding:18px 0;}
   .sitenav .wrap{display:flex;align-items:center;gap:18px;}
   .wordmark{font-family:var(--serif);font-weight:400;font-size:21px;letter-spacing:.28em;line-height:1;}
+  .wordmarkimg{height:34px;width:auto;display:block;}
   .wordmark small{display:block;font-size:9px;letter-spacing:.34em;color:var(--muted);margin-top:5px;text-align:center;}
   .navspacer{margin-left:auto;}
   .navlink{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;text-decoration:none;border-bottom:1px solid currentColor;padding-bottom:2px;}
@@ -102,6 +103,10 @@
     text-decoration:none;border-radius:100px;padding:14px 24px;
     font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;
   }
+  /* Secondary action, added 18 Aug with the consultation CTA. The mint pill means "this is
+     the thing we want you to do", so a second mint pill beside it would make the Zoom
+     fallback look like an equal choice. Same shape, no fill. */
+  .pill.ghost{background:transparent;color:var(--site-green);box-shadow:inset 0 0 0 1px var(--site-green);}
 
   .sect{padding:96px 0;}
   .sect.paper{background:var(--site-paper);}

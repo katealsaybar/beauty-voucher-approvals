@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Beauty Voucher: Runbook</title>
+<title>Wellness Voucher: Runbook</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
@@ -18,7 +18,7 @@
       <a class="back" href="../index.html">&larr; Approval pack</a>
       <img class="brandlogo" src="../assets/tara-rose-logo-black.png" alt="Tara Rose Salon">
       <div class="head">
-        <div class="k">Beauty Voucher &middot; operations</div>
+        <div class="k">Wellness Voucher &middot; operations</div>
         <h1>Runbook: what to do when it goes wrong</h1>
         <div class="hint">Not a review document. This is the page you open <b>while</b> something is
           failing, so it is ordered by urgency rather than by workflow.</div>
@@ -522,7 +522,7 @@
           guess would be a wrong one.</p>
         <ol class="steps">
           <li><b>Still to do, and it needs the scenario to exist first.</b> There is no Stripe bridge
-            scenario in this Make account yet: the two Beauty Voucher scenarios are still drawings in
+            scenario in this Make account yet: the two Wellness Voucher scenarios are still drawings in
             <code>automations/automations.html</code>. Nothing here is wired to anything.</li>
           <li><b>When you build scenario 2</b>, read the emirate with a <em>Data store &rarr; Search
             records</em> module filtered on <code>link_id</code>, placed before the contact upsert.
@@ -604,7 +604,7 @@
       </article>
 
       <div class="note warn"><b>Two built templates are not in this pack.</b> The
-        <em>Beauty Voucher Reserved</em> and <em>Beauty Voucher &mdash; Payment Notification</em>
+        <em>Wellness Voucher Reserved</em> and <em>Wellness Voucher &mdash; Payment Notification</em>
         messages exist and were test-sent in July, and neither is in
         <code>data/whatsapp-templates.json</code>, which carries eight. Two consequences.
         <b>One:</b> the &ldquo;is Lead Nurture broadcast-fed or form-fed&rdquo; question that has

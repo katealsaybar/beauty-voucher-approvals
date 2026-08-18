@@ -1,4 +1,4 @@
-// Beauty Voucher Approval Pack: the front door and the decision queue.
+// Wellness Voucher Approval Pack: the front door and the decision queue.
 //
 // WHY THIS EXISTS. The pack is a long document with thirteen open decisions buried in a
 // section near the bottom. That is fine for someone auditing it and wrong for the two
@@ -44,7 +44,7 @@
   var SWIPE_PX = 92;
 
   var PACK_ID = document.body.dataset.notePack || 'pack';
-  // Splits on the colon in "Beauty Voucher: Approval Pack". Keep this in step with the
+  // Splits on the colon in "Wellness Voucher: Approval Pack". Keep this in step with the
   // <title> and with notes-widget.js: a separator that matches nothing does not narrow
   // PACK_TITLE, it silently widens it to the whole string.
   var PACK_TITLE = (document.title.split(':')[0] || document.title).trim();
@@ -305,7 +305,7 @@
         // The rule above the wordmark is clipped off the PNG and redrawn by .dq-logowrap::before
         // in the reader's colour. See decide.css.
         '<span class="dq-logowrap"><img class="dq-logo" src="' + ASSETS + 'tara-rose-logo-white.png" alt="Tara Rose Salon"></span>' +
-        '<div class="dq-kicker">Summer Beauty Ritual Voucher</div>' +
+        '<div class="dq-kicker">Wellness Voucher</div>' +
         '<h2 id="dqForkH"></h2>' +
         '<p class="dq-fork-sub" id="dqForkSub"></p>' +
 

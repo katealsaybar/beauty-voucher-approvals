@@ -1,4 +1,4 @@
-// Beauty Voucher: review dashboard.
+// Wellness Voucher: review dashboard.
 //
 // The read-across view: every note and every suggestion anyone has left, on either page,
 // in one list. Same idea as the CWD knowledgebase dashboard, cut down to what this pack
