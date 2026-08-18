@@ -17,6 +17,8 @@
     --site-paper:#FAF8F4;    /* cards                         rgb(250,248,244) */
     --site-dark:#1C1B18;     /* dark sections                 rgb(28,27,24)    */
     --site-ink:#2D2E37;      /* body copy                                       */
+    --site-muted:#6E6E77;    /* eyebrows, captions, small print                 */
+    --site-serif:'Playfair Display',Georgia,serif;  /* display face, brand-locked */
     --site-green:#1C7563;    /* eyebrows                      rgb(28,117,99)   */
     --site-mint:#7CE8D2;     /* CTA fill                      rgb(124,232,210) */
     --site-mint-ink:#0E2A25; /* CTA label                     rgb(14,42,37)    */
@@ -502,7 +504,8 @@
     place-content:center;text-align:center;font-size:11px;letter-spacing:.18em;
     text-transform:uppercase;color:var(--site-muted);line-height:2;}
   .founderimg span{font-family:var(--site-serif);font-size:14px;letter-spacing:0;text-transform:none;}
-  /* The real portrait, 18 Aug. The file is 683 x 1024, so 2:3 against a 3:4 box: cover, and
+  /* The real portrait, 18 Aug, swapped for the one Tara actually likes: the white-brick shot
+     the live site already runs. The file is 568 x 852, so 2:3 against a 3:4 box: cover, and
      the object-position favours the top so her face sits in the frame rather than centred
      with the crop taking her hairline. */
   .founderimg{overflow:hidden;}
@@ -510,13 +513,15 @@
   .linkcards{margin-top:34px;}
   .cardcta.ghost{background:transparent;color:var(--site-ink);border:1px solid rgba(45,46,55,.20);}
 
-  /* gallery, placeholders: the live images stay as they are */
+  /* gallery: the five live images, exactly as they run today */
   .gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:12px;
     margin-top:24px;text-align:left;}
   .gitem{font-size:12.5px;line-height:1.5;color:var(--site-muted);}
   .gitem span{display:grid;place-content:center;aspect-ratio:4/5;border-radius:14px;
     background:var(--site-sand);margin-bottom:9px;font-size:10.5px;letter-spacing:.18em;
     text-transform:uppercase;}
+  .gitem img{display:block;width:100%;aspect-ratio:4/5;object-fit:cover;object-position:center;
+    border-radius:14px;margin-bottom:9px;background:var(--site-sand);}
 
   /* after you reserve */
   .afterlist{list-style:none;margin:24px auto 0;max-width:620px;text-align:left;}
@@ -568,7 +573,11 @@
 
   @media (max-width:760px){
     .founder{grid-template-columns:1fr;}
-    .founderimg{aspect-ratio:16/10;}
+    /* Not 16/10 here. Stacked to one column the box goes full width, and a letterbox that
+       wide against a 2:3 standing portrait crops straight through the top of her head. 4/5
+       keeps the same shape as the gallery tiles and leaves her hair inside the frame. */
+    .founderimg{aspect-ratio:4/5;}
+    .founderimg img{object-position:50% 12%;}
     .footgrid{grid-template-columns:1fr 1fr;}
     .bigquote{font-size:25px;max-width:none;}
   }

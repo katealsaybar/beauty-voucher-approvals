@@ -170,6 +170,10 @@
   .decision .a{font-size:13.5px;color:var(--muted);margin-top:3px;}
   .decision .tick{font-weight:800;color:var(--green);flex-shrink:0;}
   .decision .num{flex-shrink:0;width:26px;height:26px;border-radius:50%;background:var(--blue);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+  /* A resolved decision keeps its number rather than swapping to a tick, because three other
+     cards cite decisions by number and a tick makes those references unfollowable. Green, so
+     it still reads as settled at a glance. */
+  .decision.done .num{background:var(--green);}
   /* Some decisions carry more than one ask. Those get a real list under the lead-in line
      instead of an inline "1) 2) 3)" run, which was unreadable at this font size. */
   .decision .a ul{margin:7px 0 0;padding-left:19px;} .decision .a li{margin:5px 0;}
