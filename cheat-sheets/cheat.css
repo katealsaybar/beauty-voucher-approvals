@@ -4,6 +4,7 @@
    No em-dashes anywhere in this file or the pages, per the 4 July purge. */
 
 :root{
+  --railw:248px;
   --bg:#FAF8F4; --paper:#FFFFFF; --ink:#2D2E37; --muted:#6E6E77;
   --line:#E7E2D8; --accent:#99F6E4; --sand:#F1ECE3; --dark:#2D2E37;
   --amber:#B4823A; --amber-bg:#FBF3E2; --blue:#3B6E8F; --blue-bg:#E6F0F5;
@@ -268,22 +269,23 @@ code{
    Same dark rail as the approval pack, so moving between the two feels like one
    estate. Off-canvas below 1080px, gone entirely in print. */
 .rail{
-  position:fixed;left:0;top:0;bottom:0;width:264px;z-index:90;
+  position:fixed;left:0;top:0;bottom:0;width:var(--railw);z-index:90;
   background:var(--dark);color:#D8D5CE;overflow-y:auto;
   padding:0 16px 26px;display:flex;flex-direction:column;
 }
 .rail-brand{
   display:block;position:sticky;top:0;background:var(--dark);z-index:2;
-  padding:24px 4px 16px;font-family:var(--serif);font-size:19px;font-weight:600;
+  padding:22px 4px 14px;font-family:var(--serif);font-size:18.5px;font-weight:600;
   color:#fff;text-decoration:none;
+  box-shadow:0 10px 12px -8px var(--dark);
 }
 .rail-lbl{
-  font-size:10px;letter-spacing:.24em;text-transform:uppercase;
-  color:#8B8981;margin:20px 0 9px;padding-left:4px;
+  font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;
+  color:#8B8981;margin:16px 0 7px;padding-left:4px;
 }
 .rail-sheet{
   display:block;text-decoration:none;color:#D8D5CE;
-  padding:9px 11px;border-radius:10px;margin-bottom:3px;transition:background .15s;
+  padding:8px 10px;border-radius:9px;margin-bottom:2px;transition:background .15s;
 }
 .rail-sheet:hover{background:rgba(255,255,255,.06);color:#fff;}
 .rail-sheet.here{background:var(--accent);color:var(--ink);}
@@ -292,7 +294,7 @@ code{
 .rail-sec{
   display:flex;align-items:flex-start;gap:8px;
   text-decoration:none;color:#BDBAB3;font-size:13px;line-height:1.4;
-  padding:7px 11px;border-radius:8px;border-left:2px solid transparent;
+  padding:6px 10px;border-radius:8px;border-left:2px solid transparent;
 }
 .rail-sec:hover{background:rgba(255,255,255,.05);color:#fff;}
 .rail-sec.on{color:#fff;border-left-color:var(--accent);background:rgba(153,246,228,.09);}
@@ -306,13 +308,17 @@ code{
 }
 .rail-back:hover{color:#fff;}
 
-body.has-rail .wrap{margin-left:264px;}
+/* Offset the body, never the wrap. Putting margin-left on .wrap overrides its
+   own `margin: 0 auto`, so the column stops centring: it gets shoved right and
+   leaves a wide empty gutter on the other side. Padding the body shrinks the
+   space the column centres inside instead, which is what balance means here. */
+body.has-rail{padding-left:var(--railw);}
 .rail-toggle{display:none;}
 
 @media (max-width:1080px){
   .rail{transform:translateX(-100%);transition:transform .22s ease;box-shadow:0 0 40px rgba(0,0,0,.3);}
   body.rail-open .rail{transform:none;}
-  body.has-rail .wrap{margin-left:0;}
+  body.has-rail{padding-left:0;}
   .rail-toggle{
     display:flex;flex-direction:column;justify-content:center;gap:4px;
     position:fixed;left:13px;top:13px;z-index:95;
@@ -324,7 +330,8 @@ body.has-rail .wrap{margin-left:264px;}
 }
 @media print{
   .rail,.rail-toggle{display:none !important;}
-  body.has-rail .wrap{margin-left:0;padding-top:0;}
+  body.has-rail{padding-left:0;}
+  body.has-rail .wrap{padding-top:0;}
 }
 
 /* ---------- the way back to the pack ---------- */
