@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LID cheat sheet: Wellness Voucher</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="cheat.css">
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <div class="crumb"><a href="index.html">Cheat sheets</a> &rsaquo; LID</div>
+    <div class="team">LID</div>
+    <p class="owns">Everything here is a build task with the answer already written into it. Nothing on this sheet is a question, and nothing is waiting on Tara. The mockups in the pack are the specification: what they show is what the live site should say.</p>
+    <div class="stamp">Wellness Voucher &middot; page is <b>already live</b> &middot; current as of <b>19 August 2026</b></div>
+  </div>
+
+  <div class="oneline">
+    <div class="lbl">The one thing that decides the rest</div>
+    <p>The live page sells one voucher across four salons. It has to become two vouchers, one per emirate, because a Dubai client cannot have what the Abu Dhabi page promises her.</p>
+  </div>
+
+  <!-- 0 -->
+  <h2><span class="n">0</span>Everything to revise, highest priority first</h2>
+  <p class="sub">Ordered by what it costs to leave alone, not by which file it lives in. Every item is already drawn in a mockup or specified in the pack, so nothing here needs writing from scratch. The section reference takes you to the wording.</p>
+
+  <h3>Band A &middot; live and wrong today, minutes each</h3>
+  <p class="sub">Clients are reading these right now. None of them needs the emirate split first.</p>
+  <ul class="check">
+    <li><strong>1. Untick &ldquo;required&rdquo; on the Confidence Mapping consent box.</strong> It is a live PDPL exposure and it is a checkbox. Nothing else on this sheet is this cheap to fix or this expensive to ignore. <span class="deeper">&sect;7</span></li>
+    <li><strong>2. Delete &ldquo;any service at any of our four salons.&rdquo;</strong> On the landing page and in the &ldquo;three tiers plainly&rdquo; email. It promises a Dubai client a deep cleanse facial she cannot have at either of her salons. Replace with the per-emirate coverage line. <span class="deeper">&sect;5</span></li>
+    <li><strong>3. Season of You: 250 becomes 200, and 3,900 becomes 3,850.</strong> The page overstates what she gets today. Card row, card value, &ldquo;On the table&rdquo; total, the small-print allowance line and the welcome email. <span class="deeper">&sect;4</span></li>
+    <li><strong>4. Delete the colour cap sentence</strong> from the &ldquo;No surprises at the till&rdquo; step and the Confidence Promise strip. It promises a cap that does not exist and never got a number. <span class="deeper">&sect;3</span></li>
+  </ul>
+
+  <h3>Band B &middot; the Confidence Mapping form, which is losing something every day</h3>
+  <p class="sub">Four items, all on the same form, so they are one trip. None of it is visible to a client, which is exactly why it has gone unnoticed for so long.</p>
+  <ul class="check">
+    <li><strong>5. Put branch, name and contact details into the <code>info@</code> notification.</strong> Requested 19 August. Today the email carries her answers and not much else, so nobody can act on it without going hunting: no salon to route her to, no name to greet her by, no number to call. <strong>Her answers are useless to us until we know who she is and where she goes.</strong> This is a Gravity Forms notification template change and it is the cheapest thing in this band. <span class="deeper">&sect;2</span></li>
+    <li><strong>6. Send the client her own copy.</strong> Requested 19 August. A second notification, to her, with the answers she just gave. She has told us a lot about her hair and currently receives nothing back, which reads as a form that went nowhere. It also sets up the chair conversation, because she arrives having already read her own answers. <span class="deeper">&sect;2</span></li>
+    <li><strong>7. Add a branch question to the form.</strong> It does two jobs: it is the field item 5 needs, and it is the emirate signal the whole campaign has been missing. Branch is the right thing to ask for, because branch implies emirate and emirate does not imply branch. <span class="deeper">&sect;2</span></li>
+    <li><strong>8. Build the Gravity Forms to GHL webhook.</strong> The form posts to <code>info@tararosesalon.com</code> and nothing else, so <strong>no Confidence Mapping answer has ever reached the CRM</strong> and none will until this exists. <strong>Add it alongside the email, not instead of it</strong>: the contact centre works from that inbox today. This is the biggest of the four and the only one that is not a settings change. <span class="deeper">&sect;2</span></li>
+  </ul>
+
+  <h3>Band C &middot; the colour rule, before anyone books on the old one</h3>
+  <p class="sub">The page currently offers all colour on every tier with a cap that does not exist. It is now a three-step ladder, so every day this waits is a day someone can be told the wrong thing.</p>
+  <ul class="check">
+    <li><strong>9. Add the colour ladder line to both coverage ledes.</strong> <span class="deeper">&sect;3</span></li>
+    <li><strong>10. Tier 1 card: name its colour step.</strong> Soft Blonde or Polished Brunette, said positively rather than as an exclusion. <span class="deeper">&sect;3</span></li>
+    <li><strong>11. Split the Tier 2 and Tier 3 lead lines.</strong> They share one line today and must not: one names Signature and Dimensional, the other Transformation and Luxury. <span class="deeper">&sect;3</span></li>
+    <li><strong>12. Add term 6 to the Terms: which colour services each voucher reaches.</strong> The three-step ladder, written by the salon’s own plan names. <strong>This renumbers every term below it</strong>, so do it before anything else cites a term number. <span class="deeper">&sect;3</span></li>
+  </ul>
+
+  <h3>Band D &middot; the emirate split, and the things that ship with it</h3>
+  <p class="sub">The largest job on the sheet. Everything below sits inside it, so plan it as one release rather than five.</p>
+  <ul class="check">
+    <li><strong>13. Split the landing page in two, one per emirate.</strong> <span class="deeper">&sect;1</span></li>
+    <li><strong>14. Add the Dubai salon picker</strong> before any Stripe link. Al Quoz and Motor City have separate links, so six of the nine are Dubai. Abu Dhabi needs no picker. <span class="deeper">&sect;1</span></li>
+    <li><strong>15. Split the Terms per emirate, and name Motor City</strong> in the participating salons list. Dawn&rsquo;s draft is the only document that leaves it out. <span class="deeper">&sect;6</span></li>
+    <li><strong>16. Add term 3</strong>, holding the credit to the emirate it was bought in. The split does not work without it, and it is new legal wording, so it goes past Dawn first.</li>
+    <li><strong>17. Day 4 nurture and Welcome Email 2:</strong> body and hidden preheader need the emirate merge fields, which render blank today.</li>
+  </ul>
+
+  <h3>Band E &middot; decided, uncontroversial, do them whenever</h3>
+  <ul class="check">
+    <li><strong>18. Term 12: take Dawn&rsquo;s lighter cancellation clause</strong> and delete the A and B fork. There is no campaign policy. <span class="deeper">&sect;6</span></li>
+    <li><strong>19. Email footers: &ldquo;Tara Rose Salon Group&rdquo; becomes &ldquo;Tara Rose Salons&rdquo;</strong>, every email. <span class="deeper">&sect;6</span></li>
+    <li><strong>20. The mapping bridge message: &ldquo;me&rdquo; becomes &ldquo;we&rdquo;.</strong> <span class="deeper">&sect;6</span></li>
+    <li><strong>21. The six Confidence Mapping copy swaps.</strong> <span class="deeper">&sect;7</span></li>
+  </ul>
+
+  <h3>Band F &middot; defects, no decision attached</h3>
+  <ul class="check">
+    <li><strong>22. The eleven build defects</strong> on the Confidence Mapping page: the phone number, the duplicate Privacy Policy URLs, &ldquo;Khalifa City&rdquo; missing its A, three H1s, the screen-reader labels and the rest. <span class="deeper">&sect;8</span></li>
+  </ul>
+
+  <!-- 1 -->
+  <h2><span class="n">1</span>Ship first: the page contradicts itself today</h2>
+  <p class="sub">These are live now, on a page clients are reading. Everything else on this sheet can wait behind them.</p>
+  <ul class="check">
+    <li><strong>&ldquo;Any service at any of our four salons&rdquo; has to go.</strong> It is on the landing page and in the &ldquo;three tiers plainly&rdquo; email. Swap in the per-voucher coverage line below, and keep &ldquo;up to your credit value&rdquo; so it never reads as unlimited free services.</li>
+    <li><strong>The Dubai page must ask which salon before it can send her anywhere.</strong> Al Quoz and Motor City have separate Stripe links, so six of the nine links are Dubai. Abu Dhabi needs no such ask: both salons pay through the same three links. The block is drawn in the mockup.</li>
+    <li><strong>The new colour rule, in six places.</strong> Detail in section 2.</li>
+  </ul>
+  <div class="deeper">The two questions answered as a page: <a href="../website-mockups/voucher-landing/voucher-landing.html">open the website mockup</a>, switch emirate in the header, and turn on <em>Show what changes</em>.</div>
+
+  <!-- 2 -->
+  <h2><span class="n">2</span>The Confidence Mapping form, and why all of it is yours</h2>
+  <p class="sub">Assigned to LID on 19 August. The webhook had been sitting with the GHL team, who cannot start their half until it exists.</p>
+
+  <h3>What actually happens today</h3>
+  <div class="card">
+    <p>The quiz is Gravity Forms 21 on WordPress. It is not a GHL-native form and it does not post to GHL. Its only notification is an email to <code>info@tararosesalon.com</code> carrying her answers. That is the whole integration.</p>
+    <p><strong>What that costs.</strong> Mapping leads are not contacts, so GHL has never seen one. The thirteen-step Confidence Mapping workflow has never fired for a real lead. A woman who filled the form twice is two emails. A woman who filled it and then bought a voucher cannot be joined up. And her nineteen answers, which are the entire point of the exercise, are readable only by whoever opens the inbox.</p>
+  </div>
+
+  <h3>The two notifications, and what each must carry</h3>
+  <table>
+    <thead><tr><th>Goes to</th><th>Must contain</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>info@tararosesalon.com</strong><br><span style="font-size:12.5px;color:var(--muted);">exists, needs more in it</span></td>
+        <td><strong>Her name. Her contact details. Her branch.</strong> Then her answers.</td>
+        <td>Without those three, nobody can route her, greet her or call her back. The answers alone are not actionable, which is why the inbox has not turned into bookings.</td>
+      </tr>
+      <tr>
+        <td><strong>The client herself</strong><br><span style="font-size:12.5px;color:var(--muted);">new, does not exist today</span></td>
+        <td>A copy of the answers she just gave.</td>
+        <td>She has told us a great deal about her hair and gets nothing back, which reads as a form that went nowhere. It also sets up the chair: she arrives having already read her own answers.</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="rule note"><b>Both are Gravity Forms notification templates.</b> No code, no plugin, no webhook needed for either. They can ship today and should, ahead of everything else in this band.</div>
+  <div class="rule watch"><b>Two things to get right on the client copy.</b> It is client-facing, so it goes through <a href="../index.html">the pack</a> and a brand review before it sends. And it says <b>Confidence Map</b> throughout, never <b>Journal</b>, which is the same swap as item 21.</div>
+
+  <h3>The webhook</h3>
+  <div class="card">
+    <p><strong>The smallest thing that works</strong> is a webhook notification from Gravity Forms into a GHL inbound webhook. <strong>Add it alongside the existing email rather than replacing it</strong>: the contact centre works from that inbox today, and turning it off in the same change is how a working process gets broken in the name of fixing a broken one.</p>
+  </div>
+  <div class="rule note"><b>Where your half stops.</b> Once an entry reaches GHL, the nineteen custom fields, the field mapping and the routing nodes are the GHL team&rsquo;s. Keys and types are in <code>docs/CONFIDENCE-MAPPING-FIELD-SPEC.md</code>. Verify together with one test submission read at both ends, because neither half proves anything on its own.</div>
+
+  <!-- 2 -->
+  <h2><span class="n">3</span>New, 19 August: the colour rule</h2>
+  <p class="sub">The per-visit colour cap was dropped, not numbered. A three-step ladder replaced it, built on plan names the floor already uses, and it has to reach the live site.</p>
+  <div class="card">
+    <p><strong>Colour runs on the salon&rsquo;s own three-step plan ladder, and each voucher reaches one step further.</strong> Dip Your Toes reaches Soft Blonde and Polished Brunette. Season of You adds Signature and Dimensional, which is where balayage and highlights sit. All-In VIP Year adds Transformation and Luxury: correction, high lift, big change. There is no cap and no number anywhere, and the names are the ones already in Tara&rsquo;s Blonde and Brunette System pages.</p>
+  </div>
+  <table>
+    <thead><tr><th>Where</th><th>What changes</th></tr></thead>
+    <tbody>
+      <tr><td>Landing page, both coverage ledes</td><td>Add the ladder sentence: balayage and highlights come in with Season of You, correction and high lift with All-In VIP Year.</td></tr>
+      <tr><td>Tier 1 card</td><td>Names its colour step positively rather than listing exclusions: Soft Blonde or Polished Brunette, meaning root retouch, all-over colour, toner and gloss.</td></tr>
+      <tr><td>Tier 2 and Tier 3 cards</td><td>They shared a lead line. They must not any more: Season of You names Signature and Dimensional, VIP Year names Transformation and Luxury.</td></tr>
+      <tr><td>&ldquo;No surprises at the till&rdquo; step</td><td>The cap sentence comes out. The spending-cap promise stays.</td></tr>
+      <tr><td>Confidence Promise strip</td><td>Same swap.</td></tr>
+      <tr><td>T&amp;C, new term 6</td><td>The whole ladder goes in as its own term. Colour was never written into the terms at all. This renumbers every term below it.</td></tr>
+    </tbody>
+  </table>
+  <div class="rule do"><b>All six are already drafted in the mockups.</b> You are not writing copy, you are shipping what the mockups show. <a href="../website-mockups/voucher-landing/voucher-landing.html">Landing</a> &middot; <a href="../website-mockups/terms/terms.html">Terms</a>.</div>
+
+  <!-- 2a -->
+  <h2><span class="n">4</span>New, 19 August: Season of You kit allowance</h2>
+  <p class="sub">One number moved, and it moves a second number with it.</p>
+  <table>
+    <thead><tr><th>Where</th><th>From</th><th>To</th></tr></thead>
+    <tbody>
+      <tr><td>Season of You tier card, kit row label and value</td><td>AED 250</td><td><strong>AED 200</strong></td></tr>
+      <tr><td>Season of You &ldquo;On the table&rdquo; total</td><td>AED 3,900</td><td><strong>AED 3,850</strong></td></tr>
+      <tr><td>Small print, home care allowance line, both emirates</td><td>100, 250 or 450</td><td><strong>100, 200 or 450</strong></td></tr>
+      <tr><td>Terms, term 8</td><td>AED 250 with Season of You</td><td><strong>AED 200 with Season of You</strong></td></tr>
+      <tr><td>Confidence Mapping welcome email</td><td>AED 100, 250 or 450</td><td><strong>AED 100, 200 or 450</strong></td></tr>
+    </tbody>
+  </table>
+  <div class="rule note"><b>Only Season of You moves.</b> Dip Your Toes stays at 100 and a 1,500 total. All-In VIP Year stays at 450 and a 7,100 total. The allowance was always inside the &ldquo;On the table&rdquo; figure, which is why the total moves at all.</div>
+  <div class="rule dont"><b>The word is <em>towards</em>, everywhere.</b> Never &ldquo;includes&rdquo;, never &ldquo;free&rdquo;, never &ldquo;your kit&rdquo;. She pays a difference at every tier, so the copy has to say so before she buys, not when she collects.</div>
+
+  <!-- 3 -->
+  <h2><span class="n">5</span>The two copy sets</h2>
+  <p class="sub">Prices and inclusions are identical. Only availability changes.</p>
+  <h3>Abu Dhabi voucher</h3>
+  <div class="say"><span class="who">Availability line, every caption and email</span>Available at our Abu Dhabi salons, Saadiyat and Khalifa City A.</div>
+  <div class="card">
+    <p><strong>Coverage.</strong> Your credit spends on any service, up to your credit value: hair, colour, beauty, treatments and facials, at either Abu Dhabi salon. It is a spending cap; anything above your credit is settled at the till.</p>
+    <p><strong>Birthday facial.</strong> A full facial of her choice, Deep Cleanse or Signature Relaxing.</p>
+  </div>
+  <h3>Dubai voucher</h3>
+  <div class="say"><span class="who">Availability line, every caption and email</span>Available in Dubai. Beauty services at Al Quoz; hair at Al Quoz and Motor City. Deep cleanse and clinical facials are available at our Abu Dhabi salons.</div>
+  <div class="card">
+    <p><strong>Coverage.</strong> Your credit spends on any service, up to your credit value. Hair at both Al Quoz and Motor City. Beauty services and the Signature Relaxing Facial at Al Quoz. It is a spending cap; anything above your credit is settled at the till.</p>
+    <p><strong>Birthday facial.</strong> Signature Relaxing Facial with lifting massage, AED 350, at Al Quoz.</p>
+  </div>
+
+  <!-- 4 -->
+  <h2><span class="n">6</span>Four decided items, each with its answer</h2>
+  <table>
+    <thead><tr><th>#</th><th>Task</th><th>The answer, already given</th></tr></thead>
+    <tbody>
+      <tr><td>7</td><td>Motor City missing from the T&amp;C participating-salons list</td><td>Add it. Dawn&rsquo;s draft is the only place it is missing, and the landing page, tier table and Stripe links all treat it as a redemption branch. A typo with legal weight, not a call.</td></tr>
+      <tr><td>12</td><td>Email footers read &ldquo;Tara Rose Salon Group&rdquo;</td><td>Change to <strong>Tara Rose Salons</strong>. The old build spec asked for the other one; this pack is the source of truth, not the build spec.</td></tr>
+      <tr><td>8</td><td>The +24h mapping bridge says &ldquo;would you like me to hold a tier&rdquo;</td><td>Change &ldquo;me&rdquo; to <strong>&ldquo;we&rdquo;</strong>. Singular voice in a plural brand. The same slip was fixed in four WhatsApp templates on 10 August. &ldquo;Most women back it with the Wellness Voucher&rdquo; stays.</td></tr>
+      <tr><td>6</td><td>Confidence Mapping page predates the locked doctrine</td><td>Apply all six copy swaps, below.</td></tr>
+    </tbody>
+  </table>
+
+  <!-- 5 -->
+  <h2><span class="n">7</span>The six Confidence Mapping swaps</h2>
+  <table>
+    <thead><tr><th>#</th><th>On the page now</th><th>Change to</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>&ldquo;A transformation, a real change&rdquo;</td><td>&ldquo;A big change, a real change&rdquo;</td></tr>
+      <tr><td>2</td><td>Hero: &ldquo;A diagnosis, not a commitment&rdquo;</td><td>&ldquo;A direction, not a commitment&rdquo;</td></tr>
+      <tr><td>3</td><td>&ldquo;&hellip;consultation &ndash; designed&hellip;&rdquo; and &ldquo;&ndash; the tara rose way&rdquo;</td><td>&ldquo;&hellip;consultation, designed&hellip;&rdquo; and &ldquo;the Tara Rose way&rdquo;</td></tr>
+      <tr><td>4</td><td>&ldquo;Confidence Map&rdquo; and &ldquo;Journal&rdquo; used interchangeably</td><td><strong>&ldquo;Confidence Map&rdquo;, everywhere</strong>, including the consent label and the submit button</td></tr>
+      <tr><td>5</td><td>Ends at &ldquo;&hellip;care, expertise and intention.&rdquo;</td><td>Add the locked footer signature: <strong>&ldquo;We see you.&rdquo;</strong></td></tr>
+      <tr><td>6</td><td>Awards strip</td><td>Not a rewrite. Doctrine says never publish an award we cannot evidence, so it needs a yes from Tara first. If confirmed, add the awarding body and the missing full stop.</td></tr>
+    </tbody>
+  </table>
+  <div class="rule watch"><b>The consent tickbox on that form is still set to required.</b> That is a PDPL problem and it is live today. It is on the GHL sheet too, because whoever gets there first should fix it.</div>
+
+  <!-- 6 -->
+  <h2><span class="n">8</span>Eleven build defects, no decision needed</h2>
+  <ul class="check">
+    <li>Stray quote mark rendering after &ldquo;Your map&rdquo;.</li>
+    <li>Pull-quote opens a quote mark and never closes it.</li>
+    <li>Phone shows +971 48 3 27061, should read <strong>+971 4 832 7061</strong>. The dial link itself is already correct.</li>
+    <li>Two different Privacy Policy URLs, one on the form and one in the footer. One is likely dead.</li>
+    <li>&ldquo;Khalifa City&rdquo; in nav and footer should read <strong>Khalifa City A</strong>.</li>
+    <li>Three H1 tags on one page. Demote two to H2, same words.</li>
+    <li>Duplicate empty heading between &ldquo;The honest answers&rdquo; and &ldquo;Good to know&rdquo;.</li>
+    <li>Hidden form labels read aloud by screen readers as &ldquo;Pain (comma list)&rdquo;, &ldquo;History bad&rdquo;, &ldquo;Route&rdquo;.</li>
+  </ul>
+
+  <!-- 7 -->
+  <h2><span class="n">9</span>House rules for anything you write</h2>
+  <ul class="check">
+    <li><strong>No em-dashes, anywhere.</strong> Universal ban, no exemptions, including code comments. Use commas, full stops or colons.</li>
+    <li><strong>British English.</strong> Colour, favourite, personalised, organise, programme.</li>
+    <li><strong>Banned in client copy:</strong> free, unlimited, premium, luxury as hype, guarantee, upsell, pamper, treat yourself, discount, % off, exclamation marks, the rose emoji.</li>
+    <li><strong>&ldquo;VIP&rdquo; and &ldquo;Ritual&rdquo; are allowed on this campaign only</strong>, as the locked names: All-In VIP Year, Home Ritual Kit. They are banned on every other Tara Rose asset.</li>
+    <li><strong>Client-facing brand name is &ldquo;Tara Rose&rdquo;.</strong> Never TRS, never TRG. Footer signature: &ldquo;We see you.&rdquo;</li>
+    <li><strong>One more question is needed on the Confidence Mapping quiz:</strong> her emirate. It is a website change, so ship it with the emirate landing-page split rather than on its own.</li>
+  </ul>
+
+  <div class="footer">
+    Wellness Voucher, LID cheat sheet. Source of truth: the <a href="../index.html">approval pack</a>, and the <a href="../index.html#decisions">Open Decisions</a> list for the reasoning behind each task.
+    If this sheet and anything else disagree, this sheet is newer. Raise it with Kate rather than guessing.
+  </div>
+</div>
+<script src="ask-config.js"></script>
+<script src="ask-widget.js"></script>
+</body>
+</html>

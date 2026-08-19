@@ -1,41 +1,54 @@
-# Caps and allowances: the two numbers the pack has been waiting for
+# Caps and allowances: both settled
 
-**Status:** for the coordinators' meeting, 19 August. Kate's proposals, not yet approved.
-**Why it is urgent:** both numbers are currently **blank in client-facing copy.** Four emails and the
-T&Cs say larger colour is "covered up to a set amount per visit", and the runbook tells reception
-*"tell her the number before she sits down."* There is no number. Nothing can ship into a salon like
-that, because the first client who asks gets a different answer at every branch.
+**Status:** settled by Kate on 19 August, and applied across the repo in the same pass.
+**What changed from the version that went into the meeting:** the colour cap was not approved at a
+number, it was dropped. A cap could not survive the checkout model, so a list replaced it. The kit
+allowance was approved as it stood, and the copy moved instead.
 
 ---
 
-## 1. Colour cap
+## 1. Colour: no cap, a three-step ladder
 
-**The rule, in one line:** the credit covers **AED 700 of colour per visit**, on every tier. All-In VIP
-Year additionally gets **one visit a year at AED 1,500**, flagged when she books.
+**The rule, in one line:** there is **no per-visit colour cap.** Colour runs on the salon's own
+three-step plan ladder, and each voucher reaches one step further than the one below it. Every
+voucher includes everything on the steps beneath it.
 
-| What she is having | Typical price | Credit covers | She settles at the till |
-|---|---|---|---|
-| Root touch-up, toner, gloss | 350 to 500 | all of it | **nothing** |
-| Core colour and cut | 650 to 850 | 700 | 0 to 150 |
-| Premium or signature colour | 1,000 to 1,400 | 700 | 300 to 700 |
-| Major colour, **All-In VIP Year, once a year** | 1,200 to 1,500 | 1,500 | **nothing** |
+| Step | Blonde | Brunette | The services | Dip Your Toes | Season of You | All-In VIP Year |
+|---|---|---|---|---|---|---|
+| 1 | **Soft** | **Polished** | Root retouch, all-over and single-process colour, toner, gloss, tonal maintenance | **Yes** | **Yes** | **Yes** |
+| 2 | **Signature** | **Dimensional** | Balayage and freehand placement, highlights and foils, grey blending, multi-tonal depth | No | **Yes** | **Yes** |
+| 3 | **Transformation** | **Luxury** | Full transformation, colour correction and removal, high lift, fantasy colour | No | No | **Yes** |
 
-**Why 700 and not the tiered 500 / 700 / 1,200 the Playbook proposed:**
+Cuts, blow-dry and styling, keratin and smoothing, and bond, strength, hydration and scalp
+treatments are **not on this ladder at all**. They are covered on every voucher.
 
-- **700 clears a full Core colour service**, which is the AED 650 to 850 band most clients sit in. So
-  the cap is invisible to the majority, and a cap nobody meets does not generate arguments.
-- **It stops the one thing that actually loses money:** two premium colours at 1,400 against a 3,000
-  credit, which is the whole credit gone on the lowest-margin service in the salon.
-- **Two numbers, not a matrix.** Reception cannot run tier-by-service rules at a busy till. Every
-  extra number is a wrong answer waiting to be given.
-- **The 1,500 for VIP Year is not generosity, it is honesty.** The WhatsApp blast going out says
-  All-In VIP Year has "one major colour in". Without that line the copy is a promise we break.
+**Why the AED 700 cap was dropped rather than approved at some number**
 
-**Deliberately not proposed: per-year caps on Tiers 1 and 2.** Nobody will track a yearly total across
-visits, so a rule like that is enforced by whoever happens to remember. Per visit is checkable.
+- **Nothing could enforce it.** Jumera's checkout is a deposit that depletes. There is no per-visit
+  ceiling in that mechanic to hang a cap on, so enforcing one means reception doing a sum per client
+  at a busy till, which is the exact thing she ruled out as operationally risky. A rule nobody can
+  enforce is enforced by whoever happens to remember it, which is the same as not having one.
+- **A ladder is read, not calculated.** It gives the same answer every time, from every branch, from
+  anyone on the floor. That was always the real requirement behind wanting numbers rather than a matrix.
+- **The credit was already the cap.** She can never spend past 1,150, 3,000 or 5,400.
+- **It gives every tier something to buy.** A cap only ever took something away. Season of You now
+  buys balayage and highlights; All-In VIP Year buys correction and high lift.
 
-**Where the number lands once approved:** `emails/mapping-4-tiers.html`, `nurture-3`, `welcome-2`,
-the T&C larger-colour term, `index.html`, and the runbook line that tells reception to say it out loud.
+**Why these names, and not a list written from scratch**
+
+Soft / Signature / Transformation and Polished / Dimensional / Luxury are the locked plan-tier names
+in Tara's own Blonde System and Brunette System pages, and the floor already books against them.
+An earlier draft of this rule invented a service list and got it wrong: it made **all-over colour** a
+top-tier service when it is the **entry** step of the brunette menu, which would have pushed the most
+ordinary brunette client into the top voucher. Building on the existing ladder removes that whole
+class of mistake.
+
+**The thing the floor has to get right:** the Self-Care Bonus does not buy colour on any tier. The
+Terms restrict it to beauty, treatments, keratin and blowdries, and always did. So a VIP Year client
+has AED 4,500 of colour headroom, not 5,400, and a Season of You client has 2,500, not 3,000.
+
+**Still to confirm, and it is Belle's:** a spot check that the six plan names match the booking system
+at all four branches.
 
 ---
 
@@ -47,7 +60,7 @@ spends on products, and she settles anything above it.** Same mechanic as the vo
 | Tier | Cap before (shelf) | as % of what she paid | **Allowance now** | as % | Cash saved per sale (trade at 50%) |
 |---|---|---|---|---|---|
 | Dip Your Toes | 350 | 35% | **100** | 10% | ~125 |
-| Season of You | 650 | 26% | **250** | 10% | ~200 |
+| Season of You | 650 | 26% | **200** | 8% | ~225 |
 | All-In VIP Year | 1,050 | 23% | **450** | 10% | ~300 |
 
 Slot counts are unchanged: 2, 4 and 6. The prescription is what makes the kit feel considered, not
@@ -64,7 +77,7 @@ Making it an allowance changes three things at once:
 
 1. **Unredeemed allowance is not spent.** A gift is a cost the moment it is packed. An allowance is a
    cost only when she uses it.
-2. **The top-up is new retail at full margin.** A 250 allowance against a 400 basket is 150 of retail
+2. **The top-up is new retail at full margin.** A 200 allowance against a 534 basket is 334 of retail
    revenue that did not exist before, from a client who is already standing at the till.
 3. **It makes the existing rule make sense.** The credit has always excluded home care. Now there is a
    reason for that, instead of it reading as a restriction: home care has its own allowance.
@@ -83,7 +96,7 @@ these numbers should move.
 
 Applied on 18 August, so the tool and the terms match this document:
 
-- `ritual-kit/ritual-kit.js` — caps are 100 / 250 / 450. The staff-facing bar no longer says "over the
+- `ritual-kit/ritual-kit.js` caps are 100 / 200 / 450. The staff-facing bar no longer says "over the
   cap, swap an item down". It now says **"she pays AED X at the till"**, and it says to tell her before
   the bag is built.
 - **T&Cs, both `index.html` and the mockup** — ritual kits were removed from the "complimentary gifts
@@ -92,16 +105,27 @@ Applied on 18 August, so the tool and the terms match this document:
   collection, that it cannot be spent on services and the service credit cannot be spent on home care,
   and that the unused part has no cash value and ends with the voucher.
 
-**Not applied, because it is not mine to decide:** the colour cap. Every mention of it still reads "a
-set amount per visit". Approve 700 / 1,500 tomorrow and it goes in everywhere in one pass.
+Applied on 19 August, in one pass, once the colour rule was settled:
+
+- **Every "a set amount per visit" is gone, and the ladder went in behind it.** `emails/mapping-4-tiers.html`, `nurture-3`,
+  `welcome-2`, the landing page lede and tier cards, the "No surprises at the till" step, the
+  Confidence Promise strip, term 5 of the T&C mockup, and the Floor Briefing. The tier rule went in
+  behind each one.
+- **The landing page tier cards now differ**, where Season of You and All-In VIP Year previously
+  shared a lead line. Tier 1 reads "three things it does not cover", not two.
+- **Term 10 lost its A/B fork.** Dawn's lighter clause governs and the detailed Cancellation Policy
+  section of the pack came out to match, so the pack states the rule once.
 
 ---
 
-## 4. What the meeting needs to produce
+## 4. What is left
 
-| # | Decision | Owner |
+| # | Item | Owner |
 |---|---|---|
-| 1 | Colour cap: **700 per visit, 1,500 once a year on VIP Year** — yes or a different number | Coordinators, then Emma |
-| 2 | Kit allowance: **100 / 250 / 450** — yes or a different number | Emma |
-| 3 | The real trade cost of the kit products, so number 2 can be checked rather than assumed | Emma |
-| 4 | Whether the offer needs its headline value replaced now that the kit is smaller | Tara |
+| 1 | Spot check that the six plan names match the booking system at each branch | Belle |
+| 2 | The real trade cost of the kit products, so the allowance is checked rather than assumed | Emma |
+
+Settled 19 August and no longer open: the colour cap (dropped, replaced by the tier list), the kit
+allowance (100 / 200 / 450, Season of You corrected from 250; copy reads *towards* rather than *your kit*), the headline value
+(the allowance was already inside the totals, so only Season of You moves, to 3,850), and the
+cancellation wording (Dawn's clause).

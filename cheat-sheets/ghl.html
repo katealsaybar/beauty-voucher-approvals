@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GHL cheat sheet: Wellness Voucher</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="cheat.css">
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <div class="crumb"><a href="index.html">Cheat sheets</a> &rsaquo; GHL team</div>
+    <div class="team">GHL team</div>
+    <p class="owns">Three workflows, thirteen emails and ten WhatsApp templates. Most of it is drawn but not built. This sheet is the build order, the traps that fail silently, and the discovery that changes the shape of the job: the Confidence Mapping form has never reached GHL at all.</p>
+    <div class="stamp">Wellness Voucher &middot; window already open since <b>17 August</b> &middot; current as of <b>19 August 2026</b></div>
+  </div>
+
+  <div class="oneline">
+    <div class="lbl">Read this before you build anything</div>
+    <p>Nothing in this campaign fails loudly. Every trap below sends nothing, logs nothing, and looks fine from our side.</p>
+  </div>
+
+  <!-- 1 -->
+  <h2><span class="n">1</span>What exists, and what is only drawn</h2>
+  <table>
+    <thead><tr><th>Workflow</th><th>Steps</th><th>Fires</th><th>State</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Lead Nurture</strong></td><td>18</td><td>pre-purchase, stops the moment she pays</td><td>built, needs the emirate branch</td></tr>
+      <tr><td><strong>Welcome Pack</strong></td><td>13</td><td>on payment</td><td>built, needs the emirate branch</td></tr>
+      <tr><td><strong>Confidence Mapping</strong></td><td>13</td><td>quiz funnel</td><td>built, nothing is mapped into it</td></tr>
+    </tbody>
+  </table>
+  <div class="rule watch"><b>Nobody has touched the live GHL account.</b> The five new routing nodes in the automations map are drawings, not builds. Treat the map as a specification, not a status.</div>
+  <div class="deeper">The map itself: <a href="../automations/automations.html">open the automations map</a>.</div>
+
+  <!-- 2 -->
+  <h2><span class="n">2</span>The build order, and why it is this order</h2>
+  <p class="sub">Item 1 can invalidate everything under it, so do not start at the bottom.</p>
+  <ul class="check">
+    <li><strong>Wait for LID to build the bridge. Do not start below this line until it exists.</strong> Answered 19 August: the Confidence Mapping form sends its entries <strong>straight to <code>info@tararosesalon.com</code></strong> as an email notification. That is a Gravity Forms notification, not an integration, so <strong>no Confidence Mapping answer has ever reached GHL</strong>. <strong>The webhook is LID&rsquo;s job, assigned 19 August</strong>, along with the branch question on the same form. Chase it, because everything under this item is waiting on it. See section 3.</li>
+    <li><strong>Create the emirate custom field.</strong> A field, not only a tag. Merge fields cannot read tags, and the emails have to read the same value.</li>
+    <li><strong>Create <code>emirate_source</code>.</strong> So a wrong guess and a wrong client answer can be told apart later.</li>
+    <li><strong>Build the five routing nodes.</strong> If/Else &middot; Emirate known? and WhatsApp &middot; Which emirate? in Lead Nurture. If/Else &middot; Emirate from payment and Task &middot; Emirate mismatch in the Welcome Pack. If/Else &middot; Locale to emirate in Confidence Mapping.</li>
+    <li><strong>Fill the three custom values.</strong> <code>{{voucher_availability_line}}</code>, <code>{{branch_a_name}}</code> and <code>{{branch_b_name}}</code> are already written into the emails and <strong>render blank today</strong>.</li>
+    <li><strong>Create the nineteen Confidence Mapping fields and map them</strong>, one at a time. Nothing maps for free on a Gravity Form.</li>
+    <li><strong>Verify with a single test submission, read at both ends.</strong></li>
+  </ul>
+  <div class="deeper">Keys, types and the test: <code>docs/CONFIDENCE-MAPPING-FIELD-SPEC.md</code>. Field design and the conflict rule: <code>docs/EMIRATE-ROUTING-BUILD-SPEC.md</code>.</div>
+
+  <!-- 3a -->
+  <h2><span class="n">3</span>The form goes to an inbox, not to GHL</h2>
+  <p class="sub">Answered by Kate on 19 August, and it is the worst of the three cases the pack allowed for. The fix is LID&rsquo;s, but the consequence is yours, so read it before starting on field mappings.</p>
+  <div class="card">
+    <p>The quiz posts to <code>info@tararosesalon.com</code> by email notification. Nothing else happens. That means:</p>
+    <ul class="plain">
+      <li><strong>Mapping leads are not contacts.</strong> They exist as emails in a shared inbox. GHL has never seen them.</li>
+      <li><strong>The Confidence Mapping workflow has never fired for a real lead.</strong> Thirteen steps, sitting on a trigger nothing reaches.</li>
+      <li><strong>Nothing is searchable, deduplicated or attributable.</strong> A woman who filled the form twice is two emails. A woman who filled it and then bought cannot be joined up.</li>
+      <li><strong>Every answer she gave is only in an email body.</strong> Nineteen answers about her hair, which is the whole point of the exercise, and no stylist can see them at the chair.</li>
+    </ul>
+    <p><strong>So the first build is not a mapping, it is a hop</strong>, and it is not yours. A webhook notification from Gravity Forms into a GHL inbound webhook is the smallest thing that works, it goes in alongside the existing email rather than replacing it, and <strong>LID owns it as of 19 August</strong>. Your half starts the moment an entry lands: the nineteen custom fields, the mapping, the routing nodes.</p>
+  </div>
+  <div class="rule note"><b>What LID is shipping on that form, so you know what to expect.</b> Three notification changes and one build: her name, contact details and <b>branch</b> go into the <code>info@</code> email; the client gets her own copy of her answers; a branch question is added; and then the webhook. The branch field is the one to care about, because it is the emirate signal every workflow here has been missing.</div>
+  <div class="rule watch"><b>The email notification stays when the bridge goes in.</b> The contact centre works from that inbox today, so the webhook is added beside it, not instead of it. If you are asked to switch the email off as part of the cutover, say no.</div>
+  <div class="rule do"><b>Verify together, with one test submission read at both ends.</b> Neither half proves anything on its own, and a mapping that looks right against a form that never fired is the failure mode here.</div>
+
+  <!-- 3b -->
+  <h2><span class="n">4</span>Lead Nurture takes two entrances</h2>
+  <p class="sub">Settled by Kate, 19 August. This was the open question that blocked the build.</p>
+  <div class="card">
+    <p><strong>Both the website reserve form and a broadcast to a segmented Phorest list feed the same workflow.</strong></p>
+    <ul class="plain">
+      <li><strong>Form entrants</strong> carry a hidden emirate field, so the emails are correct from the first message.</li>
+      <li><strong>Broadcast entrants</strong> cannot carry one. Their emirate comes from Phorest, and where Phorest does not have it, from the WhatsApp ask inside Lead Nurture.</li>
+    </ul>
+    <p>This is the largest of the three builds: two emirate paths, and five emails that have to read as well to a client we already know as to a new lead. <strong>Stage it.</strong> The window is already open, so this lands in pieces on a live campaign, not as one launch.</p>
+  </div>
+  <div class="rule note"><b>Two dead ends, so nobody re-proposes them.</b> The emirate cannot be guessed from the phone number, because +971 covers the whole country. And the payment is a reliable <b>emirate</b> signal but an unreliable <b>branch</b> one, because Saadiyat has no working Stripe and its clients pay through the Khalifa City link.</div>
+
+  <!-- 4 -->
+  <h2><span class="n">5</span>The traps that fail silently</h2>
+
+  <h3>The tier is not recorded on in-salon sales</h3>
+  <div class="rule dont"><b><code>tier:[x]</code> is written by the Stripe bridge only.</b> A till or Tabby sale gets <code>voucher:paid</code> applied by hand and no tier, and most purchases are expected to happen in salon. Three things then break, none of which logs an error: the Self-Care Bonus paragraph vanishes from Welcome Email 2, the expiry touch cannot work out whether to fire at 5, 8 or 11 months, and the 8 Pillars Journal never sends because it is gated on <code>tier:vip</code>.</div>
+  <div class="rule note"><b>Not a naming collision, before anyone goes looking.</b> <code>tier:[x]</code> carries two meanings, the voucher tier from payment (<code>dip</code> / <code>season</code> / <code>vip</code>) and the home care tier from Confidence Mapping (<code>protect</code> / <code>maintain</code> / <code>full</code>). The two value sets do not overlap, so <code>tier:vip</code> is unambiguous. The fault is <b>absence</b>, not ambiguity, and renaming nothing fixes it.</div>
+
+  <h3>WhatsApp templates over the Meta limits</h3>
+  <div class="rule watch"><b>Going over does not get trimmed, it gets refused.</b> Meta caps an outbound template at <b>1,024 characters</b> and each button label at <b>25</b>. Over the limit, Meta rejects it at approval, the step stays in the workflow with nothing to send, and there is no warning at the moment it would have gone out. Our Abu Dhabi broadcast reached 1,193 characters once, and two button labels reached 26. The blast now sits at <b>894</b> because the link moved into a URL button &mdash; see &sect;6 for all four bodies and their counts.</div>
+  <div class="rule note">WhatsApp stays split by emirate and cannot be parametrised, because Meta fixes button labels at template level and they will not take a merge field. The blast is split the same way, and split again for the lists where the first name is unusable. The emails do not need splitting: three strings change, the body of the Day 4 nurture email, and the body and hidden preheader of Welcome Email 2.</div>
+
+  <h3>Confidence Mapping locale is not the emirate</h3>
+  <div class="rule dont"><b>An earlier note said locale was &ldquo;the emirate already collected and thrown away.&rdquo; It is not.</b> The live script sets locale from the page language attribute, so it reads <code>en-us</code> for every lead and always will. There is nothing to recover. Mapping leads stay <code>emirate:unknown</code> until the branch question ships, and take it from the WhatsApp ask until then.</div>
+
+  <!-- 6 -->
+  <h2><span class="n">6</span>The blast, submission-ready</h2>
+  <p class="sub">Settled 19 August, and it is the last message in the campaign to get its buttons. Submit these four as written; nothing below needs a decision from anyone.</p>
+
+  <div class="rule do"><b>Moving the link out of the body into a URL button freed 128 characters.</b> The blast had been sitting two characters under the cap, which meant no edit was safe. It now has headroom, and it carries buttons for the first time, which is what &sect;8 of this sheet has always required of every other template.</div>
+
+  <table>
+    <thead><tr><th>Template</th><th>Segment</th><th class="num">Body</th></tr></thead>
+    <tbody>
+      <tr><td><code>wellness_voucher_blast_ad</code></td><td>Abu Dhabi &middot; Phorest and GHL, first name known</td><td class="num">894</td></tr>
+      <tr><td><code>wellness_voucher_blast_dxb</code></td><td>Dubai &middot; Phorest and GHL, first name known</td><td class="num">693</td></tr>
+      <tr><td><code>wellness_voucher_blast_ad_noname</code></td><td>Abu Dhabi &middot; respond.io</td><td class="num">888</td></tr>
+      <tr><td><code>wellness_voucher_blast_dxb_noname</code></td><td>Dubai &middot; respond.io</td><td class="num">687</td></tr>
+    </tbody>
+  </table>
+
+  <div class="rule note"><b>Four templates, still one send per contact.</b> Templates cost nothing to submit; sends are the cost, and Meta allows one marketing message per contact per 24 hours either way. The one-blast decision of 18 August is untouched by this.</div>
+
+  <div class="rule dont"><b>Do not point the respond.io segment at a <code>{{1}}</code> template.</b> Display names on that list are unusable &mdash; single characters, symbols, and one contact saved as &ldquo;I want to know the location and the prices&rdquo;. A broken merge goes out worse than no name at all, which is why the <code>_noname</code> pair exists. Route by list, not by emirate alone.</div>
+
+  <div class="tpl">
+    <div class="tname"><code>wellness_voucher_blast_ad</code><span>Abu Dhabi &middot; Mamsha al Saadiyat, Khalifa City A</span><span class="tcount">894 / 1024 characters</span></div>
+    <pre>Hi {{1}}, this is Tara Rose Salon.
+
+We&#x27;ve been thinking about you, so we built something for our regulars. Not money off. A plan.
+
+Most of us don&#x27;t lack the intention to look after ourselves. We lack a plan. A treatment here, a blowdry there, and six months on you&#x27;re back where you started.
+
+So we made three prepaid Wellness Vouchers. You place your credit, we add more on top, and we map your visits so each builds on the last.
+
+Dip Your Toes: place AED 1,000, receive AED 1,150. Any service, 6 months.
+Season of You: place AED 2,500, receive AED 3,000. Plus hair spa and glossing. 9 months.
+All-In VIP Year: place AED 4,500, receive AED 5,400. Your year mapped, major colour in. 12 months.
+
+Tabby splits the upper two into four, and the credit stays the same.
+
+Reserve one for yourself, or tick the gifting option on the form for the woman who&#x27;d never book it herself.
+
+Closes 30 September.</pre>
+  </div>
+  <div class="tpl">
+    <div class="tname"><code>wellness_voucher_blast_dxb</code><span>Dubai &middot; Al Quoz, Motor City</span><span class="tcount">693 / 1024 characters</span></div>
+    <pre>Hi {{1}}, this is Tara Rose Salon.
+
+Something we built for our regulars, and it closes 30 September. Not money off. A plan.
+
+Three prepaid Wellness Vouchers. You place your credit, we add more on top, and we map your visits so each builds on the last.
+
+Dip Your Toes: place AED 1,000, receive AED 1,150. Any service, 6 months.
+Season of You: place AED 2,500, receive AED 3,000. Plus hair spa and glossing. 9 months.
+All-In VIP Year: place AED 4,500, receive AED 5,400. Your year mapped, major colour in. 12 months.
+
+Tabby splits the upper two into four, and the credit stays the same.
+
+Reserve one for yourself, or tick the gifting option on the form for the woman who&#x27;d never book it herself.</pre>
+  </div>
+  <div class="rule note">The <code>_noname</code> pair is these two bodies with the opener changed to <code>Hi, this is Tara Rose Salon.</code> and nothing else touched. Counts: <b>888</b> and <b>687</b>.</div>
+
+  <h3>Footer and buttons, identical on all four</h3>
+  <div class="tpl">
+    <div class="tname"><span>Footer</span><span class="tcount">42 / 60 characters</span></div>
+    <pre>You just need to put yourself in the plan.</pre>
+  </div>
+  <table>
+    <thead><tr><th>Type</th><th>Label</th><th class="num">Label chars</th><th>Value</th></tr></thead>
+    <tbody>
+      <tr><td>URL</td><td>See what&rsquo;s included</td><td class="num">19 / 25</td><td><code>https://www.tararosesalon.com/en/ae/beauty-voucher/</code></td></tr>
+      <tr><td>Quick reply</td><td>Help me choose</td><td class="num">14 / 25</td><td>&mdash;</td></tr>
+      <tr><td>Quick reply</td><td>Send it as a gift</td><td class="num">17 / 25</td><td>&mdash;</td></tr>
+    </tbody>
+  </table>
+  <div class="rule note"><b>One URL button alongside two quick replies is allowed on a marketing template.</b> No header, on purpose: an image header needs a media handle and adds approval risk for nothing. All three client exits are present, with one of them now tappable rather than buried in a sentence &mdash; buy, gift, decide later.</div>
+
+  <h3>The two auto-replies</h3>
+  <div class="rule note"><b>These are free-form messages, not templates.</b> She tapped, so the 24-hour service window is open: no character cap, no approval, nothing to submit. They still need building as two branches off the quick replies.</div>
+  <div class="tpl">
+    <div class="tname"><span>If she taps &ldquo;Help me choose&rdquo;</span><span class="tcount">free-form, no cap</span></div>
+    <pre>Happy to help. Two things and I can point you at the right one: how often do you come in, and is it mostly hair, mostly beauty, or both?
+
+If colour is a regular part of it, All-In VIP Year is the tier that carries major colour. If you come in every month or two, Season of You covers a proper stretch. And if you&#x27;re easing back into a routine, Dip Your Toes is the gentlest way in.
+
+Reply here and one of us will look at it with you properly.</pre>
+  </div>
+  <div class="tpl">
+    <div class="tname"><span>If she taps &ldquo;Send it as a gift&rdquo;</span><span class="tcount">free-form, no cap</span></div>
+    <pre>Lovely. You choose that at the point of purchase: there&#x27;s a gifting option on the reserve form, and you name her there.
+
+You pick the tier, she decides what she spends it on, up to the credit. One thing worth knowing so there are no surprises: once a voucher is bought it stays in the name it was bought for, so the choice is made on the form rather than afterwards.
+
+If you&#x27;d like help picking the tier for her, tell me a little about her and we&#x27;ll help you choose.</pre>
+  </div>
+  <div class="deeper">Every message as she receives it: <a href="../automations/automations.html">the automations map</a>.</div>
+
+  <!-- 7 -->
+  <h2><span class="n">7</span>Live compliance issue, today</h2>
+  <div class="rule dont"><b>The consent tickbox on the Confidence Mapping form is still set to required.</b> That is a PDPL problem and it is live right now, not a launch task.</div>
+  <div class="card">
+    <p>Two more things on the same form that nobody has listed. &ldquo;Journal&rdquo; appears in two client-facing places: the consent label, and the submit button, which reads <strong>&ldquo;Send my Journal&rdquo;</strong>. Both should read Confidence Map. The page title still says <strong>&ldquo;A diagnosis, not a commitment&rdquo;</strong>, which is what shows in a Google result.</p>
+  </div>
+
+  <!-- 8 -->
+  <h2><span class="n">8</span>Message rules that are not preferences</h2>
+  <ul class="check">
+    <li><strong>Every message carries a client self-exit.</strong> An email button (&ldquo;Already got yours? Tap here and we&rsquo;ll stop the reminders&rdquo;) and a WhatsApp quick reply or the keyword DONE. It stops the sequence immediately and flags the contact centre to confirm the payment.</li>
+    <li><strong>No message asks her to compose a reply.</strong> Every WhatsApp template carries tappable buttons, which is also how the workflow knows what to do next.</li>
+    <li><strong>The payment confirmation offers her own two salons only</strong>, plus &ldquo;Help me choose&rdquo;. An earlier version listed all four, which left a Dubai client looking at two salons she cannot use.</li>
+    <li><strong>Email footers read &ldquo;Tara Rose Salons&rdquo;</strong>, not &ldquo;Tara Rose Salon Group&rdquo;. The old build spec said otherwise and the build spec is not the source of truth.</li>
+  </ul>
+
+  <!-- 9 -->
+  <h2><span class="n">9</span>Two things to hand back before the campaign closes</h2>
+  <div class="card">
+    <p><strong>The waits are fixed-date for this window.</strong> They need rebuilding as relative delays once the campaign is over, or the workflows are dead the moment the dates pass.</p>
+    <p><strong>The expiry touch must survive the campaign closing.</strong> It fires 30 days before a tier lapses, which for a 12-month voucher is well into next year. That is where unredeemed-credit complaints live, so it cannot be switched off with the campaign.</p>
+    <p><strong>Until a Phorest to GHL webhook exists</strong>, reception applies <code>voucher:redeemed</code> at checkout by hand. Worth building, but it is not blocking.</p>
+  </div>
+
+  <div class="footer">
+    Wellness Voucher, GHL cheat sheet. Source of truth: the <a href="../index.html">approval pack</a>, and the <a href="../automations/automations.html">automations map</a> for every message as she receives it.
+    If this sheet and anything else disagree, this sheet is newer. Raise it with Kate rather than guessing.
+  </div>
+</div>
+<script src="ask-config.js"></script>
+<script src="ask-widget.js"></script>
+</body>
+</html>

@@ -16,7 +16,7 @@
 var TIERS = {
   t1:{name:'Dip Your Toes', care:'Protect',              slots:2, cap:100,
       price:'AED 1,000 &rarr; 1,150 &middot; 6 months'},
-  t2:{name:'Season of You', care:'Protect &amp; Maintain', slots:4, cap:250,
+  t2:{name:'Season of You', care:'Protect &amp; Maintain', slots:4, cap:200,
       price:'AED 2,500 &rarr; 3,000 &middot; 9 months'},
   t3:{name:'All-In VIP Year', care:'Full Insurance',     slots:6, cap:450,
       price:'AED 4,500 &rarr; 5,400 &middot; 12 months'}
@@ -314,7 +314,7 @@ function buildMatrix(){
       '<td>' + c.tick + (c.status==='call' ? '<br><span class="chip call">Tara</span>' : '') +
         '<br><span style="color:var(--muted);font-size:12.5px;">' + c.cat + '</span></td>' +
       '<td style="font-size:13px;line-height:1.75;">' + list + '</td>' +
-      cell(2,100) + cell(4,250) + cell(6,450);
+      cell(2,100) + cell(4,200) + cell(6,450);
     body.appendChild(tr);
   });
 }
