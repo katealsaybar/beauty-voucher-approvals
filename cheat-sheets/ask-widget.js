@@ -16,8 +16,11 @@
 
   var ENDPOINT = window.TRS_ASK_ENDPOINT || "";
   var ANON_KEY = window.TRS_ASK_ANON_KEY || "";
-  var SHEETS = ["index.html", "lid.html", "ghl.html", "reception.html"];
-  var LABELS = { "index.html": "Overview", "lid.html": "LID", "ghl.html": "GHL team", "reception.html": "Reception" };
+  var SHEETS = ["index.html", "lid.html", "ghl.html", "reception.html", "core-team.html"];
+  var LABELS = {
+    "index.html": "Overview", "lid.html": "LID", "ghl.html": "GHL team",
+    "reception.html": "Reception", "core-team.html": "Core team"
+  };
 
   var context = null;      // built once per page load, then reused
   var building = null;     // the in-flight build, so two fast clicks share one
@@ -36,22 +39,54 @@
     return body.innerText.replace(/\n{3,}/g, "\n\n").trim();
   }
 
+  // Send the sheet she is on, plus the Overview, in full. Send the rest as their
+  // headings only.
+  //
+  // Sending all four in full was 45,000 characters and about nine seconds, and it
+  // was going to get worse as sheets are added. Almost every question is about the
+  // sheet in front of her, and the Overview carries what changed and who owns
+  // what, so those two answer nearly everything. The headings of the others are
+  // enough for the model to say "that is on the GHL sheet" rather than guess,
+  // which is the honest answer to a cross-team question anyway.
+  function headingsOf(doc) {
+    var hs = doc.querySelectorAll("h2");
+    var out = [];
+    for (var i = 0; i < hs.length; i++) out.push(hs[i].textContent.replace(/^\s*\d+\s*/, "").trim());
+    return out;
+  }
+
+  function fetchSheet(f) {
+    return fetch(f)
+      .then(function (r) { return r.ok ? r.text() : ""; })
+      .then(function (html) {
+        return html ? new DOMParser().parseFromString(html, "text/html") : null;
+      })
+      .catch(function () { return null; });
+  }
+
   function buildContext() {
     if (context) return Promise.resolve(context);
     if (building) return building;
+
+    var here = location.pathname.split("/").pop() || "index.html";
+    var full = [here];
+    if (here !== "index.html") full.push("index.html");
+    var rest = SHEETS.filter(function (f) { return full.indexOf(f) === -1; });
+
     building = Promise.all(
-      SHEETS.map(function (f) {
-        return fetch(f)
-          .then(function (r) { return r.ok ? r.text() : ""; })
-          .then(function (html) {
-            if (!html) return "";
-            var doc = new DOMParser().parseFromString(html, "text/html");
-            return "===== SHEET: " + LABELS[f] + " =====\n" + textOf(doc);
-          })
-          .catch(function () { return ""; });
-      })
-    ).then(function (parts) {
-      context = parts.filter(Boolean).join("\n\n");
+      full.map(fetchSheet).concat(rest.map(fetchSheet))
+    ).then(function (docs) {
+      var parts = [];
+      full.forEach(function (f, i) {
+        if (docs[i]) parts.push("===== SHEET: " + LABELS[f] + " (full text) =====\n" + textOf(docs[i]));
+      });
+      rest.forEach(function (f, i) {
+        var d = docs[full.length + i];
+        if (!d) return;
+        parts.push("===== SHEET: " + LABELS[f] + " (headings only, not loaded) =====\n" +
+                   headingsOf(d).map(function (h) { return "- " + h; }).join("\n"));
+      });
+      context = parts.join("\n\n");
       building = null;
       return context;
     });
@@ -101,6 +136,42 @@
       "Which branch does which facial?"
     ];
 
+    // Who answers. The reader picks, because the trade is theirs to make: at a
+    // till with somebody waiting, a fast answer she can check against the quoted
+    // line beats a slower one. The key is sent to the function, which holds the
+    // allowlist; nothing here decides which model actually runs.
+    var MODELS = [
+      { key: "quick",    name: "Quick",    note: "fastest" },
+      { key: "balanced", name: "Balanced", note: "middle" },
+      { key: "careful",  name: "Careful",  note: "slowest, most exacting" }
+    ];
+    var chosen = "careful";
+    try { chosen = localStorage.getItem("trsAskModel") || "careful"; } catch (e) {}
+    if (!MODELS.some(function (m) { return m.key === chosen; })) chosen = "careful";
+
+    var picker = el("div", "trs-ask-models");
+    picker.setAttribute("role", "radiogroup");
+    picker.setAttribute("aria-label", "Who answers");
+    var lbl = el("span", "trs-ask-models-lbl", "Answered by");
+    picker.appendChild(lbl);
+    MODELS.forEach(function (m) {
+      var b = el("button", "trs-ask-model" + (m.key === chosen ? " on" : ""), m.name);
+      b.type = "button";
+      b.title = m.name + ", " + m.note;
+      b.setAttribute("role", "radio");
+      b.setAttribute("aria-checked", m.key === chosen ? "true" : "false");
+      b.addEventListener("click", function () {
+        chosen = m.key;
+        try { localStorage.setItem("trsAskModel", chosen); } catch (e) {}
+        [].forEach.call(picker.querySelectorAll(".trs-ask-model"), function (o) {
+          var on = o === b;
+          o.classList.toggle("on", on);
+          o.setAttribute("aria-checked", on ? "true" : "false");
+        });
+      });
+      picker.appendChild(b);
+    });
+
     var form = el("form", "trs-ask-form");
     var input = el("input", "trs-ask-input");
     input.type = "text";
@@ -122,7 +193,7 @@
       chips.appendChild(c);
     });
 
-    panel.appendChild(head); panel.appendChild(note); panel.appendChild(chips); panel.appendChild(log); panel.appendChild(form);
+    panel.appendChild(head); panel.appendChild(note); panel.appendChild(chips); panel.appendChild(log); panel.appendChild(picker); panel.appendChild(form);
     root.appendChild(btn); root.appendChild(panel);
     document.body.appendChild(root);
 
@@ -166,7 +237,7 @@
       input.disabled = true; send.disabled = true;
       if (chips.parentNode) chips.remove();
       var pending = say("trs-ask-wait", "Reading the sheets...");
-      // A grounded answer over all four sheets takes a few seconds. Saying so
+      // A grounded answer over all five sheets takes a few seconds. Saying so
       // beats a spinner that looks stuck.
       var waited = 0;
       var tick = setInterval(function () {
@@ -186,7 +257,7 @@
           return fetch(ENDPOINT, {
             method: "POST",
             headers: headers,
-            body: JSON.stringify({ question: q, sheets: sheets }),
+            body: JSON.stringify({ question: q, sheets: sheets, model: chosen }),
           });
         })
         .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
@@ -201,6 +272,13 @@
           // as the widget being broken.
           say(res.d.found === false ? "trs-ask-none" : "trs-ask-a",
               res.d.answer || "No answer came back.");
+          if (res.d.model) {
+            var who = MODELS.filter(function (m) { return m.key === res.d.model; })[0];
+            if (who) {
+              var tag = el("div", "trs-ask-by", "answered by " + who.name);
+              log.appendChild(tag);
+            }
+          }
           if (res.d.source && res.d.source !== "not in the sheets") {
             var s = el("div", "trs-ask-src");
             s.appendChild(el("span", "trs-ask-srclbl",
