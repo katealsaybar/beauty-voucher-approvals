@@ -27,6 +27,20 @@
 
   <aside class="sidebar">
     <div class="brandwrap"><img class="brandlogo" src="assets/tara-rose-logo-white.png" alt="Tara Rose Salon"></div>
+    <div class="navgroup sheetsgroup">
+      <div class="navlabel mocklbl">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h10l6 6v8a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z"/><path d="M14 5v6h6"/></svg>
+        Team cheat sheets
+      </div>
+      <nav>
+        <a href="cheat-sheets/index.html" target="_blank" rel="noopener"><span>All three &middot; start here</span><span>&nearr;</span></a>
+        <a href="cheat-sheets/lid.html" target="_blank" rel="noopener"><span>LID</span><span>&nearr;</span></a>
+        <a href="cheat-sheets/ghl.html" target="_blank" rel="noopener"><span>GHL team</span><span>&nearr;</span></a>
+        <a href="cheat-sheets/reception.html" target="_blank" rel="noopener"><span>Reception</span><span>&nearr;</span></a>
+      </nav>
+      <div class="gnote">One page per team, carrying the answer without the reasoning. <b>Each has an Ask button</b> that answers from the sheets only.</div>
+    </div>
+
     <div class="navlabel" style="margin-top:14px;">Approval Pack</div>
     <nav id="nav">
       <a href="#overview"><span>Overview</span><span class="dot pending"></span></a>
@@ -51,14 +65,6 @@
          the campaign DRAWN: the pages a client will actually meet. Mixing them in one
          list made the mockups read as more admin, which is the opposite of what they are,
          so they get their own boxed group below with the device switch called out. -->
-    <div class="navlabel">Team cheat sheets</div>
-    <nav>
-      <a href="cheat-sheets/index.html" target="_blank" rel="noopener"><span>All three &middot; start here</span><span>&nearr;</span></a>
-      <a href="cheat-sheets/lid.html" target="_blank" rel="noopener"><span>LID</span><span>&nearr;</span></a>
-      <a href="cheat-sheets/ghl.html" target="_blank" rel="noopener"><span>GHL team</span><span>&nearr;</span></a>
-      <a href="cheat-sheets/reception.html" target="_blank" rel="noopener"><span>Reception</span><span>&nearr;</span></a>
-    </nav>
-
     <div class="navlabel">Tools</div>
     <nav>
       <a href="automations/automations.html" target="_blank" rel="noopener"><span>Automations map</span><span>&nearr;</span></a>
@@ -414,6 +420,8 @@
     <section id="copy">
       <div class="sec-head"><h2>Campaign Copy</h2><span class="badge draft"><span class="b-dot"></span>Approve wording</span></div>
       <div class="oneline"><div><b>In one line</b>Two copy sets, one per voucher. Prices and inclusions are identical; only the availability line changes.</div></div>
+
+      <div class="note good"><strong>The two live URLs were designated on 19 August.</strong> <code>/en/ae/wellness-voucher/abu-dhabi/</code> and <code>/en/ae/wellness-voucher/dubai/</code>. That settles where the split lands, and it confirms the split is happening rather than being argued about. <strong>Note the path change</strong>, from <code>beauty-voucher</code> to <code>wellness-voucher</code>: everything built so far points at the old path, including the WhatsApp blast button, four welcome emails and the Confidence Mapping page, so the old URL needs a 301 rather than being left to 404. Which emirate it should redirect to is a judgement call, not a technical one.</div>
 
       <h3>Abu Dhabi voucher</h3>
       <div class="card">

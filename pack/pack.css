@@ -192,3 +192,9 @@
        phone. Let them scroll inside their own box rather than stretch the whole page. */
     table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;}
   }
+
+  /* The cheat sheets sit above the pack's own sections, not below them: they are
+     the thing three teams open daily, and sixteen sections above them meant
+     nobody scrolled far enough to find them. */
+  .navgroup.sheetsgroup{margin-top:6px;}
+  .navgroup.sheetsgroup .navlabel{margin-top:12px;}

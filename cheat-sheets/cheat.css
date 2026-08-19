@@ -165,6 +165,9 @@ code{
   width:21px;height:21px;border-radius:50%;
   background:var(--accent);color:var(--ink);font-weight:800;font-size:13px;
 }
+/* [hidden] is a UA rule, and the class below out-specifies it, so the panel
+   never actually hid. This has to come after the class, not before. */
+.trs-ask-panel[hidden]{display:none !important;}
 .trs-ask-panel{
   width:min(400px,calc(100vw - 40px));margin-bottom:12px;
   background:var(--paper);border:1px solid var(--line);border-radius:18px;
@@ -218,3 +221,121 @@ code{
 }
 @media print{ #trs-ask{display:none !important;} }
 .trs-ask-none{background:var(--amber-bg);color:var(--ink);border-left:3px solid var(--amber);border-radius:8px;}
+
+/* suggested questions: taps fill the box, because a placeholder looked like a
+   typed question and pressing Ask on it did nothing */
+.trs-ask-chips{display:flex;flex-wrap:wrap;gap:6px;padding:11px 15px 0;}
+.trs-ask-chip{
+  background:var(--sand);border:1px solid var(--line);border-radius:100px;
+  padding:7px 12px;font-family:var(--sans);font-size:12.5px;color:var(--ink);
+  cursor:pointer;text-align:left;line-height:1.35;
+}
+.trs-ask-chip:hover{border-color:var(--ink);background:#fff;}
+.trs-ask-chips:empty{display:none;}
+
+/* ---------- section references: peek without leaving your place ---------- */
+.refpeek-link{
+  font-weight:700;color:var(--blue);text-decoration:none;
+  border-bottom:1px dotted currentColor;padding:0 1px;white-space:nowrap;
+}
+.refpeek-link:hover,.refpeek-link:focus{
+  color:var(--ink);background:var(--accent);border-radius:4px;
+  border-bottom-color:transparent;outline:none;
+}
+.refpeek{
+  position:absolute;z-index:120;width:min(340px,calc(100vw - 24px));
+  background:var(--dark);color:#EFECE5;border-radius:14px;padding:15px 17px;
+  box-shadow:0 14px 34px rgba(45,46,55,.3);font-size:13.5px;line-height:1.55;
+}
+.refpeek::after{
+  content:"";position:absolute;left:50%;margin-left:-7px;border:7px solid transparent;
+  border-top-color:var(--dark);bottom:-14px;
+}
+.refpeek.below::after{border-top-color:transparent;border-bottom-color:var(--dark);top:-14px;bottom:auto;}
+.refpeek-lbl{
+  font-size:10px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:7px;
+}
+.refpeek-title{font-family:var(--serif);font-size:17px;font-weight:600;margin-bottom:6px;color:#fff;}
+.refpeek-body{color:#C9C7C0;}
+.refpeek-cta{
+  margin-top:10px;padding-top:9px;border-top:1px solid rgba(255,255,255,.14);
+  font-size:11.5px;color:var(--accent);
+}
+@media print{ .refpeek{display:none !important;} .refpeek-link{color:inherit;font-weight:700;} }
+
+/* ---------- navigation rail ----------
+   Same dark rail as the approval pack, so moving between the two feels like one
+   estate. Off-canvas below 1080px, gone entirely in print. */
+.rail{
+  position:fixed;left:0;top:0;bottom:0;width:264px;z-index:90;
+  background:var(--dark);color:#D8D5CE;overflow-y:auto;
+  padding:0 16px 26px;display:flex;flex-direction:column;
+}
+.rail-brand{
+  display:block;position:sticky;top:0;background:var(--dark);z-index:2;
+  padding:24px 4px 16px;font-family:var(--serif);font-size:19px;font-weight:600;
+  color:#fff;text-decoration:none;
+}
+.rail-lbl{
+  font-size:10px;letter-spacing:.24em;text-transform:uppercase;
+  color:#8B8981;margin:20px 0 9px;padding-left:4px;
+}
+.rail-sheet{
+  display:block;text-decoration:none;color:#D8D5CE;
+  padding:9px 11px;border-radius:10px;margin-bottom:3px;transition:background .15s;
+}
+.rail-sheet:hover{background:rgba(255,255,255,.06);color:#fff;}
+.rail-sheet.here{background:var(--accent);color:var(--ink);}
+.rail-sheet-n{display:block;font-size:14.5px;font-weight:700;}
+.rail-sheet-note{display:block;font-size:11.5px;opacity:.72;line-height:1.35;margin-top:1px;}
+.rail-sec{
+  display:flex;align-items:flex-start;gap:8px;
+  text-decoration:none;color:#BDBAB3;font-size:13px;line-height:1.4;
+  padding:7px 11px;border-radius:8px;border-left:2px solid transparent;
+}
+.rail-sec:hover{background:rgba(255,255,255,.05);color:#fff;}
+.rail-sec.on{color:#fff;border-left-color:var(--accent);background:rgba(153,246,228,.09);}
+.rail-num{
+  flex:0 0 17px;height:17px;line-height:17px;text-align:center;margin-top:1px;
+  background:rgba(255,255,255,.13);border-radius:50%;font-size:10.5px;font-weight:700;
+}
+.rail-sec.on .rail-num{background:var(--accent);color:var(--ink);}
+.rail-back{
+  margin-top:auto;padding-top:18px;font-size:12.5px;color:#9C9A93;text-decoration:none;
+}
+.rail-back:hover{color:#fff;}
+
+body.has-rail .wrap{margin-left:264px;}
+.rail-toggle{display:none;}
+
+@media (max-width:1080px){
+  .rail{transform:translateX(-100%);transition:transform .22s ease;box-shadow:0 0 40px rgba(0,0,0,.3);}
+  body.rail-open .rail{transform:none;}
+  body.has-rail .wrap{margin-left:0;}
+  .rail-toggle{
+    display:flex;flex-direction:column;justify-content:center;gap:4px;
+    position:fixed;left:13px;top:13px;z-index:95;
+    width:42px;height:42px;padding:0 10px;border:none;border-radius:12px;
+    background:var(--dark);cursor:pointer;box-shadow:0 4px 14px rgba(45,46,55,.24);
+  }
+  .rail-toggle span{display:block;height:2px;background:var(--accent);border-radius:2px;}
+  body.has-rail .wrap{padding-top:64px;}
+}
+@media print{
+  .rail,.rail-toggle{display:none !important;}
+  body.has-rail .wrap{margin-left:0;padding-top:0;}
+}
+
+/* ---------- the way back to the pack ---------- */
+.topnav{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:14px;}
+.topnav .crumb{margin-bottom:0;}
+.backpack{
+  display:inline-flex;align-items:center;gap:7px;flex-shrink:0;
+  background:var(--sand);border:1px solid var(--line);border-radius:100px;
+  padding:8px 15px;font-size:13px;font-weight:600;color:var(--ink);text-decoration:none;
+  transition:border-color .15s,background .15s;
+}
+.backpack:hover{border-color:var(--ink);background:#fff;}
+.backpack span[aria-hidden]{opacity:.55;font-size:15px;line-height:1;}
+@media print{ .backpack{display:none !important;} .topnav{display:block;} }

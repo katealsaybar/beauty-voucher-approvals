@@ -27,6 +27,8 @@
 // Deploy:  supabase functions deploy cheat-sheet-ask --project-ref gvijxenafoowajqktqvd
 // Secrets: shares pulse-narrative's ANTHROPIC_API_KEY. Nothing new to set.
 // Tables:  none. Nothing is stored; a question is not a record.
+// Speed:   fast mode is on. If a 429 comes back specifically on fast mode,
+//          dropping `speed` falls back to standard Opus 5, slower but working.
 //
 // No em-dashes anywhere in this file, per the 4 July purge. Comments included.
 
@@ -146,18 +148,27 @@ Deno.serve(async (req: Request) => {
 
   const anthropic = new Anthropic({ apiKey });
 
-  try {
-    const res = await anthropic.beta.messages.create({
+  async function ask(useFastMode: boolean) {
+    return await anthropic.beta.messages.create({
       model: MODEL,
       max_tokens: 1500,
       // Opus 5 runs adaptive thinking by default, so `thinking` is omitted on
-      // purpose. Medium effort: this is a grounded lookup with a refusal rule,
-      // not a reasoning problem. Low would make the refusal discipline sloppier,
-      // and a wrong policy answer is the one failure we cannot have.
-      output_config: { format: { type: "json_schema", schema: SCHEMA }, effort: "medium" },
+      // purpose. Low effort: medium took nine seconds, which is too long for
+      // somebody holding a client, and this is a grounded lookup rather than a
+      // reasoning problem. The refusal discipline is carried by the system
+      // prompt, not by thinking depth, and the trap questions were re-run at low
+      // to confirm it: no cap invented, no price guessed, no till decision made.
+      output_config: { format: { type: "json_schema", schema: SCHEMA }, effort: "low" },
+      // Fast mode. Somebody at a till with a client waiting will not sit through
+      // ten seconds, and the first build did. Up to 2.5x the output speed on the
+      // same model, at premium token pricing, which is the right trade here
+      // because the volume is a handful of questions a day from three teams.
+      ...(useFastMode ? { speed: "fast" as const } : {}),
       // Server-side fallback, so a safety refusal still returns something the
       // person at the till can act on rather than an error.
-      betas: ["server-side-fallback-2026-07-01"],
+      betas: useFastMode
+        ? ["fast-mode-2026-02-01", "server-side-fallback-2026-07-01"]
+        : ["server-side-fallback-2026-07-01"],
       fallbacks: "default",
       system: [
         // Stable prefix first so it caches. The system prompt and the sheets do
@@ -167,6 +178,22 @@ Deno.serve(async (req: Request) => {
       ],
       messages: [{ role: "user", content: question }],
     });
+  }
+
+  try {
+    let res;
+    try {
+      res = await ask(true);
+    } catch (fastError) {
+      // Fast mode has its own rate limit, separate from standard Opus. A 429 on
+      // it should mean a slower answer, never no answer.
+      if (fastError instanceof Anthropic.RateLimitError) {
+        console.warn("[ask] fast mode rate limited, retrying standard");
+        res = await ask(false);
+      } else {
+        throw fastError;
+      }
+    }
 
     // Opus 5 can decline outright. Check before reading content.
     if (res.stop_reason === "refusal") {

@@ -26,7 +26,12 @@
   // stripped so the model never sees its own past answers as if they were policy.
   function textOf(doc) {
     var body = doc.body.cloneNode(true);
-    var junk = body.querySelectorAll("script, style, #trs-ask, .crumb, .footer");
+    // Belt and braces. The rail and the widget are injected by script, so they
+    // are not in the fetched HTML this parses and would not appear anyway. Listed
+    // so that stays true if any of it is ever moved into the markup.
+    var junk = body.querySelectorAll(
+      "script, style, #trs-ask, .rail, .rail-toggle, .refpeek, .topnav, .crumb, .footer, .backpack"
+    );
     for (var i = 0; i < junk.length; i++) junk[i].remove();
     return body.innerText.replace(/\n{3,}/g, "\n\n").trim();
   }
@@ -86,17 +91,38 @@
     var log = el("div", "trs-ask-log");
     log.setAttribute("aria-live", "polite");
 
+    // Tappable starters. The old placeholder read like a question somebody had
+    // already typed, so people pressed Ask on grey text and nothing happened.
+    var chips = el("div", "trs-ask-chips");
+    var STARTERS = [
+      "Can a Season of You client have balayage?",
+      "What is the kit allowance?",
+      "What are the three expiry dates?",
+      "Which branch does which facial?"
+    ];
+
     var form = el("form", "trs-ask-form");
     var input = el("input", "trs-ask-input");
     input.type = "text";
-    input.placeholder = "Can a Season of You client have balayage?";
+    input.placeholder = "Type your question";
     input.setAttribute("aria-label", "Your question");
     input.maxLength = 600;
     var send = el("button", "trs-ask-send", "Ask");
     send.type = "submit";
     form.appendChild(input); form.appendChild(send);
 
-    panel.appendChild(head); panel.appendChild(note); panel.appendChild(log); panel.appendChild(form);
+    STARTERS.forEach(function (q) {
+      var c = el("button", "trs-ask-chip", q);
+      c.type = "button";
+      c.addEventListener("click", function () {
+        input.value = q;
+        chips.remove();
+        form.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }));
+      });
+      chips.appendChild(c);
+    });
+
+    panel.appendChild(head); panel.appendChild(note); panel.appendChild(chips); panel.appendChild(log); panel.appendChild(form);
     root.appendChild(btn); root.appendChild(panel);
     document.body.appendChild(root);
 
@@ -138,7 +164,17 @@
       say("trs-ask-q", q);
       input.value = "";
       input.disabled = true; send.disabled = true;
+      if (chips.parentNode) chips.remove();
       var pending = say("trs-ask-wait", "Reading the sheets...");
+      // A grounded answer over all four sheets takes a few seconds. Saying so
+      // beats a spinner that looks stuck.
+      var waited = 0;
+      var tick = setInterval(function () {
+        waited += 3;
+        if (!pending.parentNode) { clearInterval(tick); return; }
+        pending.textContent = waited < 6 ? "Reading the sheets..."
+          : (waited < 12 ? "Checking which sheet says it..." : "Nearly there, this one is taking a moment...");
+      }, 3000);
 
       buildContext()
         .then(function (sheets) {
@@ -155,7 +191,7 @@
         })
         .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
         .then(function (res) {
-          pending.remove();
+          clearInterval(tick); pending.remove();
           if (!res.ok || res.d.error) {
             say("trs-ask-err", res.d.error || "That did not work. Try again, or read the sheet.");
             return;
@@ -175,7 +211,7 @@
           }
         })
         .catch(function () {
-          pending.remove();
+          clearInterval(tick); pending.remove();
           say("trs-ask-err", "Could not reach the answer service. The sheets are still correct; scroll and read.");
         })
         .then(function () {
