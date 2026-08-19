@@ -107,8 +107,11 @@ line on the upper two tiers, and where the button goes.
 | **All-In VIP Year**, bonus row (AED 750) | A birthday facial of your choice and a scalp and hair treatment with a blowdry | A birthday Signature Relaxing Facial with lifting massage at Al Quoz and a scalp and hair treatment with a blowdry |
 | **Button on all three tiers** | `Claim Dip Your Toes` / `Claim Season of You` / `Claim VIP Year` → straight to that tier's payment link | `Claim: choose your salon` → jumps to the salon picker (4.4) |
 
-The gift row reads **"AED 300 to gift, on a card you hand to a friend"** (and AED 500 on VIP) on
-both pages. Not "3 × AED 100": Phorest issues one card, not three.
+The gift row reads **"3 × AED 100 to gift, one card each for three friends, sent in your name"**
+(and 5 × AED 100 on VIP) on
+both pages. It IS "3 × AED 100": Phorest holds nine gift card products and the friend
+vouchers are individual AED 100 cards, one per friend. (Corrected 18 Aug, Decision 13.
+This line previously said the opposite.)
 
 ### 4.4 Dubai salon picker — NEW SECTION, Dubai page only
 

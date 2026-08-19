@@ -271,8 +271,8 @@ function render(){
     '</div>' +
     '<div class="track"><div class="fill' + (over?' over':'') + '" style="width:' + pct + '%"></div></div>' +
     '<div class="foot">' + (over
-      ? '<strong>She pays AED ' + money(sum - t.cap) + ' at the till.</strong> Her allowance covers AED ' + money(t.cap) + ' of this kit, and the rest is hers to settle. <b>Tell her the number before you build the bag</b>, never after. She can also drop an item and pay nothing.'
-      : 'AED ' + money(t.cap - sum) + ' of her allowance unused. Do not pad the bag to spend it, the kit is a prescription and the allowance is a discount, not a target.') +
+      ? '<strong>She pays AED ' + money(sum - t.cap) + ' at the till.</strong> Her allowance covers AED ' + money(t.cap) + ' of this kit, and the rest is hers to settle. <b>Tell her the number before you build the bag</b>, never after. She can also drop an item to bring the total down.'
+      : 'AED ' + money(t.cap - sum) + ' of her allowance unused. Do not pad the bag to spend it, the kit is a prescription and the allowance is a ceiling, not a target.') +
     '</div></div>';
 
   html +=
