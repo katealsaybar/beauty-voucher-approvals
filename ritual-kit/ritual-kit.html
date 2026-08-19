@@ -17,6 +17,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../shared/notes-widget.css">
+<link rel="stylesheet" href="../shared/ask-widget.css">
 <link rel="stylesheet" href="ritual-kit.css">
 </head>
 
@@ -47,6 +48,10 @@
         <b>Updated 8 Aug.</b> The tree below now asks all three stages itself, in order, and puts every flag and override on the answer card automatically: henna and keratin sign-off, the shedding flag, and the Stage 4 detox override. <a href="#stopcheck">Stop and check</a> stays further down as the printable backup, for anyone reading the matrix off paper rather than clicking through the tree.
       </div>
     </details>
+
+    <div class="note info">
+      <strong>The quickest way to one bag: ask for it.</strong> <b>Ask about the kit</b> sits in the bottom corner of this page. Type her tier, her emirate and what she ticked, and it reads this page and the reception sheet back to you: what goes in the bag, what she pays at the till, and the Because to say out loud. The tree below is the same answer clicked rather than typed, and it is the version that prints for the desk drawer.
+    </div>
 
     <div class="note bad">
       <strong>The cap is staff information. It never goes to a client, and it never appears on a card in the bag.</strong> She is being given a kit matched to her hair. She is not being given a budget. Anything in a red-outlined box on this page stays behind the desk.
@@ -239,7 +244,7 @@
   </section>
 
   <!-- ===================== WHAT THE SHEET SHOWED ===================== -->
-  <section class="staffonly">
+  <section class="staffonly" id="stockfixes">
     <div class="eyebrow" style="margin-top:6px;">Found while pricing this</div>
     <h2>Six things in the stock sheet that need fixing</h2>
     <p class="lede">None of these blocks the kit. All of them will cause an argument later if nobody owns them. Emma.</p>
@@ -389,5 +394,39 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../auth/supabase-client.js"></script>
 <script src="../shared/notes-widget.js"></script>
+
+<!-- The question widget, the same one the team cheat sheets carry.
+     Reception and the beauticians nearly always want one answer, "what do I put in
+     her bag and what do I say", and typing that is faster than clicking six steps
+     to reach it. So the widget is the quick route and the tree below stays as the
+     one that prints. It is loaded after ritual-kit.js on purpose, because that file
+     is what sets TRS_ASK_EXTRA, and the widget reads its settings once on load.
+
+     It reads this page plus the Overview sheet in full, and the other four sheets as
+     their headings, which is the same trade the cheat sheets make. Pulling the
+     reception sheet in whole as well was tried and dropped: it took the context past
+     the point where the answer stays quick, and the wording it carries, towards
+     rather than includes, is on the Overview already. -->
+<script>
+  window.TRS_ASK_SHEET_BASE = "../cheat-sheets/";
+  window.TRS_ASK_PAGE_LABEL = "Home Ritual Kit";
+  // The matrix, the tree's option buttons and the answer card are all rendered
+  // from the same three tables TRS_ASK_EXTRA hands over, and EXTRA does it better:
+  // both emirates rather than whichever one is showing, and the sums already done.
+  // The stock-sheet fixes are a data cleanup list for Kate and Emma, and nobody at
+  // a till has ever needed them. All of it is stripped rather than read every time,
+  // because the length of the context is what makes the answer slow.
+  window.TRS_ASK_STRIP      = "#matrixbody, .opts, #out, #stockfixes";
+  window.TRS_ASK_TITLE      = "Ask about the kit";
+  window.TRS_ASK_NOTE       = "Tell it her tier, her emirate and what she ticked, and you get the bag, what she pays and what to say. Answers come from this page and the team cheat sheets only, so if it is not on them you will be told so rather than guessed at.";
+  window.TRS_ASK_STARTERS   = [
+    "Season of You, Dubai, she ticked brassy. What goes in the bag?",
+    "All-In VIP Year, Abu Dhabi, breakage. What does she pay at the till?",
+    "She ticked dry and coated. Which line wins?",
+    "She has not done her Confidence Mapping. Can she have the kit?"
+  ];
+</script>
+<script src="../cheat-sheets/ask-config.js"></script>
+<script src="../cheat-sheets/ask-widget.js"></script>
 </body>
 </html>

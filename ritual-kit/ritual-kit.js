@@ -335,3 +335,73 @@ bAd.addEventListener('click', function(){ setEmirate('ad'); });
 bDx.addEventListener('click', function(){ setEmirate('dxb'); });
 
 buildMatrix();
+
+/* ---------------- what the question widget is handed ----------------
+   The widget reads the live page, which is why it can see the matrix at all. What
+   it cannot see is the other emirate, because the matrix renders one shelf at a
+   time, nor the maths for the two tiers she did not buy.
+
+   So this hands over both shelves, all three tiers, and the sums already done, as
+   plain text built from the same three tables the page itself renders from. There
+   is nothing to keep in step, because there is no second copy of the products.
+
+   Written tight on purpose. Everything here is read before every answer, and a
+   longer context is a slower answer at a till with somebody waiting, so the page
+   strips the matrix and the tree options rather than send them alongside this.
+------------------------------------------------------------------- */
+function kitContextText(){
+  var out = [];
+  var plain = function(s){ return s.replace(/&rarr;/g,'to').replace(/&middot;/g,'and').replace(/&amp;/g,'and'); };
+
+  out.push('WHAT THIS IS. The products we suggest to a client after her Confidence Mapping, ' +
+    'for reception, stylists and beauticians to read out at the desk. Which line she gets is set by ' +
+    'what she ticked at Stage 2, Look. How many items, and how much of it her allowance covers, is ' +
+    'set by the voucher she bought. Prices are AED shelf value from the TRS Beauty Stock sheet, read ' +
+    '7 August 2026, worst case across the two branches in that emirate, so a bag that passes here ' +
+    'passes at either branch. Never quote the cap or the shelf value to a client, only what she pays.');
+
+  out.push('THE TIERS');
+  ['t1','t2','t3'].forEach(function(k){
+    var t = TIERS[k];
+    out.push('- ' + t.name + ' (' + plain(t.care) + '): ' + t.slots + ' items suggested, AED ' + t.cap +
+             ' allowance towards them, ' + plain(t.price) + '. She pays the difference at the till.');
+  });
+
+  out.push('THE SIX SLOTS, IN ORDER. Cumulative, so a 2-item bag is slots 1 and 2, a 4-item bag is 1 to 4.');
+  SLOTS.forEach(function(s,i){ out.push((i+1) + '. ' + s.t + '. ' + s.w); });
+
+  out.push('THE LINES, BY WHAT SHE TICKED. Abu Dhabi is Saadiyat and Khalifa City A. Dubai is Al Quoz ' +
+    'and Motor City. The two do not share the same shelf, so both are given. If she ticked more than ' +
+    'one box the order of priority is detox first, then treat, then tone: one line, never a mix of two.');
+
+  function list(picks){
+    return picks.map(function(p,i){ return (i+1) + '. ' + p[0] + ' ' + p[1]; }).join(' | ');
+  }
+  function sums(picks){
+    return '   Bag: ' + ['t1','t2','t3'].map(function(k){
+      var t = TIERS[k], sum = total(picks, t.slots), over = sum - t.cap;
+      return t.slots + ' items AED ' + sum + ' against a ' + t.cap + ' allowance, ' +
+        (over > 0 ? 'she pays ' + over : (-over) + ' unused and the bag is not padded to spend it');
+    }).join('. ') + '.';
+  }
+
+  BUNDLES.forEach(function(c){
+    out.push('TICKED "' + c.tick + '" gives the ' + c.cat + ' line' +
+      (c.status === 'call' ? '. NOT CONFIRMED YET, an interim: ' + c.gap : '. Locked line.') +
+      (c.borrow ? ' Borrowed whole from the ' + c.borrow + ' line.' : ''));
+    out.push('   Say: "I am giving you this because ' + c.why + ', and without it ' + c.cons + '."');
+    var ad = picksFor(c, 'ad'), dxb = picksFor(c, 'dxb');
+    if (list(ad) === list(dxb)) {
+      out.push('   Both emirates: ' + list(ad));
+      out.push(sums(ad));
+    } else {
+      out.push('   Abu Dhabi: ' + list(ad));
+      out.push(sums(ad));
+      out.push('   Dubai: ' + list(dxb));
+      out.push(sums(dxb));
+    }
+  });
+
+  return out.join('\n');
+}
+window.TRS_ASK_EXTRA = kitContextText;

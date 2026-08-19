@@ -1,28 +1,42 @@
 # Audience segmentation: who the Wellness Voucher goes to
 
 **Status:** Emma-Louise's parameters from the 18 August leadership call, written up so Bell can run
-the Phorest export and David can import it. **Not signed off by Tara yet.** Section 3 is the list of
-things nobody on the call could answer, and Bell should not pull until they are answered, because
-each one changes the size of the list by a lot.
+the Phorest export and David can import it. **Section 1 was replaced by Kate on 19 August:** email
+and WhatsApp now go to the same single list. The rest is **not signed off by Tara yet.** Section 3 is
+the list of things nobody on the call could answer, and Bell should not pull until they are answered,
+because each one changes the size of the list by a lot.
 
 **Owners:** Bell exports from Phorest. David imports to GHL and reports the size back.
 **Deadline pressure:** Bell is off Thursday, and Tara travels Thursday.
 
 ---
 
-## 1. There are two audiences, not one
+## 1. One audience, both channels
 
-The call split these deliberately, on cost.
+**Decided by Kate, 19 August. This replaces the two-audience split agreed on 18 August.** Email and
+WhatsApp both go to **Belle's list and nothing else.**
 
-| | Email blast | WhatsApp blast |
+The 18 August call split them on cost: email to the entire database because sending it is nearly free,
+WhatsApp to the segment because it is charged per message. Belle spotted what that split actually did.
+The **top spender exclusion existed on WhatsApp only**, so the women it removed received the offer by
+email regardless, and the exclusion did nothing except make one list smaller. One list removes the
+contradiction, and there is now one thing to export, import and de-duplicate instead of two.
+
+| | Email | WhatsApp |
 |---|---|---|
-| **Who** | The entire database. No segmentation filter. | The segment in section 2 only. |
-| **Why** | Email costs effectively nothing, so filtering only loses reach. | WhatsApp is charged per message and scales fast. |
-| **Size** | 14,818 contacts carry an email address across all branches. | Unknown until the Phorest export lands. |
-| **Risk** | GHL has never sent a bulk blast, so domain reputation is untested. **Stagger the send.** | Meta allows one marketing message per contact per 24 hours, and if another brand gets there first, ours is not delivered. |
+| **Who** | Belle's list, section 2. | Belle's list, section 2. The same women. |
+| **Size** | Unknown until the Phorest export lands, and the same number for both. | Same. |
+| **Risk** | GHL has never sent a bulk blast, so domain reputation is untested. **Stagger the send.** | Meta delivers one marketing message per contact per 24 hours, which is why a broadcast entrant skips the Day 0 WhatsApp. |
 
-Note on the 14,818: that is contacts-with-an-email, **not** customers. Much of it is people who
-enquired once and never came in. Do not present it as a customer count to anyone.
+**What this gives up, said plainly.** 14,818 contacts carry an email address across all branches, and
+email costs **AED 0.004** per send, so the reach just dropped was effectively free. Against that: the
+14,818 is contacts-with-an-email, **not** customers, and much of it is people who enquired once and
+never came in, so it was never worth what the number suggests. If the list comes back small, the
+option is a second **email-only** send to the remainder after launch, not reopening the split now.
+
+**Overlap is now total, by design.** Everyone on the list gets both channels. That was Belle's original
+concern and it is accepted: at AED 0.004 against AED 0.17, the cost of the overlap sits almost entirely
+on the WhatsApp side, where it was always going to sit.
 
 ---
 
@@ -41,7 +55,7 @@ enquired once and never came in. Do not present it as a customer count to anyone
 
 4. The **top 50 clients by beauty revenue.** Sending money off to the highest beauty spenders was
    explicitly rejected on the call: it discounts revenue that was coming anyway (see 3.3).
-5. **Motor City clients**, judged unlikely to travel to Al Quoz (see 3.2, this collides with rule 2).
+5. **Motor City clients.** Deliberate, confirmed by Kate on 19 August. Not an oversight in the export.
 6. Anyone already carrying `voucher:paid`, `suppress:campaign`, or a `+973` Bahrain number. These are
    the pack's standing suppressions and they apply here too.
 
@@ -60,22 +74,23 @@ hair clients, the window is 2025 to 2026. If the intent was genuinely dormant, 2
 honest answer, and it is also two different messages, which the two-message WhatsApp cap can just
 about carry.
 
-### 3.2 "Hair only" points straight at Motor City, and Motor City is excluded
+### 3.2 Motor City. Answered: the exclusion is deliberate
 
-The pack records this as final: **Motor City is hair only, no beauty at all.** Al Quoz does the full
-beauty menu. So:
+**Confirmed by Kate, 19 August. Motor City is out on purpose and the export is correct as delivered.**
+Nobody needs to chase a missing file.
 
-- **Every Motor City client is a hair-only client**, by force. There is no beauty there to book.
-- Rule 2 therefore selects mostly Motor City, and rule 5 then deletes them.
-- What survives in Dubai is only **Al Quoz clients who could book beauty and never did**, which is a
-  much smaller pool than "hair-only clients" sounds like.
+Worth keeping straight, because these are two different things and someone downstream will conflate them:
 
-This is the single biggest risk to the list size. Abu Dhabi is unaffected: Saadiyat and Khalifa City A
-both do beauty, so hair-only there is a real and meaningful segment.
+- **Who we contact** excludes Motor City.
+- **Where the voucher works** does not. The Dubai voucher is valid at **both Al Quoz and Motor City**,
+  and the landing page, the Stripe links and the tier table all say so.
 
-**Ask Emma-Louise: does the Dubai list include Motor City or not?** If the reason for excluding them
-was travel to Al Quoz, note that the Dubai voucher is valid at **both** Motor City and Al Quoz, so a
-Motor City client can spend her credit on hair at her own branch without travelling anywhere.
+So a Motor City client who hears about the campaign from a friend, a poster or the website can still buy
+and still redeem at her own branch. **Do not let anyone "tidy up" the copy by removing Motor City from
+the voucher terms to match the contact list.** The list is a targeting decision; the terms are a promise.
+
+The consequence to expect: Dubai is **286 WhatsApp contacts and 246 email contacts** against Abu Dhabi's
+2,624 and 1,385. The Dubai lane is small by design, so do not read it later as a Dubai underperformance.
 
 ### 3.3 The top-50 exclusion overlaps with rule 2 by definition
 
@@ -106,7 +121,7 @@ current-versus-dormant on its own, which is why this is a manual pull.
 templates:
 
 - `wellness-target-abu-dhabi.csv` — Mamsha al Saadiyat and Khalifa City A
-- `wellness-target-dubai.csv` — Al Quoz, and Motor City only if 3.2 says so
+- `wellness-target-dubai.csv`: Al Quoz only. Motor City is excluded on purpose, see 3.2.
 
 **Columns, in this order:**
 

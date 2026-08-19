@@ -22,7 +22,16 @@
     "reception.html": "Reception", "core-team.html": "Core team"
   };
 
-  var context = null;      // built once per page load, then reused
+  // Set by a page that is not itself a cheat sheet, so the same widget can be
+  // dropped on one. The ritual kit page is the worked example.
+  var BASE       = window.TRS_ASK_SHEET_BASE  || "";    // path from here to the sheets
+  var PAGE_LABEL = window.TRS_ASK_PAGE_LABEL  || "";    // what to call this page in the context
+  var EXTRA      = window.TRS_ASK_EXTRA       || null;  // data the page holds in script, not in markup
+  var TITLE      = window.TRS_ASK_TITLE       || "Ask the cheat sheets";
+  var NOTE       = window.TRS_ASK_NOTE        || "Answers come from these sheets only. If it is not on them, you will be told so rather than guessed at.";
+  var STRIP      = window.TRS_ASK_STRIP       || "";    // page markup that EXTRA already says better
+
+  var remote = null;       // the fetched sheets, built once per page load
   var building = null;     // the in-flight build, so two fast clicks share one
 
   // Pull readable text out of a sheet. The panel and the widget's own markup are
@@ -32,8 +41,14 @@
     // Belt and braces. The rail and the widget are injected by script, so they
     // are not in the fetched HTML this parses and would not appear anyway. Listed
     // so that stays true if any of it is ever moved into the markup.
+    // STRIP is how a page drops the parts of itself that its own EXTRA block
+    // already carries. Sending both is not just waste, it is the same products
+    // twice, and length is what makes an answer slow at a till with somebody
+    // waiting. The selectors do not exist on the cheat sheets, so listing them
+    // here rather than only for the local page costs nothing.
     var junk = body.querySelectorAll(
-      "script, style, #trs-ask, .rail, .rail-toggle, .refpeek, .topnav, .crumb, .footer, .backpack"
+      "script, style, #trs-ask, .rail, .rail-toggle, .refpeek, .topnav, .crumb, .footer, .backpack, " +
+      ".trs-notes-root, .trs-idbar" + (STRIP ? ", " + STRIP : "")
     );
     for (var i = 0; i < junk.length; i++) junk[i].remove();
     return body.innerText.replace(/\n{3,}/g, "\n\n").trim();
@@ -56,7 +71,7 @@
   }
 
   function fetchSheet(f) {
-    return fetch(f)
+    return fetch(BASE + f)
       .then(function (r) { return r.ok ? r.text() : ""; })
       .then(function (html) {
         return html ? new DOMParser().parseFromString(html, "text/html") : null;
@@ -64,14 +79,24 @@
       .catch(function () { return null; });
   }
 
-  function buildContext() {
-    if (context) return Promise.resolve(context);
+  // The page she is on is read out of the live DOM. The others are fetched.
+  //
+  // That split matters as soon as the widget leaves the cheat sheets. A fetched
+  // page is parsed with DOMParser, which does not run scripts, so any page that
+  // builds its own tables in script arrives with them missing: the ritual kit
+  // page would hand over its prose and none of its products. The live DOM has
+  // already run, and it is one fetch saved either way.
+  //
+  // Only the fetched half is cached. The local half is rebuilt on every ask,
+  // because on a page with state, an emirate switch or a tree answer, the first
+  // question would otherwise freeze the page as it was when it was asked.
+  function fetchRemote() {
+    if (remote) return Promise.resolve(remote);
     if (building) return building;
 
-    var here = location.pathname.split("/").pop() || "index.html";
-    var full = [here];
-    if (here !== "index.html") full.push("index.html");
-    var rest = SHEETS.filter(function (f) { return full.indexOf(f) === -1; });
+    var here = current();
+    var full = here !== "index.html" ? ["index.html"] : [];
+    var rest = SHEETS.filter(function (f) { return f !== here && full.indexOf(f) === -1; });
 
     building = Promise.all(
       full.map(fetchSheet).concat(rest.map(fetchSheet))
@@ -86,11 +111,28 @@
         parts.push("===== SHEET: " + LABELS[f] + " (headings only, not loaded) =====\n" +
                    headingsOf(d).map(function (h) { return "- " + h; }).join("\n"));
       });
-      context = parts.join("\n\n");
+      remote = parts;
       building = null;
-      return context;
+      return remote;
     });
     return building;
+  }
+
+  function current() { return location.pathname.split("/").pop() || "index.html"; }
+
+  function buildContext() {
+    return fetchRemote().then(function (parts) {
+      var here = current();
+      var isSheet = SHEETS.indexOf(here) !== -1;
+      var label = LABELS[here] || PAGE_LABEL || document.title || "This page";
+      var local = [(isSheet ? "===== SHEET: " : "===== PAGE: ") + label +
+                   " (full text, and this is the page in front of her) =====\n" + textOf(document)];
+      if (EXTRA) {
+        var ex = typeof EXTRA === "function" ? EXTRA() : EXTRA;
+        if (ex) local.push("===== " + label + ", the underlying data =====\n" + ex);
+      }
+      return local.concat(parts).join("\n\n");
+    });
   }
 
   function el(tag, cls, text) {
@@ -114,14 +156,13 @@
     panel.hidden = true;
 
     var head = el("div", "trs-ask-head");
-    head.appendChild(el("div", "trs-ask-title", "Ask the cheat sheets"));
+    head.appendChild(el("div", "trs-ask-title", TITLE));
     var close = el("button", "trs-ask-close", "×");
     close.type = "button";
     close.setAttribute("aria-label", "Close");
     head.appendChild(close);
 
-    var note = el("p", "trs-ask-note",
-      "Answers come from these sheets only. If it is not on them, you will be told so rather than guessed at.");
+    var note = el("p", "trs-ask-note", NOTE);
 
     var log = el("div", "trs-ask-log");
     log.setAttribute("aria-live", "polite");
@@ -129,7 +170,7 @@
     // Tappable starters. The old placeholder read like a question somebody had
     // already typed, so people pressed Ask on grey text and nothing happened.
     var chips = el("div", "trs-ask-chips");
-    var STARTERS = [
+    var STARTERS = window.TRS_ASK_STARTERS || [
       "Can a Season of You client have balayage?",
       "What is the kit allowance?",
       "What are the three expiry dates?",

@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The lists: Wellness Voucher</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="cheat.css">
+<link rel="stylesheet" href="../shared/ask-widget.css">
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <div class="crumb"><a href="index.html">Cheat sheets</a> &rsaquo; The lists</div>
+    <div class="team">The lists</div>
+    <p class="owns">Who actually gets contacted, how many of them there are, what was taken out of Belle&rsquo;s export and why, and what each send costs. This is the sheet to quote from when someone asks for a number.</p>
+    <div class="stamp">Wellness Voucher &middot; purchases close <b>30 September 2026</b> &middot; current as of <b>19 August 2026</b></div>
+  </div>
+
+  <div class="oneline">
+    <div class="lbl">If you remember one sentence</div>
+    <p>&ldquo;2,910 women can be reached on WhatsApp and 1,631 by email, and the whole campaign costs AED 1,032 to send.&rdquo;</p>
+  </div>
+
+  <div class="rule dont"><b>The rows themselves are not on this site, and must not be put here.</b> This page is on a public link. The cleaned files are client personal data: names, mobile numbers, email addresses, visit dates and lifetime spend for 3,218 real women. They live in <code>Downloads\voucher-contact-lists-cleaned</code> and are shared <b>as files, direct to the person who needs them</b>, never as a URL and never through a group chat. What belongs on this page is the counts and the method, which is all anyone needs to plan or to check the maths.</div>
+
+  <!-- 1 -->
+  <h2><span class="n">1</span>One list, both channels</h2>
+  <p class="sub">Decided by Kate, 19 August. It replaces the split agreed on 18 August.</p>
+  <div class="card">
+    <p><strong>Email and WhatsApp both go to Belle&rsquo;s list and nothing else.</strong></p>
+    <p>The 18 August call had sent email to the entire database and WhatsApp to the segment, on the grounds that email is nearly free. Belle spotted what that actually did: the <strong>top spender exclusion existed on WhatsApp only</strong>, so the women it removed were being sent the offer by email regardless. One list removes the contradiction, and there is one thing to export, import and de-duplicate instead of two.</p>
+  </div>
+  <div class="rule note"><b>Overlap is now total, and that is accepted.</b> Everyone on the list gets both channels. At AED 0.0039 an email against AED 0.1709 a WhatsApp message, the cost of the overlap sits almost entirely on the WhatsApp side, where it was always going to sit.</div>
+
+  <!-- 2 -->
+  <h2><span class="n">2</span>What Belle sent, and what came out of it</h2>
+  <table>
+    <thead><tr><th>Stage</th><th class="num">Rows</th><th>Where they went</th></tr></thead>
+    <tbody>
+      <tr><td>Supplied by Belle, two exports</td><td class="num"><b>3,218</b></td><td>Abu Dhabi 2,876 &middot; Dubai 342</td></tr>
+      <tr><td>No email address at all</td><td class="num">427</td><td>WhatsApp only</td></tr>
+      <tr><td>Reception placeholder address</td><td class="num">1,146</td><td>WhatsApp only, see &sect;3</td></tr>
+      <tr><td><b>Real, unique email addresses</b></td><td class="num"><b>1,631</b></td><td>The email send</td></tr>
+      <tr><td><b>Valid UAE mobiles</b></td><td class="num"><b>2,910</b></td><td>The WhatsApp send</td></tr>
+      <tr><td>Valid overseas mobiles</td><td class="num">296</td><td>Held back, see &sect;5</td></tr>
+      <tr><td>Genuinely malformed numbers</td><td class="num">12</td><td>Held back for a human to read</td></tr>
+    </tbody>
+  </table>
+  <div class="rule note"><b>Every file is de-duplicated, and where the same woman appeared twice the higher-spend row was kept.</b> Numbers are stored as <code>+971&hellip;</code>, which is the form WhatsApp needs. Nothing was invented: a number was only corrected where the fix was unambiguous, and anything doubtful went to the repair file with its raw value intact rather than a script guessing a digit.</div>
+
+  <!-- 3 -->
+  <h2><span class="n">3</span>The 1,146 placeholder emails</h2>
+  <p class="sub">The single biggest thing wrong with the raw export, and no validator would have caught it.</p>
+  <div class="card">
+    <p>Where a client would not give an address, reception typed one in. Twelve distinct addresses account for 1,146 rows:</p>
+    <table>
+      <thead><tr><th>Address</th><th class="num">Times it appears</th></tr></thead>
+      <tbody>
+        <tr><td><code>soc@gmail.com</code></td><td class="num"><b>783</b></td></tr>
+        <tr><td><code>soc@yahoo.com</code></td><td class="num">153</td></tr>
+        <tr><td><code>s@gmail.com</code></td><td class="num">56</td></tr>
+        <tr><td><code>trs@gmail.com</code></td><td class="num">47</td></tr>
+        <tr><td><code>social@gmail.com</code></td><td class="num">39</td></tr>
+        <tr><td><code>soc@tararose.com</code></td><td class="num">39</td></tr>
+        <tr><td>six others</td><td class="num">3 to 9 each</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="rule dont"><b>Sent as supplied, one real inbox receives 783 copies of the same campaign in a single run.</b> Every one of these is syntactically valid, so a format check passes them. GHL has never sent a bulk blast, so the domain has no sending reputation to absorb that, and <code>soc@gmail.com</code> may well belong to a stranger who never heard of us.</div>
+  <div class="rule do"><b>Detection is by reuse, not by a list of known bad addresses.</b> Any address shared by three or more different clients is treated as a placeholder. Run the same script on a future export and it catches whatever reception has started typing since, with no maintenance.</div>
+  <div class="rule note"><b>Nobody was dropped.</b> These 1,146 women are held in a separate file and most of them are perfectly reachable on WhatsApp. They are a one-channel audience, not a loss.</div>
+
+  <!-- 4 -->
+  <h2><span class="n">4</span>The four files to upload</h2>
+  <table>
+    <thead><tr><th>File</th><th class="num">Rows</th><th>Send</th></tr></thead>
+    <tbody>
+      <tr><td><code>abu-dhabi-WHATSAPP-uae.csv</code></td><td class="num"><b>2,624</b></td><td>Abu Dhabi WhatsApp</td></tr>
+      <tr><td><code>dubai-WHATSAPP-uae.csv</code></td><td class="num"><b>286</b></td><td>Dubai WhatsApp</td></tr>
+      <tr><td><code>abu-dhabi-EMAIL-blast.csv</code></td><td class="num"><b>1,385</b></td><td>Abu Dhabi email</td></tr>
+      <tr><td><code>dubai-EMAIL-blast.csv</code></td><td class="num"><b>246</b></td><td>Dubai email</td></tr>
+    </tbody>
+  </table>
+  <div class="rule note"><b>Split by emirate, not by branch,</b> because that is how the voucher splits and how the payment links and landing pages split. Abu Dhabi is Mamsha al Saadiyat plus Khalifa City A; Dubai is Al Quoz. The branch is still a column if anyone wants to cut it finer, but see &sect;7 first.</div>
+
+  <!-- 5 -->
+  <h2><span class="n">5</span>What each send costs</h2>
+  <p class="sub">Rates from the GHL agency billing page, August 2026 actual usage. The dirham is pegged at 3.6725, so these do not move.</p>
+  <table>
+    <thead><tr><th>Send</th><th class="num">Contacts</th><th class="num">Cost</th></tr></thead>
+    <tbody>
+      <tr><td>WhatsApp &middot; Abu Dhabi blast</td><td class="num">2,624</td><td class="num">AED 448.39</td></tr>
+      <tr><td>WhatsApp &middot; Dubai blast</td><td class="num">286</td><td class="num">AED 48.87</td></tr>
+      <tr><td>WhatsApp &middot; second marketing message</td><td class="num">2,910</td><td class="num">AED 497.26</td></tr>
+      <tr><td>Email &middot; the blast</td><td class="num">1,631</td><td class="num">AED 6.29</td></tr>
+      <tr><td>Email &middot; five nurture emails</td><td class="num">8,155</td><td class="num">AED 31.45</td></tr>
+      <tr><td><b>Everything</b></td><td class="num"><b>&mdash;</b></td><td class="num"><b>AED 1,032.26</b></td></tr>
+    </tbody>
+  </table>
+  <div class="rule note"><b>WhatsApp is 96% of the bill.</b> AED 0.1709 a message against AED 0.0039 an email, so a WhatsApp message costs 44 times what an email costs. Anything spent trimming the email side is spent on the wrong 4%. If the number has to come down, it comes down by sending <b>one</b> WhatsApp message instead of two, which is AED 497.26 on its own.</div>
+  <div class="rule dont"><b>The wallet is the risk, not the budget.</b> The GHL wallet holds <b>AED 177</b> and this campaign needs <b>AED 1,032</b>. Auto recharge adds AED 184 whenever the balance drops below AED 37, so it would have to fire about five times. On 10 August it <b>failed three times running</b> before someone topped the wallet up by hand, and the 29 July subscription invoice failed three times before it cleared, so the card on file is not reliable. If the wallet empties mid send, the send stops and nothing raises an error. <b>Pre-load AED 1,400 and check the card, before the send rather than during it.</b></div>
+
+  <!-- 6 -->
+  <h2><span class="n">6</span>Held back, and needing a decision</h2>
+  <table>
+    <thead><tr><th>Held back</th><th class="num">Rows</th><th>The question</th></tr></thead>
+    <tbody>
+      <tr><td>Overseas numbers</td><td class="num">296</td><td>Valid mobiles, not UAE: 89 UK, 19 Australia, 18 France, 15 South Africa, 12 Germany, 12 Ireland. Expat clients. Do they hear from us at all? Two WhatsApp messages to all of them adds about AED 101, and international rates may differ from the UAE rate above.</td></tr>
+      <tr><td>Malformed numbers</td><td class="num">12</td><td>Not safely guessable. Somebody opens the client record rather than a script inventing a digit.</td></tr>
+      <tr><td>Consent</td><td class="num">all 3,218</td><td><b>Neither export carries a consent or opt-in column.</b> The pack assumes a marketing export only returns clients who opted in. That cannot be confirmed from these files, and it is a PDPL question, so it is worth asking Belle before anything sends.</td></tr>
+    </tbody>
+  </table>
+
+  <!-- 7 -->
+  <h2><span class="n">7</span>Two things about the export itself</h2>
+
+  <h3>Motor City is missing on purpose</h3>
+  <div class="rule do"><b>Confirmed by Kate, 19 August. The export is correct as delivered and nobody needs to chase a file.</b> Keep two things apart, because they will get conflated: <b>who we contact</b> excludes Motor City, but <b>where the voucher works</b> does not. The Dubai voucher is valid at Al Quoz <b>and</b> Motor City, and the landing page, the Stripe links and the tier table all say so. A Motor City client who hears about the campaign any other way can still buy and still redeem at her own branch. <b>Do not tidy the copy by removing Motor City from the terms to match the contact list.</b> The list is a targeting decision; the terms are a promise. Expect Dubai to be small by design, 286 against Abu Dhabi&rsquo;s 2,624, and do not read that later as Dubai underperforming.</div>
+
+  <h3>The Abu Dhabi branch names do not say which branch</h3>
+  <div class="rule watch"><b>The branch column carries two Abu Dhabi labels, and neither one names Saadiyat or Khalifa City.</b> 1,501 rows read <code>Tara Rose Hair and Beauty Salon</code> and 1,375 read <code>Tara Rose Hair and Beauty Salon - Turquoise 7</code>. The <b>emirate</b> split is unaffected, so every number on this sheet stands. But nobody can segment Abu Dhabi by branch until Belle confirms which label is which, so do not guess it from the name.</div>
+
+  <!-- 8 -->
+  <h2><span class="n">8</span>This is an active audience, not a database</h2>
+  <div class="card">
+    <p><strong>All 3,218 women last visited in 2026.</strong> 730 in July, 603 in June, 603 in May, 425 in August, 381 in April. Median lifetime spend is <strong>AED 1,855</strong>, and <strong>38%</strong> have spent over AED 2,500.</p>
+    <p>This settles the date-window question the 18 August call could not answer. There was a worry that a 2024 filter would produce a dormant list; what Belle actually pulled is the opposite, a current, high-value audience. <strong>Nothing here is dormant, so nothing needs the dormant messaging.</strong></p>
+  </div>
+  <div class="rule note"><b>What was given up to get here.</b> 14,818 contacts in GHL carry an email address, and email costs AED 0.0039 a send, so the reach dropped by going to one list was effectively free. Against that: the 14,818 is contacts-with-an-email, <b>not</b> customers, and much of it is people who enquired once and never came in. If the numbers come in short, the option is a second <b>email-only</b> send to the remainder after launch, rather than reopening the split now.</div>
+
+  <div class="footer">
+    Wellness Voucher, the lists. Counts from Belle&rsquo;s two Phorest exports of 19 August after de-duplication, placeholder removal and number validation. Rates from GHL agency billing, August 2026 usage: emails $3.23 across 3,076 sends, WhatsApp marketing $18.10 across 389 sends. Source of truth: the <a href="../index.html">approval pack</a>, and <a href="../docs/AUDIENCE-SEGMENTATION-SPEC.md">AUDIENCE-SEGMENTATION-SPEC.md</a> for the segment rules.
+    If this sheet and anything else disagree, this sheet is newer. Raise it with Kate rather than guessing.
+  </div>
+</div>
+<script src="doc-modal.js"></script>
+<script src="nav-rail.js"></script>
+<script src="ref-peek.js"></script>
+<script src="ask-config.js"></script>
+<script src="ask-widget.js"></script>
+</body>
+</html>
