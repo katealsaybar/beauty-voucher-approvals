@@ -25,6 +25,7 @@ contradiction, and there is now one thing to export, import and de-duplicate ins
 | | Email | WhatsApp |
 |---|---|---|
 | **Who** | Belle's list, section 2. | Belle's list, section 2. The same women. |
+| **Sends from** | GHL, the sending domain. | **GHL, Contact Centre sub-account.** Not respond.io. `058 155 9679` for both emirates. |
 | **Size** | Unknown until the Phorest export lands, and the same number for both. | Same. |
 | **Risk** | GHL has never sent a bulk blast, so domain reputation is untested. **Stagger the send.** | Meta delivers one marketing message per contact per 24 hours, which is why a broadcast entrant skips the Day 0 WhatsApp. |
 
@@ -33,6 +34,12 @@ email costs **AED 0.004** per send, so the reach just dropped was effectively fr
 14,818 is contacts-with-an-email, **not** customers, and much of it is people who enquired once and
 never came in, so it was never worth what the number suggests. If the list comes back small, the
 option is a second **email-only** send to the remainder after launch, not reopening the split now.
+
+**One list, still two sends.** The list is single, the WhatsApp send is not. It splits by emirate at the
+point of sending, because the templates already do: `_ad` names Mamsha al Saadiyat and Khalifa City A,
+`_dxb` names Motor City and Al Quoz, and Meta fixes those button labels at template level. So the export
+Bell produces carries an **emirate** column and David splits on it at import, rather than Bell producing
+two files. One export, two audiences inside it, two sends, **one sending number**.
 
 **Overlap is now total, by design.** Everyone on the list gets both channels. That was Belle's original
 concern and it is accepted: at AED 0.004 against AED 0.17, the cost of the overlap sits almost entirely
