@@ -281,10 +281,10 @@ function render(){
     '<div style="margin-top:9px;font-size:13px;color:var(--muted);">Then seven seconds of silence. Do not fill it.</div></div>';
 
   if(state.tier==='t3'){
-    html += '<div class="note good" style="margin-top:14px;"><strong>Also hers on this tier:</strong> the home skin care set, the Reset Journal and the 8 Pillars of Wellness Journal. ' +
+    html += '<div class="note watch" style="margin-top:14px;"><strong>Also hers on this tier:</strong> the Reset Journal and the 8 Pillars of Wellness Journal, both guaranteed. The <strong>home skin care set is extras from branch stock, Matis and Geske, and only if there is any</strong>, so check the shelf before you promise it to her. ' +
             '<span class="only-ad">Handed over at her own branch alongside her birthday facial.</span>' +
             '<span class="only-dxb">The skin set sits with Al Quoz, where the Dubai birthday facial is set. Hand it over at that visit.</span>' +
-            ' These sit outside the kit cap.</div>';
+            ' The journals sit outside the kit cap; so does the skin set, when there is one.</div>';
   }
 
   out.hidden = false;

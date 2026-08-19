@@ -152,6 +152,8 @@
   tr:last-child td{border-bottom:none;}
   td.num{font-variant-numeric:tabular-nums;white-space:nowrap;}
   .avail-yes{color:var(--green);font-weight:700;} .avail-no{color:var(--red);font-weight:700;} .avail-tbc{color:var(--blue);font-weight:700;}
+  /* a benefit that was on the page and has been withdrawn: kept visible so nobody re-adds it */
+  tr.struck td{text-decoration:line-through;opacity:.55;} tr.struck td strong{text-decoration:none;opacity:1;color:var(--red);}
 
   .note{background:var(--sand);border-radius:12px;padding:15px 18px;font-size:14px;margin:14px 0;}
   .note.flag{background:var(--amber-bg);color:#6E5320;border:1px solid #EAD9B8;}
