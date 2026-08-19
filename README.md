@@ -87,6 +87,42 @@ reviewer confirms rather than composes. Only decisions 6, 14 and 16 have one so 
 "no recommendation: this one is genuinely open", which is honest but weak. **Filling these
 in is the single highest-value edit left on this pack.**
 
+## The cheat sheets, and the four added on 19 August 2026
+
+`cheat-sheets/index.html` is a second front door, for the people who have to act rather than
+sign off. The pack carries the reasoning; a sheet carries the answer, because a busy till and
+a build queue need the answer. **If a sheet and anything else disagree, the sheet is newer.**
+
+Three sheets were written for the teams (LID, the GHL team, Reception). **`core-team.html`**
+was added on 19 August for the four of us: one section each for Tara, Emma, Kate and Hanneh,
+in that order, behind a "who answers what" table at the top.
+
+**One page, not four.** It was built as four separate sheets first and that was the wrong
+shape: four managers reading four pages need the same twelve numbers, so the tiers, the colour
+ladder, the three expiry clocks and the banned words got said four times and would have drifted
+four ways. They are now said once, in `§5`, and each person's section carries only what they
+decide or watch. It also means nobody has to be told which of four URLs is theirs.
+
+**A core team sheet is a different kind of document from a team sheet,** which is why the
+index groups them separately rather than listing four equal doors. A team sheet is a job to
+do, ordered by what it costs to leave alone. This one is the answers we owe each other:
+decisions with a recommendation already attached, and the small number of things each of us
+should be watching.
+
+**Tara's section is deliberately the shortest and reads as multiple choice,** per the ADHD
+feedback rules: four choices, each with the recommended answer in its own column, and no open
+questions. A section that hands her a buffet is a section that gets skipped.
+
+**Three files know the list of sheets and all three have to agree.** `nav-rail.js` (the rail,
+grouped by the `group` field), `ask-widget.js` (`SHEETS` and `LABELS`, which is what the Ask
+button reads from) and `cheat-sheets/index.html` (the doors). Miss the second and a new sheet
+exists but the Ask button cannot answer from it, which is the failure that looks like the model
+being wrong rather than a list being short. The pack's own sidebar carries the four links too.
+
+Everything else on a sheet is automatic: `nav-rail.js` builds the section rail from the page's
+own `h2` list, and `ref-peek.js` turns any `§N` in the text into a hover preview of that
+section. So a new sheet needs no configuration beyond the four script tags at the foot.
+
 ## The two channels
 
 Concept copied from the CWD knowledgebase widgets (Comments Widget + Suggestions Widget),
@@ -128,6 +164,10 @@ wellness-voucher-approval-pack/
 │
 ├── pack/                      index.html's own styling and the decision queue
 │   └── pack.css · pack.js · decide.css · decide.js
+│
+├── cheat-sheets/              one page per team, one for the core team, printable
+│   └── index.html · lid · ghl · reception · core-team
+│       cheat.css · nav-rail.js · ref-peek.js · doc-modal.js · ask-config.js · ask-widget.js
 │
 ├── website-mockups/           drawings of real tararosesalon.com pages
 │   ├── voucher-landing/       voucher-landing.html · .css · .js

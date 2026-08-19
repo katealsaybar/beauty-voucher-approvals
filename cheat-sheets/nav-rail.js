@@ -3,8 +3,9 @@
  * Built from the page's own h2 list rather than hand-written, so a section can
  * never exist without a link to it, and reordering the page reorders the rail.
  *
- * Two halves: the four sheets at the top, so somebody on the wrong sheet can get
- * to theirs in one click, and the sections of the current sheet below it. The
+ * Two halves: the sheets at the top, grouped into the three teams and the core
+ * team so somebody on the wrong sheet can get to theirs in one click, and the
+ * sections of the current sheet below it. The
  * active section tracks the scroll position, because a twenty-item revision list
  * is easy to lose your place in.
  *
@@ -16,11 +17,15 @@
 (function () {
   "use strict";
 
+  /* Grouped, because the two kinds of sheet are not the same kind of thing: a team
+     sheet is a job to do, the core team sheet is a set of answers to give. `group`
+     starts a new label in the rail. */
   var SHEETS = [
-    { file: "index.html", name: "Overview", note: "what changed, who owns what" },
-    { file: "lid.html", name: "LID", note: "the live site and the Terms" },
+    { file: "index.html", name: "Overview", note: "what changed, who owns what", group: "Start here" },
+    { file: "lid.html", name: "LID", note: "the live site and the Terms", group: "The three teams" },
     { file: "ghl.html", name: "GHL team", note: "workflows and messages" },
-    { file: "reception.html", name: "Reception", note: "what you say at the till" }
+    { file: "reception.html", name: "Reception", note: "what you say at the till" },
+    { file: "core-team.html", name: "Core team", note: "Tara, Emma, Kate, Hanneh", group: "The core team" }
   ];
 
   function build() {
@@ -46,12 +51,13 @@
     brand.textContent = "Wellness Voucher";
     rail.appendChild(brand);
 
-    var l1 = document.createElement("div");
-    l1.className = "rail-lbl";
-    l1.textContent = "The four sheets";
-    rail.appendChild(l1);
-
     SHEETS.forEach(function (s) {
+      if (s.group) {
+        var lbl = document.createElement("div");
+        lbl.className = "rail-lbl";
+        lbl.textContent = s.group;
+        rail.appendChild(lbl);
+      }
       var a = document.createElement("a");
       a.className = "rail-sheet" + (s.file === page ? " here" : "");
       a.href = s.file;
