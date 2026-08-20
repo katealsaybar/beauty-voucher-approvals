@@ -1,0 +1,701 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- Kept out of search results. Unlike the rest of the pack this page WRITES: it allocates a
+     real serial and a real row in the voucher log. It is served from a public site with no
+     sign-in, so the only thing standing between it and a stranger is that nobody has the
+     path. noindex keeps a crawler from handing that path out. It is not a security control,
+     see the note in the page body. -->
+<meta name="robots" content="noindex,nofollow">
+<title>Issue a Wellness Card: till tool</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FAF8F4; --paper:#FFFFFF; --ink:#2D2E37; --muted:#6E6E77;
+  --line:#E7E2D8; --accent:#99F6E4; --sand:#F1ECE3; --dark:#2D2E37;
+  --amber:#B4823A; --amber-bg:#FBF3E2; --blue:#3B6E8F; --blue-bg:#E6F0F5;
+  --green:#3E7A5E; --green-bg:#E4F1EA; --red:#B24A4A; --red-bg:#F7E9E9;
+  --serif:'Playfair Display',Georgia,serif;
+  --sans:'Inter',system-ui,-apple-system,sans-serif;
+  --gold:#C9A961; --cream:#F1ECE3;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.6;font-size:16px;}
+.wrap{max-width:1180px;margin:0 auto;padding:36px 28px 90px;}
+
+.top{border-bottom:2px solid var(--ink);padding-bottom:20px;margin-bottom:24px;}
+.crumb{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;}
+.crumb a{color:inherit;text-decoration:none;border-bottom:1px solid var(--line);}
+.crumb a:hover{border-color:var(--ink);}
+.team{font-family:var(--serif);font-size:clamp(30px,5vw,44px);line-height:1.05;font-weight:600;margin-bottom:8px;}
+.owns{font-size:16px;color:var(--muted);max-width:66ch;}
+.stamp{margin-top:12px;font-size:13px;color:var(--muted);}
+.stamp b{color:var(--ink);font-weight:600;}
+
+.mock{background:var(--amber-bg);border:1px solid #EBD9B4;border-left:3px solid var(--amber);
+  border-radius:10px;padding:14px 16px;font-size:14px;margin-bottom:24px;}
+
+.cols{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:24px;align-items:start;}
+@media (max-width:940px){.cols{grid-template-columns:1fr;}}
+
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:20px;}
+.panel h2{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);
+  font-weight:700;margin-bottom:16px;}
+
+.f{margin-bottom:14px;}
+.f label{display:block;font-size:12px;font-weight:600;letter-spacing:.04em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+.f input,.f select{width:100%;font-family:var(--sans);font-size:15px;padding:9px 11px;
+  border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);}
+.f input:focus,.f select:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--ink);}
+.hint{font-size:12px;color:var(--muted);margin-top:5px;}
+
+.btn{font-family:var(--sans);font-size:14px;font-weight:600;
+  padding:10px 16px;border-radius:8px;border:1px solid var(--ink);background:var(--ink);
+  color:#fff;cursor:pointer;}
+.btn:hover{opacity:.88;}
+.btn.ghost{background:#fff;color:var(--ink);}
+.btn:disabled{opacity:.4;cursor:not-allowed;}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;}
+
+.setbar{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:6px;}
+.chip{font-family:var(--sans);font-size:12px;font-weight:600;padding:7px 11px;border-radius:999px;
+  border:1px solid var(--line);background:#fff;color:var(--ink);cursor:pointer;white-space:nowrap;}
+.chip.on{background:var(--ink);color:#fff;border-color:var(--ink);}
+.chip.off{opacity:.45;}
+.chip .v{font-weight:400;opacity:.7;margin-left:4px;}
+
+.serial{font-size:13px;color:var(--muted);margin-bottom:14px;}
+.serial code,.caption code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  background:var(--sand);padding:2px 7px;border-radius:5px;color:var(--ink);font-weight:600;}
+
+.note{border-radius:10px;padding:12px 14px;font-size:13.5px;margin-top:16px;}
+.note.flag{background:var(--red-bg);border-left:3px solid var(--red);}
+.note.good{background:var(--green-bg);border-left:3px solid var(--green);}
+.note.info{background:var(--blue-bg);border-left:3px solid var(--blue);}
+
+/* ---------------- the card ---------------- */
+.stage{display:flex;justify-content:center;padding:18px 0 6px;}
+.card{
+  /* 85.6 x 54 mm, the real ID-1 credit card. Everything inside is sized in em, so the
+     whole card scales off this one font-size. The print block below changes only those two. */
+  width:428px; height:270px; font-size:11px;
+  position:relative;border-radius:4.6%/7.3%;overflow:hidden;
+  background:
+    radial-gradient(120% 90% at 18% 12%, #3a3a42 0%, transparent 55%),
+    radial-gradient(90% 70% at 82% 88%, #34343c 0%, transparent 60%),
+    linear-gradient(145deg,#131316 0%,#0a0a0c 46%,#1b1b20 74%,#0d0d10 100%);
+  color:var(--cream);
+  box-shadow:0 10px 30px rgba(45,46,55,.28);
+}
+.card .sheen{position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(118deg,transparent 34%,rgba(241,236,227,.055) 46%,transparent 58%);}
+.card .brand{position:absolute;top:1.8em;left:0;right:0;text-align:center;}
+.card .brand .rule{width:2.4em;height:1px;background:var(--cream);opacity:.55;margin:0 auto .5em;}
+.card .brand .nm{font-family:var(--serif);font-size:1.68em;letter-spacing:.3em;
+  font-weight:500;line-height:1;text-indent:.3em;}
+.card .brand .sub{font-size:.7em;letter-spacing:.42em;opacity:.72;margin-top:.45em;text-indent:.42em;}
+
+.card .tier{position:absolute;top:7em;left:0;right:0;text-align:center;
+  font-size:.9em;letter-spacing:.15em;font-weight:600;text-transform:uppercase;
+  color:var(--gold);text-indent:.15em;padding:0 8%;}
+.card .gift{position:absolute;top:6.5em;left:0;right:0;text-align:center;
+  font-family:var(--serif);font-style:italic;font-size:1.45em;color:var(--cream);}
+
+/* the chip sits ABOVE the number, on the left, the way a real card reads */
+.card .emv{position:absolute;left:8%;top:11.4em;width:3.2em;height:2.45em;border-radius:.4em;
+  background:linear-gradient(140deg,#E4C77E,#B08F45 52%,#E9D496);overflow:hidden;}
+.card .emv i{position:absolute;background:rgba(90,68,20,.5);}
+.card .emv i:nth-child(1){left:22%;top:0;width:1px;height:100%;}
+.card .emv i:nth-child(2){left:56%;top:0;width:1px;height:100%;}
+.card .emv i:nth-child(3){left:0;top:34%;width:100%;height:1px;}
+.card .emv i:nth-child(4){left:0;top:66%;width:100%;height:1px;}
+
+.card .val{position:absolute;right:8%;top:11.1em;text-align:right;}
+.card .val .lb{font-size:.6em;letter-spacing:.2em;opacity:.6;text-transform:uppercase;text-indent:.2em;}
+.card .val .amt{font-family:var(--serif);font-size:1.7em;line-height:1.15;color:var(--gold);}
+.card .val .amt small{font-size:.5em;letter-spacing:.14em;opacity:.85;margin-right:.35em;
+  font-family:var(--sans);vertical-align:.4em;}
+
+.card .num{position:absolute;left:8%;right:8%;top:15.2em;display:flex;gap:1.5em;
+  font-size:1.14em;letter-spacing:.14em;font-weight:500;font-variant-numeric:tabular-nums;}
+.card .num span{white-space:nowrap;}
+
+.card .of{position:absolute;left:8%;top:18.6em;font-size:.6em;letter-spacing:.2em;
+  opacity:.6;text-transform:uppercase;text-indent:.2em;}
+
+.card .foot{position:absolute;left:8%;right:8%;bottom:1.7em;
+  display:flex;align-items:flex-end;justify-content:space-between;gap:1em;}
+.card .who .lb{font-size:.6em;letter-spacing:.2em;opacity:.6;text-transform:uppercase;
+  margin-bottom:.25em;text-indent:.2em;}
+.card .who .nm{font-size:1.02em;letter-spacing:.09em;text-transform:uppercase;font-weight:500;}
+.card .dates{text-align:right;font-size:.64em;letter-spacing:.13em;opacity:.8;line-height:1.8;
+  text-transform:uppercase;white-space:nowrap;}
+.card .dates b{font-weight:600;opacity:1;letter-spacing:.07em;}
+
+.caption{text-align:center;font-size:13px;color:var(--muted);margin-top:12px;}
+#printall{display:none;}
+
+/* ---------------- print: one card, exact size, a real PDF ---------------- */
+/* No canvas and no image export anywhere in this file, so every line on the card
+   stays selectable text and vector in the saved PDF. */
+@media print{
+  @page{size:85.6mm 54mm;margin:0;}
+  body{background:#fff;}
+  .top,.mock,#tillpanel,.panel h2,.setbar,.serial,.note,.caption,.btnrow,.f{display:none !important;}
+  .wrap{max-width:none;margin:0;padding:0;}
+  .cols{display:block;}
+  .panel{border:0;border-radius:0;padding:0;background:transparent;}
+  .stage{padding:0;display:block;}
+  /* body carries .p-one or .p-all so the two buttons share one @page block */
+  body.p-all .stage{display:none;}
+  body.p-all #printall{display:block;}
+  #printall .card{margin:0;page-break-after:always;break-after:page;}
+  #printall .card:last-child{page-break-after:auto;break-after:auto;}
+  .card{
+    width:85.6mm;height:54mm;font-size:2.24mm;
+    border-radius:0;box-shadow:none;
+    -webkit-print-color-adjust:exact;print-color-adjust:exact;
+  }
+}
+</style>
+</head>
+<body data-auth-root="../">
+<div class="wrap">
+
+  <div class="top">
+    <div class="crumb"><a href="../cheat-sheets/reception.html">Reception cheat sheet</a> &rsaquo; Issue a card</div>
+    <div class="team">Issue a Wellness Card</div>
+    <p class="owns">Pick the branch, the tier and her name. The serial, the value and every expiry date are worked out for you. Then print the card she needs as a PDF.</p>
+    <div class="stamp">Wellness Voucher &middot; purchases close <b>30 September 2026</b></div>
+  </div>
+
+  <div class="mock"><b>The artwork is a placeholder</b> standing in for Hanneh's card, drawn at the real 85.6 &times; 54 mm and
+    showing the corrections in the brief: chip above the number, serial in four groups, the AED value on the face, the purchase
+    date, and the expiry spelled out. When her PNGs land, the artwork changes and nothing else does.
+    <b>The numbering and the log are live.</b> Every set issued here is a real row and a real serial that will not be handed out
+    again, so use a recognisable test name if you are only looking.</div>
+
+  <div class="cols">
+
+    <div class="panel" id="tillpanel">
+      <h2>At the till</h2>
+
+      <div class="f">
+        <label for="branch">Branch you are at</label>
+        <select id="branch">
+          <option value="SAA">Mamsha al Saadiyat &middot; SAA</option>
+          <option value="KCA" selected>Khalifa City A &middot; KCA</option>
+          <option value="AQ">Al Quoz &middot; AQ</option>
+          <option value="MC">Motor City &middot; MC</option>
+        </select>
+        <p class="hint" id="emirate"></p>
+      </div>
+
+      <div class="f">
+        <label for="tier">Tier she bought</label>
+        <select id="tier">
+          <option value="D">Dip Your Toes &middot; she places 1,000</option>
+          <option value="S" selected>Season of You &middot; she places 2,500</option>
+          <option value="V">All-In VIP Year &middot; she places 4,500</option>
+        </select>
+      </div>
+
+      <div class="f">
+        <label for="cname">Her name</label>
+        <input id="cname" type="text" placeholder="Jamie Chastain" autocomplete="off">
+      </div>
+
+      <div class="f">
+        <label for="pdate">Date of purchase</label>
+        <input id="pdate" type="date">
+      </div>
+
+      <div class="f">
+        <label for="who">Who is at the till</label>
+        <input id="who" type="text" placeholder="Your name" autocomplete="off">
+        <p class="hint">Goes into the log, so a serial can be traced back to whoever issued it.</p>
+      </div>
+
+      <div class="btnrow">
+        <button class="btn" id="issue">Issue the set</button>
+        <button class="btn ghost" id="reset">Start over</button>
+      </div>
+
+      <div class="note info" id="counter"></div>
+      <div class="note" id="dbstate"></div>
+    </div>
+
+    <div class="panel">
+      <h2>Her cards</h2>
+      <div class="serial" id="serialline">Nothing issued yet. Fill the form and press <b>Issue the set</b>.</div>
+      <div class="setbar" id="setbar"></div>
+
+      <div class="stage" id="stage"></div>
+      <p class="caption" id="caption"></p>
+
+      <!-- Every printable card, stacked. Never shown on screen; it exists so one Save as PDF
+           produces her whole set as one file. Reception sends one attachment instead of
+           photographing the screen six or eight times, and WhatsApp does not recompress a
+           PDF the way it crushes an image, which is what the small serial cannot survive. -->
+      <div id="printall"></div>
+
+      <div class="btnrow" style="justify-content:center">
+        <button class="btn" id="printall-btn" disabled>Save all her cards as one PDF</button>
+        <button class="btn ghost" id="print" disabled>Just this card</button>
+        <button class="btn ghost" id="copy" disabled>Copy the serial</button>
+      </div>
+
+      <div class="note" id="cardnote" style="display:none"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Supabase UMD first, then the pack's shared client, then this page. Same order and same
+     reason as every other page here: plain scripts, no modules, works off disk. -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../auth/supabase-client.js"></script>
+<script>
+/* ------------------------------------------------------------------ *
+ * Wellness Voucher: till tool.
+ *
+ * Plain script, no modules and no build, because the pack has to work opened
+ * straight off disk as file:// like every other page here.
+ *
+ * The number and the log both come from Postgres, via issue_voucher() in
+ * sql/voucher_issues_setup.sql. That function allocates the sequence under a row
+ * lock on the branch's counter, which is the only way two tills at one branch
+ * cannot both hand out 0043, and it is why the sequence is per branch at all.
+ *
+ * If the database is not reachable the page falls back to a local counter and
+ * says so on screen, in red, on every issued set. That fallback exists so the
+ * interface can be reviewed before the SQL is run. It must never be how a real
+ * card is issued, because a local counter cannot promise uniqueness.
+ * ------------------------------------------------------------------ */
+
+var BRANCHES = {
+  SAA:{name:'Mamsha al Saadiyat', emirate:'Abu Dhabi'},
+  KCA:{name:'Khalifa City A',     emirate:'Abu Dhabi'},
+  AQ: {name:'Al Quoz',            emirate:'Dubai'},
+  MC: {name:'Motor City',         emirate:'Dubai'}
+};
+
+var TIERS = {
+  D:{name:'Dip Your Toes',   spends:1150, months:6,  friends:1, birthday:150, birthdayWhat:'Birthday blow-dry',      refer:100},
+  S:{name:'Season of You',   spends:3000, months:9,  friends:3, birthday:350, birthdayWhat:'Birthday facial',        refer:150},
+  V:{name:'All-In VIP Year', spends:5400, months:12, friends:5, birthday:750, birthdayWhat:'Birthday treat',         refer:200}
+};
+
+/* ---------- dates ---------- */
+var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+// British English, month spelled out. Deliberately not 26/08/2026: the client base is
+// mostly expat, and a numeric 03/05/2026 is read two different ways by two nationalities.
+// A spelled month has exactly one reading, so the till never has that argument.
+function fmt(d){ return d.getDate() + ' ' + MONTHS[d.getMonth()] + ' ' + d.getFullYear(); }
+
+// Add months, clamped to the end of the target month, so 31 Mar + 6 lands on 30 Sep
+// instead of rolling into October.
+function addMonths(d, n){
+  var day = d.getDate();
+  var t = new Date(d.getFullYear(), d.getMonth() + n, 1);
+  var last = new Date(t.getFullYear(), t.getMonth() + 1, 0).getDate();
+  t.setDate(Math.min(day, last));
+  return t;
+}
+function parseDate(v){ var p = v.split('-'); return new Date(+p[0], +p[1] - 1, +p[2]); }
+function today(){ var n = new Date(); return new Date(n.getFullYear(), n.getMonth(), n.getDate()); }
+function iso(d){
+  var m = String(d.getMonth() + 1), dd = String(d.getDate());
+  if (m.length < 2) m = '0' + m;
+  if (dd.length < 2) dd = '0' + dd;
+  return d.getFullYear() + '-' + m + '-' + dd;
+}
+function money(n){ return n.toLocaleString('en-GB'); }
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function pad4(n){ var s = String(n); while (s.length < 4) s = '0' + s; return s; }
+
+/* ---------- the serial ---------- */
+// WV-<tier><type>-<branch>-<seq>[-<n>]. Full form for the log, for Phorest and for
+// the small print. The card face prints the same thing in four groups, which is how it
+// reads as a card number without being encoded down into digits.
+function serialOf(tier, type, branch, seq, n){
+  var s = 'WV-' + tier + type + '-' + branch + '-' + pad4(seq);
+  return n ? s + '-' + n : s;
+}
+function faceGroups(tier, type, branch, seq){
+  return ['WV', tier + type, branch, pad4(seq)];
+}
+
+/* ---------- where the number comes from ---------- */
+// Two modes, and the page says out loud which one it is in.
+//
+//   LIVE      issue_voucher() in Postgres allocates the sequence under a row lock and
+//             writes the row. This is the only mode that is safe on a real till, because
+//             it is the only one where two machines at one branch cannot both get 0043.
+//
+//   PREVIEW   the database is not reachable, or the tables are not created yet. The
+//             sequence comes from a local counter so the interface can still be shown
+//             and the layout checked. Nothing is logged, and the page says so.
+//
+// The local counter deliberately does NOT assume localStorage works. It is blocked on
+// data: URLs, in some private modes, and on locked-down machines, and a bare
+// localStorage read throws rather than returning null, which took the whole page down.
+var mem = {};
+var store = {
+  get: function (k){
+    try { var v = localStorage.getItem(k); return v === null ? mem[k] : v; }
+    catch (e) { return mem[k]; }
+  },
+  set: function (k, v){
+    mem[k] = String(v);
+    try { localStorage.setItem(k, String(v)); } catch (e) {}
+  }
+};
+
+function db(){ return (window.TRS && window.TRS.db) || null; }
+
+function localSeq(branch){
+  var k = 'trs-wv-seq-' + branch;
+  var next = parseInt(store.get(k) || '1', 10);
+  store.set(k, next + 1);
+  return next;
+}
+
+// Ask Postgres for the number and the row. Resolves to null on any failure, so the caller
+// decides what to do rather than this swallowing the problem.
+function remoteIssue(branch, tier, name, purchase, who){
+  var d = db();
+  if (!d) return Promise.resolve(null);
+  return d.rpc('issue_voucher', {
+    p_branch: branch,
+    p_tier: tier,
+    p_client_name: name,
+    p_purchase_date: iso(purchase),
+    p_issued_by: who || null
+  }).then(function (res){
+    if (res.error || !res.data) {
+      lastError = res.error ? (res.error.message || String(res.error)) : 'no row returned';
+      return null;
+    }
+    var row = Array.isArray(res.data) ? res.data[0] : res.data;
+    return row || null;
+  }).catch(function (e){
+    lastError = e && e.message ? e.message : String(e);
+    return null;
+  });
+}
+var lastError = null;
+
+// What the next number will be, for the panel. Read-only, so it is fine for anon.
+function remotePeek(branch){
+  var d = db();
+  if (!d) return Promise.resolve(null);
+  return d.from('voucher_counters').select('next_seq').eq('branch', branch).maybeSingle()
+    .then(function (res){ return res.error || !res.data ? null : res.data.next_seq; })
+    .catch(function (){ return null; });
+}
+
+/* ---------- one buyer's whole set ---------- */
+// One buyer, one sequence. The type letter is the only thing that changes, so
+// reception holds a single number for all six or eight cards.
+// alloc carries the number and the two dates. When the row came from Postgres those dates
+// are the ones stored against the serial, so the card shows exactly what the log holds
+// rather than a second calculation that could drift from it.
+function buildSet(branch, tier, name, purchase, alloc){
+  var t = TIERS[tier], seq = alloc.seq, cards = [], i;
+  var mainExpiry   = alloc.mainExpiry;
+  var friendExpiry = alloc.friendExpiry;
+
+  cards.push({
+    type:'M', label:'Main card', serial:serialOf(tier,'M',branch,seq),
+    face:faceGroups(tier,'M',branch,seq),
+    lead:t.name, value:t.spends, valueLabel:'Credit',
+    expiry:mainExpiry, printable:true
+  });
+
+  for (i = 1; i <= t.friends; i++){
+    cards.push({
+      type:'G', label:'Gift ' + i, serial:serialOf(tier,'G',branch,seq,i),
+      face:faceGroups(tier,'G',branch,seq),
+      gift:true, value:100, valueLabel:'Gift credit',
+      expiry:friendExpiry, printable:true,
+      of:'Card ' + i + ' of ' + t.friends,
+      note:'Two months from <b>her</b> purchase date, not from the day she hands it over. ' +
+           'All ' + t.friends + ' carry the same expiry.'
+    });
+  }
+
+  cards.push({
+    type:'B', label:'Birthday', serial:serialOf(tier,'B',branch,seq),
+    face:faceGroups(tier,'B',branch,seq),
+    lead:t.birthdayWhat, value:t.birthday, valueLabel:'Birthday treat',
+    expiry:mainExpiry, printable:true,
+    note:'Usable <b>any time</b> inside her voucher validity, not only in her birthday month. ' +
+         'Same clock as the main card.'
+  });
+
+  cards.push({
+    type:'R', label:'Refer a friend', serial:serialOf(tier,'R',branch,seq),
+    face:faceGroups(tier,'R',branch,seq),
+    lead:'Thank you for the introduction', value:t.refer, valueLabel:'Referral credit',
+    expiry:null, printable:false,
+    note:'<b>Cannot be printed today.</b> The clock starts when her third new friend has visited ' +
+         '<i>and paid</i>, so the expiry does not exist yet. Issue it then, against this same ' +
+         'number. It is a business adjustment, so it has no Phorest gift card either.'
+  });
+
+  return {
+    seq:seq, branch:branch, tier:tier, name:name, purchase:purchase, cards:cards,
+    live:!!alloc.live, id:alloc.id || null
+  };
+}
+
+/* ---------- render one card ---------- */
+function renderCard(set, card){
+  var b = BRANCHES[set.branch];
+  var nm = set.name ? set.name : 'Her name';
+  var lead = card.gift
+    ? '<div class="gift">A gift for you</div>'
+    : '<div class="tier">' + esc(card.lead) + '</div>';
+  var expiry = card.expiry ? fmt(card.expiry) : 'Set on referral';
+
+  return '' +
+  '<div class="card">' +
+    '<div class="sheen"></div>' +
+    '<div class="brand">' +
+      '<div class="rule"></div>' +
+      '<div class="nm">TARA ROSE</div>' +
+      '<div class="sub">SALON</div>' +
+    '</div>' +
+    lead +
+    '<div class="emv"><i></i><i></i><i></i><i></i></div>' +
+    '<div class="val">' +
+      '<div class="lb">' + esc(card.valueLabel) + '</div>' +
+      '<div class="amt"><small>AED</small>' + money(card.value) + '</div>' +
+    '</div>' +
+    '<div class="num">' +
+      card.face.map(function(g){ return '<span>' + g + '</span>'; }).join('') +
+    '</div>' +
+    (card.of ? '<div class="of">' + esc(card.of) + '</div>' : '') +
+    '<div class="foot">' +
+      '<div class="who">' +
+        '<div class="lb">' + (card.gift ? 'Gifted by' : 'Cardholder') + '</div>' +
+        '<div class="nm">' + esc(nm) + '</div>' +
+      '</div>' +
+      '<div class="dates">' +
+        '<div>Purchased <b>' + fmt(set.purchase) + '</b></div>' +
+        '<div>Valid until <b>' + expiry + '</b></div>' +
+        '<div>' + esc(b.name) + '</div>' +
+      '</div>' +
+    '</div>' +
+  '</div>';
+}
+
+/* ---------- wiring ---------- */
+function el(id){ return document.getElementById(id); }
+var state = {set:null, active:0};
+
+function refreshCounter(){
+  var b = el('branch').value;
+  el('emirate').textContent = BRANCHES[b].emirate + '. The card works at both salons in this emirate.';
+
+  function show(n, live){
+    el('counter').innerHTML = 'Next number at <b>' + esc(BRANCHES[b].name) + '</b> is <b>' +
+      pad4(n) + '</b>' + (live ? '' : ' <i>(local)</i>') +
+      '. Each branch counts on its own, so two tills can never collide.';
+  }
+
+  remotePeek(b).then(function (n){
+    if (n !== null){ show(n, true); setDbState(true); }
+    else { show(parseInt(store.get('trs-wv-seq-' + b) || '1', 10), false); setDbState(false); }
+  });
+}
+
+function setDbState(live){
+  var n = el('dbstate');
+  n.className = 'note ' + (live ? 'good' : 'flag');
+  n.innerHTML = live
+    ? '<b>Connected.</b> Every card issued here is written to the log in Supabase, and the ' +
+      'number is allocated by the database.'
+    : '<b>Preview only, nothing is being saved.</b> The <code>voucher_issues</code> tables are ' +
+      'not reachable, so the number is coming from this browser. Run ' +
+      '<code>sql/voucher_issues_setup.sql</code> in the Supabase SQL editor to switch this to live.' +
+      (lastError ? ' <br><span style="opacity:.75">' + esc(lastError) + '</span>' : '');
+}
+
+function drawSet(){
+  var set = state.set;
+  if (!set) return;
+  var card = set.cards[state.active];
+
+  el('serialline').innerHTML = (set.live ? 'Issued' : 'Previewed') + ' for <b>' + esc(set.name) +
+    '</b> at <b>' + esc(BRANCHES[set.branch].name) + '</b>. Her number is <code>' +
+    pad4(set.seq) + '</code>' + (set.live ? ', logged.' : ', <b>not logged</b>.');
+
+  el('setbar').innerHTML = set.cards.map(function(c, i){
+    var cls = 'chip' + (i === state.active ? ' on' : '') + (c.printable ? '' : ' off');
+    return '<button class="' + cls + '" data-i="' + i + '">' + esc(c.label) +
+           '<span class="v">AED ' + money(c.value) + '</span></button>';
+  }).join('');
+
+  el('stage').innerHTML = renderCard(set, card);
+  el('caption').innerHTML = 'Full serial <code>' + card.serial + '</code>';
+
+  var printable = set.cards.filter(function (c){ return c.printable; });
+  el('printall').innerHTML = printable.map(function (c){ return renderCard(set, c); }).join('');
+  el('printall-btn').disabled = !set.live;
+  el('printall-btn').textContent = set.live
+    ? 'Save all ' + printable.length + ' cards as one PDF'
+    : 'Cannot print, nothing was logged';
+
+  var note = el('cardnote');
+  if (card.note){
+    note.style.display = '';
+    note.className = 'note ' + (card.printable ? 'good' : 'flag');
+    note.innerHTML = card.note;
+  } else {
+    note.style.display = 'none';
+  }
+
+  // Preview mode means nothing was written, so nothing may be handed over. A serial that
+  // exists only on paper cannot be reconciled later, and the set PDF would carry five to
+  // seven of them at once. Refusing here is the cheaper failure.
+  el('print').disabled = !card.printable || !set.live;
+  el('printall-btn').disabled = !set.live;
+  el('copy').disabled = false;
+
+  if (!set.live){
+    el('printall-btn').textContent = 'Cannot print, nothing was logged';
+  }
+}
+
+el('setbar').addEventListener('click', function(e){
+  var b = e.target.closest('.chip');
+  if (!b) return;
+  state.active = +b.getAttribute('data-i');
+  drawSet();
+});
+
+el('branch').addEventListener('change', refreshCounter);
+
+el('issue').addEventListener('click', function(){
+  var name = el('cname').value.trim();
+  var d = el('pdate').value;
+  if (!name){ el('cname').focus(); return; }
+  if (!d){ el('pdate').focus(); return; }
+
+  var branch = el('branch').value, tier = el('tier').value;
+  var purchase = parseDate(d), who = el('who').value.trim();
+  var btn = this;
+
+  btn.disabled = true;
+  btn.textContent = 'Issuing...';
+
+  lastError = null;
+  remoteIssue(branch, tier, name, purchase, who).then(function (row){
+    var alloc;
+    if (row){
+      // The database is the source of truth for the dates as well as the number.
+      alloc = {
+        seq: row.seq, id: row.id, live: true,
+        mainExpiry: parseDate(row.main_expires_on),
+        friendExpiry: parseDate(row.friend_expires_on)
+      };
+    } else {
+      // Preview. The month maths here mirrors make_interval() in the SQL, including the
+      // end-of-month clamp, so switching to live does not change any date.
+      alloc = {
+        seq: localSeq(branch), id: null, live: false,
+        mainExpiry: addMonths(purchase, TIERS[tier].months),
+        friendExpiry: addMonths(purchase, 2)
+      };
+    }
+    state.set = buildSet(branch, tier, name, purchase, alloc);
+    state.active = 0;
+    setDbState(alloc.live);
+    refreshCounter();
+    drawSet();
+  }).then(function (){
+    btn.disabled = false;
+    btn.textContent = 'Issue the set';
+  });
+});
+
+el('reset').addEventListener('click', function(){
+  state.set = null; state.active = 0;
+  el('cname').value = '';
+  el('setbar').innerHTML = '';
+  el('stage').innerHTML = '';
+  el('caption').innerHTML = '';
+  el('cardnote').style.display = 'none';
+  el('printall').innerHTML = '';
+  el('serialline').innerHTML = 'Nothing issued yet. Fill the form and press <b>Issue the set</b>.';
+  el('print').disabled = true;
+  el('copy').disabled = true;
+  el('printall-btn').disabled = true;
+  el('printall-btn').textContent = 'Save all her cards as one PDF';
+});
+
+// The browser names a Save as PDF after document.title, so it is set to something reception
+// can find again in a folder of attachments, then put back.
+function printWith(mode, filename){
+  var restore = document.title;
+  document.title = filename;
+  document.body.classList.add(mode);
+
+  // Undone on afterprint, not on the line after window.print(). Chrome does not reliably
+  // block there, so clearing it immediately could strip the mode before the print preview
+  // has rendered, and the wrong card set would come out.
+  function cleanup(){
+    document.body.classList.remove(mode);
+    document.title = restore;
+    window.removeEventListener('afterprint', cleanup);
+  }
+  window.addEventListener('afterprint', cleanup);
+  window.print();
+}
+
+el('print').addEventListener('click', function(){
+  var c = state.set.cards[state.active];
+  printWith('p-one', c.serial + ' ' + state.set.name);
+});
+
+el('printall-btn').addEventListener('click', function(){
+  var s2 = state.set;
+  printWith('p-all', 'WV-' + s2.branch + '-' + pad4(s2.seq) + ' ' + s2.name + ' all cards');
+});
+
+el('copy').addEventListener('click', function(){
+  var s = state.set.cards[state.active].serial;
+  var btn = this;
+  function done(){
+    btn.textContent = 'Copied';
+    setTimeout(function(){ btn.textContent = 'Copy the serial'; }, 1400);
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(s).then(done, done);
+  } else {
+    var ta = document.createElement('textarea');
+    ta.value = s; document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); } catch (e) {}
+    document.body.removeChild(ta);
+    done();
+  }
+});
+
+el('pdate').value = iso(today());
+
+// supabase-client.js resolves TRS.ready once it has looked for a session. Waiting for it
+// means the first counter read goes to the database rather than reporting "local" and then
+// silently correcting itself a moment later.
+if (window.TRS && window.TRS.ready) { window.TRS.ready.then(refreshCounter); }
+else { refreshCounter(); }
+</script>
+</body>
+</html>
