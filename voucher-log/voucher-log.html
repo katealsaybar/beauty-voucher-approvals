@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- Reads the voucher log, which is client names and purchase dates. Not for search results. -->
+<meta name="robots" content="noindex,nofollow">
+<title>The voucher log</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FAF8F4; --paper:#FFFFFF; --ink:#2D2E37; --muted:#6E6E77;
+  --line:#E7E2D8; --accent:#99F6E4; --sand:#F1ECE3;
+  --amber:#B4823A; --amber-bg:#FBF3E2; --blue:#3B6E8F; --blue-bg:#E6F0F5;
+  --green:#3E7A5E; --green-bg:#E4F1EA; --red:#B24A4A; --red-bg:#F7E9E9;
+  --serif:'Playfair Display',Georgia,serif;
+  --sans:'Inter',system-ui,-apple-system,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.6;font-size:16px;}
+.wrap{max-width:1100px;margin:0 auto;padding:32px 24px 90px;}
+
+.brandlogo{height:32px;width:auto;display:block;margin-bottom:16px;}
+.top{border-bottom:2px solid var(--ink);padding-bottom:18px;margin-bottom:20px;}
+.crumb{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
+.crumb a{color:inherit;text-decoration:none;border-bottom:1px solid var(--line);}
+.team{font-family:var(--serif);font-size:clamp(28px,5vw,42px);line-height:1.05;font-weight:600;margin-bottom:8px;}
+.owns{font-size:16px;color:var(--muted);max-width:66ch;}
+
+.who{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:13px;
+  color:var(--muted);margin-top:14px;}
+.who b{color:var(--ink);}
+.pill{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  padding:3px 9px;border-radius:999px;background:var(--sand);color:var(--ink);}
+.pill.admin{background:var(--ink);color:#fff;}
+
+.bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:18px;}
+.bar input[type=search]{flex:1 1 260px;font-family:var(--sans);font-size:15px;padding:11px 13px;
+  border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--ink);}
+.bar input[type=search]:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--ink);}
+.bar label{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:6px;}
+
+.btn{font-family:var(--sans);font-size:13px;font-weight:600;padding:8px 13px;border-radius:8px;
+  border:1px solid var(--ink);background:var(--ink);color:#fff;cursor:pointer;}
+.btn.ghost{background:#fff;color:var(--ink);}
+.btn.danger{background:#fff;color:var(--red);border-color:var(--red);}
+.btn:disabled{opacity:.4;cursor:not-allowed;}
+.btn.sm{font-size:12px;padding:6px 10px;}
+
+.tally{font-size:13px;color:var(--muted);margin-bottom:14px;}
+
+.row{background:var(--paper);border:1px solid var(--line);border-radius:12px;
+  padding:14px 16px;margin-bottom:10px;}
+.row.void{background:var(--red-bg);border-color:#EBC9C9;}
+.row.arch{opacity:.55;}
+.rhead{display:flex;gap:14px;align-items:baseline;flex-wrap:wrap;}
+.rser{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13.5px;font-weight:600;}
+.rname{font-size:16px;font-weight:600;flex:1 1 160px;}
+.rmeta{font-size:13px;color:var(--muted);}
+.tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}
+.tag{font-size:11.5px;padding:3px 8px;border-radius:6px;background:var(--sand);color:var(--ink);}
+.tag.warn{background:var(--amber-bg);color:var(--amber);}
+.tag.ok{background:var(--green-bg);color:var(--green);}
+.tag.bad{background:var(--red-bg);color:var(--red);}
+
+.detail{margin-top:14px;padding-top:14px;border-top:1px solid var(--line);display:none;}
+.row.open .detail{display:block;}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px 18px;
+  font-size:13.5px;margin-bottom:14px;}
+.grid div span{display:block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--muted);}
+
+.friends{margin:0 0 12px;padding:0;list-style:none;font-size:13.5px;}
+.friends li{display:flex;gap:10px;align-items:center;padding:7px 0;border-top:1px solid var(--line);}
+.friends li b{flex:1;font-weight:500;}
+.friends .n{width:20px;height:20px;border-radius:50%;background:var(--ink);color:#fff;
+  font-size:11px;font-weight:700;display:grid;place-items:center;flex:none;}
+
+.addf{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;}
+.addf .fld{flex:1 1 130px;}
+.addf label{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:4px;}
+.addf input{width:100%;font-family:var(--sans);font-size:14px;padding:8px 10px;
+  border:1px solid var(--line);border-radius:7px;background:#fff;color:var(--ink);}
+
+.note{border-radius:10px;padding:12px 14px;font-size:13.5px;margin-bottom:18px;}
+.note.flag{background:var(--red-bg);border-left:3px solid var(--red);}
+.note.info{background:var(--blue-bg);border-left:3px solid var(--blue);}
+.empty{text-align:center;color:var(--muted);padding:40px 20px;font-size:15px;}
+</style>
+</head>
+<body data-auth-root="../">
+<div class="wrap">
+
+  <div class="top">
+    <img class="brandlogo" src="../assets/tara-rose-logo-black.png" alt="Tara Rose Salon">
+    <div class="crumb"><a href="../voucher-issue/voucher-issue.html">Issue a card</a> &rsaquo; The log</div>
+    <div class="team">The voucher log</div>
+    <p class="owns">Every Wellness Card issued, who issued it, and how far each client is towards her referral credit.</p>
+    <div class="who" id="who"></div>
+  </div>
+
+  <div class="note info" id="rolenote"></div>
+
+  <div class="bar">
+    <input type="search" id="q" placeholder="Search a name, a serial, a branch or who issued it" autocomplete="off">
+    <label><input type="checkbox" id="showarch"> Show archived</label>
+    <button class="btn ghost" id="refresh">Refresh</button>
+  </div>
+
+  <p class="tally" id="tally">Loading&hellip;</p>
+  <div id="list"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../auth/supabase-client.js"></script>
+<script>
+/* ------------------------------------------------------------------ *
+ * The voucher log. Read for everyone, change for Kate only.
+ *
+ * Every control that writes is hidden unless TRS.isAdmin(), but that is
+ * convenience, not the guard. The guard is the RLS policy in
+ * sql/voucher_roles_fix.sql and sql/voucher_referrals.sql, both of which check
+ * public.is_admin(auth.uid()). If the UI is wrong the database still refuses,
+ * which is the order those two have to be in.
+ * ------------------------------------------------------------------ */
+
+var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function el(id){ return document.getElementById(id); }
+function esc(s){ return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function money(n){ return Number(n || 0).toLocaleString('en-GB'); }
+
+// Spelled month, same reason as the card: a numeric date is read two ways by two
+// nationalities and this list is read next to a client on the phone.
+function fmt(d){
+  if (!d) return '';
+  var p = String(d).split('-');
+  return (+p[2]) + ' ' + MONTHS[(+p[1]) - 1] + ' ' + p[0];
+}
+function iso(d){
+  var m = String(d.getMonth() + 1), dd = String(d.getDate());
+  if (m.length < 2) m = '0' + m;
+  if (dd.length < 2) dd = '0' + dd;
+  return d.getFullYear() + '-' + m + '-' + dd;
+}
+function db(){ return (window.TRS && window.TRS.db) || null; }
+function admin(){ return !!(window.TRS && window.TRS.isAdmin && window.TRS.isAdmin()); }
+
+var rows = [], friendsBy = {}, open = {};
+var hasReferrals = true;   // set from the shape of the view, see load()
+
+/* ---------- who is looking ---------- */
+function drawWho(){
+  var email = window.TRS && window.TRS.email ? window.TRS.email() : null;
+  var isAdm = admin();
+
+  el('who').innerHTML = email
+    ? 'Signed in as <b>' + esc(email) + '</b> <span class="pill' + (isAdm ? ' admin' : '') + '">' +
+      (isAdm ? 'can edit' : 'view only') + '</span> ' +
+      '<button class="btn ghost sm" id="signout">Sign out</button>'
+    : 'Not signed in <span class="pill">view only</span> ' +
+      '<a class="btn ghost sm" href="' + (window.TRS ? window.TRS.loginUrl() : '#') +
+      '" style="text-decoration:none">Sign in</a>';
+
+  if (el('signout')){
+    el('signout').addEventListener('click', function(){
+      window.TRS.signOut().then(function(){ drawWho(); draw(); });
+    });
+  }
+
+  el('rolenote').className = 'note ' + (isAdm ? 'info' : 'info');
+  el('rolenote').innerHTML = isAdm
+    ? '<b>You can change things here.</b> Recording a friend towards a referral, archiving a row, ' +
+      'and voiding a card are all yours alone. <b>Archive hides a row. Void kills the card</b>, and ' +
+      'reception will turn the client away at the desk, so they are two different buttons on purpose.'
+    : '<b>This is a read-only view.</b> Everything issued is listed, and the referral count is shown, ' +
+      'but only Kate can record a friend or retire a card. Sign in if you are her.';
+}
+
+/* ---------- load ---------- */
+function load(){
+  var d = db();
+  if (!d){
+    el('tally').textContent = 'Cannot reach the database.';
+    return Promise.resolve();
+  }
+  el('tally').textContent = 'Loading…';
+  return d.from('voucher_log').select('*').order('created_at', {ascending:false}).limit(500)
+    .then(function (res){
+      if (res.error){
+        el('tally').innerHTML = 'Could not read the log. <span style="opacity:.7">' +
+          esc(res.error.message) + '</span>';
+        rows = [];
+        return;
+      }
+      rows = res.data || [];
+
+      // voucher_referrals.sql adds friends_so_far to the view. If it is absent the migration
+      // has not been run, and every referral control has to go quiet rather than render
+      // "undefined of 3" next to a client's name.
+      hasReferrals = !rows.length || Object.prototype.hasOwnProperty.call(rows[0], 'friends_so_far');
+      if (!hasReferrals){ friendsBy = {}; return; }
+
+      // One query for every friend on screen rather than one per row.
+      return d.from('voucher_referrals').select('*').order('visited_on', {ascending:true})
+        .then(function (r2){
+          friendsBy = {};
+          (r2.data || []).forEach(function (f){
+            (friendsBy[f.issue_id] = friendsBy[f.issue_id] || []).push(f);
+          });
+        });
+    })
+    .then(draw);
+}
+
+/* ---------- draw ---------- */
+function draw(){
+  var term = el('q').value.trim().toLowerCase();
+  var withArchived = el('showarch').checked;
+
+  var shown = rows.filter(function (r){
+    if (!withArchived && r.is_archived) return false;
+    return !term || (r.search_text || '').indexOf(term) > -1;
+  });
+
+  var live = rows.filter(function (r){ return !r.is_archived && !r.is_voided; });
+  var sold = live.reduce(function (a, r){ return a + (r.credit_aed || 0); }, 0);
+  var earned = live.filter(function (r){ return r.referral_earned; }).length;
+
+  el('tally').innerHTML = '<b>' + live.length + '</b> live ' +
+    (live.length === 1 ? 'voucher' : 'vouchers') + ' &middot; <b>AED ' + money(sold) +
+    '</b> of credit placed &middot; <b>' + earned + '</b> ' +
+    (earned === 1 ? 'has' : 'have') + ' earned the referral credit' +
+    (term ? ' &middot; showing ' + shown.length + ' for &ldquo;' + esc(term) + '&rdquo;' : '');
+
+  if (!hasReferrals){
+    el('rolenote').className = 'note flag';
+    el('rolenote').innerHTML = '<b>Referral tracking is not set up yet.</b> Run ' +
+      '<code>sql/voucher_referrals.sql</code> in the Supabase SQL editor. Until then this page ' +
+      'lists the cards but cannot count friends, and the referral credit cannot be earned.';
+  }
+
+  if (!shown.length){
+    el('list').innerHTML = '<div class="empty">' +
+      (rows.length ? 'Nothing matches that.' : 'Nothing issued yet. Cards appear here as reception issues them.') +
+      '</div>';
+    return;
+  }
+
+  el('list').innerHTML = shown.map(rowHtml).join('');
+}
+
+function rowHtml(r){
+  var isAdm = admin();
+  var friends = friendsBy[r.id] || [];
+  var need = r.friends_needed || 3;
+  var got  = r.friends_so_far || 0;
+
+  var tags = [];
+  if (r.is_voided)   tags.push('<span class="tag bad">Voided' + (r.void_reason ? ': ' + esc(r.void_reason) : '') + '</span>');
+  if (r.is_archived) tags.push('<span class="tag">Archived</span>');
+  tags.push('<span class="tag">' + esc(r.tier_name) + ' &middot; AED ' + money(r.credit_aed) + '</span>');
+  tags.push('<span class="tag">' + esc(r.branch) + ' &middot; ' + esc(r.emirate) + '</span>');
+  if (!hasReferrals){
+    tags.push('<span class="tag">Referral tracking not set up</span>');
+  } else if (r.referral_earned){
+    tags.push('<span class="tag ok">Referral earned &middot; AED ' + money(r.referral_aed) +
+      ' &middot; expires ' + fmt(r.referral_expires_on) + '</span>');
+  } else {
+    tags.push('<span class="tag warn">Referral ' + got + ' of ' + need + '</span>');
+  }
+
+  return '' +
+  '<div class="row' + (r.is_voided ? ' void' : '') + (r.is_archived ? ' arch' : '') +
+       (open[r.id] ? ' open' : '') + '" data-id="' + r.id + '">' +
+    '<div class="rhead" data-toggle="1" style="cursor:pointer">' +
+      '<span class="rser">' + esc(r.main_serial) + '</span>' +
+      '<span class="rname">' + esc(r.client_name) + '</span>' +
+      '<span class="rmeta">bought ' + fmt(r.purchase_date) +
+        (r.issued_by ? ' &middot; by ' + esc(r.issued_by) : '') + '</span>' +
+    '</div>' +
+    '<div class="tags">' + tags.join('') + '</div>' +
+
+    '<div class="detail">' +
+      '<div class="grid">' +
+        '<div><span>Her credit expires</span>' + fmt(r.main_expires_on) + '</div>' +
+        '<div><span>Friend cards expire</span>' + fmt(r.friend_expires_on) + '</div>' +
+        '<div><span>Friend cards</span>' + r.friend_cards + ' &times; AED 100</div>' +
+        (hasReferrals ? '<div><span>Referral credit</span>AED ' + money(r.referral_aed) + '</div>' : '') +
+      '</div>' +
+
+      (hasReferrals ? '<div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px">' +
+        'Friends who came in and paid' +
+      '</div>' : '') +
+      (!hasReferrals ? '' : friends.length
+        ? '<ul class="friends">' + friends.map(function (f, i){
+            return '<li><span class="n">' + (i + 1) + '</span><b>' + esc(f.friend_name) + '</b>' +
+              '<span class="rmeta">' + fmt(f.visited_on) +
+              (f.gift_serial ? ' &middot; ' + esc(f.gift_serial) : '') + '</span>' +
+              (isAdm ? '<button class="btn danger sm" data-delf="' + f.id + '">Remove</button>' : '') +
+            '</li>';
+          }).join('') + '</ul>'
+        : '<p class="rmeta" style="margin-bottom:12px">None yet. Reaching ' + need +
+          ' earns the credit, and that day starts the two months.</p>') +
+
+      (isAdm && hasReferrals ? addFriendHtml(r) : '') +
+
+      (isAdm ? '<div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">' +
+        (r.is_archived ? '' : '<button class="btn ghost sm" data-arch="' + r.id + '">Archive this row</button>') +
+        (r.is_voided ? '' : '<button class="btn danger sm" data-void="' + r.id + '">Void this card</button>') +
+      '</div>' : '') +
+    '</div>' +
+  '</div>';
+}
+
+function addFriendHtml(r){
+  return '' +
+  '<div class="addf">' +
+    '<div class="fld"><label>Her friend&rsquo;s name</label>' +
+      '<input type="text" data-fn="' + r.id + '" placeholder="Full name"></div>' +
+    '<div class="fld"><label>Day she visited and paid</label>' +
+      '<input type="date" data-fd="' + r.id + '" value="' + iso(new Date()) + '"></div>' +
+    '<div class="fld"><label>Gift card serial, if she had one</label>' +
+      '<input type="text" data-fg="' + r.id + '" placeholder="WV-' + r.tier + 'G-' + r.branch + '-' +
+        String(r.seq).padStart(4,'0') + '-1"></div>' +
+    '<button class="btn sm" data-addf="' + r.id + '">Add this friend</button>' +
+  '</div>';
+}
+
+/* ---------- writes, all admin only, all refused by the database otherwise ---------- */
+function addFriend(id){
+  var name = document.querySelector('[data-fn="' + id + '"]').value.trim();
+  var when = document.querySelector('[data-fd="' + id + '"]').value;
+  var gift = document.querySelector('[data-fg="' + id + '"]').value.trim().toUpperCase();
+  if (!name || !when){ return; }
+
+  db().from('voucher_referrals').insert({
+    issue_id: id, friend_name: name, visited_on: when,
+    gift_serial: gift || null,
+    recorded_by: window.TRS.email()
+  }).then(function (res){
+    if (res.error){ alert('Not saved: ' + res.error.message); return; }
+    load();
+  });
+}
+
+function addEvent(id, kind, detail){
+  db().from('voucher_events').insert({
+    issue_id: id, kind: kind, detail: detail || null,
+    recorded_by: window.TRS.email()
+  }).then(function (res){
+    if (res.error){ alert('Not saved: ' + res.error.message); return; }
+    load();
+  });
+}
+
+/* ---------- wiring ---------- */
+el('list').addEventListener('click', function (e){
+  var t = e.target;
+
+  var head = t.closest('[data-toggle]');
+  if (head && !t.closest('button')){
+    var id = head.closest('.row').getAttribute('data-id');
+    open[id] = !open[id];
+    head.closest('.row').classList.toggle('open');
+    return;
+  }
+
+  if (t.hasAttribute('data-addf')){ addFriend(t.getAttribute('data-addf')); return; }
+
+  if (t.hasAttribute('data-delf')){
+    if (!confirm('Remove this friend from the count?')) return;
+    db().from('voucher_referrals').delete().eq('id', t.getAttribute('data-delf'))
+      .then(function (res){
+        if (res.error){ alert('Not removed: ' + res.error.message); return; }
+        load();
+      });
+    return;
+  }
+
+  if (t.hasAttribute('data-arch')){
+    // Archive is reversible in the sense that it changes nothing for the client, so it does
+    // not need the same warning as a void.
+    addEvent(t.getAttribute('data-arch'), 'archived', null);
+    return;
+  }
+
+  if (t.hasAttribute('data-void')){
+    // Void IS what reception acts on, so it asks for a reason and says what happens.
+    var why = prompt('Voiding means reception will refuse this card at the desk.\n\nWhy?');
+    if (why === null) return;
+    if (!why.trim()){ alert('A reason is needed, so the desk can explain it to her.'); return; }
+    addEvent(t.getAttribute('data-void'), 'voided', why.trim());
+    return;
+  }
+});
+
+el('q').addEventListener('input', draw);
+el('showarch').addEventListener('change', draw);
+el('refresh').addEventListener('click', load);
+
+if (window.TRS && window.TRS.ready){
+  window.TRS.ready.then(function (){ drawWho(); return load(); });
+  window.TRS.onAuthChange(function (){ drawWho(); draw(); });
+} else {
+  drawWho(); load();
+}
+</script>
+</body>
+</html>
