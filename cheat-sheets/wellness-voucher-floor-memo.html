@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Wellness Voucher, Floor Memo v3</title>
+<title>Wellness Voucher, Floor Memo v4</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
@@ -11,14 +11,17 @@
   }
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:'Inter',-apple-system,Segoe UI,sans-serif;color:var(--ink);background:var(--paper);
-       font-size:10.4pt;line-height:1.42;-webkit-font-smoothing:antialiased}
-  .sheet{width:210mm;min-height:297mm;padding:12mm 13mm;margin:0 auto;background:var(--paper);
-         display:flex;flex-direction:column}
+       font-size:9.8pt;line-height:1.4;-webkit-font-smoothing:antialiased}
+  .sheet{width:210mm;height:297mm;padding:11mm 12mm;margin:0 auto 6mm;background:var(--paper);
+         display:flex;flex-direction:column;overflow:hidden}
+  .sheet+.sheet{page-break-before:always}
 
   header{border-bottom:2px solid var(--ink);padding-bottom:6px;margin-bottom:10px;
          display:flex;justify-content:space-between;align-items:flex-end;gap:16px}
   .brand{font-size:7pt;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
   h1{font-family:'Playfair Display',Georgia,serif;font-size:20pt;font-weight:600;line-height:1.05;letter-spacing:-.01em}
+  h1 small{font-family:'Inter';font-size:8pt;font-weight:500;letter-spacing:0;color:var(--muted);
+           display:block;margin-top:4px;line-height:1.35;max-width:110mm}
   .who{text-align:right;font-size:8pt;color:var(--muted);line-height:1.5;white-space:nowrap}
   .who b{color:var(--ink);font-weight:600}
 
@@ -29,7 +32,7 @@
   .cols{display:grid;grid-template-columns:1fr 1fr;gap:0 15px}
   section{break-inside:avoid;margin-bottom:9px}
   h2{font-size:7.9pt;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
-     margin-bottom:4px;padding-bottom:3px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:6px}
+     margin-bottom:5px;padding-bottom:3px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:6px}
   h2 .n{display:inline-flex;align-items:center;justify-content:center;width:13.5px;height:13.5px;border-radius:50%;
         background:var(--ink);color:var(--paper);font-size:6.4pt;font-weight:700;flex:0 0 13.5px}
   p+p{margin-top:3.5px}
@@ -42,32 +45,77 @@
                     color:var(--ink);font-size:8.2pt;font-weight:700;opacity:1;line-height:1.4}
   .never b{font-weight:600}
   .never span{color:var(--muted)}
-  .ladder{border-left:3px solid var(--lilac);padding-left:9px}
-  .ladder div{margin-bottom:3px}
-  .ladder .tier{font-weight:700;font-size:8pt}
-  .say{background:var(--lime);padding:7px 10px;border-radius:3px;margin-top:4px;
+  .say{background:var(--lime);padding:7px 10px;border-radius:3px;margin-top:5px;
        font-family:'Playfair Display',Georgia,serif;font-size:9.4pt;line-height:1.32}
   .say .lbl{font-family:'Inter';font-size:6.4pt;letter-spacing:.14em;text-transform:uppercase;font-weight:700;
             opacity:.6;display:block;margin-bottom:2px}
-  .box{background:#fff;border:1px solid var(--line);padding:6px 10px;border-radius:3px}
+  .box{background:#fff;border:1px solid var(--line);padding:7px 10px;border-radius:3px}
   .box.teal{border-left:3px solid var(--teal)}
   .box.coral{border-left:3px solid var(--coral)}
+  .box.lilac{border-left:3px solid var(--lilac)}
+  .box+p{margin-top:4px}
+  p.note{font-size:8.4pt;color:var(--muted);margin-top:4px}
+  p.note b{color:var(--ink);font-weight:600}
+
+  /* page 1: the five steps, and the worked example */
+  .steps{counter-reset:s;margin-bottom:2px}
+  .steps li{padding-left:24px;margin-bottom:5px;font-size:10.4pt;line-height:1.34}
+  .steps li::before{counter-increment:s;content:counter(s);left:0;top:.05em;width:16px;height:16px;
+                    border-radius:50%;background:var(--lilac);color:var(--ink);opacity:1;
+                    font-size:7.2pt;font-weight:700;display:flex;align-items:center;justify-content:center}
+  .steps li b{font-weight:700}
+  .steps li span{color:var(--muted);font-size:8.6pt}
+
+  table{width:100%;border-collapse:collapse;font-size:8.4pt}
+  .tbl th{text-align:left;font-weight:700;font-size:6.9pt;letter-spacing:.09em;text-transform:uppercase;
+          color:var(--muted);padding:0 6px 3px 0;border-bottom:1px solid var(--ink);vertical-align:bottom}
+  .tbl td{padding:3.6px 6px 3.6px 0;border-bottom:1px solid var(--line);vertical-align:top}
+  .tbl tr:last-child td{border-bottom:none}
+  .tbl .plan{font-weight:700}
+  .tbl .num{white-space:nowrap}
+  .tbl td.tot,.tbl th.tot{text-align:right;white-space:nowrap}
+  .tbl tr.total td{border-top:1px solid var(--ink);border-bottom:none;font-weight:700;background:rgba(196,181,253,.16)}
+  .tbl.story td:last-child{font-weight:700;text-align:right;white-space:nowrap}
+  .tbl.story th:last-child{text-align:right}
+  .tbl.story .when{white-space:nowrap;font-weight:600}
+  .yes{font-weight:600}
+  .no{color:var(--muted)}
+
+  .gloss{font-size:8.8pt;line-height:1.36}
+  .gloss div{margin-bottom:4px;break-inside:avoid}
+  .gloss b{font-weight:700}
+  .gloss span{color:var(--muted)}
+
+  .ladder{border-left:3px solid var(--lilac);padding-left:9px}
+  .ladder div{margin-bottom:4px}
+  .ladder .tier{font-weight:700;font-size:8.2pt}
+
+  .terms{column-count:2;column-gap:15px;font-size:8.6pt;line-height:1.36}
+  .terms .t{break-inside:avoid;margin-bottom:6px}
+  .terms .t h3{font-size:8.6pt;font-weight:700;display:inline}
+  .terms .t h3 .tn{display:inline-block;min-width:12px;color:var(--muted)}
+  .terms .t p{display:inline;margin:0}
+
   footer{margin-top:auto;padding-top:8px;border-top:2px solid var(--ink);
          display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
-  footer p{font-size:8.2pt;max-width:116mm}
+  footer p{font-size:8.4pt;max-width:116mm}
   footer p+p{margin-top:3px}
   footer .meta{font-size:7pt;color:var(--muted);text-align:right;line-height:1.6;white-space:nowrap}
+  .pagetag{font-size:7pt;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);
+           margin-top:auto;padding-top:8px;border-top:1px solid var(--line);display:flex;justify-content:space-between}
   @page{size:A4;margin:0}
   @media print{body{background:#fff}.sheet{margin:0}}
 </style>
 </head>
 <body>
+
+<!-- ===================== PAGE 1: START HERE ===================== -->
 <div class="sheet">
 
   <header>
     <div>
-      <div class="brand">Tara Rose &nbsp;·&nbsp; Floor Memo &nbsp;·&nbsp; v3</div>
-      <h1>The Wellness Voucher</h1>
+      <div class="brand">Tara Rose &nbsp;·&nbsp; Floor Memo &nbsp;·&nbsp; v4 &nbsp;·&nbsp; page 1 of 4</div>
+      <h1>The Wellness Voucher<small>Start here. This page assumes you have never heard of this campaign. Page 2 is the prices, page 3 is what you do on the floor, page 4 is the terms she agreed to when she paid.</small></h1>
     </div>
     <div class="who">
       <b>For:</b> all stylists &amp; beauticians<br>
@@ -81,89 +129,301 @@
     <p>“It’s not money off. You place your credit, we add more on top, and it becomes your plan for the year.”</p>
   </div>
 
+  <section>
+    <h2><span class="n">1</span> How it works, in five steps</h2>
+    <ul class="steps">
+      <li>The client <b>pays us money now</b>, in one go. <span>Say AED 2,500.</span></li>
+      <li>We <b>add extra money on top of what she paid</b>. <span>AED 500 on that plan, and she does not pay for that part. She now has AED 3,000 sitting on her account.</span></li>
+      <li>She <b>spends that AED 3,000 with us</b>, one appointment at a time, over the next few months. <span>Six, nine or twelve months, depending on the plan she bought.</span></li>
+      <li>Every visit, the price of her services <b>comes off her balance</b>, like money in a bank account. She pays nothing at the till while there is balance left.</li>
+      <li>When the balance runs out, or her months are up, <b>she pays normally again</b>.</li>
+    </ul>
+    <p class="note"><b>So: nothing here is free, and nothing is a discount.</b> She paid for most of it herself. We added some on top to thank her for paying up front, and to get her booked in for the whole year instead of once.</p>
+  </section>
+
+  <section>
+    <h2><span class="n">2</span> One client, start to finish</h2>
+    <table class="tbl story">
+      <tr><th>When</th><th>What happens</th><th>Her balance</th></tr>
+      <tr><td class="when">August</td><td>She pays AED 2,500 for the Season of You plan. We put AED 3,000 on her account, for nine months.</td><td>AED 3,000</td></tr>
+      <tr><td class="when">September</td><td>Colour and a blowdry, AED 700. She pays nothing at the till.</td><td>AED 2,300</td></tr>
+      <tr><td class="when">October</td><td>A facial and her nails, AED 500. Again, nothing at the till.</td><td>AED 1,800</td></tr>
+      <tr><td class="when">November</td><td>She wants a full colour correction, AED 1,200. Her plan does not reach that service, so <b>she pays for that one herself</b>, in the normal way. Her balance is not touched.</td><td>AED 1,800</td></tr>
+      <tr><td class="when">May</td><td>Nine months are up. Anything she has not used stops there, so we keep her booked in rather than waiting for her to remember.</td><td>Ends</td></tr>
+    </table>
+    <p class="note">That one story is four of the rules on this memo: her credit pays for services, some services are above her plan, she settles those herself, and her months run out. <b>If you can tell that story, you can answer most questions on the floor.</b></p>
+  </section>
+
+  <section>
+    <h2><span class="n">3</span> What it is not</h2>
+    <div class="cols gloss">
+      <div>
+        <div><b>It is not a discount.</b> <span>She pays our normal menu price for every service. The only extra she gets is the credit we added on top.</span></div>
+        <div><b>It is not a membership.</b> <span>Nothing renews and nothing repeats. She buys it once, uses it, and that is the end of it.</span></div>
+      </div>
+      <div>
+        <div><b>It is not a loyalty card or points.</b> <span>It is her own money, sitting on her account, waiting to be spent with us.</span></div>
+        <div><b>It is not money off today’s bill.</b> <span>It is money she already paid us, spread across the next few months.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="n">4</span> The words she will use, and what they mean</h2>
+    <div class="cols gloss">
+      <div>
+        <div><b>Her credit, or her balance.</b> <span>The money sitting on her account. Hers to spend on services with us. It is a spending limit, not a free pass.</span></div>
+        <div><b>Her Self-Care Bonus.</b> <span>The extra money we added on top, on the two bigger plans. It can only go on beauty, treatments, keratin and blowdries, never on colour.</span></div>
+        <div><b>Confidence Mapping.</b> <span>The proper consultation where we write her plan and choose her products, before she is in the chair. Every plan includes it, and she cannot collect her kit without it.</span></div>
+      </div>
+      <div>
+        <div><b>Her Home Ritual Kit.</b> <span>Her take-home products. She gets an amount <i>towards</i> it, not a free kit, and she pays the difference when she collects it.</span></div>
+        <div><b>Dip Your Toes, Season of You, All-In VIP Year.</b> <span>The three plans. She will say the name, not the number of months. They run 6, 9 and 12 months in that order.</span></div>
+        <div><b>Any client, any service, any stylist.</b> <span>There is no list of who may take her booking, and nothing about the offer is restricted. She can move between you as often as she likes.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="pagetag">
+    <span>The Wellness Voucher · Floor Memo v4 · start here</span>
+    <span>Page 1 of 4 · the prices, overleaf</span>
+  </div>
+
+</div>
+
+<!-- ===================== PAGE 2: THE OFFER ===================== -->
+<div class="sheet">
+
+  <header>
+    <div>
+      <div class="brand">Tara Rose &nbsp;·&nbsp; Floor Memo &nbsp;·&nbsp; v4 &nbsp;·&nbsp; page 2 of 4</div>
+      <h1>The offer, in full<small>What she pays, what she gets, and where she can spend it. You do not have to sell this. You do have to be able to say it correctly when she asks.</small></h1>
+    </div>
+    <div class="who">
+      <b>Three plans</b> · same in both emirates<br>
+      <b>Purchases close:</b> 30 September 2026<br>
+      Prices include VAT
+    </div>
+  </header>
+
+  <section>
+    <h2><span class="n">5</span> The three plans, and what each one costs her</h2>
+    <table class="tbl">
+      <tr><th>Plan</th><th>She pays us</th><th>We add on top</th><th>She has to spend</th><th>Runs for</th><th>Tabby</th></tr>
+      <tr><td class="plan">Dip Your Toes</td><td class="num">AED 1,000</td><td class="num">+ AED 150</td><td class="num"><b>AED 1,150</b></td><td class="num">6 months</td><td class="no">No, paid in full</td></tr>
+      <tr><td class="plan">Season of You</td><td class="num">AED 2,500</td><td class="num">+ AED 500 bonus</td><td class="num"><b>AED 3,000</b></td><td class="num">9 months</td><td class="num">4 × AED 625</td></tr>
+      <tr><td class="plan">All-In VIP Year</td><td class="num">AED 4,500</td><td class="num">+ AED 900 bonus</td><td class="num"><b>AED 5,400</b></td><td class="num">12 months</td><td class="num">4 × AED 1,125</td></tr>
+    </table>
+    <p class="note">Season of You is the one most women choose. The months run <b>from the day she paid</b>, not from her first appointment and not from 30 September. Tabby means she can split the payment into four, and it changes nothing about what she gets.</p>
+  </section>
+
+  <section>
+    <h2><span class="n">6</span> What else is in each plan, on top of her credit</h2>
+    <table class="tbl">
+      <tr><th>Also included</th><th class="tot">Dip Your Toes</th><th class="tot">Season of You</th><th class="tot">All-In VIP Year</th></tr>
+      <tr><td>Confidence Mapping, her plan written before she is in the chair</td><td class="tot yes">Yes</td><td class="tot yes">Yes</td><td class="tot yes">Yes</td></tr>
+      <tr><td>Cards to give away, AED 100 each, emailed in her name</td><td class="tot">1 card</td><td class="tot">3 cards</td><td class="tot">5 cards</td></tr>
+      <tr><td>Extra credit, once 3 new friends have visited and paid</td><td class="tot">+ AED 100</td><td class="tot">+ AED 150</td><td class="tot">+ AED 200</td></tr>
+      <tr><td>A birthday treat, at menu value</td><td class="tot">AED 150</td><td class="tot">AED 350</td><td class="tot">AED 750</td></tr>
+      <tr><td>Money towards her Home Ritual Kit, for 2, 4 or 6 products</td><td class="tot">AED 100</td><td class="tot">AED 200</td><td class="tot">AED 450</td></tr>
+      <tr><td>Journals</td><td class="tot no">–</td><td class="tot">Reset Journal</td><td class="tot">Reset + 8 Pillars</td></tr>
+      <tr><td>The home skin care set, if her salon has it in stock</td><td class="tot no">–</td><td class="tot no">–</td><td class="tot yes">Yes</td></tr>
+      <tr class="total"><td>What the campaign says is on the table</td><td class="tot">AED 1,500</td><td class="tot">AED 3,850</td><td class="tot">AED 7,100</td></tr>
+    </table>
+    <p class="note">The birthday treat is a blowdry on Dip Your Toes. On Season of You it is a facial of her choice <b>or</b> a scalp and hair treatment with a blowdry. On All-In VIP Year it is a facial <b>and</b> the treatment. In Dubai the birthday facial is the Signature Relaxing Facial at Al Quoz.</p>
+  </section>
+
+  <section>
+    <h2><span class="n">7</span> Two vouchers, and her credit does not travel</h2>
+    <div class="cols">
+      <div>
+        <div class="box coral">
+          There is an <b>Abu Dhabi voucher</b> and a <b>Dubai voucher</b>. Same three plans, same prices, different salons. Her credit belongs to the emirate she bought it in, so an Abu Dhabi voucher cannot be spent at Al Quoz or Motor City, and a Dubai voucher cannot be spent at Saadiyat or Khalifa City A.
+        </div>
+        <p class="note">Deep cleanse and clinical facials and LED are Abu Dhabi only, so promising one to a Dubai client is the easiest mistake on this campaign. If she thinks she bought the wrong voucher, send her to reception <b>before</b> she spends any of it, while it can still be put right.</p>
+      </div>
+      <div>
+        <table class="tbl">
+          <tr><th>She is at</th><th>Hair</th><th>Beauty, nails, waxing, lashes, massage</th><th>Facials</th></tr>
+          <tr><td class="plan">Mamsha al Saadiyat</td><td class="yes">Yes</td><td class="yes">Yes</td><td class="yes">All, including deep cleanse and LED</td></tr>
+          <tr><td class="plan">Khalifa City A</td><td class="yes">Yes</td><td class="yes">Yes</td><td class="yes">All, including deep cleanse and LED</td></tr>
+          <tr><td class="plan">Al Quoz</td><td class="yes">Yes</td><td class="yes">Yes</td><td>Signature Relaxing Facial only</td></tr>
+          <tr><td class="plan">Motor City</td><td class="yes">Yes</td><td class="no">None</td><td class="no">None</td></tr>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="n">8</span> The questions she will actually ask</h2>
+    <div class="cols gloss">
+      <div>
+        <div><b>“Can I use it at your other salon?”</b> <span>Only inside the emirate she bought in. Her Abu Dhabi credit does not spend in Dubai, and the other way round.</span></div>
+        <div><b>“Can my daughter use my credit?”</b> <span>The credit is hers. The AED 100 cards are the part she gives away, and they are emailed in her name.</span></div>
+        <div><b>“What if I don’t spend it all?”</b> <span>Whatever is left when her months are up stops there. So we book her in early rather than late.</span></div>
+        <div><b>“Can I have the money back?”</b> <span>No. It is not refundable and it never comes back as cash.</span></div>
+      </div>
+      <div>
+        <div><b>“Can I book any stylist?”</b> <span>Yes. Any stylist, any service on her salon’s menu, as often as she likes. Nothing is restricted.</span></div>
+        <div><b>“Is my kit free?”</b> <span>No. She has an amount towards it and pays the difference when she collects it.</span></div>
+        <div><b>“Can I use it with another offer?”</b> <span>No, unless Tara Rose confirms it for her.</span></div>
+        <div><b>“What happens after 30 September?”</b> <span>She can no longer buy one. Her plan carries on exactly as it is until her months run out.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="pagetag">
+    <span>The Wellness Voucher · Floor Memo v4 · the offer</span>
+    <span>Page 2 of 4 · what you do with it, overleaf</span>
+  </div>
+
+</div>
+
+<!-- ===================== PAGE 3: ON THE FLOOR ===================== -->
+<div class="sheet">
+
+  <header>
+    <div>
+      <div class="brand">Tara Rose &nbsp;·&nbsp; Floor Memo &nbsp;·&nbsp; v4 &nbsp;·&nbsp; page 3 of 4</div>
+      <h1>What you do on the floor<small>The things that get us caught out, and the words to use instead. Reception owns her numbers and her dates; everything on this page is yours.</small></h1>
+    </div>
+    <div class="who">
+      <b>Ask before you tell.</b><br>
+      Reception first, then your<br>
+      branch manager. Nobody guesses.
+    </div>
+  </header>
+
   <div class="cols">
     <div>
       <section>
-        <h2><span class="n">1</span> What it actually is</h2>
-        <p>The client pays her own money in. We add extra credit on top. She spends it with us over 6, 9 or 12 months, depending on which plan she bought.</p>
-        <p><b>Reception knows which plan she is on. Ask before you book her colour.</b></p>
-        <p>She may call her plan by its name rather than by a number of months. If she does, do not guess which one it is. Reception will tell you.</p>
+        <h2><span class="n">9</span> Colour, check her plan first</h2>
+        <div class="ladder">
+          <div><span class="tier">All three plans.</span> Step 1, Soft Blonde and Polished Brunette: roots and regrowth, all-over and single-process colour, toner, gloss and glaze, tonal maintenance.</div>
+          <div><span class="tier">Season of You adds.</span> Step 2, Signature and Dimensional: balayage and freehand placement, highlights and foils, grey blending, multi-tonal depth.</div>
+          <div><span class="tier">All-In VIP Year adds.</span> Step 3, Transformation and Luxury: full transformation, colour correction and removal, high lift, fantasy colour.</div>
+        </div>
+        <p class="note">It is the same ladder you already book against, and each plan includes everything on the steps beneath it. Cuts, blow-dry, keratin and treatments are <b>not on this ladder at all</b>: they are covered on every plan.</p>
+        <p class="note">There is <b>no per-visit colour cap</b> and no amount to quote. If anyone still says AED 700, that was a proposal and it was dropped on 19 August.</p>
+        <p class="note">She can always have a service above her step. She simply pays for that one herself, in the normal way, and her balance is not touched. Say it that way round, and say it <b>before</b> the appointment, never at the till. If you cannot tell which step a service sits on, ask reception before she sits down, then tell Kate so the ladder gains the name.</p>
       </section>
 
       <section>
-        <h2><span class="n">2</span> Your commission</h2>
+        <h2><span class="n">10</span> The bonus never buys colour</h2>
         <div class="box coral">
-          It is <b>not</b> taken away. It moves to when she spends the credit. You still get paid.
+          Her Self-Care Bonus is for <b>beauty, treatments, keratin and blowdries only</b>. So an All-In VIP Year client has AED 4,500 to spend on colour, not 5,400, and a Season of You client has AED 2,500, not 3,000. <b>It cannot go on her balayage.</b>
         </div>
       </section>
 
       <section>
-        <h2><span class="n">3</span> Four things you never say</h2>
+        <h2><span class="n">11</span> Home kit, price before you pack</h2>
+        <p>She has an amount <b>towards</b> her kit, not a free kit: AED 100 for 2 products on Dip Your Toes, AED 200 for 4 on Season of You, AED 450 for 6 on All-In VIP Year. She pays a difference at every plan. Say the number out loud first, every time.</p>
+        <div class="say">
+          <span class="lbl">Word for word</span>
+          “You’ve got AED 450 towards your kit, your products came to AED 910, so that’s AED 460 today.”
+        </div>
+        <p class="note">No kit leaves the salon until her Confidence Mapping is done and the difference is paid. That is real policy, not a preference. If she wants the bag kept small, she tells us before it is built, not after.</p>
+      </section>
+    </div>
+
+    <div>
+      <section>
+        <h2><span class="n">12</span> Two pots, and what neither one covers</h2>
+        <p><b>Her service credit</b> pays for services only. <b>Her kit money</b> pays for home care only. Neither one crosses over.</p>
+        <ul>
+          <li>Credit never pays for home care, or any other product</li>
+          <li>Credit never pays for new hair extensions</li>
+          <li>No cash out and no cash refund, from either pot</li>
+        </ul>
+        <p class="note">Everything else is fair game, within her plan: hair, colour on her step, keratin, treatments, blowdries, and beauty as far as your branch offers it.</p>
+      </section>
+
+      <section>
+        <h2><span class="n">13</span> Four things you never say</h2>
         <ul class="never">
           <li><b>“Free”</b> <span>: she paid for it herself.</span></li>
-          <li><b>“Unlimited”</b> <span>: the credit is a limit, not a free pass.</span></li>
+          <li><b>“Unlimited”</b> <span>: the credit is a spending limit, not a free pass.</span></li>
           <li><b>“Your kit is included”</b> <span>: say <i>towards</i>. She always pays a difference.</span></li>
           <li><b>Any number for colour</b> <span>: colour is a ladder, not a budget.</span></li>
         </ul>
       </section>
 
       <section>
-        <h2><span class="n">4</span> Colour, check her plan first</h2>
-        <div class="ladder">
-          <div><span class="tier">All plans:</span> roots, single-process colour, toner, gloss</div>
-          <div><span class="tier">9 &amp; 12 month plans:</span> the above, plus balayage, freehand highlights, grey blending</div>
-          <div><span class="tier">12 month plan only:</span> the above, plus colour correction, high lift, big change</div>
+        <h2><span class="n">14</span> Your commission</h2>
+        <div class="box lilac">
+          It is <b>not</b> taken away. It moves to when she spends the credit, because the voucher is money sitting on her account. You still get paid. If you are leaving before she has spent it, ask your branch manager rather than inventing an answer.
         </div>
-        <p style="margin-top:4px">If she wants something above her plan, have that conversation <b>before</b> the appointment, never as a surprise at the till.</p>
-      </section>
-    </div>
-
-    <div>
-      <section>
-        <h2><span class="n">5</span> Home kit, price before you pack</h2>
-        <p>She has an <b>allowance towards</b> her kit. It is not a free kit. Say the number out loud first, every time.</p>
-        <div class="say">
-          <span class="lbl">Word for word</span>
-          “You’ve got AED 450 towards your kit, your products came to AED 910, so that’s AED 460 today.”
-        </div>
-        <p style="margin-top:4px">No kit leaves the salon until her Confidence Mapping is done and the difference is paid.</p>
       </section>
 
       <section>
-        <h2><span class="n">6</span> What the credit does not cover</h2>
-        <ul>
-          <li>Home care and retail products</li>
-          <li>New hair extensions</li>
-        </ul>
-        <p style="margin-top:3px"><b>Her kit allowance is separate from her credit.</b> Her credit never pays for home care.</p>
-        <p>Everything else is fair game, within her plan.</p>
-      </section>
-
-      <section>
-        <h2><span class="n">7</span> Her credit is safe</h2>
+        <h2><span class="n">15</span> Her credit is safe, her dates are not yours</h2>
         <div class="box teal">
-          Cancellations, reschedules, running late, no-shows: <b>none of it touches her voucher balance.</b> Normal salon booking rules still apply to everything else.
+          Cancelling, rescheduling, running late, missing an appointment: <b>none of it touches her balance.</b> Say that first, because it is the real worry underneath the question. Everything else follows the salon’s normal booking policy, unchanged.
         </div>
-        <p style="margin-top:4px"><b>Never quote her an end date.</b> Dates are not the same on every plan. Reception owns dates.</p>
+        <p class="note">You can quote every rule in this memo. <b>Only reception can quote her dates</b>, because there are four on one client and they all start from something different: her plan from the day she paid, her friend cards two months from the day she paid, her referral credit two months from the day the third friend paid, her birthday treat any time inside her plan.</p>
       </section>
 
       <section>
-        <h2><span class="n">8</span> After 30 September</h2>
-        <p>Purchases close. Nothing else changes. Every rule on this page still applies for as long as her plan is running, which for some clients is well into 2027.</p>
+        <h2><span class="n">16</span> After 30 September</h2>
+        <p>She can no longer buy one. <b>Nothing else changes.</b> Every rule in this memo still applies for as long as her plan is running, which for a client who bought in September is well into 2027.</p>
+        <p class="note">Telling her in November that the voucher is finished is the same size of mistake as telling her it was free.</p>
       </section>
     </div>
   </div>
 
+  <div class="pagetag">
+    <span>The Wellness Voucher · Floor Memo v4 · on the floor</span>
+    <span>Page 3 of 4 · her terms overleaf</span>
+  </div>
+
+</div>
+
+<!-- ===================== PAGE 4: HER TERMS ===================== -->
+<div class="sheet">
+
+  <header>
+    <div>
+      <div class="brand">Tara Rose &nbsp;·&nbsp; Floor Memo &nbsp;·&nbsp; v4 &nbsp;·&nbsp; page 4 of 4</div>
+      <h1>What she agreed to<small>The full voucher terms, in plain words, in the order she reads them on the website. She sees all of this before she pays, so you should know it before she asks.</small></h1>
+    </div>
+    <div class="who">
+      <b>Two vouchers:</b> one per emirate<br>
+      <b>Purchases close:</b> 30 September 2026<br>
+      Current as of 20 August 2026
+    </div>
+  </header>
+
+  <div class="terms">
+    <div class="t"><h3><span class="tn">1</span> How long she can buy for.</h3> <p>She can buy until 30 September 2026. Credit bought inside that window can be spent at any point in her own months, <b>including after the window closes</b>.</p></div>
+    <div class="t"><h3><span class="tn">2</span> Where she can spend it.</h3> <p>Abu Dhabi voucher: Mamsha al Saadiyat and Khalifa City A, the full hair and beauty menu at both, including all facials. Dubai voucher: hair at Al Quoz and Motor City, beauty services and the Signature Relaxing Facial at Al Quoz only. Motor City is a hair salon. Deep cleanse and clinical facials and LED are not available in Dubai.</p></div>
+    <div class="t"><h3><span class="tn">3</span> Which voucher she holds.</h3> <p>Her credit, her bonus and everything included come with the emirate she bought in, and only there. They cannot be spent at the other emirate’s salons or swapped for the other voucher. If she bought the wrong one, we put it right before she spends any of it.</p></div>
+    <div class="t"><h3><span class="tn">4</span> The plans, and how long each lasts.</h3> <p>AED 1,000 becomes 1,150 for 6 months, AED 2,500 becomes 3,000 for 9 months, AED 4,500 becomes 5,400 for 12 months. The months start on the day she paid. Dip Your Toes is paid in full; the other two can be four interest-free Tabby payments, if Tabby approves her.</p></div>
+    <div class="t"><h3><span class="tn">5</span> What her credit pays for.</h3> <p>Services at her own salons, at the menu price on the day of the appointment. <b>Not</b> home care or any other product, <b>not</b> new hair extensions, and never cash. On the two bigger plans, the Self-Care Bonus part is for beauty services, treatments, keratin and blowdries only.</p></div>
+    <div class="t"><h3><span class="tn">6</span> Colour, and which services her voucher reaches.</h3> <p>Colour follows the salon’s own three-step ladder, and each voucher reaches one step further, including everything beneath it. A service above her step can still be booked, and she settles that one in the usual way, outside her credit. <b>There is no per-visit spending limit on colour of any kind.</b> If a service is not named on the ladder, we tell her which step it sits on before her appointment, never at the till.</p></div>
+    <div class="t"><h3><span class="tn">7</span> The gifts that come with it.</h3> <p>They are extra, on top of her credit, and they have no cash value. Physical gifts depend on stock, and we may swap one for something of similar value.</p></div>
+    <div class="t"><h3><span class="tn">8</span> The Home Ritual Kit money.</h3> <p>AED 100, 200 or 450 depending on her plan, towards the home care we recommend for her. Anything above it is paid when she collects the kit, and <b>we tell her the difference before anything is packed, never after</b>. If she would rather keep it small, we build the fewest items that will work. This money cannot be spent on services, her service credit cannot be spent on home care, and anything left over has no cash value and ends when her voucher ends.</p></div>
+    <div class="t"><h3><span class="tn">9</span> The cards she gives to friends.</h3> <p>Sent by email, in her name, to the people she chooses. Nothing is posted or printed. One card of AED 100 on Dip Your Toes, three on Season of You, five on All-In VIP Year. Services only, no products, no cash, and <b>they last two months from the day she bought her voucher</b>, not from the day she hands one over, with the date on the card. So tell her to give them out early. Her own credit cannot be passed to someone else unless Tara Rose agrees.</p></div>
+    <div class="t"><h3><span class="tn">10</span> The referral reward.</h3> <p>She gets it once the required number of new clients have actually come in and paid, not just booked. It then lasts two months <b>from that day</b>, on its own clock, so referring a friend late in her plan does not shorten what she earns. Never exchanged for cash.</p></div>
+    <div class="t"><h3><span class="tn">11</span> Her birthday treat.</h3> <p>Used inside her months, and subject to us having the appointment free. In Abu Dhabi the birthday facial is any full facial she chooses from the Abu Dhabi menu. In Dubai it is the Signature Relaxing Facial with lifting massage at Al Quoz. The prices shown in the campaign are our normal menu prices, there to show what the whole voucher is worth.</p></div>
+    <div class="t"><h3><span class="tn">12</span> Appointments, cancellations and no-shows.</h3> <p>The salon’s normal booking, cancellation and no-show policy applies, unchanged. <b>There is no special campaign rule and there never was.</b> Holding a voucher, or having priority booking, does not guarantee a particular stylist, therapist, date or time.</p></div>
+    <div class="t"><h3><span class="tn">13</span> When it ends.</h3> <p>Her credit and her bonus are used inside her months: six on Dip Your Toes, nine on Season of You, twelve on All-In VIP Year, each counted from the day she paid. Two things run on their own clocks and are not covered by that: the friend cards and the referral reward. Anything unused after her date is gone, and is not paid out in cash or extended unless Tara Rose agrees.</p></div>
+    <div class="t"><h3><span class="tn">14</span> Refunds.</h3> <p>Once she has bought it, it is not refundable, except where the law says otherwise. Credit and bonuses are never exchanged for cash.</p></div>
+    <div class="t"><h3><span class="tn">15</span> Other offers.</h3> <p>Her credit, her bonus and her gifts cannot be combined with another promotion, discount or offer unless Tara Rose says so.</p></div>
+    <div class="t"><h3><span class="tn">16</span> Paying with Tabby.</h3> <p>Where Tabby is offered, the approval and the payment plan come from Tabby, on Tabby’s terms. Paying that way does not change the amount of credit she gets.</p></div>
+    <div class="t"><h3><span class="tn">17</span> Prices.</h3> <p>Every price and value is in UAE Dirhams and includes VAT.</p></div>
+    <div class="t"><h3><span class="tn">18</span> The general clause.</h3> <p>Tara Rose can reasonably tidy up or clarify these terms to run the campaign, but never in a way that takes away credit a client has already bought. Buying a voucher means she accepts the terms.</p></div>
+  </div>
+
   <footer>
     <div>
-      <p><b>If you are not sure, ask before you tell the client.</b> A wrong answer on the floor costs us far more than a five-minute question. Any stylist who doesn’t know this campaign is where we get caught out.</p>
+      <p><b>If you are not sure, ask before you tell the client.</b> A wrong answer on the floor costs us far more than a five-minute question, so “let me check” is the right answer, not a weak one. Any client can now ask any one of you, so one person who has not read this memo is the whole exposure.</p>
       <p>Reception first. If reception is not sure, your branch manager. Nobody guesses.</p>
     </div>
     <div class="meta">
       Voice: TRS<br>
       Prepared by Kate Alsaybar<br>
       Current as of 20 August 2026<br>
-      Supersedes any earlier version
+      Supersedes v3 and any earlier version
     </div>
   </footer>
 
