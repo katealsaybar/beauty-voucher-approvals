@@ -19,13 +19,14 @@
 --
 -- THE THREE LEVELS
 --
---   ANONYMOUS (reception at the till, not signed in)
---     issue a voucher, read the log. Cannot write to voucher_events at all. Reception's job
---     is to create cards, never to retire one.
+--   ANONYMOUS
+--     nothing at all, as of 20 August. See the ACCESS block in voucher_issues_setup.sql and
+--     sql/voucher_lockdown.sql for why the till stopped being open.
 --
 --   SIGNED IN, NOT ADMIN (info@tararosesalon.com, the salon staff account)
---     read the log. Nothing else. Same power as anon, but with a name attached to the
---     session, which is the point of giving the salons their own login rather than the URL.
+--     issue a voucher, read the log. Cannot write to voucher_events at all. Reception's job
+--     is to create cards, never to retire one. This is the account the till runs on, so the
+--     session carries a name rather than the URL carrying the permission.
 --
 --   ADMIN (kate@tararosesalon.com)
 --     the only account that can record anything against a voucher after it was issued:
@@ -55,7 +56,8 @@ create unique index if not exists voucher_events_one_archive
 -- ---------------------------------------------------------------------------
 
 revoke insert on public.voucher_events from anon;
-grant  select on public.voucher_events to anon, authenticated;
+revoke select on public.voucher_events from anon;
+grant  select on public.voucher_events to authenticated;
 grant  insert on public.voucher_events to authenticated;
 
 -- The old policy accepted any kind from anybody. Both earlier names are dropped explicitly

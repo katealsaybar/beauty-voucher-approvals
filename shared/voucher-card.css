@@ -60,6 +60,14 @@
   font-size:1.14em;letter-spacing:.14em;font-weight:500;font-variant-numeric:tabular-nums;}
 .card .num span{white-space:nowrap;}
 
+/* The small print, along the bottom edge under the foot. There is about 20px of card left
+   below the dates, so this is deliberately tiny and deliberately one line.
+   FOR HANNEH: this line has to survive into the real artwork. A card carrying up to AED
+   5,400 of credit with nothing on it about cash is the one thing on here that is not a
+   design choice. The wording is Dawn's, lifted from term 12, not written here. */
+.card .fine{position:absolute;left:8%;right:8%;top:93%;font-size:.5em;letter-spacing:.14em;
+  opacity:.5;text-transform:uppercase;text-align:center;white-space:nowrap;}
+
 /* Between the chip and the serial. It used to be below the serial, where the foot leaves
    about five pixels, which is why it ended up on the chip instead. */
 .card .of{position:absolute;left:8%;top:62.2%;font-size:.6em;letter-spacing:.2em;

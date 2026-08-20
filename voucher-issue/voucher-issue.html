@@ -3,11 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<!-- Kept out of search results. Unlike the rest of the pack this page WRITES: it allocates a
-     real serial and a real row in the voucher log. It is served from a public site with no
-     sign-in, so the only thing standing between it and a stranger is that nobody has the
-     path. noindex keeps a crawler from handing that path out. It is not a security control,
-     see the note in the page body. -->
+<!-- Kept out of search results, and that is now the LEAST of what holds this page shut.
+     Unlike the rest of the pack this page WRITES: it allocates a real serial and a real row
+     in the voucher log. It used to do that for anybody who had the path, and the path is in
+     a public repository's file listing, so obscurity was never the control it read as.
+     It is now signed-in only in two places that both have to hold: shared/signin-gate.js
+     for the sentence, and no anon grant on issue_voucher for the enforcement. See
+     sql/voucher_lockdown.sql. -->
 <meta name="robots" content="noindex,nofollow">
 <title>Issue a Wellness Card: till tool</title>
 <link rel="stylesheet" href="../shared/voucher-card.css">
@@ -77,6 +79,12 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1
 .chip.off{opacity:.45;}
 .chip .v{font-weight:400;opacity:.7;margin-left:4px;}
 
+.practice{display:flex;gap:9px;align-items:flex-start;margin-top:14px;padding:11px 13px;
+  border:1px dashed var(--line);border-radius:10px;font-size:12.5px;color:var(--muted);
+  cursor:pointer;line-height:1.5;}
+.practice input{margin-top:2px;flex:0 0 auto;}
+.practice b{color:var(--ink);}
+
 .serial{font-size:13px;color:var(--muted);margin-bottom:14px;}
 .serial code,.caption code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
   background:var(--sand);padding:2px 7px;border-radius:5px;color:var(--ink);font-weight:600;}
@@ -142,6 +150,13 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1
       </div>
 
       <div class="f">
+        <label for="ccontact">Her mobile or email</label>
+        <input id="ccontact" type="text" placeholder="050 123 4567" autocomplete="off">
+        <p class="hint">The only thing that tells two clients with the same name apart when
+          this is reconciled against Phorest. Leave it empty only if she will not give it.</p>
+      </div>
+
+      <div class="f">
         <label for="pdate">The day she paid</label>
         <input id="pdate" type="date">
       </div>
@@ -157,6 +172,16 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1
         <button class="btn ghost" id="reset">Start over</button>
       </div>
 
+      <!-- Training used to cost a real serial. "Use a recognisable test name" was the only
+           control, in a banner, above a button that writes. This does the same job without
+           spending a number: it skips the database entirely and draws the set locally, and
+           everything that could leave the screen stays switched off. -->
+      <label class="practice" for="practice">
+        <input type="checkbox" id="practice">
+        <span><b>Practice run.</b> Show me the cards without issuing anything. No number is
+          used, nothing is logged, and nothing can be printed or copied.</span>
+      </label>
+
       <div class="note info" id="counter"></div>
       <div class="note" id="dbstate"></div>
     </div>
@@ -171,7 +196,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1
 
       <!-- Every printable card, stacked. Never shown on screen; it exists so one Save as PDF
            produces her whole set as one file. Reception sends one attachment instead of
-           photographing the screen six or eight times, and WhatsApp does not recompress a
+           photographing the screen three, five or seven times, and WhatsApp does not recompress a
            PDF the way it crushes an image, which is what the small serial cannot survive. -->
       <div id="printall"></div>
 
@@ -200,6 +225,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="../auth/supabase-client.js"></script>
 <script src="../shared/voucher-card.js"></script>
+<script src="../shared/signin-gate.js"></script>
 <script>
 /* ------------------------------------------------------------------ *
  * Wellness Voucher: till tool.
@@ -212,15 +238,21 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1
  * lock on the branch's counter, which is the only way two tills at one branch
  * cannot both hand out 0043, and it is why the sequence is per branch at all.
  *
- * If the database is not reachable the page falls back to a local counter and
- * says so on screen, in red, on every issued set. That fallback exists so the
- * interface can be reviewed before the SQL is run. It must never be how a real
- * card is issued, because a local counter cannot promise uniqueness.
+ * If nothing ANSWERS, the page falls back to a local counter and says so on screen, in
+ * red, on every issued set. That fallback exists so the interface can be reviewed before
+ * the SQL is run. It must never be how a real card is issued, because a local counter
+ * cannot promise uniqueness.
+ *
+ * If the database answers and says NO, that is a different thing and it now reads
+ * differently. A mistyped year and an unreachable database used to produce the same red box
+ * telling reception to go and run a SQL file. She cannot run a SQL file, and the year was
+ * the actual problem. A refusal now shows the reason and issues nothing.
  * ------------------------------------------------------------------ */
 
 // The campaign's numbers, the date maths, the serial format and the card are all in
 // shared/voucher-card.js now. Aliased here so the rest of this file reads unchanged, and so
 // the till and the log can never disagree about a value, an expiry or a serial.
+var NL = String.fromCharCode(10);      // a newline for confirm(), which cannot take markup
 var C = window.TRSCard;
 var BRANCHES = C.BRANCHES, TIERS = C.TIERS;
 var fmt = C.fmt, addMonths = C.addMonths, parseDate = C.parseDate, today = C.today, iso = C.iso;
@@ -262,29 +294,69 @@ function localSeq(branch){
   return next;
 }
 
-// Ask Postgres for the number and the row. Resolves to null on any failure, so the caller
-// decides what to do rather than this swallowing the problem.
-function remoteIssue(branch, tier, name, purchase, who){
+// Ask Postgres for the number and the row. Resolves to a VERDICT rather than to null,
+// because the ways this can fail need different sentences at the till and only two of them
+// mean "preview is fine":
+//
+//   ok        the row is written. Her number is hers.
+//   refused   the database answered and said no: a mistyped year, a one-letter name, a
+//             branch it does not know. Nothing is issued, no number is used, and the reason
+//             is shown as the reason. This used to be reported as "the tables are not
+//             reachable, go and run sql/voucher_issues_setup.sql", which sent reception
+//             after a database when what she had was a typo.
+//   denied    the account is not allowed to issue. Sign in with the salon account.
+//   setup     the function or the tables are not there. Preview, and the SQL note is right.
+//   offline   nothing answered at all. Preview.
+var SETUP_CODES  = ['PGRST202','PGRST204','42883','42P01','42P17'];
+var DENIED_CODES = ['42501','PGRST301','PGRST302'];
+
+function verdictOf(err){
+  var code = String(err && err.code ? err.code : '');
+  var msg  = (err && err.message) ? err.message : String(err || 'no reason given');
+  if (SETUP_CODES.indexOf(code)  !== -1) return {state:'setup',   message:msg};
+  if (DENIED_CODES.indexOf(code) !== -1) return {state:'denied',  message:msg};
+  return {state:'refused', message:msg};
+}
+
+function remoteIssue(branch, tier, name, purchase, who, contact){
   var d = db();
-  if (!d) return Promise.resolve(null);
+  if (!d) return Promise.resolve({state:'offline', message:'no Supabase client on this page'});
   return d.rpc('issue_voucher', {
     p_branch: branch,
     p_tier: tier,
     p_client_name: name,
     p_purchase_date: iso(purchase),
+    p_client_contact: contact || null,
     p_issued_by: who || null
   }).then(function (res){
-    if (res.error || !res.data) {
-      lastError = res.error ? (res.error.message || String(res.error)) : 'no row returned';
-      return null;
-    }
+    if (res.error) return verdictOf(res.error);
     var row = Array.isArray(res.data) ? res.data[0] : res.data;
-    return row || null;
+    if (!row) return {state:'offline', message:'the database answered with no row'};
+    return {state:'ok', row:row};
   }).catch(function (e){
-    lastError = e && e.message ? e.message : String(e);
-    return null;
+    // A rejected promise here is the transport, not the database: nothing answered.
+    return {state:'offline', message:(e && e.message) ? e.message : String(e)};
   });
 }
+
+// Has this buyer already been issued for this date at this branch? One branch, one day, so
+// the read is small. Compared in JS rather than with ilike() because a name is allowed to
+// contain % and _ and neither should behave as a wildcard.
+function existingRow(branch, name, dateIso){
+  var d = db();
+  if (!d) return Promise.resolve(null);
+  var want = name.trim().toLowerCase();
+  return d.from('voucher_issues').select('seq,tier,client_name,issued_by')
+    .eq('branch', branch).eq('purchase_date', dateIso).limit(200)
+    .then(function (res){
+      if (res.error || !res.data) return null;
+      for (var i = 0; i < res.data.length; i++){
+        if (String(res.data[i].client_name).trim().toLowerCase() === want) return res.data[i];
+      }
+      return null;
+    }).catch(function (){ return null; });
+}
+
 var lastError = null;
 
 // What the next number will be, for the panel. Read-only, so it is fine for anon.
@@ -311,21 +383,47 @@ function refreshCounter(){
   }
 
   remotePeek(b).then(function (n){
-    if (n !== null){ show(n, true); setDbState(true); }
-    else { show(parseInt(store.get('trs-wv-seq-' + b) || '1', 10), false); setDbState(false); }
+    if (n !== null){ show(n, true); setDbState('ok'); }
+    else { show(parseInt(store.get('trs-wv-seq-' + b) || '1', 10), false); setDbState('offline'); }
   });
 }
 
-function setDbState(live){
-  var n = el('dbstate');
-  n.className = 'note ' + (live ? 'good' : 'flag');
-  n.innerHTML = live
-    ? '<b>Connected.</b> Every card issued here is written to the log in Supabase, and the ' +
-      'number is allocated by the database.'
-    : '<b>Preview only, nothing is being saved.</b> The <code>voucher_issues</code> tables are ' +
-      'not reachable, so the number is coming from this browser. Run ' +
-      '<code>sql/voucher_issues_setup.sql</code> in the Supabase SQL editor to switch this to live.' +
-      (lastError ? ' <br><span style="opacity:.75">' + esc(lastError) + '</span>' : '');
+// One box, and the sentence in it has to match what actually happened. The old version had
+// two states, connected and "not reachable, go and run the SQL", so a mistyped year sent
+// reception after a database. Each of these is a different thing to do next.
+function setDbState(state, detail){
+  var n = el('dbstate'), body, kind = 'flag';
+  var why = detail ? ' <br><span style="opacity:.75">' + esc(detail) + '</span>' : '';
+
+  if (state === 'ok'){
+    kind = 'good';
+    body = '<b>Connected.</b> Every card issued here is written to the log in Supabase, and ' +
+           'the number is allocated by the database.';
+  } else if (state === 'refused'){
+    // The database answered. It is working, it said no, and the reason is hers to fix.
+    body = '<b>Not issued, and no number was used.</b> The till refused this one. Fix what it ' +
+           'says below and press the button again. This is not a fault with the system.' + why;
+  } else if (state === 'practice'){
+    kind = 'info';
+    body = '<b>Practice run.</b> These cards are not real: no number was taken, nothing was ' +
+           'written, and none of them can be printed or copied. Untick the box to issue for ' +
+           'real.';
+  } else if (state === 'denied'){
+    body = '<b>This account cannot issue cards.</b> Sign out and sign back in with the salon ' +
+           'account. If it still refuses, the grants need re-running: ' +
+           '<code>sql/voucher_lockdown.sql</code>.' + why;
+  } else if (state === 'setup'){
+    body = '<b>Preview only, nothing is being saved.</b> The <code>voucher_issues</code> tables ' +
+           'or <code>issue_voucher()</code> are not there. Run ' +
+           '<code>sql/voucher_issues_setup.sql</code> in the Supabase SQL editor to switch ' +
+           'this to live.' + why;
+  } else {
+    body = '<b>Preview only, nothing is being saved.</b> Nothing answered, so the number is ' +
+           'coming from this browser and no card here may be handed over. Check the ' +
+           'connection and reload.' + why;
+  }
+  n.className = 'note ' + kind;
+  n.innerHTML = body;
 }
 
 function drawSet(){
@@ -362,16 +460,24 @@ function drawSet(){
     note.style.display = 'none';
   }
 
-  // Preview mode means nothing was written, so nothing may be handed over. A serial that
-  // exists only on paper cannot be reconciled later, and the set PDF would carry five to
+  // Preview mode means nothing was written, so nothing may leave this screen. A serial that
+  // exists only on paper cannot be reconciled later, and the set PDF would carry three to
   // seven of them at once. Refusing here is the cheaper failure.
+  //
+  // Copy is refused for the same reason, and it was not, which was the hole: printing was
+  // blocked while Copy the serial stayed live, and pasting into Phorest is the one route
+  // that actually matters. A number in Phorest with no row behind it is the exact mismatch
+  // this whole log exists to prevent.
   el('print').disabled = !card.printable || !set.live;
   el('printall-btn').disabled = !set.live;
-  el('copy').disabled = false;
-  el('copyname').disabled = false;
+  el('copy').disabled = !set.live;
+  el('copyname').disabled = !set.live;
 
   if (!set.live){
     el('printall-btn').textContent = 'Cannot print, nothing was logged';
+    el('copy').title = 'Nothing was logged, so this serial does not exist yet';
+  } else {
+    el('copy').title = '';
   }
 }
 
@@ -392,16 +498,74 @@ el('issue').addEventListener('click', function(){
 
   var branch = el('branch').value, tier = el('tier').value;
   var purchase = parseDate(d), who = el('who').value.trim();
+  var contact = el('ccontact').value.trim();
   var btn = this;
 
-  btn.disabled = true;
-  btn.textContent = 'Issuing...';
+  // The campaign's own dates, checked here so a mistyped year costs a sentence rather than a
+  // round trip. issue_voucher() refuses the same two, which is the check that counts.
+  if (d > C.CAMPAIGN.closes){
+    clearCards();
+    setDbState('refused', 'Purchases closed on ' + fmt(C.CAMPAIGN.closes) + '. ' + fmt(d) +
+      ' is after that, so no card can be issued against it.');
+    return;
+  }
+  if (d < C.CAMPAIGN.opens){
+    clearCards();
+    setDbState('refused', fmt(d) + ' is before this campaign started. Check the year.');
+    return;
+  }
 
+  btn.disabled = true;
+  btn.textContent = 'Checking...';
   lastError = null;
-  remoteIssue(branch, tier, name, purchase, who).then(function (row){
+
+  // A practice run never reaches the database, so it cannot use a number and cannot be
+  // mistaken for a real issue: preview mode already refuses to print or copy.
+  if (el('practice').checked){
+    state.set = buildSet(branch, tier, name, purchase, {
+      seq: 0, id: null, live: false,
+      mainExpiry: addMonths(purchase, TIERS[tier].months),
+      friendExpiry: addMonths(purchase, 2)
+    });
+    state.active = 0;
+    setDbState('practice');
+    drawSet();
+    btn.disabled = false;
+    btn.textContent = 'Get her cards';
+    return;
+  }
+
+  // Same name, same branch, same day. Almost always a second press, a reload after a slow
+  // response, or two receptionists doing the same sale, and every one of those ends with two
+  // serials for one client and no way to tell which she was given. A real second purchase on
+  // the same day is possible, so this asks rather than refuses.
+  existingRow(branch, name, iso(purchase)).then(function (dupe){
+    if (dupe){
+      var already = 'WV-' + dupe.tier + 'M-' + branch + '-' + pad4(dupe.seq);
+      var ok = window.confirm(
+        name + ' already has ' + already + ' issued at ' + BRANCHES[branch].name +
+        ' for this same date' + (dupe.issued_by ? ', by ' + dupe.issued_by : '') + '.' +
+        NL + NL +
+        'Issue a SECOND set anyway? A serial cannot be taken back afterwards.');
+      if (!ok) return null;
+    }
+    btn.textContent = 'Issuing...';
+    return remoteIssue(branch, tier, name, purchase, who, contact);
+  }).then(function (v){
+    if (!v) return;                                    // she cancelled at the confirm
+
+    // Answered, and said no. Nothing was written and no number moved, so the screen must not
+    // show her a card. Showing one is how an unlogged serial reaches Phorest.
+    if (v.state === 'refused' || v.state === 'denied'){
+      clearCards();
+      setDbState(v.state, v.message);
+      return;
+    }
+
     var alloc;
-    if (row){
+    if (v.state === 'ok'){
       // The database is the source of truth for the dates as well as the number.
+      var row = v.row;
       alloc = {
         seq: row.seq, id: row.id, live: true,
         mainExpiry: parseDate(row.main_expires_on),
@@ -418,18 +582,30 @@ el('issue').addEventListener('click', function(){
     }
     state.set = buildSet(branch, tier, name, purchase, alloc);
     state.active = 0;
-    setDbState(alloc.live);
-    refreshCounter();
+    setDbState(alloc.live ? 'ok' : v.state, alloc.live ? null : v.message);
+    if (alloc.live) refreshCounter();
     drawSet();
+  }).catch(function (e){
+    // Anything thrown AFTER the RPC returned, which is the dangerous one: the row can already
+    // be written while the screen shows nothing. There used to be no catch here at all, so
+    // the button stayed disabled on "Issuing..." and the only way out was a reload, straight
+    // into issuing the same client a second serial.
+    clearCards();
+    setDbState('refused',
+      'Something failed after the card was requested, so a row may already exist. Open the ' +
+      'log and search for this client BEFORE pressing the button again. (' +
+      ((e && e.message) ? e.message : String(e)) + ')');
   }).then(function (){
     btn.disabled = false;
     btn.textContent = 'Get her cards';
   });
 });
 
-el('reset').addEventListener('click', function(){
+// Empties the right-hand panel. Called by Start over, and by every refusal: a red box above
+// the PREVIOUS client's cards still leaves a printable set on screen, and the buttons above
+// it do not know that the box is about somebody else.
+function clearCards(){
   state.set = null; state.active = 0;
-  el('cname').value = '';
   el('setbar').innerHTML = '';
   el('stage').innerHTML = '';
   el('caption').innerHTML = '';
@@ -441,6 +617,12 @@ el('reset').addEventListener('click', function(){
   el('copyname').disabled = true;
   el('printall-btn').disabled = true;
   el('printall-btn').textContent = 'Save all her cards as one PDF';
+}
+
+el('reset').addEventListener('click', function(){
+  clearCards();
+  el('cname').value = '';
+  el('ccontact').value = '';
 });
 
 el('print').addEventListener('click', function(){
@@ -483,11 +665,30 @@ el('branch').addEventListener('change', function(){ store.set('trs-wv-branch', t
 el('who').addEventListener('change', function(){ store.set('trs-wv-who', this.value.trim()); });
 
 el('pdate').value = iso(today());
+// The database refuses all three of these, and now the picker does too, one step earlier and
+// without spending a round trip on a mistyped year.
+el('pdate').min = C.CAMPAIGN.opens;
+el('pdate').max = iso(today()) < C.CAMPAIGN.closes ? iso(today()) : C.CAMPAIGN.closes;
 
-// supabase-client.js resolves TRS.ready once it has looked for a session. Waiting for it
-// means the first counter read goes to the database rather than reporting "local" and then
+// Purchases close, and the day after they close this page still worked. It says so now.
+if (iso(today()) > C.CAMPAIGN.closes){
+  el('issue').disabled = true;
+  el('issue').textContent = 'Purchases are closed';
+  var shut = el('counter');
+  shut.className = 'note flag';
+  shut.innerHTML = '<b>Purchases closed on ' + fmt(C.CAMPAIGN.closes) + '.</b> No new card ' +
+    'can be issued. Cards already in a client\'s hand keep the expiry they were printed ' +
+    'with, and the log is still open.';
+}
+
+// Nothing here touches the database until we know who is at the till. TRSGate.require()
+// resolves only once there is a session, which also means the first counter read happens
+// after supabase-client.js has looked for one, rather than reporting "local" and then
 // silently correcting itself a moment later.
-if (window.TRS && window.TRS.ready) { window.TRS.ready.then(refreshCounter); }
+if (window.TRSGate) {
+  window.TRSGate.require('This page hands out real card numbers, and a number cannot be ' +
+    'taken back once it is issued').then(refreshCounter);
+}
 else { refreshCounter(); }
 </script>
 </body>

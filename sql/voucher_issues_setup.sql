@@ -25,22 +25,36 @@
 --   holds one row per branch and issue_voucher() takes a row lock on it, so calls at the
 --   same branch serialise and calls at different branches never block each other.
 --
--- ACCESS, following the same two levels as notes_setup.sql
+-- ACCESS
 --
---   ANONYMOUS (reception, at the till, not signed in)
+--   ANONYMOUS
+--     nothing. Not a read, not a call. This was the opposite until 20 August: anon could
+--     call issue_voucher() and read the log, on the reasoning that reception stands at a
+--     till and should not have to sign in. Two things were wrong with it. The publishable
+--     key is in the page source, the page is served from a PUBLIC repository, so "nobody
+--     has the path" was never true; and voucher_issues holds client names, which is the one
+--     thing in this pack that cannot sit on an open URL. Reception signs in once per machine
+--     with the salon account and the session persists.
+--
+--   SIGNED IN (info@tararosesalon.com at the till, or Kate)
 --     may call issue_voucher() and may read the log. Deliberately NOT granted a direct
 --     INSERT on voucher_issues: if the browser could insert rows it could also choose its
 --     own seq, and the whole uniqueness guarantee would move from the database into a
 --     client that a receptionist can open the console on. The function is the only door.
 --
---   EDITOR (kate@tararosesalon.com, signed in)
---     everything above. Nothing here is UPDATE-able by anybody, see below.
+--   ADMIN (kate@tararosesalon.com)
+--     everything above, plus the only account that may write voucher_events. That policy
+--     lives in voucher_roles_fix.sql, because it needs is_admin() and this file is
+--     standalone. Nothing here is UPDATE-able by anybody, see below.
+--
+--   Grants are additive, so EDITING this file does not take back what anon already holds on
+--   a database this ran on before. sql/voucher_lockdown.sql does the revoking.
 --
 -- WHY NOTHING IS UPDATE-ABLE
 --   Both later states, "the referral completed" and "this voucher was voided", are recorded
 --   as rows in voucher_events rather than as edits to voucher_issues. Append-only means a
 --   serial's history can never be quietly rewritten, and it keeps reception on INSERT only,
---   which is all the anon role ever gets. It also fits the rule in the spec: a voided
+--   which is all the till account ever gets. It also fits the rule in the spec: a voided
 --   voucher retires its number, and gaps are fine.
 
 -- ---------------------------------------------------------------------------
@@ -59,13 +73,13 @@ insert into public.voucher_counters (branch) values ('SAA'),('KCA'),('AQ'),('MC'
   on conflict (branch) do nothing;
 
 alter table public.voucher_counters enable row level security;
-grant select on public.voucher_counters to anon, authenticated;
+grant select on public.voucher_counters to authenticated;
 -- No insert/update/delete grant to anyone. Only issue_voucher() touches this table, and it
 -- runs as security definer, which bypasses both the grants and the policy below.
 
 drop policy if exists voucher_counters_select on public.voucher_counters;
 create policy voucher_counters_select on public.voucher_counters
-  for select using (true);
+  for select to authenticated using (true);
 
 -- ---------------------------------------------------------------------------
 -- 2. one row per buyer
@@ -104,12 +118,12 @@ create index if not exists voucher_issues_created_idx    on public.voucher_issue
 create index if not exists voucher_issues_name_idx       on public.voucher_issues (lower(client_name));
 
 alter table public.voucher_issues enable row level security;
-grant select on public.voucher_issues to anon, authenticated;
+grant select on public.voucher_issues to authenticated;
 -- INSERT is intentionally NOT granted. issue_voucher() is the only way in; see the header.
 
 drop policy if exists voucher_issues_select on public.voucher_issues;
 create policy voucher_issues_select on public.voucher_issues
-  for select using (true);
+  for select to authenticated using (true);
 
 -- ---------------------------------------------------------------------------
 -- 3. what happened to a voucher afterwards, append-only
@@ -121,8 +135,9 @@ create table if not exists public.voucher_events (
   kind        text not null check (kind in ('referral_completed','voided','note')),
 
   -- Set on referral_completed. The referral clock starts when the third new client has
-  -- visited AND paid, which is why the R card cannot be printed at the till: on the day of
-  -- sale this date does not exist yet.
+  -- visited AND paid (public.referrals_required() in voucher_referrals.sql), which is why
+  -- the R card cannot be printed at the till: on the day of sale this date does not exist
+  -- yet.
   effective_on  date,
   expires_on    date,
 
@@ -144,21 +159,25 @@ create unique index if not exists voucher_events_one_void
 create index if not exists voucher_events_issue_idx on public.voucher_events (issue_id, created_at desc);
 
 alter table public.voucher_events enable row level security;
-grant select, insert on public.voucher_events to anon, authenticated;
+grant select on public.voucher_events to authenticated;
 
 drop policy if exists voucher_events_select on public.voucher_events;
 create policy voucher_events_select on public.voucher_events
-  for select using (true);
+  for select to authenticated using (true);
 
--- Reception records a completed referral herself, so anon needs INSERT here. She cannot
--- edit or delete one afterwards: there is no UPDATE or DELETE grant, and the two partial
--- unique indexes above mean a second attempt at the same event is refused by the database.
+-- NO INSERT POLICY HERE, ON PURPOSE, AND DO NOT PUT ONE BACK.
+--
+-- This file used to grant anon INSERT and accept any of the three kinds, which meant anyone
+-- reaching the public site could mark a voucher VOIDED, and a voided voucher is one
+-- reception refuses at the desk. voucher_roles_fix.sql fixed that. But this file describes
+-- itself as idempotent and safe to re-run, so re-running it after the fix put the hole
+-- straight back and nothing said so. A grant cannot be un-granted by a file that keeps
+-- granting it.
+--
+-- So the write side of voucher_events lives in exactly one place now:
+-- sql/voucher_roles_fix.sql, admin only. With no insert policy, RLS refuses every insert,
+-- which is the correct state for this file to leave behind on its own.
 drop policy if exists voucher_events_insert on public.voucher_events;
-create policy voucher_events_insert on public.voucher_events
-  for insert with check (
-    kind in ('referral_completed','voided','note')
-    and exists (select 1 from public.voucher_issues i where i.id = issue_id)
-  );
 
 -- ---------------------------------------------------------------------------
 -- 4. the only door in
@@ -202,11 +221,23 @@ begin
     raise exception 'a purchase date is required';
   end if;
 
-  -- Purchases close 30 September 2026 (Decision 13 and the campaign dates). A future date
-  -- is almost always a mistyped year, and a serial issued against one cannot be corrected
-  -- afterwards because nothing here is UPDATE-able.
+  -- A future date is almost always a mistyped year, and a serial issued against one cannot
+  -- be corrected afterwards because nothing here is UPDATE-able.
   if p_purchase_date > current_date + 1 then
     raise exception 'purchase date % is in the future', p_purchase_date;
+  end if;
+
+  -- The campaign's own window (Decision 13 and the campaign dates). Both dates are also in
+  -- T.CAMPAIGN in shared/voucher-card.js, which is where the page checks them so a typo
+  -- costs a sentence instead of a round trip. This is the check that actually refuses.
+  --
+  -- The floor is not a launch date, it is a mistyped-year catch: 2025 and 2016 are the
+  -- realistic slips at a keyboard and both land outside it.
+  if p_purchase_date > date '2026-09-30' then
+    raise exception 'purchases closed on 30 September 2026, % is after that', p_purchase_date;
+  end if;
+  if p_purchase_date < date '2026-01-01' then
+    raise exception 'purchase date % is before this campaign, check the year', p_purchase_date;
   end if;
 
   -- THE ATOMIC BIT. UPDATE takes a row lock on this branch's counter, so two tills at the
@@ -239,41 +270,28 @@ end;
 $$;
 
 revoke all on function public.issue_voucher(text,text,text,date,text,text) from public;
-grant execute on function public.issue_voucher(text,text,text,date,text,text) to anon, authenticated;
+revoke all on function public.issue_voucher(text,text,text,date,text,text) from anon;
+grant execute on function public.issue_voucher(text,text,text,date,text,text) to authenticated;
 
 -- ---------------------------------------------------------------------------
--- 5. the log, for reconciliation against Phorest
+-- 5. the log is NOT defined here, and must not be put back
 -- ---------------------------------------------------------------------------
-
--- One row per buyer with her serial, her state, and the counts reception needs. The
--- individual card serials are derived in the UI from these columns, which is why they
--- cannot disagree with each other.
-create or replace view public.voucher_log as
-select
-  i.id,
-  'WV-' || i.tier || 'M-' || i.branch || '-' || lpad(i.seq::text, 4, '0') as main_serial,
-  i.branch,
-  case when i.branch in ('SAA','KCA') then 'Abu Dhabi' else 'Dubai' end as emirate,
-  i.seq,
-  i.tier,
-  case i.tier when 'D' then 'Dip Your Toes'
-              when 'S' then 'Season of You'
-              when 'V' then 'All-In VIP Year' end as tier_name,
-  case i.tier when 'D' then 1150 when 'S' then 3000 when 'V' then 5400 end as credit_aed,
-  case i.tier when 'D' then 1    when 'S' then 3    when 'V' then 5    end as friend_cards,
-  i.client_name,
-  i.client_contact,
-  i.purchase_date,
-  i.main_expires_on,
-  i.friend_expires_on,
-  r.effective_on as referral_completed_on,
-  r.expires_on   as referral_expires_on,
-  (v.id is not null) as is_voided,
-  v.detail       as void_reason,
-  i.issued_by,
-  i.created_at
-from public.voucher_issues i
-left join public.voucher_events r on r.issue_id = i.id and r.kind = 'referral_completed'
-left join public.voucher_events v on v.issue_id = i.id and v.kind = 'voided';
-
-grant select on public.voucher_log to anon, authenticated;
+--
+-- This file used to define public.voucher_log, and so does voucher_referrals.sql. Two files
+-- defining one view is the trap voucher_roles_fix.sql section 3 already describes, and this
+-- was the third copy of it, missed when that one was fixed.
+--
+-- It does not fail quietly, which is the one good thing about it. voucher_referrals.sql adds
+-- referral_aed, friends_so_far, friends_needed, is_archived and search_text, and Postgres
+-- will not let CREATE OR REPLACE VIEW remove columns, so re-running this file on a live
+-- database stopped with:
+--
+--     ERROR: 42P16: cannot drop columns from view
+--
+-- The whole script rolls back on that, so nothing else in this file lands either, which is
+-- how a schema change and a security change can both silently not happen.
+--
+-- sql/voucher_referrals.sql is the ONLY file that defines the view, and it drops and
+-- recreates rather than replacing, for the same column-order reason. Run it after this one.
+-- If the log page says referral tracking is not set up, that is this, and re-running
+-- voucher_referrals.sql is the whole fix.

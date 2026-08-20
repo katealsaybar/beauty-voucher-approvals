@@ -15,6 +15,20 @@
 --   The team knows the number and the client does not, which is the shape of a dispute at
 --   the desk. That is a copy fix, not a schema one, but it belongs next to this rule.
 --
+-- THREE ON EVERY TIER, INCLUDING DIP YOUR TOES
+--   Checked against the pack rather than reasoned about here, because the pack settles it in
+--   five places: the reception and core-team cheat sheets, the floor memo,
+--   docs/VOUCHER-SERIAL-SPEC.md, and the decision table in index.html, which records it as
+--   Kate, 19 August. Three.
+--
+--   The consequence is worth writing down so nobody later reads it as a fault. Dip Your Toes
+--   ships ONE gift card and still needs three friends, so two of her three arrive holding
+--   nothing that ties them to her, and are recorded with gift_serial null. That is why
+--   gift_serial is nullable and why the log's own field says "if she had one". It is not a
+--   miscount and it must not be made required. What still holds the count together on that
+--   tier is voucher_referrals_no_double_count, which stops the same friend being entered
+--   twice to reach three.
+--
 --   Still undefined anywhere: what makes a client NEW. New to that branch or new to Tara
 --   Rose, and whether someone who last came three years ago counts. This schema records who
 --   was counted and who said so, so that when the rule is written down the history can be
@@ -34,6 +48,17 @@
 
 -- A function rather than a literal 3 scattered through the view, so if the number ever
 -- changes there is exactly one line to change and every historic row is recomputed with it.
+--
+-- The view depends on this function, so the view has to go first. It is recreated in section
+-- 3 of this same file, which is the only place it is ever defined.
+--
+-- BOTH signatures are dropped. A per-tier referrals_required(text) existed briefly, on the
+-- reasoning in the header, before the pack was checked. If it was ever run, this removes it,
+-- so the file lands the same way whichever state the database is in.
+drop view if exists public.voucher_log;
+drop function if exists public.referrals_required(text);
+drop function if exists public.referrals_required();
+
 create or replace function public.referrals_required()
 returns integer language sql immutable as $$ select 3 $$;
 
@@ -75,20 +100,21 @@ create index if not exists voucher_referrals_issue_idx
   on public.voucher_referrals (issue_id, visited_on);
 
 alter table public.voucher_referrals enable row level security;
-grant select on public.voucher_referrals to anon, authenticated;
+grant select on public.voucher_referrals to authenticated;
 grant insert, delete on public.voucher_referrals to authenticated;
 
 drop policy if exists voucher_referrals_select on public.voucher_referrals;
 create policy voucher_referrals_select on public.voucher_referrals
-  for select using (true);
+  for select to authenticated using (true);
 
 -- ADMIN ONLY, matching the instruction that salon staff look and Kate is the only one who
 -- changes anything. Worth knowing what that costs: a referral is earned at the desk, in
 -- front of the client, and reception cannot record it. Every one waits for Kate.
 --
--- If reception should record them herself, change `to authenticated` plus is_admin() to
--- `to anon, authenticated` and drop the is_admin() line. That is the whole change. Think
--- about it first: this table awards money, and the till page is public with no sign-in.
+-- If reception should record them herself, drop the is_admin() line and leave the rest.
+-- That is the whole change. Think about it first: this table awards money. The till is no
+-- longer open to anyone with the path, but the salon account is shared, so "signed in" and
+-- "a named person" are still not the same thing.
 drop policy if exists voucher_referrals_insert on public.voucher_referrals;
 create policy voucher_referrals_insert on public.voucher_referrals
   for insert to authenticated
@@ -164,7 +190,7 @@ left join counted c              on c.issue_id = i.id
 left join public.voucher_events v on v.issue_id = i.id and v.kind = 'voided'
 left join public.voucher_events a on a.issue_id = i.id and a.kind = 'archived';
 
-grant select on public.voucher_log to anon, authenticated;
+grant select on public.voucher_log to authenticated;
 
 -- ---------------------------------------------------------------------------
 -- 4. check it landed

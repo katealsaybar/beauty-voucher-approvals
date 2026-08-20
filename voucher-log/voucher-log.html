@@ -180,6 +180,7 @@ tr.det.hide{display:none;}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="../auth/supabase-client.js"></script>
 <script src="../shared/voucher-card.js"></script>
+<script src="../shared/signin-gate.js"></script>
 <script>
 /* ------------------------------------------------------------------ *
  * The voucher log. Reads for anyone, changes for Kate only.
@@ -443,6 +444,12 @@ function detailHtml(r){
         ? 'AED ' + C.money(r.referral_aed) + ', expires ' + C.fmt(r.referral_expires_on)
         : '<span class="muted">AED ' + C.money(r.referral_aed) + ', not earned yet</span>') +
     '</div>' +
+    '<div style="margin-top:10px"><div class="lbl">How to reach her</div>' +
+      (r.client_contact
+        ? C.esc(r.client_contact)
+        : '<span class="muted">Nothing recorded. Two clients with this name cannot be told ' +
+          'apart from the log alone.</span>') +
+    '</div>' +
     (r.void_reason
       ? '<div style="margin-top:10px"><div class="lbl">Voided because</div>' + C.esc(r.void_reason) + '</div>'
       : '');
@@ -656,8 +663,14 @@ el('q').addEventListener('input', draw);
 el('showarch').addEventListener('change', draw);
 el('refresh').addEventListener('click', load);
 
-if (window.TRS && window.TRS.ready){
-  window.TRS.ready.then(function (){ drawWho(); return load(); });
+// This page lists client names, which is the one thing in the pack that was never ours to
+// leave on a public URL. Nothing loads until there is a session. The overlay is only the
+// sentence; the enforcement is that anon holds no grant on voucher_log. See
+// sql/voucher_lockdown.sql.
+if (window.TRSGate){
+  window.TRSGate.require('This page lists client names').then(function (){
+    drawWho(); return load();
+  });
   window.TRS.onAuthChange(function (){ drawWho(); draw(); });
 } else {
   drawWho();

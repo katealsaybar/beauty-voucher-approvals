@@ -9,10 +9,17 @@
  *   tiers, values and validity     Decision 13 and the tier table
  *   three expiry clocks            19 August, with the birthday card settled 20 August
  *   serial format                  docs/VOUCHER-SERIAL-SPEC.md
- *   three friends for a referral   Kate, 19 August
+ *   three friends for a referral   Kate, 19 August. See needs: below
  */
 (function () {
   var T = window.TRSCard = {};
+
+  // The campaign's own dates. opens is not a launch date, it is a floor: anything before it
+  // is a mistyped year, which is the error that matters because a serial cannot be corrected
+  // afterwards. closes is the real one and it is stated on the till page too, so if it ever
+  // moves it moves in both. issue_voucher() in sql/voucher_issues_setup.sql holds the same
+  // two dates and is the one that actually refuses.
+  T.CAMPAIGN = { opens:'2026-01-01', closes:'2026-09-30' };
 
   T.BRANCHES = {
     SAA:{name:'Mamsha al Saadiyat', emirate:'Abu Dhabi'},
@@ -21,10 +28,21 @@
     MC: {name:'Motor City',         emirate:'Dubai'}
   };
 
+  // needs: how many new friends have to visit AND pay before the referral credit unlocks.
+  // THREE, on every tier. Kate settled it on 19 August and the pack says it in five places:
+  // the reception and core-team cheat sheets, the floor memo, docs/VOUCHER-SERIAL-SPEC.md and
+  // the decision table in index.html. It is a field rather than a literal only so the copy on
+  // the R card can be generated from it instead of the word "third" being typed twice.
+  //
+  // KNOWN CONSEQUENCE, and it is not a bug to be fixed here. Dip Your Toes ships ONE gift
+  // card and still needs three friends, so two of her three arrive without one and get logged
+  // with gift_serial empty. That is expected on this tier, not a miscount: gift_serial is
+  // nullable for exactly this reason. Do not make it required, and do not refuse a friend for
+  // arriving without a card.
   T.TIERS = {
-    D:{name:'Dip Your Toes',   places:1000, spends:1150, months:6,  friends:1, birthday:150, birthdayWhat:'Birthday blow-dry', refer:100},
-    S:{name:'Season of You',   places:2500, spends:3000, months:9,  friends:3, birthday:350, birthdayWhat:'Birthday facial',   refer:150},
-    V:{name:'All-In VIP Year', places:4500, spends:5400, months:12, friends:5, birthday:750, birthdayWhat:'Birthday treat',    refer:200}
+    D:{name:'Dip Your Toes',   places:1000, spends:1150, months:6,  friends:1, needs:3, birthday:150, birthdayWhat:'Birthday blow-dry', refer:100},
+    S:{name:'Season of You',   places:2500, spends:3000, months:9,  friends:3, needs:3, birthday:350, birthdayWhat:'Birthday facial',   refer:150},
+    V:{name:'All-In VIP Year', places:4500, spends:5400, months:12, friends:5, needs:3, birthday:750, birthdayWhat:'Birthday treat',    refer:200}
   };
 
   /* ---------- dates ---------- */
@@ -63,6 +81,9 @@
   };
 
   T.money = function (n) { return Number(n || 0).toLocaleString('en-GB'); };
+  // Only ever used for the referral threshold, so it needs to reach five and no further.
+  var ORDINALS = ['', 'first', 'second', 'third', 'fourth', 'fifth'];
+  T.ordinal = function (n) { return ORDINALS[n] || (n + 'th'); };
   T.pad4 = function (n) { var s = String(n); while (s.length < 4) s = '0' + s; return s; };
   T.esc = function (s) {
     return String(s == null ? '' : s)
@@ -83,7 +104,7 @@
 
   /* ---------- one buyer's whole set ---------- */
   // One buyer, one sequence. The type letter is the only thing that changes, so reception
-  // holds a single number for all six or eight cards.
+  // holds a single number for all four, six or eight cards.
   //
   // alloc carries {seq, mainExpiry, friendExpiry, live, id}. When it came from Postgres the
   // dates are the ones stored against the serial, so the card shows exactly what the log
@@ -100,14 +121,17 @@
     });
 
     for (i = 1; i <= t.friends; i++) {
+      // Dip Your Toes ships a single card, where "Card 1 of 1" and "All 1 carry the same
+      // expiry" both read as a bug at the desk. One card gets neither line.
       cards.push({
-        type:'G', label:'Gift ' + i, serial:T.serialOf(tier,'G',branch,seq,i),
+        type:'G', label:t.friends === 1 ? 'Gift card' : 'Gift ' + i,
+        serial:T.serialOf(tier,'G',branch,seq,i),
         face:T.faceGroups(tier,'G',branch,seq),
         gift:true, value:100, valueLabel:'Gift credit',
         expiry:friendExpiry, printable:true,
-        of:'Card ' + i + ' of ' + t.friends,
-        note:'Two months from <b>her</b> purchase date, not from the day she hands it over. ' +
-             'All ' + t.friends + ' carry the same expiry.'
+        of:t.friends === 1 ? null : 'Card ' + i + ' of ' + t.friends,
+        note:'Two months from <b>her</b> purchase date, not from the day she hands it over.' +
+             (t.friends === 1 ? '' : ' All ' + t.friends + ' carry the same expiry.')
       });
     }
 
@@ -127,10 +151,11 @@
       expiry:alloc.referralExpiry || null,
       printable:!!alloc.referralExpiry,
       note:alloc.referralExpiry
-        ? 'Earned. The clock started the day her third friend visited and paid.'
-        : '<b>Cannot be printed yet.</b> The clock starts when her third new friend has ' +
-          'visited <i>and paid</i>, so the expiry does not exist until then. It is a business ' +
-          'adjustment, so it has no Phorest gift card either.'
+        ? 'Earned. The clock started the day her ' + T.ordinal(t.needs) +
+          ' friend visited and paid.'
+        : '<b>Cannot be printed yet.</b> The clock starts when her ' + T.ordinal(t.needs) +
+          ' new friend has visited <i>and paid</i>, so the expiry does not exist until then. ' +
+          'It is a business adjustment, so it has no Phorest gift card either.'
     });
 
     return {
@@ -183,9 +208,15 @@
         '<div class="dates">' +
           '<div>Purchased <b>' + T.fmt(set.purchase) + '</b></div>' +
           '<div>Valid until <b>' + expiry + '</b></div>' +
-          '<div>' + T.esc(b.name) + '</div>' +
+          // The cardholder needs to know where the credit is good, and Term 3 holds it to
+          // the emirate it was bought in. The issuing branch is already inside the serial,
+          // so printing it twice would cost the one line that answers her actual question.
+          '<div>' + T.esc(b.emirate) + ' salons</div>' +
         '</div>' +
       '</div>' +
+      // Dawn's wording, term 12. The terms page is not published yet, so there is no URL to
+      // point at; "full terms apply" is the honest version of that until there is one.
+      '<div class="fine">Cannot be exchanged for cash &middot; Full terms apply</div>' +
     '</div>';
   };
 
