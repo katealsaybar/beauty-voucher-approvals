@@ -10,6 +10,7 @@
      see the note in the page body. -->
 <meta name="robots" content="noindex,nofollow">
 <title>Issue a Wellness Card: till tool</title>
+<link rel="stylesheet" href="../shared/voucher-card.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
@@ -85,87 +86,12 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1
 .note.good{background:var(--green-bg);border-left:3px solid var(--green);}
 .note.info{background:var(--blue-bg);border-left:3px solid var(--blue);}
 
-/* ---------------- the card ---------------- */
+/* The card lives in shared/voucher-card.css, so the till and the log cannot drift
+   apart on what a card looks like. */
 .stage{display:flex;justify-content:center;padding:18px 0 6px;}
-.card{
-  /* 85.6 x 54 mm, the real ID-1 credit card. Everything inside is sized in em, so the
-     whole card scales off this one font-size. The print block below changes only those two. */
-  width:428px; height:270px; font-size:11px;
-  position:relative;border-radius:4.6%/7.3%;overflow:hidden;
-  background:
-    radial-gradient(120% 90% at 18% 12%, #3a3a42 0%, transparent 55%),
-    radial-gradient(90% 70% at 82% 88%, #34343c 0%, transparent 60%),
-    linear-gradient(145deg,#131316 0%,#0a0a0c 46%,#1b1b20 74%,#0d0d10 100%);
-  color:var(--cream);
-  box-shadow:0 10px 30px rgba(45,46,55,.28);
-}
-.card .sheen{position:absolute;inset:0;pointer-events:none;
-  background:linear-gradient(118deg,transparent 34%,rgba(241,236,227,.055) 46%,transparent 58%);}
-.card .brand{position:absolute;top:2.1em;left:0;right:0;text-align:center;}
-.card .brand img{height:3.5em;width:auto;display:inline-block;}
-
-.card .tier{position:absolute;top:7em;left:0;right:0;text-align:center;
-  font-size:.9em;letter-spacing:.15em;font-weight:600;text-transform:uppercase;
-  color:var(--gold);text-indent:.15em;padding:0 8%;}
-.card .gift{position:absolute;top:6.5em;left:0;right:0;text-align:center;
-  font-family:var(--serif);font-style:italic;font-size:1.45em;color:var(--cream);}
-
-/* the chip sits ABOVE the number, on the left, the way a real card reads */
-.card .emv{position:absolute;left:8%;top:11.4em;width:3.2em;height:2.45em;border-radius:.4em;
-  background:linear-gradient(140deg,#E4C77E,#B08F45 52%,#E9D496);overflow:hidden;}
-.card .emv i{position:absolute;background:rgba(90,68,20,.5);}
-.card .emv i:nth-child(1){left:22%;top:0;width:1px;height:100%;}
-.card .emv i:nth-child(2){left:56%;top:0;width:1px;height:100%;}
-.card .emv i:nth-child(3){left:0;top:34%;width:100%;height:1px;}
-.card .emv i:nth-child(4){left:0;top:66%;width:100%;height:1px;}
-
-.card .val{position:absolute;right:8%;top:11.1em;text-align:right;}
-.card .val .lb{font-size:.6em;letter-spacing:.2em;opacity:.6;text-transform:uppercase;text-indent:.2em;}
-.card .val .amt{font-family:var(--serif);font-size:1.7em;line-height:1.15;color:var(--gold);}
-.card .val .amt small{font-size:.5em;letter-spacing:.14em;opacity:.85;margin-right:.35em;
-  font-family:var(--sans);vertical-align:.4em;}
-
-.card .num{position:absolute;left:8%;right:8%;top:15.2em;display:flex;gap:1.5em;
-  font-size:1.14em;letter-spacing:.14em;font-weight:500;font-variant-numeric:tabular-nums;}
-.card .num span{white-space:nowrap;}
-
-.card .of{position:absolute;left:8%;top:18.6em;font-size:.6em;letter-spacing:.2em;
-  opacity:.6;text-transform:uppercase;text-indent:.2em;}
-
-.card .foot{position:absolute;left:8%;right:8%;bottom:1.7em;
-  display:flex;align-items:flex-end;justify-content:space-between;gap:1em;}
-.card .who .lb{font-size:.6em;letter-spacing:.2em;opacity:.6;text-transform:uppercase;
-  margin-bottom:.25em;text-indent:.2em;}
-.card .who .nm{font-size:1.02em;letter-spacing:.09em;text-transform:uppercase;font-weight:500;}
-.card .dates{text-align:right;font-size:.64em;letter-spacing:.13em;opacity:.8;line-height:1.8;
-  text-transform:uppercase;white-space:nowrap;}
-.card .dates b{font-weight:600;opacity:1;letter-spacing:.07em;}
-
 .caption{text-align:center;font-size:13px;color:var(--muted);margin-top:12px;}
 #printall{display:none;}
 
-/* ---------------- print: one card, exact size, a real PDF ---------------- */
-/* No canvas and no image export anywhere in this file, so every line on the card
-   stays selectable text and vector in the saved PDF. */
-@media print{
-  @page{size:85.6mm 54mm;margin:0;}
-  body{background:#fff;}
-  .top,.mock,#tillpanel,.panel h2,.setbar,.serial,.note,.caption,.btnrow,.f{display:none !important;}
-  .wrap{max-width:none;margin:0;padding:0;}
-  .cols{display:block;}
-  .panel{border:0;border-radius:0;padding:0;background:transparent;}
-  .stage{padding:0;display:block;}
-  /* body carries .p-one or .p-all so the two buttons share one @page block */
-  body.p-all .stage{display:none;}
-  body.p-all #printall{display:block;}
-  #printall .card{margin:0;page-break-after:always;break-after:page;}
-  #printall .card:last-child{page-break-after:auto;break-after:auto;}
-  .card{
-    width:85.6mm;height:54mm;font-size:2.24mm;
-    border-radius:0;box-shadow:none;
-    -webkit-print-color-adjust:exact;print-color-adjust:exact;
-  }
-}
 </style>
 </head>
 <body data-auth-root="../">
@@ -273,6 +199,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1
      reason as every other page here: plain scripts, no modules, works off disk. -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="../auth/supabase-client.js"></script>
+<script src="../shared/voucher-card.js"></script>
 <script>
 /* ------------------------------------------------------------------ *
  * Wellness Voucher: till tool.
@@ -291,59 +218,14 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1
  * card is issued, because a local counter cannot promise uniqueness.
  * ------------------------------------------------------------------ */
 
-var BRANCHES = {
-  SAA:{name:'Mamsha al Saadiyat', emirate:'Abu Dhabi'},
-  KCA:{name:'Khalifa City A',     emirate:'Abu Dhabi'},
-  AQ: {name:'Al Quoz',            emirate:'Dubai'},
-  MC: {name:'Motor City',         emirate:'Dubai'}
-};
-
-var TIERS = {
-  D:{name:'Dip Your Toes',   spends:1150, months:6,  friends:1, birthday:150, birthdayWhat:'Birthday blow-dry',      refer:100},
-  S:{name:'Season of You',   spends:3000, months:9,  friends:3, birthday:350, birthdayWhat:'Birthday facial',        refer:150},
-  V:{name:'All-In VIP Year', spends:5400, months:12, friends:5, birthday:750, birthdayWhat:'Birthday treat',         refer:200}
-};
-
-/* ---------- dates ---------- */
-var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-
-// British English, month spelled out. Deliberately not 26/08/2026: the client base is
-// mostly expat, and a numeric 03/05/2026 is read two different ways by two nationalities.
-// A spelled month has exactly one reading, so the till never has that argument.
-function fmt(d){ return d.getDate() + ' ' + MONTHS[d.getMonth()] + ' ' + d.getFullYear(); }
-
-// Add months, clamped to the end of the target month, so 31 Mar + 6 lands on 30 Sep
-// instead of rolling into October.
-function addMonths(d, n){
-  var day = d.getDate();
-  var t = new Date(d.getFullYear(), d.getMonth() + n, 1);
-  var last = new Date(t.getFullYear(), t.getMonth() + 1, 0).getDate();
-  t.setDate(Math.min(day, last));
-  return t;
-}
-function parseDate(v){ var p = v.split('-'); return new Date(+p[0], +p[1] - 1, +p[2]); }
-function today(){ var n = new Date(); return new Date(n.getFullYear(), n.getMonth(), n.getDate()); }
-function iso(d){
-  var m = String(d.getMonth() + 1), dd = String(d.getDate());
-  if (m.length < 2) m = '0' + m;
-  if (dd.length < 2) dd = '0' + dd;
-  return d.getFullYear() + '-' + m + '-' + dd;
-}
-function money(n){ return n.toLocaleString('en-GB'); }
-function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-function pad4(n){ var s = String(n); while (s.length < 4) s = '0' + s; return s; }
-
-/* ---------- the serial ---------- */
-// WV-<tier><type>-<branch>-<seq>[-<n>]. Full form for the log, for Phorest and for
-// the small print. The card face prints the same thing in four groups, which is how it
-// reads as a card number without being encoded down into digits.
-function serialOf(tier, type, branch, seq, n){
-  var s = 'WV-' + tier + type + '-' + branch + '-' + pad4(seq);
-  return n ? s + '-' + n : s;
-}
-function faceGroups(tier, type, branch, seq){
-  return ['WV', tier + type, branch, pad4(seq)];
-}
+// The campaign's numbers, the date maths, the serial format and the card are all in
+// shared/voucher-card.js now. Aliased here so the rest of this file reads unchanged, and so
+// the till and the log can never disagree about a value, an expiry or a serial.
+var C = window.TRSCard;
+var BRANCHES = C.BRANCHES, TIERS = C.TIERS;
+var fmt = C.fmt, addMonths = C.addMonths, parseDate = C.parseDate, today = C.today, iso = C.iso;
+var money = C.money, esc = C.esc, pad4 = C.pad4;
+var buildSet = C.buildSet, renderCard = C.render;
 
 /* ---------- where the number comes from ---------- */
 // Two modes, and the page says out loud which one it is in.
@@ -412,98 +294,6 @@ function remotePeek(branch){
   return d.from('voucher_counters').select('next_seq').eq('branch', branch).maybeSingle()
     .then(function (res){ return res.error || !res.data ? null : res.data.next_seq; })
     .catch(function (){ return null; });
-}
-
-/* ---------- one buyer's whole set ---------- */
-// One buyer, one sequence. The type letter is the only thing that changes, so
-// reception holds a single number for all six or eight cards.
-// alloc carries the number and the two dates. When the row came from Postgres those dates
-// are the ones stored against the serial, so the card shows exactly what the log holds
-// rather than a second calculation that could drift from it.
-function buildSet(branch, tier, name, purchase, alloc){
-  var t = TIERS[tier], seq = alloc.seq, cards = [], i;
-  var mainExpiry   = alloc.mainExpiry;
-  var friendExpiry = alloc.friendExpiry;
-
-  cards.push({
-    type:'M', label:'Main card', serial:serialOf(tier,'M',branch,seq),
-    face:faceGroups(tier,'M',branch,seq),
-    lead:t.name, value:t.spends, valueLabel:'Credit',
-    expiry:mainExpiry, printable:true
-  });
-
-  for (i = 1; i <= t.friends; i++){
-    cards.push({
-      type:'G', label:'Gift ' + i, serial:serialOf(tier,'G',branch,seq,i),
-      face:faceGroups(tier,'G',branch,seq),
-      gift:true, value:100, valueLabel:'Gift credit',
-      expiry:friendExpiry, printable:true,
-      of:'Card ' + i + ' of ' + t.friends,
-      note:'Two months from <b>her</b> purchase date, not from the day she hands it over. ' +
-           'All ' + t.friends + ' carry the same expiry.'
-    });
-  }
-
-  cards.push({
-    type:'B', label:'Birthday', serial:serialOf(tier,'B',branch,seq),
-    face:faceGroups(tier,'B',branch,seq),
-    lead:t.birthdayWhat, value:t.birthday, valueLabel:'Birthday treat',
-    expiry:mainExpiry, printable:true,
-    note:'Usable <b>any time</b> inside her voucher validity, not only in her birthday month. ' +
-         'Same clock as the main card.'
-  });
-
-  cards.push({
-    type:'R', label:'Refer a friend', serial:serialOf(tier,'R',branch,seq),
-    face:faceGroups(tier,'R',branch,seq),
-    lead:'Thank you for the introduction', value:t.refer, valueLabel:'Referral credit',
-    expiry:null, printable:false,
-    note:'<b>Cannot be printed today.</b> The clock starts when her third new friend has visited ' +
-         '<i>and paid</i>, so the expiry does not exist yet. Issue it then, against this same ' +
-         'number. It is a business adjustment, so it has no Phorest gift card either.'
-  });
-
-  return {
-    seq:seq, branch:branch, tier:tier, name:name, purchase:purchase, cards:cards,
-    live:!!alloc.live, id:alloc.id || null
-  };
-}
-
-/* ---------- render one card ---------- */
-function renderCard(set, card){
-  var b = BRANCHES[set.branch];
-  var nm = set.name ? set.name : 'Her name';
-  var lead = card.gift
-    ? '<div class="gift">A gift for you</div>'
-    : '<div class="tier">' + esc(card.lead) + '</div>';
-  var expiry = card.expiry ? fmt(card.expiry) : 'Set on referral';
-
-  return '' +
-  '<div class="card">' +
-    '<div class="sheen"></div>' +
-    '<div class="brand"><img src="../assets/tara-rose-logo-white.png" alt="Tara Rose Salon"></div>' +
-    lead +
-    '<div class="emv"><i></i><i></i><i></i><i></i></div>' +
-    '<div class="val">' +
-      '<div class="lb">' + esc(card.valueLabel) + '</div>' +
-      '<div class="amt"><small>AED</small>' + money(card.value) + '</div>' +
-    '</div>' +
-    '<div class="num">' +
-      card.face.map(function(g){ return '<span>' + g + '</span>'; }).join('') +
-    '</div>' +
-    (card.of ? '<div class="of">' + esc(card.of) + '</div>' : '') +
-    '<div class="foot">' +
-      '<div class="who">' +
-        '<div class="lb">' + (card.gift ? 'Gifted by' : 'Cardholder') + '</div>' +
-        '<div class="nm">' + esc(nm) + '</div>' +
-      '</div>' +
-      '<div class="dates">' +
-        '<div>Purchased <b>' + fmt(set.purchase) + '</b></div>' +
-        '<div>Valid until <b>' + expiry + '</b></div>' +
-        '<div>' + esc(b.name) + '</div>' +
-      '</div>' +
-    '</div>' +
-  '</div>';
 }
 
 /* ---------- wiring ---------- */
@@ -653,34 +443,12 @@ el('reset').addEventListener('click', function(){
   el('printall-btn').textContent = 'Save all her cards as one PDF';
 });
 
-// The browser names a Save as PDF after document.title, so it is set to something reception
-// can find again in a folder of attachments, then put back.
-function printWith(mode, filename){
-  var restore = document.title;
-  document.title = filename;
-  document.body.classList.add(mode);
-
-  // Undone on afterprint, not on the line after window.print(). Chrome does not reliably
-  // block there, so clearing it immediately could strip the mode before the print preview
-  // has rendered, and the wrong card set would come out.
-  function cleanup(){
-    document.body.classList.remove(mode);
-    document.title = restore;
-    window.removeEventListener('afterprint', cleanup);
-  }
-  window.addEventListener('afterprint', cleanup);
-  window.print();
-}
-
 el('print').addEventListener('click', function(){
   var c = state.set.cards[state.active];
-  printWith('p-one', c.serial + ' ' + state.set.name);
+  C.print(state.set, [c], c.serial + ' ' + state.set.name);
 });
 
-el('printall-btn').addEventListener('click', function(){
-  var s2 = state.set;
-  printWith('p-all', 'WV-' + s2.branch + '-' + pad4(s2.seq) + ' ' + s2.name + ' all cards');
-});
+el('printall-btn').addEventListener('click', function(){ C.printSet(state.set); });
 
 function wireCopy(id, label, pick){
   el(id).addEventListener('click', function(){

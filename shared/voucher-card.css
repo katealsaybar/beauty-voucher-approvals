@@ -1,0 +1,94 @@
+/* The Wellness Card itself, and how it prints.
+ *
+ * Shared by voucher-issue (the till) and voucher-log (the record) so there is one card, not
+ * two that drift. Both pages sit one folder below the pack root, so the logo path written by
+ * voucher-card.js, ../assets/tara-rose-logo-white.png, resolves from either.
+ *
+ * The artwork is a placeholder for Hanneh's. When her PNGs land, only .card's background and
+ * the positions below change; nothing outside this file knows what the card looks like.
+ */
+
+.card{
+  /* 85.6 x 54 mm, the real ID-1 credit card. Everything inside is sized in em, so the whole
+     card scales off this one font-size and the print block at the bottom only changes those
+     two values. Do not put px inside the card. */
+  width:428px; height:270px; font-size:11px;
+  position:relative;border-radius:4.6%/7.3%;overflow:hidden;
+  background:
+    radial-gradient(120% 90% at 18% 12%, #3a3a42 0%, transparent 55%),
+    radial-gradient(90% 70% at 82% 88%, #34343c 0%, transparent 60%),
+    linear-gradient(145deg,#131316 0%,#0a0a0c 46%,#1b1b20 74%,#0d0d10 100%);
+  color:#F1ECE3;
+  box-shadow:0 10px 30px rgba(45,46,55,.28);
+  font-family:'Inter',system-ui,-apple-system,sans-serif;
+  line-height:1.4;
+}
+.card .sheen{position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(118deg,transparent 34%,rgba(241,236,227,.055) 46%,transparent 58%);}
+
+.card .brand{position:absolute;top:2.1em;left:0;right:0;text-align:center;}
+.card .brand img{height:3.5em;width:auto;display:inline-block;}
+
+.card .tier{position:absolute;top:7em;left:0;right:0;text-align:center;
+  font-size:.9em;letter-spacing:.15em;font-weight:600;text-transform:uppercase;
+  color:#C9A961;text-indent:.15em;padding:0 8%;}
+.card .gift{position:absolute;top:6.5em;left:0;right:0;text-align:center;
+  font-family:'Playfair Display',Georgia,serif;font-style:italic;font-size:1.45em;color:#F1ECE3;}
+
+/* The chip sits ABOVE the number, on the left, the way a real card reads. Named .emv rather
+   than .chip because .chip is a button elsewhere in the pack and the two collided: the card's
+   gold plate inherited a border and a pointer cursor from it. */
+.card .emv{position:absolute;left:8%;top:11.4em;width:3.2em;height:2.45em;border-radius:.4em;
+  background:linear-gradient(140deg,#E4C77E,#B08F45 52%,#E9D496);overflow:hidden;}
+.card .emv i{position:absolute;background:rgba(90,68,20,.5);}
+.card .emv i:nth-child(1){left:22%;top:0;width:1px;height:100%;}
+.card .emv i:nth-child(2){left:56%;top:0;width:1px;height:100%;}
+.card .emv i:nth-child(3){left:0;top:34%;width:100%;height:1px;}
+.card .emv i:nth-child(4){left:0;top:66%;width:100%;height:1px;}
+
+.card .val{position:absolute;right:8%;top:11.1em;text-align:right;}
+.card .val .lb{font-size:.6em;letter-spacing:.2em;opacity:.6;text-transform:uppercase;text-indent:.2em;}
+.card .val .amt{font-family:'Playfair Display',Georgia,serif;font-size:1.7em;line-height:1.15;color:#C9A961;}
+.card .val .amt small{font-size:.5em;letter-spacing:.14em;opacity:.85;margin-right:.35em;
+  font-family:'Inter',system-ui,sans-serif;vertical-align:.4em;}
+
+.card .num{position:absolute;left:8%;right:8%;top:15.2em;display:flex;gap:1.5em;
+  font-size:1.14em;letter-spacing:.14em;font-weight:500;font-variant-numeric:tabular-nums;}
+.card .num span{white-space:nowrap;}
+
+.card .of{position:absolute;left:8%;top:18.6em;font-size:.6em;letter-spacing:.2em;
+  opacity:.6;text-transform:uppercase;text-indent:.2em;}
+
+.card .foot{position:absolute;left:8%;right:8%;bottom:1.7em;
+  display:flex;align-items:flex-end;justify-content:space-between;gap:1em;}
+.card .who .lb{font-size:.6em;letter-spacing:.2em;opacity:.6;text-transform:uppercase;
+  margin-bottom:.25em;text-indent:.2em;}
+.card .who .nm{font-size:1.02em;letter-spacing:.09em;text-transform:uppercase;font-weight:500;}
+.card .dates{text-align:right;font-size:.64em;letter-spacing:.13em;opacity:.8;line-height:1.8;
+  text-transform:uppercase;white-space:nowrap;}
+.card .dates b{font-weight:600;opacity:1;letter-spacing:.07em;}
+
+/* A smaller card, for the hover preview in the log. One value, because of the em rule above. */
+.card.sm{width:257px;height:162px;font-size:6.6px;box-shadow:0 12px 28px rgba(45,46,55,.34);}
+
+/* ---------------- printing ----------------
+ * TRSCard.print() fills #trs-printroot and adds .trs-printing to <body>. The rules below hide
+ * every other top-level element, so this works on any page in the pack without that page
+ * having to list what to hide. Nothing here rasterises the card: it stays live text, so the
+ * serial and the dates are selectable and vector in the saved PDF.
+ */
+#trs-printroot{display:none;}
+
+@media print{
+  @page{size:85.6mm 54mm;margin:0;}
+  body.trs-printing{background:#fff;}
+  body.trs-printing > *{display:none !important;}
+  body.trs-printing > #trs-printroot{display:block !important;}
+  #trs-printroot .card{
+    width:85.6mm;height:54mm;font-size:2.24mm;
+    border-radius:0;box-shadow:none;margin:0;
+    page-break-after:always;break-after:page;
+    -webkit-print-color-adjust:exact;print-color-adjust:exact;
+  }
+  #trs-printroot .card:last-child{page-break-after:auto;break-after:auto;}
+}
