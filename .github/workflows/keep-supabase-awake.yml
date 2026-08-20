@@ -1,0 +1,67 @@
+# Keeps the Wellness Voucher database from pausing.
+#
+# WHY THIS EXISTS
+#   The voucher log lives on a Supabase FREE project (vlqvefsaxztitcbhirxt). Free projects
+#   pause after about a week with no requests. A paused project means the till tool at
+#   voucher-issue/voucher-issue.html cannot allocate a serial, and because printing is
+#   deliberately blocked when nothing can be logged, reception cannot hand a client her
+#   card at all. One read every couple of days is enough to keep it awake.
+#
+# THIS IS A STOPGAP, NOT THE FIX
+#   It only answers the pausing. It does nothing about backups, which is the larger free-tier
+#   problem for something that is the only record of who holds which serial. The real fix is
+#   to move the project onto a paid plan and out of a former employee's organisation. Delete
+#   this file once that is done: a heartbeat guarding a till is a thing to remove, not keep.
+#
+# THE KEY BELOW IS NOT A LEAK
+#   sb_publishable_... is a publishable key. It is designed to sit in a browser, it is
+#   already served in this repo's own JavaScript on the public site, and everything it can
+#   reach is governed by row level security. It grants a read of voucher_counters and no more.
+#
+# CAVEAT
+#   GitHub disables scheduled workflows after 60 days of no repository activity. That
+#   outlasts this campaign, but it is another quiet failure, which is why the job below is
+#   written to FAIL rather than warn. A failed run emails you; a silent one teaches nothing.
+
+name: Keep Supabase awake
+
+on:
+  schedule:
+    # 06:00 UTC every second day. GitHub's cron can run late, sometimes by an hour or more,
+    # which is why the interval is two days against a roughly seven day pause window rather
+    # than something tighter.
+    - cron: '0 6 */2 * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Read one row from voucher_counters
+        env:
+          SUPABASE_URL: https://vlqvefsaxztitcbhirxt.supabase.co
+          SUPABASE_KEY: sb_publishable_JlOzwdcK0xjmE6j3nHmwhg_xDKxq1vv
+        run: |
+          set -euo pipefail
+
+          # --fail-with-body so a 4xx/5xx is a non-zero exit AND the response is printed.
+          # Without it curl exits 0 on an HTTP error and the heartbeat reports success while
+          # the database is unreachable, which is the one outcome that makes this worse than
+          # having no heartbeat at all.
+          body=$(curl --silent --show-error --fail-with-body \
+            --max-time 30 \
+            --header "apikey: ${SUPABASE_KEY}" \
+            --header "Authorization: Bearer ${SUPABASE_KEY}" \
+            "${SUPABASE_URL}/rest/v1/voucher_counters?select=branch,next_seq&order=branch")
+
+          echo "Counters: ${body}"
+
+          # A reachable but empty table means the schema is not what the till tool expects,
+          # so treat it as a failure too. sql/voucher_issues_setup.sql seeds four branches.
+          case "$body" in
+            *'"branch"'*) echo "Awake, and the counters are there." ;;
+            *) echo "Reached the database but voucher_counters came back empty." >&2; exit 1 ;;
+          esac
