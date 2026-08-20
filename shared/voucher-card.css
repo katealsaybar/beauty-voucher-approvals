@@ -9,9 +9,13 @@
  */
 
 .card{
-  /* 85.6 x 54 mm, the real ID-1 credit card. Everything inside is sized in em, so the whole
-     card scales off this one font-size and the print block at the bottom only changes those
-     two values. Do not put px inside the card. */
+  /* 85.6 x 54 mm, the real ID-1 credit card. Two rules inside, and they are not the same:
+       TYPE sizes use em, so everything scales off this one font-size.
+       VERTICAL POSITIONS use % of the card's height, never em.
+     The second rule is not a style preference. `top` in em resolves against the element's OWN
+     font-size, so .of at font-size:.6em and top:18.6em landed at 123px rather than 205px and
+     sat on top of the chip. The card has a fixed aspect ratio, so a percentage means the same
+     place at any size, on screen and in print alike. Do not put px inside the card. */
   width:428px; height:270px; font-size:11px;
   position:relative;border-radius:4.6%/7.3%;overflow:hidden;
   background:
@@ -26,19 +30,19 @@
 .card .sheen{position:absolute;inset:0;pointer-events:none;
   background:linear-gradient(118deg,transparent 34%,rgba(241,236,227,.055) 46%,transparent 58%);}
 
-.card .brand{position:absolute;top:2.1em;left:0;right:0;text-align:center;}
+.card .brand{position:absolute;top:8.56%;left:0;right:0;text-align:center;}
 .card .brand img{height:3.5em;width:auto;display:inline-block;}
 
-.card .tier{position:absolute;top:7em;left:0;right:0;text-align:center;
+.card .tier{position:absolute;top:25.7%;left:0;right:0;text-align:center;
   font-size:.9em;letter-spacing:.15em;font-weight:600;text-transform:uppercase;
   color:#C9A961;text-indent:.15em;padding:0 8%;}
-.card .gift{position:absolute;top:6.5em;left:0;right:0;text-align:center;
+.card .gift{position:absolute;top:30%;left:0;right:0;text-align:center;
   font-family:'Playfair Display',Georgia,serif;font-style:italic;font-size:1.45em;color:#F1ECE3;}
 
 /* The chip sits ABOVE the number, on the left, the way a real card reads. Named .emv rather
    than .chip because .chip is a button elsewhere in the pack and the two collided: the card's
    gold plate inherited a border and a pointer cursor from it. */
-.card .emv{position:absolute;left:8%;top:11.4em;width:3.2em;height:2.45em;border-radius:.4em;
+.card .emv{position:absolute;left:8%;top:46.4%;width:3.2em;height:2.45em;border-radius:.4em;
   background:linear-gradient(140deg,#E4C77E,#B08F45 52%,#E9D496);overflow:hidden;}
 .card .emv i{position:absolute;background:rgba(90,68,20,.5);}
 .card .emv i:nth-child(1){left:22%;top:0;width:1px;height:100%;}
@@ -46,25 +50,32 @@
 .card .emv i:nth-child(3){left:0;top:34%;width:100%;height:1px;}
 .card .emv i:nth-child(4){left:0;top:66%;width:100%;height:1px;}
 
-.card .val{position:absolute;right:8%;top:11.1em;text-align:right;}
+.card .val{position:absolute;right:8%;top:45.2%;text-align:right;}
 .card .val .lb{font-size:.6em;letter-spacing:.2em;opacity:.6;text-transform:uppercase;text-indent:.2em;}
 .card .val .amt{font-family:'Playfair Display',Georgia,serif;font-size:1.7em;line-height:1.15;color:#C9A961;}
 .card .val .amt small{font-size:.5em;letter-spacing:.14em;opacity:.85;margin-right:.35em;
   font-family:'Inter',system-ui,sans-serif;vertical-align:.4em;}
 
-.card .num{position:absolute;left:8%;right:8%;top:15.2em;display:flex;gap:1.5em;
+.card .num{position:absolute;left:8%;right:8%;top:70.6%;display:flex;gap:1.5em;
   font-size:1.14em;letter-spacing:.14em;font-weight:500;font-variant-numeric:tabular-nums;}
 .card .num span{white-space:nowrap;}
 
-.card .of{position:absolute;left:8%;top:18.6em;font-size:.6em;letter-spacing:.2em;
+/* Between the chip and the serial. It used to be below the serial, where the foot leaves
+   about five pixels, which is why it ended up on the chip instead. */
+.card .of{position:absolute;left:8%;top:62.2%;font-size:.6em;letter-spacing:.2em;
   opacity:.6;text-transform:uppercase;text-indent:.2em;}
 
-.card .foot{position:absolute;left:8%;right:8%;bottom:1.7em;
+/* Anchored from the TOP, not the bottom. It was bottom:1.7em, and the card is very slightly
+   shorter in print than on screen when measured in em (24.1 against 24.5), so everything
+   anchored to the bottom rose by about a line and the CARDHOLDER label landed on top of the
+   serial. Measuring from the top means the gap between the serial and the foot is fixed and
+   cannot close, whatever the card's height rounds to. */
+.card .foot{position:absolute;left:8%;right:8%;top:79%;
   display:flex;align-items:flex-end;justify-content:space-between;gap:1em;}
 .card .who .lb{font-size:.6em;letter-spacing:.2em;opacity:.6;text-transform:uppercase;
   margin-bottom:.25em;text-indent:.2em;}
 .card .who .nm{font-size:1.02em;letter-spacing:.09em;text-transform:uppercase;font-weight:500;}
-.card .dates{text-align:right;font-size:.64em;letter-spacing:.13em;opacity:.8;line-height:1.8;
+.card .dates{text-align:right;font-size:.64em;letter-spacing:.13em;opacity:.8;line-height:1.7;
   text-transform:uppercase;white-space:nowrap;}
 .card .dates b{font-weight:600;opacity:1;letter-spacing:.07em;}
 
