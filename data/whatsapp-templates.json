@@ -27,12 +27,12 @@
     "broadcast": {
       "label": "Initial broadcast",
       "region": "Abu Dhabi and Dubai",
-      "submit": "Hi, this is Tara Rose Salon.\n\nWe've been thinking about you, so we built something for our regulars. Not money off. A plan.\n\nMost of us don't lack the intention to look after ourselves. We lack a plan. A treatment here, a blowdry there, and six months on you're back where you started.\n\nSo we made three prepaid Wellness Vouchers. You place your credit, we add more on top, and we map your visits so each builds on the last.\n\nDip Your Toes: pay 1,000, get 1,150. Any service, 6 months.\nSeason of You: pay 2,500, get 3,000. Plus hair spa and glossing. 9 months.\nAll-In VIP Year: pay 4,500, get 5,400. Your year mapped, one major colour in. 12 months.\n\nTabby splits the upper two into four, and the credit stays the same.\n\nWhat each covers: [voucher link]\n\nThree ways in: 1⃣ Reserve one for yourself. 2⃣ Tick “this is a gift” on the form and we'll send it in her name, for the woman who'd never book it herself. 3⃣ Not sure which tier? Reply and we'll help.\n\nCloses 30 September. Shukran"
+      "submit": "Hi, this is Tara Rose Salon.\n\nWe built something for our regulars. Not money off. A plan.\n\nMost of us don't lack the intention. We lack a plan. A treatment here, a blowdry there, and six months on you're back where you started.\n\nSo we made three prepaid Wellness Vouchers. You place your credit, we add more on top, and we map your visits so each builds on the last.\n\nDip Your Toes: pay 1,000, get 1,150. Any service, 6 months.\nSeason of You: pay 2,500, get 3,000. Plus hair spa and glossing. 9 months.\nAll-In VIP Year: pay 4,500, get 5,400. Your year mapped, one major colour in. 12 months.\n\nTabby splits the upper two into four, and the credit stays the same.\n\nReception will match you with one of our selected stylists.\n\nWhat each covers: [voucher link]\n\nThree ways in: 1⃣ Reserve one for yourself. 2⃣ Tick “this is a gift” on the form and we'll send it in her name, for the woman who'd never book it herself. 3⃣ Not sure which tier? Just reply.\n\nCloses 30 September. Shukran"
     },
     "reminder_ad": {
       "label": "48-72h reminder",
       "region": "Abu Dhabi",
-      "submit": "Hi [Name], a gentle reminder from us. The Wellness Voucher closes on 30 September, and we did not want you to miss it if you have been thinking it over.\n\nYou can reserve it for yourself, and the gift card that comes with it is emailed to whoever you name, in your name. Or simply reply and we will help you decide. No pressure at all.\n\n[voucher link]\n\nShukran.",
+      "submit": "Hi [Name], a gentle reminder from us. The Wellness Voucher closes on 30 September, and we did not want you to miss it if you have been thinking it over.\n\nYou can reserve it for yourself, and the gift card that comes with it is emailed to whoever you name, in your name. Or simply reply and we will help you decide. No pressure at all.\n\nReception will match you with one of our selected stylists.\n\n[voucher link]\n\nShukran.",
       "buttons": [
         "Tell me more",
         "I already have mine"
@@ -41,7 +41,7 @@
     "reminder_dubai": {
       "label": "48-72h reminder",
       "region": "Dubai",
-      "submit": "Hi [Name], a quick one. The Wellness Voucher window closes 30 September.\n\nIf it has been on your mind, the three tiers are here: [voucher link]\n\nReserve it for yourself, and the gift card that comes with it is emailed to whoever you name. Or reply and we will help you choose. Whatever suits you.",
+      "submit": "Hi [Name], a quick one. The Wellness Voucher window closes 30 September.\n\nIf it has been on your mind, the three tiers are here: [voucher link]\n\nReserve it for yourself, and the gift card that comes with it is emailed to whoever you name. Or reply and we will help you choose. Whatever suits you.\n\nReception will match you with one of our selected stylists.",
       "buttons": [
         "Tell me more",
         "I already have mine"
