@@ -189,7 +189,12 @@
     return '' +
     '<div class="card' + (extraClass ? ' ' + extraClass : '') + '">' +
       '<div class="sheen"></div>' +
-      '<div class="brand"><img src="../assets/tara-rose-logo-white.png" alt="Tara Rose Salon"></div>' +
+      // tara-rose-logo-CARD, not -white. The shared white logo carries the mint rule above the
+      // wordmark, which is the pack's UI accent and is right on the eight pages that use it.
+      // On the black card it is the only cool colour against the gold, and the approved Canva
+      // artwork has a plain white rule there: counted, zero mint pixels on it. So the card gets
+      // its own copy with that one rule turned white, and the shared asset is left alone.
+      '<div class="brand"><img src="../assets/tara-rose-logo-card.png" alt="Tara Rose Salon"></div>' +
       lead +
       '<div class="emv"><i></i><i></i><i></i><i></i></div>' +
       '<div class="val">' +
@@ -234,7 +239,12 @@
       root.id = 'trs-printroot';
       document.body.appendChild(root);
     }
-    root.innerHTML = cards.map(function (c) { return T.render(set, c); }).join('');
+    // One A5 page per card, the card centred on it. The sheet is what carries the page
+    // break, so voucher-card.css can size the page and the card independently. See the
+    // printing block there for why the card is not printed at its real 85.6mm.
+    root.innerHTML = cards.map(function (c) {
+      return '<div class="sheet">' + T.render(set, c) + '</div>';
+    }).join('');
 
     // The browser names a Save as PDF after document.title, so reception can find the file
     // again in a folder of attachments rather than opening four called Untitled.

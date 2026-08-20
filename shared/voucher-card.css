@@ -95,19 +95,43 @@
  * every other top-level element, so this works on any page in the pack without that page
  * having to list what to hide. Nothing here rasterises the card: it stays live text, so the
  * serial and the dates are selectable and vector in the saved PDF.
+ *
+ * ONE A5 PAGE PER CARD, not one card-sized page. Measured off the real print path on 20 Aug:
+ * at a true 85.6 x 54mm page the small print resolves to 3.1pt and the CARDHOLDER label to
+ * 3.7pt. That is fine on plastic you can hold up to the light, and unreadable in a PDF on a
+ * phone, which is the only way a client ever receives this. The same card at 140mm on A5
+ * gives 5.1pt and 6.2pt. Every size on the card is em or %, so the three numbers on .card
+ * below are the only thing that changes: nothing above this comment knows about print.
+ *
+ * TO GO BACK to a real card-sized page (a plastic card run, say): @page 85.6mm 54mm, .card
+ * width:85.6mm height:54mm font-size:2.24mm border-radius:0, and drop .sheet's sizing so it
+ * stops being a page of its own.
  */
 #trs-printroot{display:none;}
 
 @media print{
-  @page{size:85.6mm 54mm;margin:0;}
+  @page{size:210mm 148mm;margin:0;}
   body.trs-printing{background:#fff;}
   body.trs-printing > *{display:none !important;}
   body.trs-printing > #trs-printroot{display:block !important;}
-  #trs-printroot .card{
-    width:85.6mm;height:54mm;font-size:2.24mm;
-    border-radius:0;box-shadow:none;margin:0;
+
+  /* The SHEET carries the page break now, not the card, which is what lets the two be sized
+     independently. Written by TRSCard.print, one per card. */
+  #trs-printroot .sheet{
+    width:210mm;height:148mm;
+    display:flex;align-items:center;justify-content:center;
+    background:#FAF8F4;
     page-break-after:always;break-after:page;
     -webkit-print-color-adjust:exact;print-color-adjust:exact;
   }
-  #trs-printroot .card:last-child{page-break-after:auto;break-after:auto;}
+  #trs-printroot .sheet:last-child{page-break-after:auto;break-after:auto;}
+
+  /* 140 x 88.3mm holds the real ID-1 ratio to within a rounding error, so the card is the
+     same shape in print as on screen. The border-radius is deliberately NOT reset here: at
+     card size the trim made the corners, on a page the card has to draw its own. */
+  #trs-printroot .card{
+    width:140mm;height:88.3mm;font-size:3.66mm;
+    box-shadow:none;margin:0;
+    -webkit-print-color-adjust:exact;print-color-adjust:exact;
+  }
 }
