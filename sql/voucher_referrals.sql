@@ -108,7 +108,13 @@ create policy voucher_referrals_delete on public.voucher_referrals
 -- 3. the view, with the referral state derived
 -- ---------------------------------------------------------------------------
 
-create or replace view public.voucher_log as
+-- DROP then CREATE, not CREATE OR REPLACE. Postgres will only let a replaced view ADD
+-- columns at the END: inserting one in the middle, or reordering, fails with
+-- "cannot change name of view column". This file puts referral_aed before client_name, so
+-- replacing in place is refused. Nothing in the database depends on this view, the pages
+-- query it at runtime, so dropping it costs nothing.
+drop view if exists public.voucher_log;
+create view public.voucher_log as
 with counted as (
   select
     r.issue_id,

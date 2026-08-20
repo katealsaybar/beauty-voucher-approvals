@@ -74,47 +74,17 @@ create policy voucher_events_insert_admin on public.voucher_events
   );
 
 -- ---------------------------------------------------------------------------
--- 3. the log the viewer reads
+-- 3. the log view is NOT defined here, on purpose
 -- ---------------------------------------------------------------------------
-
--- Replaces the view from the first file, adding the archive state and a single text column
--- to search against, so the page can filter on name OR serial without two queries.
-create or replace view public.voucher_log as
-select
-  i.id,
-  'WV-' || i.tier || 'M-' || i.branch || '-' || lpad(i.seq::text, 4, '0') as main_serial,
-  i.branch,
-  case when i.branch in ('SAA','KCA') then 'Abu Dhabi' else 'Dubai' end as emirate,
-  i.seq,
-  i.tier,
-  case i.tier when 'D' then 'Dip Your Toes'
-              when 'S' then 'Season of You'
-              when 'V' then 'All-In VIP Year' end as tier_name,
-  case i.tier when 'D' then 1150 when 'S' then 3000 when 'V' then 5400 end as credit_aed,
-  case i.tier when 'D' then 1    when 'S' then 3    when 'V' then 5    end as friend_cards,
-  i.client_name,
-  i.client_contact,
-  i.purchase_date,
-  i.main_expires_on,
-  i.friend_expires_on,
-  r.effective_on as referral_completed_on,
-  r.expires_on   as referral_expires_on,
-  (v.id is not null) as is_voided,
-  v.detail       as void_reason,
-  (a.id is not null) as is_archived,
-  i.issued_by,
-  i.created_at,
-  -- One haystack for the search box. lower() here rather than in the page, so the index
-  -- below can be used and the page does not have to know how to spell a serial.
-  lower(i.client_name || ' ' ||
-        'WV-' || i.tier || 'M-' || i.branch || '-' || lpad(i.seq::text, 4, '0') || ' ' ||
-        coalesce(i.issued_by, '') || ' ' || i.branch) as search_text
-from public.voucher_issues i
-left join public.voucher_events r on r.issue_id = i.id and r.kind = 'referral_completed'
-left join public.voucher_events v on v.issue_id = i.id and v.kind = 'voided'
-left join public.voucher_events a on a.issue_id = i.id and a.kind = 'archived';
-
-grant select on public.voucher_log to anon, authenticated;
+--
+-- It used to be, and that was a trap. public.voucher_log was defined in BOTH this file and
+-- voucher_referrals.sql, so whichever ran last won. Running them in the documented order was
+-- fine; running this one afterwards silently dropped the referral columns and the log page
+-- lost its friend counting with no error anywhere.
+--
+-- sql/voucher_referrals.sql is now the only file that defines the view. Run it after this
+-- one. If the log page says referral tracking is not set up, that is this trap being sprung,
+-- and re-running voucher_referrals.sql is the whole fix.
 
 -- ---------------------------------------------------------------------------
 -- 4. check it landed
