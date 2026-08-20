@@ -92,7 +92,7 @@
   <div class="rule note"><b>Not a naming collision, before anyone goes looking.</b> <code>tier:[x]</code> carries two meanings, the voucher tier from payment (<code>dip</code> / <code>season</code> / <code>vip</code>) and the home care tier from Confidence Mapping (<code>protect</code> / <code>maintain</code> / <code>full</code>). The two value sets do not overlap, so <code>tier:vip</code> is unambiguous. The fault is <b>absence</b>, not ambiguity, and renaming nothing fixes it.</div>
 
   <h3>WhatsApp templates over the Meta limits</h3>
-  <div class="rule watch"><b>Going over does not get trimmed, it gets refused.</b> Meta caps an outbound template at <b>1,024 characters</b> and each button label at <b>25</b>. Over the limit, Meta rejects it at approval, the step stays in the workflow with nothing to send, and there is no warning at the moment it would have gone out. Our Abu Dhabi broadcast reached 1,193 characters once, and two button labels reached 26. The blast now sits at <b>955</b> because the link moved into a URL button &mdash; see &sect;6 for all four bodies and their counts.</div>
+  <div class="rule watch"><b>Going over does not get trimmed, it gets refused.</b> Meta caps an outbound template at <b>1,024 characters</b> and each button label at <b>25</b>. Over the limit, Meta rejects it at approval, the step stays in the workflow with nothing to send, and there is no warning at the moment it would have gone out. Our Abu Dhabi broadcast reached 1,193 characters once, and two button labels reached 26. The blast now sits at <b>894</b> because the link moved into a URL button &mdash; see &sect;6 for all four bodies and their counts.</div>
   <div class="rule note">WhatsApp stays split by emirate and cannot be parametrised, because Meta fixes button labels at template level and they will not take a merge field. The blast is split the same way, and split again for the lists where the first name is unusable. The emails do not need splitting: three strings change, the body of the Day 4 nurture email, and the body and hidden preheader of Welcome Email 2.</div>
 
   <h3>Confidence Mapping locale is not the emirate</h3>
@@ -107,10 +107,10 @@
   <table>
     <thead><tr><th>Template</th><th>The list it goes to</th><th>Sends from</th><th class="num">Body</th></tr></thead>
     <tbody>
-      <tr><td><code>wellness_voucher_blast_ad</code></td><td>Abu Dhabi &middot; Phorest and GHL, first name known</td><td><code>058 155 9679</code></td><td class="num">955</td></tr>
-      <tr><td><code>wellness_voucher_blast_dxb</code></td><td>Dubai &middot; Phorest and GHL, first name known</td><td><code>058 155 9679</code></td><td class="num">754</td></tr>
-      <tr><td><code>wellness_voucher_blast_ad_noname</code></td><td>Abu Dhabi &middot; the list exported from respond.io</td><td><code>058 155 9679</code></td><td class="num">949</td></tr>
-      <tr><td><code>wellness_voucher_blast_dxb_noname</code></td><td>Dubai &middot; the list exported from respond.io</td><td><code>058 155 9679</code></td><td class="num">748</td></tr>
+      <tr><td><code>wellness_voucher_blast_ad</code></td><td>Abu Dhabi &middot; Phorest and GHL, first name known</td><td><code>058 155 9679</code></td><td class="num">894</td></tr>
+      <tr><td><code>wellness_voucher_blast_dxb</code></td><td>Dubai &middot; Phorest and GHL, first name known</td><td><code>058 155 9679</code></td><td class="num">693</td></tr>
+      <tr><td><code>wellness_voucher_blast_ad_noname</code></td><td>Abu Dhabi &middot; the list exported from respond.io</td><td><code>058 155 9679</code></td><td class="num">888</td></tr>
+      <tr><td><code>wellness_voucher_blast_dxb_noname</code></td><td>Dubai &middot; the list exported from respond.io</td><td><code>058 155 9679</code></td><td class="num">687</td></tr>
     </tbody>
   </table>
 
@@ -129,7 +129,7 @@
   <div class="rule dont"><b>Do not point the respond.io segment at a <code>{{1}}</code> template.</b> Display names on that list are unusable &mdash; single characters, symbols, and one contact saved as &ldquo;I want to know the location and the prices&rdquo;. A broken merge goes out worse than no name at all, which is why the <code>_noname</code> pair exists. Route by list, not by emirate alone.</div>
 
   <div class="tpl">
-    <div class="tname"><code>wellness_voucher_blast_ad</code><span>Abu Dhabi &middot; Mamsha al Saadiyat, Khalifa City A</span><span class="tcount">955 / 1024 characters</span></div>
+    <div class="tname"><code>wellness_voucher_blast_ad</code><span>Abu Dhabi &middot; Mamsha al Saadiyat, Khalifa City A</span><span class="tcount">894 / 1024 characters</span></div>
     <pre>Hi {{1}}, this is Tara Rose Salon.
 
 We&#x27;ve been thinking about you, so we built something for our regulars. Not money off. A plan.
@@ -144,14 +144,12 @@ All-In VIP Year: place AED 4,500, receive AED 5,400. Your year mapped, major col
 
 Tabby splits the upper two into four, and the credit stays the same.
 
-Reception will match you with one of our selected stylists.
-
 Reserve one for yourself, or tick the gifting option on the form for the woman who&#x27;d never book it herself.
 
 Closes 30 September.</pre>
   </div>
   <div class="tpl">
-    <div class="tname"><code>wellness_voucher_blast_dxb</code><span>Dubai &middot; Al Quoz, Motor City</span><span class="tcount">754 / 1024 characters</span></div>
+    <div class="tname"><code>wellness_voucher_blast_dxb</code><span>Dubai &middot; Al Quoz, Motor City</span><span class="tcount">693 / 1024 characters</span></div>
     <pre>Hi {{1}}, this is Tara Rose Salon.
 
 Something we built for our regulars, and it closes 30 September. Not money off. A plan.
@@ -164,11 +162,9 @@ All-In VIP Year: place AED 4,500, receive AED 5,400. Your year mapped, major col
 
 Tabby splits the upper two into four, and the credit stays the same.
 
-Reception will match you with one of our selected stylists.
-
 Reserve one for yourself, or tick the gifting option on the form for the woman who&#x27;d never book it herself.</pre>
   </div>
-  <div class="rule note">The <code>_noname</code> pair is these two bodies with the opener changed to <code>Hi, this is Tara Rose Salon.</code> and nothing else touched. Counts: <b>949</b> and <b>748</b>.</div>
+  <div class="rule note">The <code>_noname</code> pair is these two bodies with the opener changed to <code>Hi, this is Tara Rose Salon.</code> and nothing else touched. Counts: <b>888</b> and <b>687</b>.</div>
 
   <h3>Footer and buttons, identical on all four</h3>
   <div class="tpl">
