@@ -25,6 +25,7 @@
     { file: "lid.html", name: "LID", note: "the live site and the Terms", group: "The three teams" },
     { file: "ghl.html", name: "GHL team", note: "workflows and messages" },
     { file: "reception.html", name: "Reception", note: "what you say at the till" },
+    { file: "stylists.html", name: "Stylists", note: "what you say in the chair", group: "On the floor" },
     { file: "core-team.html", name: "Core team", note: "Tara, Emma, Kate, Hanneh", group: "The core team" },
     { file: "lists.html", name: "The lists", note: "who gets contacted, and what it costs", group: "The numbers" }
   ];

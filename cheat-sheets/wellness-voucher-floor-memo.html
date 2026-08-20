@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Wellness Voucher, Floor Memo v3</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#2D2E37; --muted:#74747B; --line:#E7E2D8; --paper:#FAF8F4;
+    --teal:#99F6E4; --lime:#EEF3C7; --lilac:#C4B5FD; --coral:#FF9B9B;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',-apple-system,Segoe UI,sans-serif;color:var(--ink);background:var(--paper);
+       font-size:10.4pt;line-height:1.42;-webkit-font-smoothing:antialiased}
+  .sheet{width:210mm;min-height:297mm;padding:12mm 13mm;margin:0 auto;background:var(--paper);
+         display:flex;flex-direction:column}
+
+  header{border-bottom:2px solid var(--ink);padding-bottom:6px;margin-bottom:10px;
+         display:flex;justify-content:space-between;align-items:flex-end;gap:16px}
+  .brand{font-size:7pt;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+  h1{font-family:'Playfair Display',Georgia,serif;font-size:20pt;font-weight:600;line-height:1.05;letter-spacing:-.01em}
+  .who{text-align:right;font-size:8pt;color:var(--muted);line-height:1.5;white-space:nowrap}
+  .who b{color:var(--ink);font-weight:600}
+
+  .northstar{background:var(--teal);padding:8px 13px;border-radius:3px;margin-bottom:10px}
+  .northstar .lbl{font-size:6.8pt;letter-spacing:.16em;text-transform:uppercase;font-weight:700;opacity:.62;margin-bottom:2px}
+  .northstar p{font-family:'Playfair Display',Georgia,serif;font-size:12pt;line-height:1.28}
+
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:0 15px}
+  section{break-inside:avoid;margin-bottom:9px}
+  h2{font-size:7.9pt;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+     margin-bottom:4px;padding-bottom:3px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:6px}
+  h2 .n{display:inline-flex;align-items:center;justify-content:center;width:13.5px;height:13.5px;border-radius:50%;
+        background:var(--ink);color:var(--paper);font-size:6.4pt;font-weight:700;flex:0 0 13.5px}
+  p+p{margin-top:3.5px}
+  ul{list-style:none}
+  li{position:relative;padding-left:11px;margin-bottom:2px}
+  li::before{content:"";position:absolute;left:0;top:.5em;width:3.5px;height:3.5px;border-radius:50%;background:var(--ink);opacity:.42}
+  .never{border-left:3px solid var(--coral);padding-left:9px}
+  .never li{padding-left:14px;margin-bottom:3px}
+  .never li::before{content:"\2715";position:absolute;left:0;top:0;width:auto;height:auto;background:none;border-radius:0;
+                    color:var(--ink);font-size:8.2pt;font-weight:700;opacity:1;line-height:1.4}
+  .never b{font-weight:600}
+  .never span{color:var(--muted)}
+  .ladder{border-left:3px solid var(--lilac);padding-left:9px}
+  .ladder div{margin-bottom:3px}
+  .ladder .tier{font-weight:700;font-size:8pt}
+  .say{background:var(--lime);padding:7px 10px;border-radius:3px;margin-top:4px;
+       font-family:'Playfair Display',Georgia,serif;font-size:9.4pt;line-height:1.32}
+  .say .lbl{font-family:'Inter';font-size:6.4pt;letter-spacing:.14em;text-transform:uppercase;font-weight:700;
+            opacity:.6;display:block;margin-bottom:2px}
+  .box{background:#fff;border:1px solid var(--line);padding:6px 10px;border-radius:3px}
+  .box.teal{border-left:3px solid var(--teal)}
+  .box.coral{border-left:3px solid var(--coral)}
+  footer{margin-top:auto;padding-top:8px;border-top:2px solid var(--ink);
+         display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
+  footer p{font-size:8.2pt;max-width:116mm}
+  footer p+p{margin-top:3px}
+  footer .meta{font-size:7pt;color:var(--muted);text-align:right;line-height:1.6;white-space:nowrap}
+  @page{size:A4;margin:0}
+  @media print{body{background:#fff}.sheet{margin:0}}
+</style>
+</head>
+<body>
+<div class="sheet">
+
+  <header>
+    <div>
+      <div class="brand">Tara Rose &nbsp;·&nbsp; Floor Memo &nbsp;·&nbsp; v3</div>
+      <h1>The Wellness Voucher</h1>
+    </div>
+    <div class="who">
+      <b>For:</b> all stylists &amp; beauticians<br>
+      <b>Purchases close:</b> 30 September 2026<br>
+      Dubai &amp; Abu Dhabi · all branches
+    </div>
+  </header>
+
+  <div class="northstar">
+    <div class="lbl">Say it exactly like this</div>
+    <p>“It’s not money off. You place your credit, we add more on top, and it becomes your plan for the year.”</p>
+  </div>
+
+  <div class="cols">
+    <div>
+      <section>
+        <h2><span class="n">1</span> What it actually is</h2>
+        <p>The client pays her own money in. We add extra credit on top. She spends it with us over 6, 9 or 12 months, depending on which plan she bought.</p>
+        <p><b>Reception knows which plan she is on. Ask before you book her colour.</b></p>
+        <p>She may call her plan by its name rather than by a number of months. If she does, do not guess which one it is. Reception will tell you.</p>
+      </section>
+
+      <section>
+        <h2><span class="n">2</span> Your commission</h2>
+        <div class="box coral">
+          It is <b>not</b> taken away. It moves to when she spends the credit. You still get paid.
+        </div>
+      </section>
+
+      <section>
+        <h2><span class="n">3</span> Four things you never say</h2>
+        <ul class="never">
+          <li><b>“Free”</b> <span>: she paid for it herself.</span></li>
+          <li><b>“Unlimited”</b> <span>: the credit is a limit, not a free pass.</span></li>
+          <li><b>“Your kit is included”</b> <span>: say <i>towards</i>. She always pays a difference.</span></li>
+          <li><b>Any number for colour</b> <span>: colour is a ladder, not a budget.</span></li>
+        </ul>
+      </section>
+
+      <section>
+        <h2><span class="n">4</span> Colour, check her plan first</h2>
+        <div class="ladder">
+          <div><span class="tier">All plans:</span> roots, single-process colour, toner, gloss</div>
+          <div><span class="tier">9 &amp; 12 month plans:</span> the above, plus balayage, freehand highlights, grey blending</div>
+          <div><span class="tier">12 month plan only:</span> the above, plus colour correction, high lift, big change</div>
+        </div>
+        <p style="margin-top:4px">If she wants something above her plan, have that conversation <b>before</b> the appointment, never as a surprise at the till.</p>
+      </section>
+    </div>
+
+    <div>
+      <section>
+        <h2><span class="n">5</span> Home kit, price before you pack</h2>
+        <p>She has an <b>allowance towards</b> her kit. It is not a free kit. Say the number out loud first, every time.</p>
+        <div class="say">
+          <span class="lbl">Word for word</span>
+          “You’ve got AED 450 towards your kit, your products came to AED 910, so that’s AED 460 today.”
+        </div>
+        <p style="margin-top:4px">No kit leaves the salon until her Confidence Mapping is done and the difference is paid.</p>
+      </section>
+
+      <section>
+        <h2><span class="n">6</span> What the credit does not cover</h2>
+        <ul>
+          <li>Home care and retail products</li>
+          <li>New hair extensions</li>
+        </ul>
+        <p style="margin-top:3px"><b>Her kit allowance is separate from her credit.</b> Her credit never pays for home care.</p>
+        <p>Everything else is fair game, within her plan.</p>
+      </section>
+
+      <section>
+        <h2><span class="n">7</span> Her credit is safe</h2>
+        <div class="box teal">
+          Cancellations, reschedules, running late, no-shows: <b>none of it touches her voucher balance.</b> Normal salon booking rules still apply to everything else.
+        </div>
+        <p style="margin-top:4px"><b>Never quote her an end date.</b> Dates are not the same on every plan. Reception owns dates.</p>
+      </section>
+
+      <section>
+        <h2><span class="n">8</span> After 30 September</h2>
+        <p>Purchases close. Nothing else changes. Every rule on this page still applies for as long as her plan is running, which for some clients is well into 2027.</p>
+      </section>
+    </div>
+  </div>
+
+  <footer>
+    <div>
+      <p><b>If you are not sure, ask before you tell the client.</b> A wrong answer on the floor costs us far more than a five-minute question. Any stylist who doesn’t know this campaign is where we get caught out.</p>
+      <p>Reception first. If reception is not sure, your branch manager. Nobody guesses.</p>
+    </div>
+    <div class="meta">
+      Voice: TRS<br>
+      Prepared by Kate Alsaybar<br>
+      Current as of 20 August 2026<br>
+      Supersedes any earlier version
+    </div>
+  </footer>
+
+</div>
+</body>
+</html>
