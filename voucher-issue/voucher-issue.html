@@ -28,6 +28,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1
 .wrap{max-width:1180px;margin:0 auto;padding:36px 28px 90px;}
 
 .top{border-bottom:2px solid var(--ink);padding-bottom:20px;margin-bottom:24px;}
+.brandlogo{height:34px;width:auto;display:block;margin-bottom:18px;}
 .crumb{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;}
 .crumb a{color:inherit;text-decoration:none;border-bottom:1px solid var(--line);}
 .crumb a:hover{border-color:var(--ink);}
@@ -61,6 +62,12 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1
 .btn.ghost{background:#fff;color:var(--ink);}
 .btn:disabled{opacity:.4;cursor:not-allowed;}
 .btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;}
+.btn.big{font-size:16px;padding:14px 22px;width:100%;}
+.steps{list-style:none;font-size:13.5px;color:var(--muted);margin:14px 0 0;padding:0;}
+.steps li{padding:7px 0 7px 26px;position:relative;border-top:1px solid var(--line);}
+.steps li:before{content:attr(data-n);position:absolute;left:0;top:7px;width:18px;height:18px;
+  border-radius:50%;background:var(--ink);color:#fff;font-size:11px;font-weight:700;
+  display:grid;place-items:center;}
 
 .setbar{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:6px;}
 .chip{font-family:var(--sans);font-size:12px;font-weight:600;padding:7px 11px;border-radius:999px;
@@ -94,11 +101,8 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1
 }
 .card .sheen{position:absolute;inset:0;pointer-events:none;
   background:linear-gradient(118deg,transparent 34%,rgba(241,236,227,.055) 46%,transparent 58%);}
-.card .brand{position:absolute;top:1.8em;left:0;right:0;text-align:center;}
-.card .brand .rule{width:2.4em;height:1px;background:var(--cream);opacity:.55;margin:0 auto .5em;}
-.card .brand .nm{font-family:var(--serif);font-size:1.68em;letter-spacing:.3em;
-  font-weight:500;line-height:1;text-indent:.3em;}
-.card .brand .sub{font-size:.7em;letter-spacing:.42em;opacity:.72;margin-top:.45em;text-indent:.42em;}
+.card .brand{position:absolute;top:2.1em;left:0;right:0;text-align:center;}
+.card .brand img{height:3.5em;width:auto;display:inline-block;}
 
 .card .tier{position:absolute;top:7em;left:0;right:0;text-align:center;
   font-size:.9em;letter-spacing:.15em;font-weight:600;text-transform:uppercase;
@@ -168,6 +172,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1
 <div class="wrap">
 
   <div class="top">
+    <img class="brandlogo" src="../assets/tara-rose-logo-black.png" alt="Tara Rose Salon">
     <div class="crumb"><a href="../cheat-sheets/reception.html">Reception cheat sheet</a> &rsaquo; Issue a card</div>
     <div class="team">Issue a Wellness Card</div>
     <p class="owns">Pick the branch, the tier and her name. The serial, the value and every expiry date are worked out for you. Then print the card she needs as a PDF.</p>
@@ -183,10 +188,10 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1
   <div class="cols">
 
     <div class="panel" id="tillpanel">
-      <h2>At the till</h2>
+      <h2>Step 1 &middot; what she bought</h2>
 
       <div class="f">
-        <label for="branch">Branch you are at</label>
+        <label for="branch">Which salon are you in</label>
         <select id="branch">
           <option value="SAA">Mamsha al Saadiyat &middot; SAA</option>
           <option value="KCA" selected>Khalifa City A &middot; KCA</option>
@@ -197,7 +202,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1
       </div>
 
       <div class="f">
-        <label for="tier">Tier she bought</label>
+        <label for="tier">Which voucher did she buy</label>
         <select id="tier">
           <option value="D">Dip Your Toes &middot; she places 1,000</option>
           <option value="S" selected>Season of You &middot; she places 2,500</option>
@@ -206,23 +211,23 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1
       </div>
 
       <div class="f">
-        <label for="cname">Her name</label>
+        <label for="cname">Her full name, spelled the way Phorest has it</label>
         <input id="cname" type="text" placeholder="Jamie Chastain" autocomplete="off">
       </div>
 
       <div class="f">
-        <label for="pdate">Date of purchase</label>
+        <label for="pdate">The day she paid</label>
         <input id="pdate" type="date">
       </div>
 
       <div class="f">
-        <label for="who">Who is at the till</label>
+        <label for="who">Your name</label>
         <input id="who" type="text" placeholder="Your name" autocomplete="off">
-        <p class="hint">Goes into the log, so a serial can be traced back to whoever issued it.</p>
+        <p class="hint">So we can see who issued which card later. Typed once, then remembered.</p>
       </div>
 
       <div class="btnrow">
-        <button class="btn" id="issue">Issue the set</button>
+        <button class="btn big" id="issue">Get her cards</button>
         <button class="btn ghost" id="reset">Start over</button>
       </div>
 
@@ -231,8 +236,8 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1
     </div>
 
     <div class="panel">
-      <h2>Her cards</h2>
-      <div class="serial" id="serialline">Nothing issued yet. Fill the form and press <b>Issue the set</b>.</div>
+      <h2>Step 2 &middot; her cards</h2>
+      <div class="serial" id="serialline">Nothing issued yet. Fill the form and press <b>Get her cards</b>.</div>
       <div class="setbar" id="setbar"></div>
 
       <div class="stage" id="stage"></div>
@@ -247,10 +252,18 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1
       <div class="btnrow" style="justify-content:center">
         <button class="btn" id="printall-btn" disabled>Save all her cards as one PDF</button>
         <button class="btn ghost" id="print" disabled>Just this card</button>
+        <button class="btn ghost" id="copyname" disabled>Copy her name</button>
         <button class="btn ghost" id="copy" disabled>Copy the serial</button>
       </div>
 
       <div class="note" id="cardnote" style="display:none"></div>
+
+      <ol class="steps">
+        <li data-n="1">Press <b>Save all her cards as one PDF</b>. In the box that opens, choose <b>Save as PDF</b>, not a printer.</li>
+        <li data-n="2">Send that one file to her on the branch WhatsApp. One file, not one photo per card.</li>
+        <li data-n="3">Paste her name and her serial into Phorest with the buttons above, so the sale and the card match.</li>
+        <li data-n="4">Tell her to hand the friend cards out early. Their two months start today, not the day she gives them away.</li>
+      </ol>
     </div>
 
   </div>
@@ -468,11 +481,7 @@ function renderCard(set, card){
   return '' +
   '<div class="card">' +
     '<div class="sheen"></div>' +
-    '<div class="brand">' +
-      '<div class="rule"></div>' +
-      '<div class="nm">TARA ROSE</div>' +
-      '<div class="sub">SALON</div>' +
-    '</div>' +
+    '<div class="brand"><img src="../assets/tara-rose-logo-white.png" alt="Tara Rose Salon"></div>' +
     lead +
     '<div class="emv"><i></i><i></i><i></i><i></i></div>' +
     '<div class="val">' +
@@ -569,6 +578,7 @@ function drawSet(){
   el('print').disabled = !card.printable || !set.live;
   el('printall-btn').disabled = !set.live;
   el('copy').disabled = false;
+  el('copyname').disabled = false;
 
   if (!set.live){
     el('printall-btn').textContent = 'Cannot print, nothing was logged';
@@ -623,7 +633,7 @@ el('issue').addEventListener('click', function(){
     drawSet();
   }).then(function (){
     btn.disabled = false;
-    btn.textContent = 'Issue the set';
+    btn.textContent = 'Get her cards';
   });
 });
 
@@ -635,9 +645,10 @@ el('reset').addEventListener('click', function(){
   el('caption').innerHTML = '';
   el('cardnote').style.display = 'none';
   el('printall').innerHTML = '';
-  el('serialline').innerHTML = 'Nothing issued yet. Fill the form and press <b>Issue the set</b>.';
+  el('serialline').innerHTML = 'Nothing issued yet. Fill the form and press <b>Get her cards</b>.';
   el('print').disabled = true;
   el('copy').disabled = true;
+  el('copyname').disabled = true;
   el('printall-btn').disabled = true;
   el('printall-btn').textContent = 'Save all her cards as one PDF';
 });
@@ -671,23 +682,37 @@ el('printall-btn').addEventListener('click', function(){
   printWith('p-all', 'WV-' + s2.branch + '-' + pad4(s2.seq) + ' ' + s2.name + ' all cards');
 });
 
-el('copy').addEventListener('click', function(){
-  var s = state.set.cards[state.active].serial;
-  var btn = this;
-  function done(){
-    btn.textContent = 'Copied';
-    setTimeout(function(){ btn.textContent = 'Copy the serial'; }, 1400);
-  }
-  if (navigator.clipboard && navigator.clipboard.writeText){
-    navigator.clipboard.writeText(s).then(done, done);
-  } else {
-    var ta = document.createElement('textarea');
-    ta.value = s; document.body.appendChild(ta); ta.select();
-    try { document.execCommand('copy'); } catch (e) {}
-    document.body.removeChild(ta);
-    done();
-  }
-});
+function wireCopy(id, label, pick){
+  el(id).addEventListener('click', function(){
+    var value = pick(), btn = this;
+    function done(){
+      btn.textContent = 'Copied';
+      setTimeout(function(){ btn.textContent = label; }, 1400);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(value).then(done, done);
+    } else {
+      // Salon machines are not always current, and a failed copy that looks like a
+      // success would have reception pasting the previous client into Phorest.
+      var ta = document.createElement('textarea');
+      ta.value = value; document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); } catch (e) {}
+      document.body.removeChild(ta);
+      done();
+    }
+  });
+}
+wireCopy('copyname', 'Copy her name', function(){ return state.set.name; });
+wireCopy('copy', 'Copy the serial', function(){ return state.set.cards[state.active].serial; });
+
+// Reception stands at one till all day. Making her pick the branch every time is how the
+// wrong branch ends up on a serial, and a serial cannot be corrected afterwards.
+var savedBranch = store.get('trs-wv-branch');
+if (savedBranch && BRANCHES[savedBranch]) { el('branch').value = savedBranch; }
+var savedWho = store.get('trs-wv-who');
+if (savedWho) { el('who').value = savedWho; }
+el('branch').addEventListener('change', function(){ store.set('trs-wv-branch', this.value); });
+el('who').addEventListener('change', function(){ store.set('trs-wv-who', this.value.trim()); });
 
 el('pdate').value = iso(today());
 
