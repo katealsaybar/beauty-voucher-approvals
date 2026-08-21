@@ -106,38 +106,6 @@
   .plain .items>div::before{content:"";position:absolute;left:0;top:.56em;width:4px;height:4px;
                             border-radius:50%;background:var(--ink);opacity:.45}
   .plain b{font-weight:700;color:var(--ink)}
-
-  /* colour band inside each plan card */
-  .col{margin:9px 13px 0;padding:8px 10px;background:rgba(196,181,253,.20);
-       border-radius:4px;border-left:3px solid var(--lilac)}
-  .col .k{font-size:7.4pt;letter-spacing:.14em;text-transform:uppercase;font-weight:700;
-          color:var(--muted);margin-bottom:2px}
-  .col .v{font-size:10.6pt;font-weight:700;line-height:1.26}
-  .col .s{font-size:9.6pt;color:var(--muted);line-height:1.3;margin-top:2px}
-
-  /* ---------- page 3, colour ---------- */
-  .ladder{margin-bottom:8px}
-  .rung{background:#fff;border:1px solid var(--line);border-radius:5px;padding:9px 14px;
-        margin-bottom:7px;display:flex;gap:14px;align-items:flex-start}
-  .rung:last-child{margin-bottom:0}
-  .rung .sn{flex:0 0 60px;font-family:'Playfair Display',Georgia,serif;font-size:17pt;
-            font-weight:600;line-height:1.05}
-  .rung .sn em{display:block;font-family:'Inter';font-style:normal;font-size:7.4pt;
-               letter-spacing:.13em;text-transform:uppercase;font-weight:700;
-               color:var(--muted);margin-top:2px}
-  .rung .body{flex:1}
-  .rung .whom{font-size:11pt;font-weight:700;line-height:1.26;margin-bottom:1px}
-  .rung .nm2{font-size:10.2pt;color:var(--muted);line-height:1.3;margin-bottom:4px}
-  .rung .svc{font-size:10.1pt;line-height:1.33}
-  .rung.r1{border-left:4px solid var(--teal)}
-  .rung.r2{border-left:4px solid var(--lilac)}
-  .rung.r3{border-left:4px solid var(--coral)}
-
-  .rules{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
-  .rule{background:#fff;border:1px solid var(--line);border-radius:5px;padding:9px 13px}
-  .rule b{display:block;font-weight:700;font-size:10.6pt;line-height:1.28;margin-bottom:1px}
-  .rule span{font-size:9.9pt;color:var(--muted);line-height:1.33}
-  .rule.hot{border-left:4px solid var(--coral)}
   @page{size:A4;margin:0}
   @media print{body{background:#fff}.sheet{margin:0}}
 </style>
@@ -148,7 +116,7 @@
 
   <header>
     <div>
-      <div class="brand">Tara Rose &nbsp;·&nbsp; pin this up in the staff room &nbsp;·&nbsp; page 1 of 3</div>
+      <div class="brand">Tara Rose &nbsp;·&nbsp; pin this up in the staff room &nbsp;·&nbsp; page 1 of 2</div>
       <h1>The Wellness Voucher,<br>start here</h1>
     </div>
     <div class="who">
@@ -197,7 +165,7 @@
         </div>
         <div>
           <div class="x">Any number for colour.</div>
-          <div class="t"><b>“Your plan covers balayage, let me check the rest with reception.”</b></div>
+          <div class="t"><b>“Your credit covers colour, your bonus is for beauty and treatments.”</b></div>
         </div>
       </div>
     </section>
@@ -218,9 +186,9 @@
       <p>Then reception. If reception isn’t sure, your branch manager. Nobody guesses, and nobody gets it in the neck for asking. A wrong answer on the floor costs us far more than a five-minute question.</p>
     </div>
     <div class="meta">
-      Page 2 has the three plans.<br>
-      Page 3 has colour, which<br>
-      step each plan reaches.
+      Page 2 has the three plans<br>
+      and everything that<br>
+      comes with each one.
     </div>
   </footer>
 
@@ -231,7 +199,7 @@
 
   <header>
     <div>
-      <div class="brand">Tara Rose &nbsp;·&nbsp; pin this up in the staff room &nbsp;·&nbsp; page 2 of 3</div>
+      <div class="brand">Tara Rose &nbsp;·&nbsp; pin this up in the staff room &nbsp;·&nbsp; page 2 of 2</div>
       <h1>What she gets<br>for her money</h1>
     </div>
     <div class="who">
@@ -255,11 +223,6 @@
         <div><span>It lasts</span><b>6 months</b></div>
         <div><span>Tabby</span><b>No, paid in full</b></div>
       </div>
-      <div class="col">
-        <div class="k">Colour it covers</div>
-        <div class="v">Step 1 only</div>
-        <div class="s">Roots and regrowth, all-over colour, toner, gloss and glaze</div>
-      </div>
       <div class="lbl2">And she also gets</div>
       <ul>
         <li>Her <b>Confidence Mapping</b>, before she is in the chair</li>
@@ -280,11 +243,6 @@
         <div><span>She gets to spend</span><b>AED 3,000</b></div>
         <div><span>It lasts</span><b>9 months</b></div>
         <div><span>Tabby</span><b>4 × AED 625</b></div>
-      </div>
-      <div class="col">
-        <div class="k">Colour it covers</div>
-        <div class="v">Steps 1 and 2</div>
-        <div class="s">Adds balayage, highlights and foils, grey blending</div>
       </div>
       <div class="lbl2">And she also gets</div>
       <ul>
@@ -308,11 +266,6 @@
         <div><span>It lasts</span><b>12 months</b></div>
         <div><span>Tabby</span><b>4 × AED 1,125</b></div>
       </div>
-      <div class="col">
-        <div class="k">Colour it covers</div>
-        <div class="v">All three steps</div>
-        <div class="s">Adds colour correction, high lift, full transformation</div>
-      </div>
       <div class="lbl2">And she also gets</div>
       <ul>
         <li>Her <b>Confidence Mapping</b>, before she is in the chair</li>
@@ -327,86 +280,6 @@
 
   </div>
 
-  <footer>
-    <div>
-      <div class="big">Reception does the cards, the dates and the serials.</div>
-      <p>You never have to. If she asks when something of hers runs out, send her to reception. There are four different dates on one client, and they each start from something different.</p>
-    </div>
-    <div class="meta">
-      Page 3 has colour in full,<br>
-      and the four things<br>
-      that get quoted wrong.
-    </div>
-  </footer>
-
-</div>
-
-<!-- ============== PAGE 3, COLOUR ============== -->
-<div class="sheet">
-
-  <header>
-    <div>
-      <div class="brand">Tara Rose &nbsp;·&nbsp; pin this up in the staff room &nbsp;·&nbsp; page 3 of 3</div>
-      <h1>Colour, which step<br>her plan reaches</h1>
-    </div>
-    <div class="who">
-      <b>No cap. No number.</b>
-      You are reading a step,<br>
-      not doing a sum.<br>
-      21 August 2026
-    </div>
-  </header>
-
-  <div class="ladder">
-
-    <div class="rung r1">
-      <div class="sn">1<em>step one</em></div>
-      <div class="body">
-        <div class="whom">On all three plans</div>
-        <div class="nm2">Soft Blonde and Polished Brunette</div>
-        <div class="svc">Roots and regrowth, all-over and single-process colour, toner, gloss and glaze, tonal maintenance.</div>
-      </div>
-    </div>
-
-    <div class="rung r2">
-      <div class="sn">2<em>step two</em></div>
-      <div class="body">
-        <div class="whom">Season of You and All-In VIP Year</div>
-        <div class="nm2">Signature and Dimensional</div>
-        <div class="svc">Balayage and freehand placement, highlights and foils, grey blending, multi-tonal depth.</div>
-      </div>
-    </div>
-
-    <div class="rung r3">
-      <div class="sn">3<em>step three</em></div>
-      <div class="body">
-        <div class="whom">All-In VIP Year only</div>
-        <div class="nm2">Transformation and Luxury</div>
-        <div class="svc">Full transformation, colour correction and removal, high lift, fantasy colour, big-contrast change.</div>
-      </div>
-    </div>
-
-  </div>
-
-  <div class="rules">
-    <div class="rule">
-      <b>Each plan includes every step beneath it.</b>
-      <span>Season of You reaches step 2, so it covers step 1 as well. All-In VIP Year covers all three.</span>
-    </div>
-    <div class="rule">
-      <b>Cuts, blowdry, keratin and treatments are not on this ladder at all.</b>
-      <span>Covered on every plan, at every branch. The ladder is colour only.</span>
-    </div>
-    <div class="rule hot">
-      <b>Her Self-Care Bonus never buys colour.</b>
-      <span>So All-In VIP Year has AED 4,500 for colour, not 5,400. Season of You has AED 2,500, not 3,000.</span>
-    </div>
-    <div class="rule hot">
-      <b>She can always have a service above her step.</b>
-      <span>She pays for that one herself and her balance is not touched. Not refused, not covered. Say it that way round.</span>
-    </div>
-  </div>
-
   <div class="plain">
     <div class="lbl">The four that get quoted wrong</div>
     <div class="items">
@@ -419,17 +292,17 @@
 
   <footer>
     <div>
-      <div class="big">Ask reception before she sits down, never at the till.</div>
-      <p>If you cannot tell which step a service sits on, that is the moment to check. No cap on colour, and no amount to quote her, so you are never doing a sum.</p>
+      <div class="big">Reception does the cards, the dates and the serials.</div>
+      <p>You never have to. If she asks when something of hers runs out, send her to reception. There are four different dates on one client, and they each start from something different.</p>
     </div>
     <div class="meta">
-      Page 1 has the one line.<br>
-      Page 2 has the plans.<br>
-      Tell Kate if a service<br>
-      is missing a step.
+      Page 1 has the one line,<br>
+      how it works, and the<br>
+      four things never to say.
     </div>
   </footer>
 
 </div>
+
 </body>
 </html>
