@@ -57,8 +57,12 @@
   // Term 3: the credit stays in the emirate it was bought in, so there are exactly two terms
   // pages and exactly two QR codes. Both were decoded off the rendered PDF, not trusted.
   T.emirateSlug = function (emirate) { return emirate === 'Dubai' ? 'dubai' : 'abu-dhabi'; };
+  // The QR and this line have to be the SAME destination. They were not: the QR went to the
+  // campaign landing page and the printed line said the same, so a client who scanned and a
+  // client who typed both landed on the sales page rather than the terms she was pointed at.
+  // Both now end at /terms/, and assets/qr-terms-*.svg were reminted to match on 21 August.
   T.termsPath = function (emirate) {
-    return 'tararosesalon.com/en/ae/wellness-voucher/' + T.emirateSlug(emirate);
+    return 'tararosesalon.com/en/ae/wellness-voucher/' + T.emirateSlug(emirate) + '/terms';
   };
 
   /* ---------- dates ---------- */
@@ -176,7 +180,10 @@
 
     return {
       seq:seq, branch:branch, tier:tier, name:name, purchase:purchase, cards:cards,
-      live:!!alloc.live, id:alloc.id || null
+      live:!!alloc.live, id:alloc.id || null,
+      // A set that is not live is either a practice run or a database that did not answer,
+      // and the desk needs those two told apart: one is a choice, the other is a fault.
+      practice:!!alloc.practice
     };
   };
 

@@ -33,8 +33,8 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1
 .top{border-bottom:2px solid var(--ink);padding-bottom:20px;margin-bottom:24px;}
 .brandlogo{height:34px;width:auto;display:block;margin-bottom:18px;}
 .crumb{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;}
-.crumb a{color:inherit;text-decoration:none;border-bottom:1px solid var(--line);}
-.crumb a:hover{border-color:var(--ink);}
+.crumb a{color:var(--blue);font-weight:600;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px;}
+.crumb a:hover{color:var(--ink);text-decoration-thickness:2px;}
 .team{font-family:var(--serif);font-size:clamp(30px,5vw,44px);line-height:1.05;font-weight:600;margin-bottom:8px;}
 .owns{font-size:16px;color:var(--muted);max-width:66ch;}
 .stamp{margin-top:12px;font-size:13px;color:var(--muted);}
@@ -79,11 +79,19 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1
 .chip.off{opacity:.45;}
 .chip .v{font-weight:400;opacity:.7;margin-left:4px;}
 
-.practice{display:flex;gap:9px;align-items:flex-start;margin-top:14px;padding:11px 13px;
+.practice{display:flex;gap:9px;align-items:flex-start;margin:0 0 12px;padding:11px 13px;
   border:1px dashed var(--line);border-radius:10px;font-size:12.5px;color:var(--muted);
   cursor:pointer;line-height:1.5;}
 .practice input{margin-top:2px;flex:0 0 auto;}
 .practice b{color:var(--ink);}
+/* Ticked, this is the loudest thing in the panel on purpose: it changes what the button below
+   it does, and the old styling gave a practice run and a real issue the same face. */
+.practice.on{background:var(--amber-bg);border:1px solid var(--amber);border-left-width:3px;
+  color:var(--ink);}
+.practice.on b{color:var(--amber);text-transform:uppercase;letter-spacing:.06em;}
+/* And the button says which of the two it is about to do, because that is the last thing
+   anybody reads before pressing it. */
+.btn.big.practising{background:var(--amber);border-color:var(--amber);}
 
 .serial{font-size:13px;color:var(--muted);margin-bottom:14px;}
 .serial code,.caption code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
@@ -93,6 +101,9 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1
 .note.flag{background:var(--red-bg);border-left:3px solid var(--red);}
 .note.good{background:var(--green-bg);border-left:3px solid var(--green);}
 .note.info{background:var(--blue-bg);border-left:3px solid var(--blue);}
+/* Amber is the practice colour everywhere on this page: the toggle, the button and this. Red
+   is kept for a real fault, so a sample run never reads as a broken till. */
+.note.warn{background:var(--amber-bg);border-left:3px solid var(--amber);}
 
 /* The card lives in shared/voucher-card.css, so the till and the log cannot drift
    apart on what a card looks like. */
@@ -113,11 +124,9 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1
     <div class="stamp">Wellness Voucher &middot; purchases close <b>30 September 2026</b></div>
   </div>
 
-  <div class="mock"><b>The artwork is a placeholder</b> standing in for Hanneh's card, drawn at the real credit-card proportions and
-    showing the corrections in the brief: chip above the number, serial in four groups, the AED value on the face, the purchase
-    date, and the expiry spelled out. When her PNGs land, the artwork changes and nothing else does. The saved PDF puts one card on an A5 page rather than on a card-sized one: at true card size the small print comes out at 3.1pt, which no client reads on a phone.
-    <b>The numbering and the log are live.</b> Every set issued here is a real row and a real serial that will not be handed out
-    again, so use a recognisable test name if you are only looking.</div>
+  <div class="mock"><b>The numbering and the log are live.</b> Every set issued here is a real row and a real serial that will not be
+    handed out again, so use a recognisable test name if you are only looking. The saved PDF puts one card on an A5 page rather
+    than on a card-sized one: at true card size the small print comes out at 3.1pt, which no client reads on a phone.</div>
 
   <div class="cols">
 
@@ -167,20 +176,23 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1
         <p class="hint">So we can see who issued which card later. Typed once, then remembered.</p>
       </div>
 
-      <div class="btnrow">
-        <button class="btn big" id="issue">Get her cards</button>
-        <button class="btn ghost" id="reset">Start over</button>
-      </div>
-
       <!-- Training used to cost a real serial. "Use a recognisable test name" was the only
            control, in a banner, above a button that writes. This does the same job without
            spending a number: it skips the database entirely and draws the set locally, and
-           everything that could leave the screen stays switched off. -->
+           everything that could leave the screen stays switched off.
+
+           It sits ABOVE the button now. Underneath it, it was a decision you could only find
+           after making the other one. -->
       <label class="practice" for="practice">
         <input type="checkbox" id="practice">
         <span><b>Practice run.</b> Show me the cards without issuing anything. No number is
           used, nothing is logged, and nothing can be printed or copied.</span>
       </label>
+
+      <div class="btnrow">
+        <button class="btn big" id="issue">Get her cards</button>
+        <button class="btn ghost" id="reset">Start over</button>
+      </div>
 
       <div class="note info" id="counter"></div>
       <div class="note" id="dbstate"></div>
@@ -191,6 +203,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1
       <div class="serial" id="serialline">Nothing issued yet. Fill the form and press <b>Get her cards</b>.</div>
       <div class="setbar" id="setbar"></div>
 
+      <div class="note" id="stagestate" style="display:none"></div>
       <div class="stage" id="stage"></div>
       <p class="caption" id="caption"></p>
 
@@ -441,6 +454,19 @@ function drawSet(){
   // Two views of the same card: the two faces loose, or the A4 page the PDF is made of.
   // The page view is the only way to see the saved layout during a practice run, where
   // printing is refused on purpose.
+  var ss = el('stagestate');
+  if (set.live){
+    ss.style.display = 'none';
+  } else {
+    ss.style.display = '';
+    ss.className = 'note ' + (set.practice ? 'warn' : 'flag');
+    ss.innerHTML = set.practice
+      ? '<b>Sample cards. Not real, not logged.</b> No serial was taken, so none of these can ' +
+        'be printed, copied or handed over. Untick <b>Practice run</b> to issue for real.'
+      : '<b>Nothing was saved, so nothing here can be handed over.</b> The number below came ' +
+        'from this browser, not the log.';
+  }
+
   el('stage').innerHTML = state.pageview
     ? C.renderPage(set, card)
     : renderCard(set, card) + C.renderBack(set, card);
@@ -524,7 +550,7 @@ el('issue').addEventListener('click', function(){
   // mistaken for a real issue: preview mode already refuses to print or copy.
   if (el('practice').checked){
     state.set = buildSet(branch, tier, name, purchase, {
-      seq: 0, id: null, live: false,
+      seq: 0, id: null, live: false, practice: true,
       mainExpiry: addMonths(purchase, TIERS[tier].months),
       friendExpiry: addMonths(purchase, 2)
     });
@@ -532,7 +558,7 @@ el('issue').addEventListener('click', function(){
     setDbState('practice');
     drawSet();
     btn.disabled = false;
-    btn.textContent = 'Get her cards';
+    markPractice();
     return;
   }
 
@@ -607,6 +633,7 @@ el('issue').addEventListener('click', function(){
 // it do not know that the box is about somebody else.
 function clearCards(){
   state.set = null; state.active = 0;
+  el('stagestate').style.display = 'none';
   el('setbar').innerHTML = '';
   el('stage').innerHTML = '';
   el('caption').innerHTML = '';
@@ -624,6 +651,17 @@ el('reset').addEventListener('click', function(){
   el('cname').value = '';
   el('ccontact').value = '';
 });
+
+// The button carries the mode, so the label under your cursor says which of the two presses
+// this is. Run once at load too, in case the browser restored a ticked box on reload.
+function markPractice(){
+  var on = el('practice').checked;
+  el('practice').parentNode.classList.toggle('on', on);
+  el('issue').classList.toggle('practising', on);
+  el('issue').textContent = on ? 'Show me sample cards' : 'Get her cards';
+}
+el('practice').addEventListener('change', markPractice);
+markPractice();
 
 el('pageview-btn').addEventListener('click', function(){
   state.pageview = !state.pageview;

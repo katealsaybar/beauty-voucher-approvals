@@ -22,8 +22,8 @@ a{color:inherit;}
 /* ---------- header ---------- */
 .top{border-bottom:2px solid var(--ink);padding-bottom:22px;margin-bottom:34px;}
 .crumb{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
-.crumb a{text-decoration:none;border-bottom:1px solid var(--line);}
-.crumb a:hover{border-color:var(--ink);}
+.crumb a{color:var(--blue);font-weight:600;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px;}
+.crumb a:hover{color:var(--ink);text-decoration-thickness:2px;}
 .team{font-family:var(--serif);font-size:clamp(34px,6vw,52px);line-height:1.05;font-weight:600;margin-bottom:10px;}
 .owns{font-size:17px;color:var(--muted);max-width:62ch;}
 .stamp{margin-top:16px;font-size:13px;color:var(--muted);}
