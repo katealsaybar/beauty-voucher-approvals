@@ -134,6 +134,23 @@
       .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   };
 
+  // FOUR CARDS, NOT ONE. Every card here used to render on the same black artwork, so a gift
+  // card and a referral card were the same object in the hand and only the small print told
+  // them apart. Hanneh's artwork does not work that way, and these are her colours, sampled off
+  // the exported pages rather than guessed: the gift card is black like the main card (#040404),
+  // the referral card is warm taupe (#D5CBC4 to #DAD4CD) and the birthday card is pale lilac
+  // (#E4E1EC to #F6F4F9).
+  //
+  // The two light cards cannot use the white wordmark or the black card's palette, so the theme
+  // carries both decisions: the class the CSS themes off, and which logo file to load.
+  T.cardTheme = function (card) {
+    var light = card.type === 'R' || card.type === 'B';
+    return {
+      cls: ' wv-t-' + card.type + (light ? ' wv-light' : ''),
+      logo: light ? 'tara-rose-logo-black.png' : 'tara-rose-logo-card.png'
+    };
+  };
+
   /* ---------- the serial ---------- */
   // WV-<tier><type>-<branch>-<seq>[-<n>] for the log, Phorest and the small print. The card
   // face prints the same thing in four groups, which is how it reads as a card number
@@ -233,16 +250,17 @@
       ? '<div class="gift">A gift for you</div>'
       : '<div class="tier">' + T.esc(card.lead) + '</div>';
     var expiry = card.expiry ? T.fmt(card.expiry) : 'Set on referral';
+    var theme = T.cardTheme(card);
 
     return '' +
-    '<div class="card' + (extraClass ? ' ' + extraClass : '') + '">' +
+    '<div class="card' + theme.cls + (extraClass ? ' ' + extraClass : '') + '">' +
       '<div class="sheen"></div>' +
       // tara-rose-logo-CARD, not -white. The shared white logo carries the mint rule above the
       // wordmark, which is the pack's UI accent and is right on the eight pages that use it.
       // On the black card it is the only cool colour against the gold, and the approved Canva
       // artwork has a plain white rule there: counted, zero mint pixels on it. So the card gets
       // its own copy with that one rule turned white, and the shared asset is left alone.
-      '<div class="brand"><img src="../assets/tara-rose-logo-card.png" alt="Tara Rose Salon"></div>' +
+      '<div class="brand"><img src="../assets/' + theme.logo + '" alt="Tara Rose Salon"></div>' +
       lead +
       '<div class="emv"><i></i><i></i><i></i><i></i></div>' +
       '<div class="val">' +
@@ -356,10 +374,12 @@
              '<div class="vl">' + value + '</div></div>';
     }
 
+    var theme = T.cardTheme(card);
+
     return '' +
-    '<div class="card back' + (extraClass ? ' ' + extraClass : '') + '">' +
+    '<div class="card back' + theme.cls + (extraClass ? ' ' + extraClass : '') + '">' +
       '<div class="sheen"></div>' +
-      '<div class="brand"><img src="../assets/tara-rose-logo-card.png" alt="Tara Rose Salon"></div>' +
+      '<div class="brand"><img src="../assets/' + theme.logo + '" alt="Tara Rose Salon"></div>' +
       '<div class="wv-qrbox"><img src="../assets/qr-terms-' + slug + '.svg" alt="Scan for the full terms"></div>' +
       '<div class="wv-qrcap">Scan for the full terms</div>' +
       '<div class="wv-bk">' +

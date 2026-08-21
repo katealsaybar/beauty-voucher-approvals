@@ -100,6 +100,31 @@
   text-transform:uppercase;white-space:nowrap;}
 .card .dates b{font-weight:600;opacity:1;letter-spacing:.07em;}
 
+/* ---------------- the four cards ----------------
+ * Colours sampled off Hanneh's exported pages, not chosen here. The gift card is black like the
+ * main card; the referral and birthday cards are light, and a light card is not the black card
+ * with a different background: the wordmark, the gold, the QR panel and the shadow all have to
+ * turn over with it. TRSCard.cardTheme decides which of the two a card is and adds .wv-light.
+ *
+ * Only .card's own paint changes below. Every position is still the % and em geometry above, so
+ * the four cards cannot drift apart in layout, only in colour.
+ */
+.card.wv-t-R{background:linear-gradient(160deg,#D5CBC4 0%,#D8D0C9 52%,#DAD4CD 100%);}
+.card.wv-t-B{background:linear-gradient(160deg,#E4E1EC 0%,#EDEAF2 48%,#F6F4F9 100%);}
+
+.card.wv-light{color:#2D2E37;box-shadow:0 10px 26px rgba(45,46,55,.18);}
+/* The sheen is a highlight for a dark surface. At full strength on a pale card it reads as a
+   printing fault, so it is nearly off rather than removed: the geometry stays identical. */
+.card.wv-light .sheen{background:linear-gradient(118deg,transparent 34%,rgba(255,255,255,.5) 46%,transparent 58%);}
+/* #C9A961 is legible on black and washes out on taupe. This is the same gold darkened until it
+   holds against a light ground; it is the gold on the QR frame in Hanneh's own artwork. */
+.card.wv-light .tier,
+.card.wv-light .val .wv-amt{color:#8D7840;}
+.card.wv-light .gift{color:#2D2E37;}
+/* The panel exists to make the QR scannable, so on a light card it goes WHITE rather than cream:
+   cream on taupe is not enough separation for a phone camera at an angle. */
+.card.back.wv-light .wv-qrbox{background:#FFFFFF;border:1px solid rgba(141,120,64,.55);}
+
 /* A smaller card, for the hover preview in the log. One value, because of the em rule above. */
 .card.sm{width:257px;height:162px;font-size:6.6px;box-shadow:0 12px 28px rgba(45,46,55,.34);}
 
