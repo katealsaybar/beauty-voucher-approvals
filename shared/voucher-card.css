@@ -65,8 +65,8 @@
 
 .card .val{position:absolute;right:8%;top:45.2%;text-align:right;}
 .card .val .lb{font-size:.6em;letter-spacing:.2em;opacity:.6;text-transform:uppercase;text-indent:.2em;}
-.card .val .amt{font-family:'Playfair Display',Georgia,serif;font-size:1.7em;line-height:1.15;color:#C9A961;}
-.card .val .amt small{font-size:.5em;letter-spacing:.14em;opacity:.85;margin-right:.35em;
+.card .val .wv-amt{font-family:'Playfair Display',Georgia,serif;font-size:1.7em;line-height:1.15;color:#C9A961;}
+.card .val .wv-amt small{font-size:.5em;letter-spacing:.14em;opacity:.85;margin-right:.35em;
   font-family:'Inter',system-ui,sans-serif;vertical-align:.4em;}
 
 .card .num{position:absolute;left:8%;right:8%;top:70.6%;display:flex;gap:1.5em;
@@ -91,11 +91,11 @@
    anchored to the bottom rose by about a line and the CARDHOLDER label landed on top of the
    serial. Measuring from the top means the gap between the serial and the foot is fixed and
    cannot close, whatever the card's height rounds to. */
-.card .foot{position:absolute;left:8%;right:8%;top:79%;
+.card .wv-cardfoot{position:absolute;left:8%;right:8%;top:79%;
   display:flex;align-items:flex-end;justify-content:space-between;gap:1em;}
-.card .who .lb{font-size:.6em;letter-spacing:.2em;opacity:.6;text-transform:uppercase;
+.card .wv-holder .lb{font-size:.6em;letter-spacing:.2em;opacity:.6;text-transform:uppercase;
   margin-bottom:.25em;text-indent:.2em;}
-.card .who .nm{font-size:1.02em;letter-spacing:.09em;text-transform:uppercase;font-weight:500;}
+.card .wv-holder .nm{font-size:1.02em;letter-spacing:.09em;text-transform:uppercase;font-weight:500;}
 .card .dates{text-align:right;font-size:.64em;letter-spacing:.13em;opacity:.8;line-height:1.7;
   text-transform:uppercase;white-space:nowrap;}
 .card .dates b{font-weight:600;opacity:1;letter-spacing:.07em;}
@@ -115,27 +115,27 @@
 .card.back .brand{top:7%;}
 .card.back .brand img{height:2.4em;}
 
-.card.back .qrbox{position:absolute;left:8%;top:23%;width:29%;aspect-ratio:1;
+.card.back .wv-qrbox{position:absolute;left:8%;top:23%;width:29%;aspect-ratio:1;
   background:#F1ECE3;border-radius:2%;padding:3.5%;}
-.card.back .qrbox img{width:100%;height:100%;display:block;}
-.card.back .qrcap{position:absolute;left:8%;width:29%;top:72.5%;text-align:center;
+.card.back .wv-qrbox img{width:100%;height:100%;display:block;}
+.card.back .wv-qrcap{position:absolute;left:8%;width:29%;top:72.5%;text-align:center;
   font-size:.55em;letter-spacing:.18em;text-transform:uppercase;opacity:.6;text-indent:.18em;}
 
-.card.back .bk{position:absolute;left:43%;right:8%;top:23%;}
-.card.back .bk .row{margin-bottom:.8em;}
-.card.back .bk .row:last-child{margin-bottom:0;}
-.card.back .bk .lb{font-size:.6em;letter-spacing:.2em;opacity:.6;text-transform:uppercase;
+.card.back .wv-bk{position:absolute;left:43%;right:8%;top:23%;}
+.card.back .wv-bk .wv-row{margin-bottom:.8em;}
+.card.back .wv-bk .wv-row:last-child{margin-bottom:0;}
+.card.back .wv-bk .lb{font-size:.6em;letter-spacing:.2em;opacity:.6;text-transform:uppercase;
   text-indent:.2em;margin-bottom:.2em;}
-.card.back .bk .vl{font-size:.82em;letter-spacing:.06em;line-height:1.35;}
+.card.back .wv-bk .vl{font-size:.82em;letter-spacing:.06em;line-height:1.35;}
 
 /* Three clauses, never four: the fourth line is where this stops being readable and starts
    being the wall of type the front was built to avoid. */
-.card.back .rules{position:absolute;left:8%;right:8%;top:79.5%;
+.card.back .wv-rules{position:absolute;left:8%;right:8%;top:79.5%;
   font-size:.55em;letter-spacing:.05em;line-height:1.62;opacity:.62;}
 
 /* Lower case, unlike .fine on the front. It is an address, and an uppercase URL reads as
    shouting and is harder to type back in by hand. */
-.card.back .bkurl{position:absolute;left:8%;right:8%;top:93%;text-align:center;
+.card.back .wv-bkurl{position:absolute;left:8%;right:8%;top:93%;text-align:center;
   font-size:.5em;letter-spacing:.1em;opacity:.5;}
 
 
@@ -148,39 +148,39 @@
  * Sizes are em off .cover's font-size, the same rule the card follows, so the whole page scales
  * from one number.
  */
-.cover{width:100%;height:100%;padding:26mm 30mm 22mm;
+.wv-cover{width:100%;height:100%;padding:26mm 30mm 22mm;
   display:flex;flex-direction:column;
   font-family:'Inter',system-ui,-apple-system,sans-serif;
   color:#2D2E37;font-size:var(--wv-cover-fs);line-height:1.55;}
-.cover .top{text-align:center;}
-.cover .top img{height:3.4em;width:auto;display:inline-block;}
-.cover h1{font-family:'Playfair Display',Georgia,serif;font-weight:600;
+.wv-cover .wv-brandline{text-align:center;}
+.wv-cover .wv-brandline img{height:3.4em;width:auto;display:inline-block;}
+.wv-cover h1{font-family:'Playfair Display',Georgia,serif;font-weight:600;
   font-size:2.5em;line-height:1.1;margin:1.5em 0 .35em;letter-spacing:.005em;}
-.cover .who{font-size:1.05em;letter-spacing:.02em;}
-.cover .who b{font-weight:600;}
-.cover .rule{height:1px;background:#E7E2D8;margin:1.5em 0;}
+.wv-cover .wv-line{font-size:1.05em;letter-spacing:.02em;}
+.wv-cover .wv-line b{font-weight:600;}
+.wv-cover .wv-rule{height:1px;background:#E7E2D8;margin:1.5em 0;}
 
-.cover .amt{font-family:'Playfair Display',Georgia,serif;font-size:2.1em;color:#B4823A;
+.wv-cover .wv-amt{font-family:'Playfair Display',Georgia,serif;font-size:2.1em;color:#B4823A;
   line-height:1.15;}
-.cover .amt small{font-family:'Inter',system-ui,sans-serif;font-size:.42em;letter-spacing:.14em;
+.wv-cover .wv-amt small{font-family:'Inter',system-ui,sans-serif;font-size:.42em;letter-spacing:.14em;
   margin-right:.4em;vertical-align:.35em;}
-.cover .sub{font-size:.95em;opacity:.78;}
+.wv-cover .wv-sub{font-size:.95em;opacity:.78;}
 
-.cover h2{font-size:.72em;letter-spacing:.2em;text-transform:uppercase;font-weight:600;
+.wv-cover h2{font-size:.72em;letter-spacing:.2em;text-transform:uppercase;font-weight:600;
   opacity:.55;margin:1.7em 0 .5em;text-indent:.2em;}
-.cover ul{list-style:none;}
-.cover li{font-size:.95em;padding:.22em 0;}
-.cover li b{font-weight:600;}
-.cover p{font-size:.95em;}
+.wv-cover ul{list-style:none;}
+.wv-cover li{font-size:.95em;padding:.22em 0;}
+.wv-cover li b{font-weight:600;}
+.wv-cover p{font-size:.95em;}
 
 /* Pushed to the bottom of the page rather than placed, so the block above can grow by a line
    without the terms sliding off the paper. */
-.cover .foot{margin-top:auto;display:flex;align-items:flex-end;justify-content:space-between;
+.wv-cover .wv-foot{margin-top:auto;display:flex;align-items:flex-end;justify-content:space-between;
   gap:2em;padding-top:1.6em;border-top:1px solid #E7E2D8;}
-.cover .foot .qr{width:24mm;height:24mm;flex:0 0 auto;}
-.cover .foot .qr img{width:100%;height:100%;display:block;}
-.cover .foot .terms{font-size:.78em;opacity:.7;}
-.cover .foot .terms b{display:block;font-size:1.05em;opacity:1;font-weight:600;margin-bottom:.2em;}
+.wv-cover .wv-foot .wv-qr{width:24mm;height:24mm;flex:0 0 auto;}
+.wv-cover .wv-foot .wv-qr img{width:100%;height:100%;display:block;}
+.wv-cover .wv-foot .wv-terms{font-size:.78em;opacity:.7;}
+.wv-cover .wv-foot .wv-terms b{display:block;font-size:1.05em;opacity:1;font-weight:600;margin-bottom:.2em;}
 
 /* ---------------- the page, on screen ----------------
  * What the saved PDF looks like, without saving it. Built for the practice run: printing is
@@ -190,21 +190,21 @@
  * The page is laid out at its TRUE size and then scaled with a transform, rather than being
  * rebuilt smaller. A transform cannot change the layout, so what you see is the same box the
  * printer is handed, at 55%. Rebuilding it smaller is what would let it drift.
- * A transform does not shrink the space the element takes, which is why .pagewrap carries the
+ * A transform does not shrink the space the element takes, which is why .wv-pagewrap carries the
  * scaled height itself.
  */
-.pagewrap{--s:.55;
+.wv-pagewrap{--s:.55;
   width:calc(var(--wv-page-w) * var(--s));
   height:calc(var(--wv-page-h) * var(--s));
   margin:0 auto;overflow:hidden;
   box-shadow:0 6px 24px rgba(45,46,55,.16);border:1px solid #E7E2D8;}
-.pagescale{width:var(--wv-page-w);height:var(--wv-page-h);
+.wv-pagescale{width:var(--wv-page-w);height:var(--wv-page-h);
   transform:scale(var(--s));transform-origin:top left;}
 
-.sheet.preview{width:var(--wv-page-w);height:var(--wv-page-h);
+.wv-sheet.wv-preview{width:var(--wv-page-w);height:var(--wv-page-h);
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   gap:var(--wv-page-gap);background:var(--wv-page-bg);}
-.sheet.preview .card{width:var(--wv-card-w);height:var(--wv-card-h);font-size:var(--wv-card-fs);
+.wv-sheet.wv-preview .card{width:var(--wv-card-w);height:var(--wv-card-h);font-size:var(--wv-card-fs);
   box-shadow:none;margin:0;}
 
 /* ---------------- printing ----------------
@@ -234,7 +234,7 @@
 
   /* The SHEET carries the page break now, not the card, which is what lets the two be sized
      independently. Written by TRSCard.print, one per card. */
-  #trs-printroot .sheet{
+  #trs-printroot .wv-sheet{
     width:var(--wv-page-w);height:var(--wv-page-h);
     display:flex;flex-direction:column;align-items:center;justify-content:center;
     gap:var(--wv-page-gap);
@@ -242,10 +242,10 @@
     page-break-after:always;break-after:page;
     -webkit-print-color-adjust:exact;print-color-adjust:exact;
   }
-  #trs-printroot .sheet:last-child{page-break-after:auto;break-after:auto;}
+  #trs-printroot .wv-sheet:last-child{page-break-after:auto;break-after:auto;}
 
   /* The cover fills its page instead of being centred in it, so this one sheet is a block. */
-  #trs-printroot .sheet.cover-sheet{display:block;}
+  #trs-printroot .wv-sheet.wv-cover-sheet{display:block;}
 
   /* 140 x 88.3mm holds the real ID-1 ratio to within a rounding error, so the card is the
      same shape in print as on screen. The border-radius is deliberately NOT reset here: at

@@ -215,14 +215,14 @@
       '<div class="emv"><i></i><i></i><i></i><i></i></div>' +
       '<div class="val">' +
         '<div class="lb">' + T.esc(card.valueLabel) + '</div>' +
-        '<div class="amt"><small>AED</small>' + T.money(card.value) + '</div>' +
+        '<div class="wv-amt"><small>AED</small>' + T.money(card.value) + '</div>' +
       '</div>' +
       '<div class="num">' +
         card.face.map(function (g) { return '<span>' + g + '</span>'; }).join('') +
       '</div>' +
       (card.of ? '<div class="of">' + T.esc(card.of) + '</div>' : '') +
-      '<div class="foot">' +
-        '<div class="who">' +
+      '<div class="wv-cardfoot">' +
+        '<div class="wv-holder">' +
           '<div class="lb">' + (card.gift ? 'Gifted by' : 'Cardholder') + '</div>' +
           '<div class="nm">' + T.esc(nm) + '</div>' +
         '</div>' +
@@ -283,22 +283,22 @@
       'its own card once your ' + T.ordinal(t.needs) + ' friend has visited and paid.</p>';
 
     return '' +
-    '<div class="cover">' +
-      '<div class="top"><img src="../assets/tara-rose-logo-black.png" alt="Tara Rose Salon"></div>' +
+    '<div class="wv-cover">' +
+      '<div class="wv-brandline"><img src="../assets/tara-rose-logo-black.png" alt="Tara Rose Salon"></div>' +
       '<h1>Your Wellness Voucher</h1>' +
-      '<div class="who"><b>' + T.esc(set.name || 'Her name') + '</b> &middot; ' + T.esc(t.name) + '</div>' +
-      '<div class="rule"></div>' +
-      '<div class="amt"><small>AED</small>' + T.money(main.value) + '</div>' +
-      '<div class="sub">Yours until ' + T.fmt(main.expiry) + ', at ' +
+      '<div class="wv-line"><b>' + T.esc(set.name || 'Her name') + '</b> &middot; ' + T.esc(t.name) + '</div>' +
+      '<div class="wv-rule"></div>' +
+      '<div class="wv-amt"><small>AED</small>' + T.money(main.value) + '</div>' +
+      '<div class="wv-sub">Yours until ' + T.fmt(main.expiry) + ', at ' +
         T.esc(T.salonsIn(b.emirate).join(' and ')) + '.</div>' +
       '<h2>In this file</h2>' +
       '<ul>' + list + '</ul>' +
       friends +
       refer +
-      '<div class="foot">' +
-        '<div class="terms"><b>Thank you for placing this with us.</b>' +
+      '<div class="wv-foot">' +
+        '<div class="wv-terms"><b>Thank you for placing this with us.</b>' +
           'Full terms: ' + T.termsPath(b.emirate) + '</div>' +
-        '<div class="qr"><img src="../assets/qr-terms-' + slug + '.svg" alt="Scan for the full terms"></div>' +
+        '<div class="wv-qr"><img src="../assets/qr-terms-' + slug + '.svg" alt="Scan for the full terms"></div>' +
       '</div>' +
     '</div>';
   };
@@ -320,7 +320,7 @@
     var expiry = card.expiry ? T.fmt(card.expiry) : 'Set on referral';
 
     function row (label, value) {
-      return '<div class="row"><div class="lb">' + label + '</div>' +
+      return '<div class="wv-row"><div class="lb">' + label + '</div>' +
              '<div class="vl">' + value + '</div></div>';
     }
 
@@ -328,19 +328,19 @@
     '<div class="card back' + (extraClass ? ' ' + extraClass : '') + '">' +
       '<div class="sheen"></div>' +
       '<div class="brand"><img src="../assets/tara-rose-logo-card.png" alt="Tara Rose Salon"></div>' +
-      '<div class="qrbox"><img src="../assets/qr-terms-' + slug + '.svg" alt="Scan for the full terms"></div>' +
-      '<div class="qrcap">Scan for the full terms</div>' +
-      '<div class="bk">' +
+      '<div class="wv-qrbox"><img src="../assets/qr-terms-' + slug + '.svg" alt="Scan for the full terms"></div>' +
+      '<div class="wv-qrcap">Scan for the full terms</div>' +
+      '<div class="wv-bk">' +
         row('Redeemable at', T.esc(T.salonsIn(b.emirate).join(' and ')) + ' only') +
         row('Full serial', T.esc(card.serial)) +
         row('Valid until', expiry) +
       '</div>' +
-      '<div class="rules">' +
+      '<div class="wv-rules">' +
         '<div>Eligible salon services only. Not valid on home care, retail products or another voucher.</div>' +
         '<div>No cash value. Cannot be exchanged or refunded, and cannot be combined with another offer.</div>' +
         '<div>Subject to appointment availability. Standard booking and cancellation policies apply.</div>' +
       '</div>' +
-      '<div class="bkurl">' + T.termsPath(b.emirate) + '</div>' +
+      '<div class="wv-bkurl">' + T.termsPath(b.emirate) + '</div>' +
     '</div>';
   };
 
@@ -349,8 +349,8 @@
   // The scale lives in CSS, not here, because voucher-card.css is the only thing that is
   // allowed to know how big the page is.
   T.renderPage = function (set, card) {
-    return '<div class="pagewrap"><div class="pagescale">' +
-             '<div class="sheet preview">' + T.render(set, card) + T.renderBack(set, card) + '</div>' +
+    return '<div class="wv-pagewrap"><div class="wv-pagescale">' +
+             '<div class="wv-sheet wv-preview">' + T.render(set, card) + T.renderBack(set, card) + '</div>' +
            '</div></div>';
   };
 
@@ -372,9 +372,9 @@
     // voucher-card.css can size the page and the card independently. See the printing block
     // there for why the card is not printed at its real 85.6mm.
     root.innerHTML =
-      (cover ? '<div class="sheet cover-sheet">' + T.renderCover(set, cards) + '</div>' : '') +
+      (cover ? '<div class="wv-sheet wv-cover-sheet">' + T.renderCover(set, cards) + '</div>' : '') +
       cards.map(function (c) {
-        return '<div class="sheet">' + T.render(set, c) + T.renderBack(set, c) + '</div>';
+        return '<div class="wv-sheet">' + T.render(set, c) + T.renderBack(set, c) + '</div>';
       }).join('');
 
     // The browser names a Save as PDF after document.title, so reception can find the file
