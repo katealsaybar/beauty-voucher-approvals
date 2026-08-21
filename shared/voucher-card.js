@@ -48,6 +48,30 @@
   // The back of the card names the salons rather than the emirate, because "Abu Dhabi salons"
   // on the front answers where and this answers which. Derived from BRANCHES rather than typed
   // again, so opening a fifth salon is still a one-line change in one place.
+  // WHAT THE BIRTHDAY CARD SAYS SHE CAN HAVE, and it is set by the EMIRATE, not the tier: the
+  // two emirates do not run the same facial. Abu Dhabi lets her choose, Dubai runs the Signature
+  // Relaxing with lifting massage. Both sentences are the pack's own, from the Abu Dhabi and
+  // Dubai voucher sections in index.html, and Hanneh's artwork carries the same two.
+  //
+  // OPEN, and deliberately NOT settled here. Dip Your Toes is a contradiction inside the pack
+  // itself, not a disagreement with the artwork: the tier table (Decision 13) gives that tier a
+  // BLOW-DRY at AED 150, while the emirate sections give every tier a facial, and the Dubai
+  // facial is priced at AED 350 in the same document. Artwork does not outrank a locked decision,
+  // so D keeps the blow-dry until Kate and Tara settle which one a Dip client actually receives.
+  T.birthdayTreat = function (tier, emirate) {
+    if (tier === 'D') return T.TIERS.D.birthdayWhat;
+    return emirate === 'Dubai'
+      ? 'Signature Relaxing Facial with lifting massage'
+      : 'Full facial of your choice';
+  };
+
+  // The birthday facial in Dubai is at AL QUOZ ONLY: Motor City does not do beauty. Everywhere
+  // else on a card "redeemable at" means both salons in the emirate, so this is the one card
+  // that cannot use salonsIn().
+  T.birthdaySalons = function (emirate) {
+    return emirate === 'Dubai' ? ['Al Quoz'] : T.salonsIn(emirate);
+  };
+
   T.salonsIn = function (emirate) {
     var out = [], k;
     for (k in T.BRANCHES) if (T.BRANCHES[k].emirate === emirate) out.push(T.BRANCHES[k].name);
@@ -158,7 +182,8 @@
     cards.push({
       type:'B', label:'Birthday', serial:T.serialOf(tier,'B',branch,seq),
       face:T.faceGroups(tier,'B',branch,seq),
-      lead:t.birthdayWhat, value:t.birthday, valueLabel:'Birthday treat',
+      lead:T.birthdayTreat(tier, T.BRANCHES[branch].emirate), value:t.birthday,
+      valueLabel:'Birthday treat',
       expiry:mainExpiry, printable:true,
       note:'Usable <b>any time</b> inside her voucher validity, not only in her birthday ' +
            'month. Same clock as the main card.'
@@ -267,7 +292,7 @@
 
     // c.label is reception's word for the card, and "Main card" and "Birthday" are the wrong
     // words to hand a client. She is not filing them, she is being given them.
-    var CLIENT_NAME = { M:'Your card', B:t.birthdayWhat, R:'Referral credit' };
+    var CLIENT_NAME = { M:'Your card', B:T.birthdayTreat(set.tier, b.emirate), R:'Referral credit' };
     var list = cards.map(function (c) {
       return '<li><b>' + T.esc(CLIENT_NAME[c.type] || c.label) + '</b>, AED ' + T.money(c.value) +
              (c.expiry ? ', until ' + T.fmt(c.expiry) : '') + '</li>';
@@ -338,7 +363,8 @@
       '<div class="wv-qrbox"><img src="../assets/qr-terms-' + slug + '.svg" alt="Scan for the full terms"></div>' +
       '<div class="wv-qrcap">Scan for the full terms</div>' +
       '<div class="wv-bk">' +
-        row('Redeemable at', T.esc(T.salonsIn(b.emirate).join(' and ')) + ' only') +
+        row('Redeemable at', T.esc((card.type === 'B' ? T.birthdaySalons(b.emirate)
+                                                     : T.salonsIn(b.emirate)).join(' and ')) + ' only') +
         row('Full serial', T.esc(card.serial)) +
         row('Valid until', expiry) +
       '</div>' +
