@@ -241,6 +241,68 @@
     '</div>';
   };
 
+  /* ---------- the cover ---------- */
+  // Page one of HER file, and the reason no covering email had to be written: everything
+  // reception would otherwise type into WhatsApp is on it.
+  //
+  // It lists the cards IN THIS FILE rather than the whole set, because her friends' cards are
+  // sent as separate files now, one per friend. If it listed all eight she would go looking for
+  // five cards that are not in there.
+  //
+  // Nothing here is a new fact. The tier, the credit, the dates and the salons all come off the
+  // same set the cards are drawn from, so the cover cannot disagree with the card behind it.
+  T.renderCover = function (set, cards) {
+    var b = T.BRANCHES[set.branch];
+    var t = T.TIERS[set.tier];
+    var slug = T.emirateSlug(b.emirate);
+    var main = cards[0];
+    var gifts = set.cards.filter(function (c) { return c.gift && c.printable; }).length;
+
+    // c.label is reception's word for the card, and "Main card" and "Birthday" are the wrong
+    // words to hand a client. She is not filing them, she is being given them.
+    var CLIENT_NAME = { M:'Your card', B:t.birthdayWhat, R:'Referral credit' };
+    var list = cards.map(function (c) {
+      return '<li><b>' + T.esc(CLIENT_NAME[c.type] || c.label) + '</b>, AED ' + T.money(c.value) +
+             (c.expiry ? ', until ' + T.fmt(c.expiry) : '') + '</li>';
+    }).join('');
+
+    // One file per friend is a privacy decision, not a filing preference, so it is explained
+    // rather than left for her to notice.
+    var friends = gifts
+      ? '<h2>Your friends’ cards come separately</h2>' +
+        '<p>' + (gifts === 1 ? 'One card, in its own file' : gifts + ' cards, one file each') +
+        ', so you can pass one to a friend without sending her the rest.</p>' +
+        '<h2>One thing to do now</h2>' +
+        '<p>Hand those out early. They run for two months from the day <b>you</b> bought, ' +
+        'not from the day you give one away.</p>'
+      : '';
+
+    // Named but not promised as an attachment, because on the day she pays it does not exist
+    // yet. She gets it as its own card once the third friend has been in.
+    var refer = '<h2>Later</h2><p>AED ' + T.money(t.refer) + ' of referral credit reaches you as ' +
+      'its own card once your ' + T.ordinal(t.needs) + ' friend has visited and paid.</p>';
+
+    return '' +
+    '<div class="cover">' +
+      '<div class="top"><img src="../assets/tara-rose-logo-black.png" alt="Tara Rose Salon"></div>' +
+      '<h1>Your Wellness Voucher</h1>' +
+      '<div class="who"><b>' + T.esc(set.name || 'Her name') + '</b> &middot; ' + T.esc(t.name) + '</div>' +
+      '<div class="rule"></div>' +
+      '<div class="amt"><small>AED</small>' + T.money(main.value) + '</div>' +
+      '<div class="sub">Yours until ' + T.fmt(main.expiry) + ', at ' +
+        T.esc(T.salonsIn(b.emirate).join(' and ')) + '.</div>' +
+      '<h2>In this file</h2>' +
+      '<ul>' + list + '</ul>' +
+      friends +
+      refer +
+      '<div class="foot">' +
+        '<div class="terms"><b>Thank you for placing this with us.</b>' +
+          'Full terms: ' + T.termsPath(b.emirate) + '</div>' +
+        '<div class="qr"><img src="../assets/qr-terms-' + slug + '.svg" alt="Scan for the full terms"></div>' +
+      '</div>' +
+    '</div>';
+  };
+
   /* ---------- the back ---------- */
   // The front answers what she holds and what it is worth. The back answers the two questions
   // reception gets asked after that: where exactly can I spend it, and where are the terms.
@@ -299,19 +361,21 @@
   // The class comes off on afterprint rather than on the line after window.print(). Chrome
   // does not reliably block there, and clearing it early strips the print layout before the
   // preview has rendered, which silently produces the wrong pages.
-  T.print = function (set, cards, filename) {
+  T.print = function (set, cards, filename, cover) {
     var root = document.getElementById('trs-printroot');
     if (!root) {
       root = document.createElement('div');
       root.id = 'trs-printroot';
       document.body.appendChild(root);
     }
-    // One A5 page per card, the card centred on it. The sheet is what carries the page
-    // break, so voucher-card.css can size the page and the card independently. See the
-    // printing block there for why the card is not printed at its real 85.6mm.
-    root.innerHTML = cards.map(function (c) {
-      return '<div class="sheet">' + T.render(set, c) + T.renderBack(set, c) + '</div>';
-    }).join('');
+    // One A4 page per card, both faces on it. The sheet is what carries the page break, so
+    // voucher-card.css can size the page and the card independently. See the printing block
+    // there for why the card is not printed at its real 85.6mm.
+    root.innerHTML =
+      (cover ? '<div class="sheet cover-sheet">' + T.renderCover(set, cards) + '</div>' : '') +
+      cards.map(function (c) {
+        return '<div class="sheet">' + T.render(set, c) + T.renderBack(set, c) + '</div>';
+      }).join('');
 
     // The browser names a Save as PDF after document.title, so reception can find the file
     // again in a folder of attachments rather than opening four called Untitled.
@@ -328,11 +392,39 @@
     window.print();
   };
 
-  // Her whole set as one file. The referral card is included only once it is printable,
-  // which is why this filters rather than taking set.cards.
-  T.printSet = function (set) {
-    var printable = set.cards.filter(function (c) { return c.printable; });
-    T.print(set, printable,
-      'WV-' + set.branch + '-' + T.pad4(set.seq) + ' ' + set.name + ' all cards');
+  // HER file: the two cards that are hers on the day she pays, behind a cover. The main card
+  // and the birthday card, and nothing else.
+  //
+  // NOT the gift cards. There used to be one button that put all eight in one file, and it was
+  // the shortest path to a leak in the pack: she forwards that file to a friend, because it is
+  // the only file she has, and the friend opens it holding her balance and the other four gift
+  // serials, any of which she could then spend. One file per friend costs reception a second
+  // Save and closes it.
+  //
+  // NOT the referral card either, and that one is a timing decision rather than a privacy one.
+  // It does not exist on the day she pays: the clock starts when her third friend has visited
+  // AND paid, so it is a later delivery. Bundling it here would mean her file held two cards on
+  // Monday and three in November, which is the kind of quiet difference nobody can support.
+  T.printHers = function (set) {
+    var hers = set.cards.filter(function (c) {
+      return c.printable && (c.type === 'M' || c.type === 'B');
+    });
+    T.print(set, hers,
+      'WV-' + set.branch + '-' + T.pad4(set.seq) + ' ' + set.name + ' wellness voucher', true);
   };
+
+  // Any one card on its own: a friend's gift card, or her referral card when she has earned it.
+  // The gift name is written for the person it is forwarded TO, who never saw the till and should
+  // not receive a file called WV-VG-KCA-0042-1.
+  T.printOne = function (set, card) {
+    var name = card.gift
+      ? 'Gift card from ' + set.name + ' ' + card.serial
+      : 'WV-' + set.branch + '-' + T.pad4(set.seq) + ' ' + set.name + ' ' + card.label.toLowerCase();
+    T.print(set, [card], name);
+  };
+
+  // Kept so nothing that still calls these breaks. printSet used to mean the whole set in one
+  // file, which is the thing being removed, so it now means her file.
+  T.printSet  = T.printHers;
+  T.printGift = T.printOne;
 })();

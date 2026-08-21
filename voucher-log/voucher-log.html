@@ -495,7 +495,6 @@ function closeModal(){
 }
 function drawModal(){
   var set = modalSet, card = set.cards[modalIdx];
-  var printable = set.cards.filter(function (c){ return c.printable; });
 
   el('sheet').innerHTML =
     '<div class="shead"><h2>' + C.esc(set.name) + '</h2>' +
@@ -513,8 +512,8 @@ function drawModal(){
     '<p class="scap">Full serial <code>' + card.serial + '</code></p>' +
 
     '<div class="srow">' +
-      '<button class="btn" id="mall">Save all ' + printable.length + ' as one PDF</button>' +
-      '<button class="btn ghost" id="mone"' + (card.printable ? '' : ' disabled') + '>Just this card</button>' +
+      '<button class="btn" id="mall">Save her file</button>' +
+      '<button class="btn ghost" id="mone"' + (card.printable ? '' : ' disabled') + '>Save just this card</button>' +
       '<button class="btn ghost" id="mser">Copy the serial</button>' +
     '</div>' +
 
@@ -529,9 +528,9 @@ function drawModal(){
     drawModal();
   });
 
-  el('mall').addEventListener('click', function(){ C.printSet(set); });
+  el('mall').addEventListener('click', function(){ C.printHers(set); });
   el('mone').addEventListener('click', function(){
-    C.print(set, [card], card.serial + ' ' + set.name);
+    C.printOne(set, card);
   });
   el('mser').addEventListener('click', function(){
     var btn = this;

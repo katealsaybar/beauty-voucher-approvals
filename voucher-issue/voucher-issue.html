@@ -99,7 +99,6 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1
 .stage{display:flex;flex-direction:column;align-items:center;gap:18px;padding:18px 0 6px;}
 /* Both faces, stacked, because the desk has to be able to check the back before it sends. */
 .caption{text-align:center;font-size:13px;color:var(--muted);margin-top:12px;}
-#printall{display:none;}
 
 </style>
 </head>
@@ -195,15 +194,9 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1
       <div class="stage" id="stage"></div>
       <p class="caption" id="caption"></p>
 
-      <!-- Every printable card, stacked. Never shown on screen; it exists so one Save as PDF
-           produces her whole set as one file. Reception sends one attachment instead of
-           photographing the screen three, five or seven times, and WhatsApp does not recompress a
-           PDF the way it crushes an image, which is what the small serial cannot survive. -->
-      <div id="printall"></div>
-
       <div class="btnrow" style="justify-content:center">
-        <button class="btn" id="printall-btn" disabled>Save all her cards as one PDF</button>
-        <button class="btn ghost" id="print" disabled>Just this card</button>
+        <button class="btn" id="printall-btn" disabled>Save her file</button>
+        <button class="btn ghost" id="print" disabled>Save just this card</button>
         <button class="btn ghost" id="pageview-btn">See the saved page</button>
         <button class="btn ghost" id="copyname" disabled>Copy her name</button>
         <button class="btn ghost" id="copy" disabled>Copy the serial</button>
@@ -212,10 +205,12 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1
       <div class="note" id="cardnote" style="display:none"></div>
 
       <ol class="steps">
-        <li data-n="1">Press <b>Save all her cards as one PDF</b>. In the box that opens, choose <b>Save as PDF</b>, not a printer.</li>
-        <li data-n="2">Send that one file to her on the branch WhatsApp. One file, not one photo per card.</li>
-        <li data-n="3">Paste her name and her serial into Phorest with the buttons above, so the sale and the card match.</li>
-        <li data-n="4">Tell her to hand the friend cards out early. Their two months start today, not the day she gives them away.</li>
+        <li data-n="1">Press <b>Save her file</b>. In the box that opens, choose <b>Save as PDF</b>, not a printer. That is her card and her birthday card, behind a cover page that explains the rest.</li>
+        <li data-n="2">Then each gift card <b>on its own</b>. Pick it above, press <b>Save just this card</b>, repeat. One file per friend.</li>
+        <li data-n="3"><b>Never send her the gift cards in one file with her own.</b> She forwards what you send her, so one file would show a friend her balance and every other gift serial.</li>
+        <li data-n="4">Send them on the branch WhatsApp. PDFs, not photos: WhatsApp crushes an image and the serial is the first thing to go.</li>
+        <li data-n="5">Paste her name and her serial into Phorest with the buttons above, so the sale and the card match.</li>
+        <li data-n="6">Tell her to hand the friend cards out early. Their two months start today, not the day she gives them away.</li>
       </ol>
     </div>
 
@@ -452,12 +447,10 @@ function drawSet(){
   el('pageview-btn').textContent = state.pageview ? 'See the cards' : 'See the saved page';
   el('caption').innerHTML = 'Full serial <code>' + card.serial + '</code>';
 
-  var printable = set.cards.filter(function (c){ return c.printable; });
-  el('printall').innerHTML = printable.map(function (c){ return renderCard(set, c); }).join('');
   el('printall-btn').disabled = !set.live;
-  el('printall-btn').textContent = set.live
-    ? 'Save all ' + printable.length + ' cards as one PDF'
-    : 'Cannot print, nothing was logged';
+  // Her file is the main card and the birthday card. The gift cards and the referral card are
+  // saved one at a time, on purpose: see printHers in voucher-card.js.
+  el('printall-btn').textContent = set.live ? 'Save her file' : 'Cannot print, nothing was logged';
 
   var note = el('cardnote');
   if (card.note){
@@ -618,13 +611,12 @@ function clearCards(){
   el('stage').innerHTML = '';
   el('caption').innerHTML = '';
   el('cardnote').style.display = 'none';
-  el('printall').innerHTML = '';
   el('serialline').innerHTML = 'Nothing issued yet. Fill the form and press <b>Get her cards</b>.';
   el('print').disabled = true;
   el('copy').disabled = true;
   el('copyname').disabled = true;
   el('printall-btn').disabled = true;
-  el('printall-btn').textContent = 'Save all her cards as one PDF';
+  el('printall-btn').textContent = 'Save her file';
 }
 
 el('reset').addEventListener('click', function(){
@@ -639,11 +631,10 @@ el('pageview-btn').addEventListener('click', function(){
 });
 
 el('print').addEventListener('click', function(){
-  var c = state.set.cards[state.active];
-  C.print(state.set, [c], c.serial + ' ' + state.set.name);
+  C.printOne(state.set, state.set.cards[state.active]);
 });
 
-el('printall-btn').addEventListener('click', function(){ C.printSet(state.set); });
+el('printall-btn').addEventListener('click', function(){ C.printHers(state.set); });
 
 function wireCopy(id, label, pick){
   el(id).addEventListener('click', function(){
