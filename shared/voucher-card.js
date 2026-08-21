@@ -45,6 +45,22 @@
     V:{name:'All-In VIP Year', places:4500, spends:5400, months:12, friends:5, needs:3, birthday:750, birthdayWhat:'Birthday treat',    refer:200}
   };
 
+  // The back of the card names the salons rather than the emirate, because "Abu Dhabi salons"
+  // on the front answers where and this answers which. Derived from BRANCHES rather than typed
+  // again, so opening a fifth salon is still a one-line change in one place.
+  T.salonsIn = function (emirate) {
+    var out = [], k;
+    for (k in T.BRANCHES) if (T.BRANCHES[k].emirate === emirate) out.push(T.BRANCHES[k].name);
+    return out;
+  };
+
+  // Term 3: the credit stays in the emirate it was bought in, so there are exactly two terms
+  // pages and exactly two QR codes. Both were decoded off the rendered PDF, not trusted.
+  T.emirateSlug = function (emirate) { return emirate === 'Dubai' ? 'dubai' : 'abu-dhabi'; };
+  T.termsPath = function (emirate) {
+    return 'tararosesalon.com/en/ae/wellness-voucher/' + T.emirateSlug(emirate);
+  };
+
   /* ---------- dates ---------- */
   var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
@@ -225,6 +241,47 @@
     '</div>';
   };
 
+  /* ---------- the back ---------- */
+  // The front answers what she holds and what it is worth. The back answers the two questions
+  // reception gets asked after that: where exactly can I spend it, and where are the terms.
+  //
+  // The QR is an SVG, not a PNG, so it stays vector in the saved PDF and survives any zoom.
+  // It sits on a CREAM PANEL and that is not decoration: the modules are #2d2e37 and a dark
+  // QR on a black card does not scan. The panel is the thing that makes it readable.
+  //
+  // The wording below is lifted from the approved gift card artwork, which took it from Dawn's
+  // terms. Only the clauses that are true of EVERY card in the set are here; anything that
+  // varies by card, the value and the expiry, is a row above rather than a sentence.
+  T.renderBack = function (set, card, extraClass) {
+    var b = T.BRANCHES[set.branch];
+    var slug = T.emirateSlug(b.emirate);
+    var expiry = card.expiry ? T.fmt(card.expiry) : 'Set on referral';
+
+    function row (label, value) {
+      return '<div class="row"><div class="lb">' + label + '</div>' +
+             '<div class="vl">' + value + '</div></div>';
+    }
+
+    return '' +
+    '<div class="card back' + (extraClass ? ' ' + extraClass : '') + '">' +
+      '<div class="sheen"></div>' +
+      '<div class="brand"><img src="../assets/tara-rose-logo-card.png" alt="Tara Rose Salon"></div>' +
+      '<div class="qrbox"><img src="../assets/qr-terms-' + slug + '.svg" alt="Scan for the full terms"></div>' +
+      '<div class="qrcap">Scan for the full terms</div>' +
+      '<div class="bk">' +
+        row('Redeemable at', T.esc(T.salonsIn(b.emirate).join(' and ')) + ' only') +
+        row('Full serial', T.esc(card.serial)) +
+        row('Valid until', expiry) +
+      '</div>' +
+      '<div class="rules">' +
+        '<div>Eligible salon services only. Not valid on home care, retail products or another voucher.</div>' +
+        '<div>No cash value. Cannot be exchanged or refunded, and cannot be combined with another offer.</div>' +
+        '<div>Subject to appointment availability. Standard booking and cancellation policies apply.</div>' +
+      '</div>' +
+      '<div class="bkurl">' + T.termsPath(b.emirate) + '</div>' +
+    '</div>';
+  };
+
   /* ---------- printing ---------- */
   // One function for every page. It fills #trs-printroot, which voucher-card.css is the only
   // thing that knows how to lay out, so no page has to own print rules of its own.
@@ -243,7 +300,7 @@
     // break, so voucher-card.css can size the page and the card independently. See the
     // printing block there for why the card is not printed at its real 85.6mm.
     root.innerHTML = cards.map(function (c) {
-      return '<div class="sheet">' + T.render(set, c) + '</div>';
+      return '<div class="sheet">' + T.render(set, c) + T.renderBack(set, c) + '</div>';
     }).join('');
 
     // The browser names a Save as PDF after document.title, so reception can find the file
