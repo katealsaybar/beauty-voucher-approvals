@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Wellness Voucher, Staff Room Notice</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#2D2E37; --muted:#6E6E76; --line:#E7E2D8; --paper:#FAF8F4;
+    --teal:#99F6E4; --lime:#EEF3C7; --lilac:#C4B5FD; --coral:#FF9B9B;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',-apple-system,Segoe UI,sans-serif;color:var(--ink);background:var(--paper);
+       font-size:12pt;line-height:1.5;-webkit-font-smoothing:antialiased}
+  .sheet{width:210mm;height:297mm;padding:14mm 15mm;margin:0 auto 8mm;background:var(--paper);
+         display:flex;flex-direction:column;overflow:hidden}
+  .sheet+.sheet{page-break-before:always}
+
+  header{border-bottom:2.5px solid var(--ink);padding-bottom:9px;margin-bottom:14px;
+         display:flex;justify-content:space-between;align-items:flex-end;gap:18px}
+  .brand{font-size:8pt;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+  h1{font-family:'Playfair Display',Georgia,serif;font-size:27pt;font-weight:600;line-height:1.04;
+     letter-spacing:-.014em}
+  .who{text-align:right;font-size:9.6pt;color:var(--muted);line-height:1.5;white-space:nowrap}
+  .who b{color:var(--ink);font-weight:700;display:block;font-size:10.4pt}
+
+  .northstar{background:var(--teal);padding:14px 19px;border-radius:5px;margin-bottom:16px}
+  .northstar .lbl{font-size:8pt;letter-spacing:.18em;text-transform:uppercase;font-weight:700;
+                  opacity:.62;margin-bottom:6px}
+  .northstar p{font-family:'Playfair Display',Georgia,serif;font-size:18.5pt;line-height:1.24}
+
+  h2{font-size:10pt;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+     margin-bottom:11px;padding-bottom:6px;border-bottom:1.5px solid var(--ink);
+     display:flex;align-items:center;gap:9px}
+
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-bottom:13px}
+
+  /* five steps */
+  .steps{counter-reset:s;list-style:none}
+  .steps li{position:relative;padding-left:34px;margin-bottom:10px;font-size:12.4pt;line-height:1.34}
+  .steps li:last-child{margin-bottom:0}
+  .steps li::before{counter-increment:s;content:counter(s);position:absolute;left:0;top:.02em;
+                    width:23px;height:23px;border-radius:50%;background:var(--lilac);color:var(--ink);
+                    font-size:9.6pt;font-weight:700;display:flex;align-items:center;justify-content:center}
+  .steps li span{display:block;color:var(--muted);font-size:10.6pt;line-height:1.42;margin-top:2px}
+
+  /* never / instead pairs */
+  .pairs>div{margin-bottom:10px}
+  .pairs>div:last-child{margin-bottom:0}
+  .pairs .x,.pairs .t{position:relative;padding-left:21px;line-height:1.35}
+  .pairs .x{font-size:12.4pt;font-weight:600}
+  .pairs .x::before{content:"\2715";position:absolute;left:0;top:0;font-weight:700;color:#C1443F}
+  .pairs .t{font-size:11.2pt;color:var(--muted);margin-top:2px}
+  .pairs .t::before{content:"\2713";position:absolute;left:0;top:0;font-weight:700;color:#4B7A3F}
+  .pairs .t b{color:var(--ink);font-weight:600}
+
+  .catch{background:#fff;border:1px solid var(--line);border-left:4px solid var(--coral);
+         border-radius:5px;padding:12px 16px;margin-bottom:12px}
+  .catch .lbl{font-size:8pt;letter-spacing:.16em;text-transform:uppercase;font-weight:700;
+              color:var(--muted);margin-bottom:8px}
+  .catch ul{list-style:none}
+  .catch li{position:relative;padding-left:14px;margin-bottom:7px;font-size:11.4pt;line-height:1.4}
+  .catch li:last-child{margin-bottom:0}
+  .catch li::before{content:"";position:absolute;left:0;top:.6em;width:4.5px;height:4.5px;
+                    border-radius:50%;background:var(--ink);opacity:.45}
+  .catch li b{font-weight:700}
+
+  footer{margin-top:auto;background:var(--ink);color:var(--paper);border-radius:5px;
+         padding:13px 18px;display:flex;justify-content:space-between;align-items:flex-start;gap:22px}
+  footer .big{font-family:'Playfair Display',Georgia,serif;font-size:16pt;line-height:1.2;
+              margin-bottom:5px}
+  footer p{font-size:10.6pt;line-height:1.45;opacity:.88;max-width:108mm}
+  footer .meta{font-size:9.2pt;text-align:right;line-height:1.55;opacity:.72;white-space:nowrap}
+
+  /* ---------- page 2, the plans ---------- */
+  .plans{display:grid;grid-template-columns:1fr 1fr 1fr;gap:11px;margin-bottom:12px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:5px;padding:0 0 11px;
+        display:flex;flex-direction:column;overflow:hidden}
+  .card .top{padding:10px 13px 9px;border-bottom:1px solid var(--line)}
+  .card.pick .top{background:rgba(196,181,253,.28)}
+  .card h3{font-family:'Playfair Display',Georgia,serif;font-size:15pt;font-weight:600;line-height:1.1}
+  .card .badge{font-size:7.4pt;letter-spacing:.14em;text-transform:uppercase;font-weight:700;
+               color:var(--muted);margin-top:3px}
+  .money{padding:8px 13px 0}
+  .money div{display:flex;justify-content:space-between;gap:8px;font-size:10.4pt;line-height:1.36;
+             padding:3px 0;border-bottom:1px dotted var(--line)}
+  .money div:last-child{border-bottom:none}
+  .money span{color:var(--muted)}
+  .money b{font-weight:700;white-space:nowrap;text-align:right}
+  .card .lbl2{font-size:7.4pt;letter-spacing:.15em;text-transform:uppercase;font-weight:700;
+              color:var(--muted);padding:9px 13px 5px}
+  .card ul{list-style:none;padding:0 13px}
+  .card li{position:relative;padding-left:12px;margin-bottom:4px;font-size:10.1pt;line-height:1.32}
+  .card li:last-child{margin-bottom:0}
+  .card li::before{content:"";position:absolute;left:0;top:.56em;width:4px;height:4px;
+                   border-radius:50%;background:var(--lilac)}
+  .card li b{font-weight:700}
+
+  .plain{background:#fff;border:1px solid var(--line);border-left:4px solid var(--lime);
+         border-radius:5px;padding:12px 16px}
+  .plain .lbl{font-size:8pt;letter-spacing:.16em;text-transform:uppercase;font-weight:700;
+              color:var(--muted);margin-bottom:7px}
+  .plain .items{display:grid;grid-template-columns:1fr 1fr;gap:8px 20px}
+  .plain .items>div{position:relative;padding-left:13px;font-size:10.5pt;line-height:1.38;
+                    color:var(--muted)}
+  .plain .items>div::before{content:"";position:absolute;left:0;top:.56em;width:4px;height:4px;
+                            border-radius:50%;background:var(--ink);opacity:.45}
+  .plain b{font-weight:700;color:var(--ink)}
+
+  /* colour band inside each plan card */
+  .col{margin:9px 13px 0;padding:8px 10px;background:rgba(196,181,253,.20);
+       border-radius:4px;border-left:3px solid var(--lilac)}
+  .col .k{font-size:7.4pt;letter-spacing:.14em;text-transform:uppercase;font-weight:700;
+          color:var(--muted);margin-bottom:2px}
+  .col .v{font-size:10.6pt;font-weight:700;line-height:1.26}
+  .col .s{font-size:9.6pt;color:var(--muted);line-height:1.3;margin-top:2px}
+
+  /* ---------- page 3, colour ---------- */
+  .ladder{margin-bottom:10px}
+  .rung{background:#fff;border:1px solid var(--line);border-radius:5px;padding:9px 14px;
+        margin-bottom:7px;display:flex;gap:14px;align-items:flex-start}
+  .rung:last-child{margin-bottom:0}
+  .rung .sn{flex:0 0 60px;font-family:'Playfair Display',Georgia,serif;font-size:17pt;
+            font-weight:600;line-height:1.05}
+  .rung .sn em{display:block;font-family:'Inter';font-style:normal;font-size:7.4pt;
+               letter-spacing:.13em;text-transform:uppercase;font-weight:700;
+               color:var(--muted);margin-top:2px}
+  .rung .body{flex:1}
+  .rung .whom{font-size:11pt;font-weight:700;line-height:1.26;margin-bottom:1px}
+  .rung .nm2{font-size:10.2pt;color:var(--muted);line-height:1.3;margin-bottom:4px}
+  .rung .svc{font-size:10.1pt;line-height:1.33}
+  .rung.r1{border-left:4px solid var(--teal)}
+  .rung.r2{border-left:4px solid var(--lilac)}
+  .rung.r3{border-left:4px solid var(--coral)}
+
+  .rules{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:10px}
+  .rule{background:#fff;border:1px solid var(--line);border-radius:5px;padding:9px 13px}
+  .rule b{display:block;font-weight:700;font-size:10.6pt;line-height:1.28;margin-bottom:1px}
+  .rule span{font-size:9.9pt;color:var(--muted);line-height:1.33}
+  .rule.hot{border-left:4px solid var(--coral)}
+  @page{size:A4;margin:0}
+  @media print{body{background:#fff}.sheet{margin:0}}
+</style>
+</head>
+<body>
+
+<div class="sheet">
+
+  <header>
+    <div>
+      <div class="brand">Tara Rose &nbsp;·&nbsp; pin this up in the staff room &nbsp;·&nbsp; page 1 of 3</div>
+      <h1>The Wellness Voucher,<br>start here</h1>
+    </div>
+    <div class="who">
+      <b>Every stylist &amp; beautician</b>
+      All four branches<br>
+      From Salon Management<br>
+      21 August 2026
+    </div>
+  </header>
+
+  <div class="northstar">
+    <div class="lbl">If you only remember one line</div>
+    <p>“It’s not money off. You put your own credit in, we add more on top, and it becomes your plan for the year.”</p>
+  </div>
+
+  <div class="cols">
+    <section>
+      <h2>How it works</h2>
+      <ul class="steps">
+        <li>She <b>pays us up front</b>, in one go.
+          <span>Say AED 2,500.</span></li>
+        <li>We <b>add money on top</b>.
+          <span>AED 500, and she doesn’t pay for that part. She’s got AED 3,000 on her account.</span></li>
+        <li>She <b>spends it with us</b>, one appointment at a time.
+          <span>Six, nine or twelve months, depending on her plan.</span></li>
+        <li>Every visit <b>comes off the balance</b>.
+          <span>Nothing to pay at the till while there’s balance left.</span></li>
+        <li>Balance gone or months up, <b>she pays normally again</b>.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Never say &nbsp;/&nbsp; say this instead</h2>
+      <div class="pairs">
+        <div>
+          <div class="x">“Free.”</div>
+          <div class="t"><b>“You put your credit in, we add more on top.”</b></div>
+        </div>
+        <div>
+          <div class="x">“Unlimited.”</div>
+          <div class="t"><b>“You’ve got AED 3,000 to spend with us.”</b></div>
+        </div>
+        <div>
+          <div class="x">“Your kit is included.”</div>
+          <div class="t"><b>“You’ve got AED 450 towards your kit.”</b> Then say what she pays today.</div>
+        </div>
+        <div>
+          <div class="x">Any number for colour.</div>
+          <div class="t"><b>“Your plan covers balayage, let me check the rest with reception.”</b></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="catch">
+    <div class="lbl">The three that catch everyone out</div>
+    <ul>
+      <li><b>Her Self-Care Bonus never buys colour.</b> Beauty, treatments, keratin and blowdries only. So an All-In VIP Year client has AED 4,500 for colour, not 5,400.</li>
+      <li><b>Her credit stays in the emirate she bought it in.</b> Abu Dhabi credit can’t be spent at Al Quoz or Motor City, and Dubai credit can’t be spent at Saadiyat or Khalifa City A.</li>
+      <li><b>Her months start the day she paid.</b> Not her first appointment, and not 30 September. Never guess her dates, only reception can quote those.</li>
+    </ul>
+  </div>
+
+  <footer>
+    <div>
+      <div class="big">“Let me check that for you.”</div>
+      <p>Then reception. If reception isn’t sure, your branch manager. Nobody guesses, and nobody gets it in the neck for asking. A wrong answer on the floor costs us far more than a five-minute question.</p>
+    </div>
+    <div class="meta">
+      Page 2 has the three plans.<br>
+      Page 3 has colour, which<br>
+      step each plan reaches.
+    </div>
+  </footer>
+
+</div>
+
+<!-- ============== PAGE 2, THE PLANS ============== -->
+<div class="sheet">
+
+  <header>
+    <div>
+      <div class="brand">Tara Rose &nbsp;·&nbsp; pin this up in the staff room &nbsp;·&nbsp; page 2 of 3</div>
+      <h1>What she gets<br>for her money</h1>
+    </div>
+    <div class="who">
+      <b>Every stylist &amp; beautician</b>
+      Same three plans, both emirates<br>
+      All prices include VAT<br>
+      21 August 2026
+    </div>
+  </header>
+
+  <div class="plans">
+
+    <div class="card">
+      <div class="top">
+        <h3>Dip Your Toes</h3>
+        <div class="badge">the small one</div>
+      </div>
+      <div class="money">
+        <div><span>She pays us</span><b>AED 1,000</b></div>
+        <div><span>She gets to spend</span><b>AED 1,150</b></div>
+        <div><span>It lasts</span><b>6 months</b></div>
+        <div><span>Tabby</span><b>No, paid in full</b></div>
+      </div>
+      <div class="col">
+        <div class="k">Colour it covers</div>
+        <div class="v">Step 1 only</div>
+        <div class="s">Roots and regrowth, all-over colour, toner, gloss and glaze</div>
+      </div>
+      <div class="lbl2">And she also gets</div>
+      <ul>
+        <li>Her <b>Confidence Mapping</b>, before she is in the chair</li>
+        <li><b>1 card</b> of AED 100 to give a friend</li>
+        <li><b>+ AED 100</b> once 3 friends have come in and paid</li>
+        <li>A birthday <b>blowdry</b>, worth AED 150</li>
+        <li><b>AED 100</b> towards her home kit, for 2 products</li>
+      </ul>
+    </div>
+
+    <div class="card pick">
+      <div class="top">
+        <h3>Season of You</h3>
+        <div class="badge">most women pick this</div>
+      </div>
+      <div class="money">
+        <div><span>She pays us</span><b>AED 2,500</b></div>
+        <div><span>She gets to spend</span><b>AED 3,000</b></div>
+        <div><span>It lasts</span><b>9 months</b></div>
+        <div><span>Tabby</span><b>4 × AED 625</b></div>
+      </div>
+      <div class="col">
+        <div class="k">Colour it covers</div>
+        <div class="v">Steps 1 and 2</div>
+        <div class="s">Adds balayage, highlights and foils, grey blending</div>
+      </div>
+      <div class="lbl2">And she also gets</div>
+      <ul>
+        <li>Her <b>Confidence Mapping</b>, before she is in the chair</li>
+        <li><b>3 cards</b> of AED 100 to give friends</li>
+        <li><b>+ AED 150</b> once 3 friends have come in and paid</li>
+        <li>A birthday <b>facial</b>, or a scalp treatment with a blowdry, worth AED 350</li>
+        <li><b>AED 200</b> towards her home kit, for 4 products</li>
+        <li>The <b>Reset Journal</b></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="top">
+        <h3>All-In VIP Year</h3>
+        <div class="badge">the big one</div>
+      </div>
+      <div class="money">
+        <div><span>She pays us</span><b>AED 4,500</b></div>
+        <div><span>She gets to spend</span><b>AED 5,400</b></div>
+        <div><span>It lasts</span><b>12 months</b></div>
+        <div><span>Tabby</span><b>4 × AED 1,125</b></div>
+      </div>
+      <div class="col">
+        <div class="k">Colour it covers</div>
+        <div class="v">All three steps</div>
+        <div class="s">Adds colour correction, high lift, full transformation</div>
+      </div>
+      <div class="lbl2">And she also gets</div>
+      <ul>
+        <li>Her <b>Confidence Mapping</b>, before she is in the chair</li>
+        <li><b>5 cards</b> of AED 100 to give friends</li>
+        <li><b>+ AED 200</b> once 3 friends have come in and paid</li>
+        <li>A birthday <b>facial and</b> a scalp treatment, worth AED 750</li>
+        <li><b>AED 450</b> towards her home kit, for 6 products</li>
+        <li>The <b>Reset</b> and <b>8 Pillars</b> journals</li>
+        <li>The <b>home skin care set</b>, if your salon has it in stock</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <footer>
+    <div>
+      <div class="big">Reception does the cards, the dates and the serials.</div>
+      <p>You never have to. If she asks when something of hers runs out, send her to reception. There are four different dates on one client, and they each start from something different.</p>
+    </div>
+    <div class="meta">
+      Page 3 has colour in full,<br>
+      and the four things<br>
+      that get quoted wrong.
+    </div>
+  </footer>
+
+</div>
+
+<!-- ============== PAGE 3, COLOUR ============== -->
+<div class="sheet">
+
+  <header>
+    <div>
+      <div class="brand">Tara Rose &nbsp;·&nbsp; pin this up in the staff room &nbsp;·&nbsp; page 3 of 3</div>
+      <h1>Colour, which step<br>her plan reaches</h1>
+    </div>
+    <div class="who">
+      <b>No cap. No number.</b>
+      You are reading a step,<br>
+      not doing a sum.<br>
+      21 August 2026
+    </div>
+  </header>
+
+  <div class="ladder">
+
+    <div class="rung r1">
+      <div class="sn">1<em>step one</em></div>
+      <div class="body">
+        <div class="whom">On all three plans</div>
+        <div class="nm2">Soft Blonde and Polished Brunette</div>
+        <div class="svc">Roots and regrowth, all-over and single-process colour, toner, gloss and glaze, tonal maintenance.</div>
+      </div>
+    </div>
+
+    <div class="rung r2">
+      <div class="sn">2<em>step two</em></div>
+      <div class="body">
+        <div class="whom">Season of You and All-In VIP Year</div>
+        <div class="nm2">Signature and Dimensional</div>
+        <div class="svc">Balayage and freehand placement, highlights and foils, grey blending, multi-tonal depth.</div>
+      </div>
+    </div>
+
+    <div class="rung r3">
+      <div class="sn">3<em>step three</em></div>
+      <div class="body">
+        <div class="whom">All-In VIP Year only</div>
+        <div class="nm2">Transformation and Luxury</div>
+        <div class="svc">Full transformation, colour correction and removal, high lift, fantasy colour, big-contrast change.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="rules">
+    <div class="rule">
+      <b>Each plan includes every step beneath it.</b>
+      <span>Season of You reaches step 2, so it covers step 1 as well. All-In VIP Year covers all three.</span>
+    </div>
+    <div class="rule">
+      <b>Cuts, blowdry, keratin and treatments are not on this ladder at all.</b>
+      <span>Covered on every plan, at every branch. The ladder is colour only.</span>
+    </div>
+    <div class="rule hot">
+      <b>Her Self-Care Bonus never buys colour.</b>
+      <span>So All-In VIP Year has AED 4,500 for colour, not 5,400. Season of You has AED 2,500, not 3,000.</span>
+    </div>
+    <div class="rule hot">
+      <b>She can always have a service above her step.</b>
+      <span>She pays for that one herself and her balance is not touched. Not refused, not covered. Say it that way round.</span>
+    </div>
+  </div>
+
+  <div class="plain">
+    <div class="lbl">The four that get quoted wrong</div>
+    <div class="items">
+      <div><b>The AED 100 cards are for her friends, not for her.</b> Two months from the day she paid, not from the day she gifts one. Tell her to hand them out early.</div>
+      <div><b>The home kit is money towards her products, not a free kit.</b> She pays the difference when she collects, and nothing leaves until her Confidence Mapping is done.</div>
+      <div><b>The referral credit lands only once 3 friends have come in and paid.</b> Not when they book. Then two months from that day.</div>
+      <div><b>Her birthday treat works any time inside her plan.</b> Not just her birthday month. In Dubai it is the Signature Relaxing Facial at Al Quoz.</div>
+    </div>
+  </div>
+
+  <footer>
+    <div>
+      <div class="big">No per-visit colour cap, and no amount to quote.</div>
+      <p>If anyone still says AED 700, that was dropped on 19 August. If you cannot tell which step a service sits on, ask reception before she sits down, never at the till.</p>
+    </div>
+    <div class="meta">
+      Page 1 has the one line.<br>
+      Page 2 has the plans.<br>
+      Tell Kate if a service<br>
+      is missing a step.
+    </div>
+  </footer>
+
+</div>
+</body>
+</html>
