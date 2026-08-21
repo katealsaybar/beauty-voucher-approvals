@@ -16,7 +16,7 @@ real {{merge_field}} tokens, which is what gets pasted into GHL.
 TWO pages consume the output now, not one, so a change here shows up in both:
   automations/automations.html      = EMAILS + WA, every node's preview and phone frame
   mapping-result/mapping-result.html = EMAILS.journal, the mapping email in a phone
-Only these fourteen emails and eight templates are generated. The mockup pages themselves are
+Only these fifteen emails and eight templates are generated. The mockup pages themselves are
 hand-written and are not built by this script; nothing here needs to know about them.
 """
 
@@ -46,6 +46,10 @@ EMAIL_FILES = [
     ("nurture4", "nurture-4-four-days-left.html"),
     ("nurture5", "nurture-5-final-day.html"),
     ("welcome1", "welcome-1-confirmation.html"),
+    # Written 21 Aug, the fifteenth, and the only email that goes to one tier. The key is
+    # "pillars" and not "journal" because "journal" is already taken by the Confidence Map
+    # journal email in the mapping lane, and mapping-result.html reads EMAILS.journal by name.
+    ("pillars",  "welcome-1b-eight-pillars-journal.html"),
     ("welcome2", "welcome-2-what-your-credit-covers.html"),
     ("welcome3", "welcome-3-confidence-mapping.html"),
     ("expiry",   "welcome-4-expiry-touch.html"),
@@ -73,6 +77,11 @@ SAMPLE = {
     "{{voucher_url}}": LIVE,
     "{{voucher_hold_url}}": LIVE,
     "{{confidence_map_url}}": LIVE,
+    # The 8 Pillars journal. Pointed at the local file rather than at LIVE, because the page
+    # exists in this pack and is not hosted anywhere yet: this way the preview's button opens
+    # the real journal and the copy can be approved before anyone hosts it. Both consuming
+    # pages sit one folder deep, same relative-path logic as the logo.
+    "{{journal_url}}": "../eight-pillars/eight-pillars.html",
     "{{mapping_url}}": LIVE,
     # the branch-choice buttons in the confirmation email
     "{{branch_a_name}}": "Mamsha al Saadiyat",

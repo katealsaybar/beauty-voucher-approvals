@@ -72,7 +72,7 @@
   <h3>Band E &middot; decided, uncontroversial, do them whenever</h3>
   <ul class="check">
     <li><strong>20. Confirm term 12 carries one clause, not two.</strong> Dawn&rsquo;s lighter wording. If you can see an option A and an option B, that is the old draft rather than the issued file. <span class="deeper">&sect;5</span></li>
-    <li><strong>21. Email footers: &ldquo;Tara Rose Salon Group&rdquo; becomes &ldquo;Tara Rose Salons&rdquo;</strong>, all fourteen templates. <span class="deeper">&sect;3</span></li>
+    <li><strong>21. Email footers: &ldquo;Tara Rose Salon Group&rdquo; becomes &ldquo;Tara Rose Salons&rdquo;</strong>, all fifteen templates. <span class="deeper">&sect;3</span></li>
     <li><strong>22. The mapping bridge message: &ldquo;me&rdquo; becomes &ldquo;we&rdquo;.</strong> <span class="deeper">&sect;9</span></li>
     <li><strong>23. The six Confidence Mapping copy swaps.</strong> <span class="deeper">&sect;10</span></li>
   </ul>
@@ -139,17 +139,21 @@
   <div class="rule note"><b>Where your half stops.</b> Once an entry reaches GHL, the nineteen custom fields, the field mapping and the routing nodes are the GHL team&rsquo;s. Keys and types are in <code>docs/CONFIDENCE-MAPPING-FIELD-SPEC.md</code>. Verify together with one test submission read at both ends, because neither half proves anything on its own.</div>
 
   <!-- 3 -->
-  <h2><span class="n">3</span>The fourteen email templates, and what each one needs</h2>
-  <p class="sub">All fourteen are already built and sitting in <code>emails/</code> in this repo. Nothing here is authoring, it is editing what is there. Every filename below opens the template as the client receives it.</p>
+  <h2><span class="n">3</span>The fifteen email templates, and what each one needs</h2>
+  <p class="sub">All fifteen are already built and sitting in <code>emails/</code> in this repo. Nothing here is authoring, it is editing what is there. Every filename below opens the template as the client receives it.</p>
 
-  <div class="rule do"><b>One change lands on all fourteen: the footer.</b> Every template still signs off <b>&ldquo;Tara Rose Salon Group&rdquo;</b>. It should read <b>&ldquo;Tara Rose Salons&rdquo;</b>. That was Decision 12, and the old build spec asking for the other one is not the source of truth. It is a find and replace across the folder.</div>
+  <div class="rule do"><b>One change lands on all fifteen: the footer.</b> Every template still signs off <b>&ldquo;Tara Rose Salon Group&rdquo;</b>. It should read <b>&ldquo;Tara Rose Salons&rdquo;</b>. That was Decision 12, and the old build spec asking for the other one is not the source of truth. It is a find and replace across the folder, and it now includes <code>welcome-1b-eight-pillars-journal</code>, added 21 Aug.</div>
 
   <table>
     <thead><tr><th>Template</th><th>What it needs beyond the footer</th></tr></thead>
     <tbody>
       <tr>
         <td><a href="../emails/mapping-4-tiers.html" target="_blank" rel="noopener">mapping-4-tiers</a></td>
-        <td><strong>Three things, the heaviest of the fourteen.</strong> It still says &ldquo;any service at any of our four salons&rdquo;, which is the promise a Dubai client cannot have. It carries the new colour ladder already. And its emirate merge fields render blank today.</td>
+        <td><strong>Three things, the heaviest of the fifteen.</strong> It still says &ldquo;any service at any of our four salons&rdquo;, which is the promise a Dubai client cannot have. It carries the new colour ladder already. And its emirate merge fields render blank today.</td>
+      </tr>
+      <tr>
+        <td><a href="../emails/welcome-1b-eight-pillars-journal.html" target="_blank" rel="noopener">welcome-1b-eight-pillars-journal</a></td>
+        <td><strong>New, 21 Aug, and it needs a hosted page before it can send.</strong> Its only button points at <code>{{journal_url}}</code>, and that URL does not exist: the journal lives at <code>eight-pillars/eight-pillars.html</code> inside this repo, which is not somewhere a client can reach. Host that page, then put its address behind the merge field. Nothing else in the template needs touching, and <strong>do not add the words &ldquo;exclusive&rdquo; or &ldquo;only&rdquo;</strong> to it: the reason is written at the top of the file.</td>
       </tr>
       <tr>
         <td><a href="../emails/welcome-1-confirmation.html" target="_blank" rel="noopener">welcome-1-confirmation</a></td>
@@ -180,7 +184,7 @@
 
   <div class="rule watch"><b>The merge fields are the GHL team&rsquo;s half, not yours.</b> <code>{{voucher_availability_line}}</code>, <code>{{branch_a_name}}</code> and <code>{{branch_b_name}}</code> render blank because the custom values behind them do not exist in GHL yet. You put the fields in the template; they create the values. <b>Neither half works alone</b>, so agree who goes first rather than both waiting.</div>
   <div class="rule dont"><b>Added and removed on 20 August, so do not put it back.</b> A sentence about <b>selected stylists</b> went into the blast email that morning and came out the same afternoon. Tara&rsquo;s decision is that the voucher is booked with <b>any stylist</b>, and no client copy restricts who she sees. If you are working from a message or a file that carries &ldquo;reception will match you with one of our selected stylists&rdquo;, that version is out of date: the current blast email carries no stylist line at all.</div>
-  <div class="rule note"><b>Read them as she receives them.</b> The <a href="../automations/automations.html" target="_blank" rel="noopener">automations map</a> shows all fourteen on a phone screen, in the order they send, with the WhatsApp templates beside them. Easier to judge a subject line there than in the file.</div>
+  <div class="rule note"><b>Read them as she receives them.</b> The <a href="../automations/automations.html" target="_blank" rel="noopener">automations map</a> shows all fifteen on a phone screen, in the order they send, with the WhatsApp templates beside them. Easier to judge a subject line there than in the file.</div>
   <div class="rule dont"><b>Anything you rewrite goes through a brand review before it sends.</b> These are client-facing. No em-dashes, British English, and never &ldquo;free&rdquo;, &ldquo;unlimited&rdquo; or &ldquo;your kit&rdquo;. The house rules are in <span class="deeper">&sect;12</span>.</div>
 
   <!-- 4 -->
