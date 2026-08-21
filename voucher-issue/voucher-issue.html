@@ -204,6 +204,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1
       <div class="btnrow" style="justify-content:center">
         <button class="btn" id="printall-btn" disabled>Save all her cards as one PDF</button>
         <button class="btn ghost" id="print" disabled>Just this card</button>
+        <button class="btn ghost" id="pageview-btn">See the saved page</button>
         <button class="btn ghost" id="copyname" disabled>Copy her name</button>
         <button class="btn ghost" id="copy" disabled>Copy the serial</button>
       </div>
@@ -371,7 +372,7 @@ function remotePeek(branch){
 
 /* ---------- wiring ---------- */
 function el(id){ return document.getElementById(id); }
-var state = {set:null, active:0};
+var state = {set:null, active:0, pageview:false};
 
 function refreshCounter(){
   var b = el('branch').value;
@@ -442,7 +443,13 @@ function drawSet(){
            '<span class="v">AED ' + money(c.value) + '</span></button>';
   }).join('');
 
-  el('stage').innerHTML = renderCard(set, card) + C.renderBack(set, card);
+  // Two views of the same card: the two faces loose, or the A4 page the PDF is made of.
+  // The page view is the only way to see the saved layout during a practice run, where
+  // printing is refused on purpose.
+  el('stage').innerHTML = state.pageview
+    ? C.renderPage(set, card)
+    : renderCard(set, card) + C.renderBack(set, card);
+  el('pageview-btn').textContent = state.pageview ? 'See the cards' : 'See the saved page';
   el('caption').innerHTML = 'Full serial <code>' + card.serial + '</code>';
 
   var printable = set.cards.filter(function (c){ return c.printable; });
@@ -624,6 +631,11 @@ el('reset').addEventListener('click', function(){
   clearCards();
   el('cname').value = '';
   el('ccontact').value = '';
+});
+
+el('pageview-btn').addEventListener('click', function(){
+  state.pageview = !state.pageview;
+  if (state.set) drawSet();
 });
 
 el('print').addEventListener('click', function(){

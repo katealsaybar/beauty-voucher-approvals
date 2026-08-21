@@ -1,3 +1,15 @@
+/* The saved page's geometry, in ONE place. The print block below and the on-screen page
+ * preview both read these, because a preview that disagrees with the PDF is worse than no
+ * preview at all: it teaches reception the wrong thing and nobody finds out until a client
+ * has it. Change a number here and both move together.
+ */
+:root{
+  --wv-page-w:210mm;    --wv-page-h:297mm;   /* A4 portrait */
+  --wv-card-w:140mm;    --wv-card-h:88.3mm;  /* holds the ID-1 ratio to a rounding error */
+  --wv-card-fs:3.66mm;  --wv-page-gap:12mm;
+  --wv-page-bg:#FAF8F4;
+}
+
 /* The Wellness Card itself, and how it prints.
  *
  * Shared by voucher-issue (the till) and voucher-log (the record) so there is one card, not
@@ -125,6 +137,32 @@
 .card.back .bkurl{position:absolute;left:8%;right:8%;top:93%;text-align:center;
   font-size:.5em;letter-spacing:.1em;opacity:.5;}
 
+
+/* ---------------- the page, on screen ----------------
+ * What the saved PDF looks like, without saving it. Built for the practice run: printing is
+ * refused there on purpose, so before this there was no way to see the page at all without
+ * spending a real serial on it.
+ *
+ * The page is laid out at its TRUE size and then scaled with a transform, rather than being
+ * rebuilt smaller. A transform cannot change the layout, so what you see is the same box the
+ * printer is handed, at 55%. Rebuilding it smaller is what would let it drift.
+ * A transform does not shrink the space the element takes, which is why .pagewrap carries the
+ * scaled height itself.
+ */
+.pagewrap{--s:.55;
+  width:calc(var(--wv-page-w) * var(--s));
+  height:calc(var(--wv-page-h) * var(--s));
+  margin:0 auto;overflow:hidden;
+  box-shadow:0 6px 24px rgba(45,46,55,.16);border:1px solid #E7E2D8;}
+.pagescale{width:var(--wv-page-w);height:var(--wv-page-h);
+  transform:scale(var(--s));transform-origin:top left;}
+
+.sheet.preview{width:var(--wv-page-w);height:var(--wv-page-h);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:var(--wv-page-gap);background:var(--wv-page-bg);}
+.sheet.preview .card{width:var(--wv-card-w);height:var(--wv-card-h);font-size:var(--wv-card-fs);
+  box-shadow:none;margin:0;}
+
 /* ---------------- printing ----------------
  * TRSCard.print() fills #trs-printroot and adds .trs-printing to <body>. The rules below hide
  * every other top-level element, so this works on any page in the pack without that page
@@ -145,7 +183,7 @@
 #trs-printroot{display:none;}
 
 @media print{
-  @page{size:210mm 297mm;margin:0;}
+  @page{size:210mm 297mm;margin:0;}  /* @page cannot take a var, so this pair is the one duplicate */
   body.trs-printing{background:#fff;}
   body.trs-printing > *{display:none !important;}
   body.trs-printing > #trs-printroot{display:block !important;}
@@ -153,9 +191,10 @@
   /* The SHEET carries the page break now, not the card, which is what lets the two be sized
      independently. Written by TRSCard.print, one per card. */
   #trs-printroot .sheet{
-    width:210mm;height:297mm;
-    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12mm;
-    background:#FAF8F4;
+    width:var(--wv-page-w);height:var(--wv-page-h);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:var(--wv-page-gap);
+    background:var(--wv-page-bg);
     page-break-after:always;break-after:page;
     -webkit-print-color-adjust:exact;print-color-adjust:exact;
   }
@@ -165,7 +204,7 @@
      same shape in print as on screen. The border-radius is deliberately NOT reset here: at
      card size the trim made the corners, on a page the card has to draw its own. */
   #trs-printroot .card{
-    width:140mm;height:88.3mm;font-size:3.66mm;
+    width:var(--wv-card-w);height:var(--wv-card-h);font-size:var(--wv-card-fs);
     box-shadow:none;margin:0;
     -webkit-print-color-adjust:exact;print-color-adjust:exact;
   }

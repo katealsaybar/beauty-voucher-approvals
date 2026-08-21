@@ -282,6 +282,16 @@
     '</div>';
   };
 
+  // The saved page, on screen, at 55%. Same two faces the printer gets, in the same box, so
+  // reception can check the page during a practice run rather than spending a serial to see it.
+  // The scale lives in CSS, not here, because voucher-card.css is the only thing that is
+  // allowed to know how big the page is.
+  T.renderPage = function (set, card) {
+    return '<div class="pagewrap"><div class="pagescale">' +
+             '<div class="sheet preview">' + T.render(set, card) + T.renderBack(set, card) + '</div>' +
+           '</div></div>';
+  };
+
   /* ---------- printing ---------- */
   // One function for every page. It fills #trs-printroot, which voucher-card.css is the only
   // thing that knows how to lay out, so no page has to own print rules of its own.
